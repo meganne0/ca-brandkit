@@ -952,8 +952,176 @@ body.yt-picker-open {
   border-radius: 9px;
 }
 
-/* YT-DX-04 · Tilted mesh (15°) */
-.yt-decor--ripple-mesh {
+/* YT-DX-04 · Node mesh (tilted graph) */
+.yt-decor--node-mesh {
+  mix-blend-mode: screen;
+  overflow: hidden;
+}
+
+.yt-decor__net {
+  position: absolute;
+  inset: -18%;
+  width: 136%;
+  height: 136%;
+  transform: rotate(15deg);
+  transform-origin: center;
+  overflow: visible;
+  -webkit-mask-image: linear-gradient(
+    118deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.2) 10%,
+    rgba(0, 0, 0, 0.85) 22%,
+    rgba(0, 0, 0, 0.35) 36%,
+    #000 50%,
+    rgba(0, 0, 0, 0.3) 64%,
+    rgba(0, 0, 0, 0.9) 78%,
+    rgba(0, 0, 0, 0.25) 90%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    118deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.2) 10%,
+    rgba(0, 0, 0, 0.85) 22%,
+    rgba(0, 0, 0, 0.35) 36%,
+    #000 50%,
+    rgba(0, 0, 0, 0.3) 64%,
+    rgba(0, 0, 0, 0.9) 78%,
+    rgba(0, 0, 0, 0.25) 90%,
+    transparent 100%
+  );
+}
+
+.yt-decor__net--ghost {
+  inset: -28%;
+  width: 156%;
+  height: 156%;
+  opacity: 0.35;
+  filter: blur(1.6px);
+  transform: rotate(15deg) scale(1.08);
+  transform-origin: 70% 40%;
+  -webkit-mask-image: linear-gradient(
+    200deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.55) 16%,
+    rgba(0, 0, 0, 0.15) 34%,
+    rgba(0, 0, 0, 0.85) 52%,
+    rgba(0, 0, 0, 0.2) 70%,
+    rgba(0, 0, 0, 0.65) 86%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    200deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.55) 16%,
+    rgba(0, 0, 0, 0.15) 34%,
+    rgba(0, 0, 0, 0.85) 52%,
+    rgba(0, 0, 0, 0.2) 70%,
+    rgba(0, 0, 0, 0.65) 86%,
+    transparent 100%
+  );
+}
+
+.yt-decor__net-edge {
+  fill: none;
+  stroke-width: 0.16;
+  stroke-linecap: round;
+  opacity: 0.65;
+}
+
+.yt-decor__net-edge--a {
+  stroke: rgba(80, 255, 200, 0.85);
+}
+
+.yt-decor__net-edge--b {
+  stroke: rgba(100, 180, 255, 0.8);
+}
+
+.yt-decor__net-edge--c {
+  stroke: rgba(160, 140, 255, 0.7);
+}
+
+.yt-decor__net-edge--soft {
+  opacity: 0.35;
+  stroke-width: 0.12;
+}
+
+.yt-decor__net-edge--blur {
+  filter: blur(0.55px);
+  opacity: 0.45;
+}
+
+.yt-decor__net-node {
+  fill: rgba(120, 255, 200, 0.95);
+}
+
+.yt-decor__net-node--a {
+  fill: rgba(90, 255, 200, 1);
+}
+
+.yt-decor__net-node--b {
+  fill: rgba(120, 190, 255, 1);
+}
+
+.yt-decor__net-node--c {
+  fill: rgba(180, 160, 255, 0.95);
+}
+
+.yt-decor__net-node--hub {
+  filter: drop-shadow(0 0 0.6px rgba(80, 255, 200, 0.7));
+}
+
+.yt-decor__net-fade--soft {
+  opacity: 0.55;
+}
+
+.yt-decor__net-fade--mid {
+  opacity: 0.75;
+}
+
+.yt-decor__net-fade--dim {
+  opacity: 0.4;
+}
+
+.yt-decor__net-blur {
+  filter: blur(0.65px);
+  opacity: 0.55;
+}
+
+.yt-decor__net-hub.yt-decor__net-blur {
+  filter: blur(0.75px);
+  opacity: 0.6;
+}
+
+.yt-decor__net-ring {
+  fill: none;
+  stroke-width: 0.12;
+  opacity: 0.55;
+}
+
+.yt-decor__net-ring--a {
+  stroke: rgba(80, 255, 200, 0.7);
+}
+
+.yt-decor__net-ring--b {
+  stroke: rgba(100, 180, 255, 0.65);
+}
+
+.yt-decor__net-ring--c {
+  stroke: rgba(160, 140, 255, 0.55);
+}
+
+.yt-decor__net--ghost .yt-decor__net-edge {
+  opacity: 0.3;
+  stroke-width: 0.12;
+}
+
+.yt-decor__net--ghost .yt-decor__net-node {
+  opacity: 0.5;
+}
+
+/* YT-DX-07 · Tilted mesh grid (fine) */
+.yt-decor--tilted-mesh {
   mix-blend-mode: screen;
 }
 
@@ -965,7 +1133,7 @@ body.yt-picker-open {
   background-image:
     linear-gradient(rgba(80, 255, 200, 0.7) 1px, transparent 1px),
     linear-gradient(90deg, rgba(100, 180, 255, 0.65) 1px, transparent 1px);
-  background-size: 20px 20px;
+  background-size: 14px 14px;
 }
 
 .yt-decor__mesh--a {
@@ -1008,8 +1176,8 @@ body.yt-picker-open {
 
 .yt-decor__mesh--b {
   opacity: 0.7;
-  background-size: 20px 20px;
-  background-position: 10px 10px;
+  background-size: 14px 14px;
+  background-position: 7px 7px;
   mask-image:
     linear-gradient(
       200deg,
@@ -1044,8 +1212,8 @@ body.yt-picker-open {
 
 .yt-decor__mesh--c {
   opacity: 0.45;
-  background-size: 20px 20px;
-  background-position: 5px 15px;
+  background-size: 14px 14px;
+  background-position: 4px 10px;
   mask-image:
     radial-gradient(ellipse 50% 40% at 25% 30%, rgba(0, 0, 0, 0.95), transparent 55%),
     radial-gradient(ellipse 45% 50% at 75% 70%, rgba(0, 0, 0, 0.8), transparent 50%),
@@ -1070,13 +1238,6 @@ body.yt-picker-open {
       rgba(0, 0, 0, 0.1) 70%,
       transparent 100%
     );
-}
-
-.yt-decor__mesh-filter {
-  position: absolute;
-  width: 0;
-  height: 0;
-  overflow: hidden;
 }
 
 .yt-decor__mesh-glow {

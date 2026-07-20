@@ -142,8 +142,13 @@ export const YOUTUBE_DECORS = {
     kind: "digital",
   },
   "YT-DX-04": {
+    label: "Node mesh",
+    description: "Fine ~20px nodes and connectors with soft fade into the BG.",
+    kind: "digital",
+  },
+  "YT-DX-07": {
     label: "Tilted mesh",
-    description: "15° tilted grid with gradient opacity.",
+    description: "Fine 15° tilted grid with gradient opacity.",
     kind: "digital",
   },
   "YT-DX-06": {
@@ -237,8 +242,140 @@ function buildDigitalGrid() {
 }
 
 function buildRippleMesh() {
+  // Graph coordinates in a 100×100 space; CSS tilts the whole layer.
+  const nodes = [
+    [8, 18],
+    [22, 12],
+    [38, 22],
+    [52, 10],
+    [68, 18],
+    [82, 8],
+    [94, 24],
+    [12, 42],
+    [28, 38],
+    [44, 48],
+    [60, 36],
+    [76, 44],
+    [90, 52],
+    [6, 68],
+    [24, 62],
+    [40, 72],
+    [56, 64],
+    [72, 78],
+    [88, 70],
+    [18, 88],
+    [48, 92],
+    [70, 96],
+    [34, 28],
+    [64, 56],
+  ];
+  const edges = [
+    [0, 1],
+    [1, 2],
+    [2, 3],
+    [3, 4],
+    [4, 5],
+    [5, 6],
+    [0, 7],
+    [1, 8],
+    [2, 8],
+    [2, 9],
+    [3, 10],
+    [4, 10],
+    [4, 11],
+    [5, 11],
+    [6, 12],
+    [7, 8],
+    [8, 9],
+    [9, 10],
+    [10, 11],
+    [11, 12],
+    [7, 13],
+    [8, 14],
+    [9, 15],
+    [10, 16],
+    [11, 17],
+    [12, 18],
+    [13, 14],
+    [14, 15],
+    [15, 16],
+    [16, 17],
+    [17, 18],
+    [13, 19],
+    [15, 20],
+    [17, 21],
+    [19, 20],
+    [20, 21],
+    [2, 22],
+    [8, 22],
+    [9, 22],
+    [11, 23],
+    [16, 23],
+    [17, 23],
+    [9, 23],
+  ];
+  const hubs = new Set([2, 8, 10, 15, 23]);
+
+  // ~20×20px nodes on a 1280×720 canvas (SVG ~136% → ~17.4px/unit).
+  const NODE_R = 0.58;
+  const HUB_R = 0.62;
+  const RING_R = 1.05;
+
+  const fadeClass = (i) => {
+    const n = i % 5;
+    if (n === 0) return " yt-decor__net-fade--dim";
+    if (n === 1) return " yt-decor__net-fade--mid";
+    if (n === 3) return " yt-decor__net-fade--soft";
+    return "";
+  };
+
+  const edgeMarkup = edges
+    .map(([a, b], i) => {
+      const [x1, y1] = nodes[a];
+      const [x2, y2] = nodes[b];
+      const tone = i % 3 === 0 ? "a" : i % 3 === 1 ? "b" : "c";
+      const blur = i % 5 === 0 || i % 7 === 0 ? " yt-decor__net-edge--blur" : "";
+      const soft = i % 4 === 2 ? " yt-decor__net-edge--soft" : "";
+      return `<line class="yt-decor__net-edge yt-decor__net-edge--${tone}${blur}${soft}${fadeClass(i)}" x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" />`;
+    })
+    .join("");
+
+  const nodeMarkup = nodes
+    .map(([x, y], i) => {
+      const hub = hubs.has(i);
+      const tone = i % 3 === 0 ? "a" : i % 3 === 1 ? "b" : "c";
+      const blurCls =
+        i % 6 === 0 || i % 9 === 0 ? " yt-decor__net-blur" : "";
+      const fade = fadeClass(i);
+      if (hub) {
+        return `
+          <g class="yt-decor__net-hub${blurCls}${fade}">
+            <circle class="yt-decor__net-ring yt-decor__net-ring--${tone}" cx="${x}" cy="${y}" r="${RING_R}" />
+            <circle class="yt-decor__net-node yt-decor__net-node--hub yt-decor__net-node--${tone}" cx="${x}" cy="${y}" r="${HUB_R}" />
+          </g>
+        `;
+      }
+      return `<circle class="yt-decor__net-node yt-decor__net-node--${tone}${blurCls}${fade}" cx="${x}" cy="${y}" r="${NODE_R}" />`;
+    })
+    .join("");
+
   return `
-    <div class="yt-decor yt-decor--ripple-mesh" aria-hidden="true">
+    <div class="yt-decor yt-decor--node-mesh" aria-hidden="true">
+      <svg class="yt-decor__net yt-decor__net--main" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
+        ${edgeMarkup}
+        ${nodeMarkup}
+      </svg>
+      <svg class="yt-decor__net yt-decor__net--ghost" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid slice">
+        ${edgeMarkup}
+        ${nodeMarkup}
+      </svg>
+    </div>
+  `;
+}
+
+function buildTiltedMesh() {
+  return `
+    <div class="yt-decor yt-decor--tilted-mesh" aria-hidden="true">
       <span class="yt-decor__mesh yt-decor__mesh--a"></span>
       <span class="yt-decor__mesh yt-decor__mesh--b"></span>
       <span class="yt-decor__mesh yt-decor__mesh--c"></span>
@@ -299,6 +436,7 @@ const BUILDERS = {
   "YT-DX-03": buildDigitalGrid,
   "YT-DX-04": buildRippleMesh,
   "YT-DX-06": buildFakeBrowser,
+  "YT-DX-07": buildTiltedMesh,
 };
 
 /**
