@@ -1,6 +1,8 @@
 /**
  * Client-side password gate for the CyberArmor brand kit.
  * Not cryptographic security — stops casual visitors only.
+ * Works on every page (hub or deep link). After unlock, reloads
+ * the current URL so the page boots normally — never redirects to hub.
  */
 (function () {
   const AUTH_KEY = "ca-brandkit-auth-v1";
@@ -37,27 +39,44 @@
 
   const style = document.createElement("style");
   style.textContent = `
+    html.ca-auth-locked,
+    html.ca-auth-locked body {
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+    }
     html.ca-auth-locked body > *:not(#ca-auth-gate) { display: none !important; }
     #ca-auth-gate {
       position: fixed;
       inset: 0;
       z-index: 99999;
-      display: grid;
-      place-items: center;
+      width: 100vw;
+      height: 100vh;
+      height: 100dvh;
+      margin: 0;
       padding: 24px;
+      box-sizing: border-box;
       background:
         radial-gradient(90% 80% at 50% 0%, rgba(242, 88, 53, 0.22), transparent 55%),
         #05030d;
       color: #fff;
       font-family: Inter, system-ui, sans-serif;
+      text-align: center;
     }
     #ca-auth-gate .ca-auth-card {
-      width: min(100%, 420px);
-      padding: 32px 28px;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: min(calc(100% - 48px), 420px);
+      margin: 0;
+      padding: 36px 28px;
       border-radius: 18px;
       border: 1px solid rgba(255, 255, 255, 0.12);
       background: rgba(18, 11, 28, 0.96);
       box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+      text-align: center;
+      box-sizing: border-box;
     }
     #ca-auth-gate .ca-auth-eyebrow {
       margin: 0 0 8px;
@@ -96,6 +115,7 @@
       color: #fff;
       font: inherit;
       font-size: 15px;
+      text-align: center;
     }
     #ca-auth-gate input:focus {
       outline: 2px solid rgba(242, 88, 53, 0.55);
@@ -116,6 +136,10 @@
       cursor: pointer;
     }
     #ca-auth-gate button:hover { filter: brightness(1.06); }
+    #ca-auth-gate button:disabled {
+      opacity: 0.7;
+      cursor: wait;
+    }
     #ca-auth-gate .ca-auth-error {
       display: none;
       margin: 12px 0 0;
@@ -134,7 +158,7 @@
       <form class="ca-auth-card" id="ca-auth-form" autocomplete="current-password">
         <p class="ca-auth-eyebrow">CyberArmor</p>
         <h1>Brand kit access</h1>
-        <p>Enter the password to open the brand kit.</p>
+        <p>Enter the password to open this page.</p>
         <label for="ca-auth-password">Password</label>
         <input
           id="ca-auth-password"
@@ -152,19 +176,27 @@
 
     const form = gate.querySelector("#ca-auth-form");
     const input = gate.querySelector("#ca-auth-password");
+    const button = form.querySelector('button[type="submit"]');
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
       gate.classList.remove("is-error");
-      const hash = await sha256Hex(input.value.trim());
-      if (hash !== PASS_HASH) {
+      button.disabled = true;
+      try {
+        const hash = await sha256Hex(input.value.trim());
+        if (hash !== PASS_HASH) {
+          gate.classList.add("is-error");
+          button.disabled = false;
+          input.select();
+          return;
+        }
+        setAuthed();
+        // Reload this same URL so the page initializes unlocked.
+        // Do not send the user to the hub/dashboard.
+        location.reload();
+      } catch {
         gate.classList.add("is-error");
-        input.select();
-        return;
+        button.disabled = false;
       }
-      setAuthed();
-      document.documentElement.classList.remove("ca-auth-locked");
-      gate.remove();
-      style.remove();
     });
   }
 
