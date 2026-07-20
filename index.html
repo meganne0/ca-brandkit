@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Mozilla+Text:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/hub.css?v=1" />
+    <link rel="stylesheet" href="css/hub.css?v=3" />
       <script src="js/auth-gate.js?v=4"></script>
 </head>
   <body>
@@ -25,14 +25,35 @@
           />
         </div>
         <h1 class="hub__title">What do you want to open?</h1>
-        <p class="hub__lead">
-          Jump into slide recipes, LinkedIn assets, YouTube thumbnails, type
-          tokens, or an existing draft deck. New decks start from the
-          <a href="briefs/presentation-brief.md">presentation brief</a>.
-        </p>
+
+        <section class="hub__section" aria-labelledby="hub-create">
+          <div class="hub__section-head">
+            <h2 class="hub__section-title" id="hub-create">Create</h2>
+            <span class="hub__badge hub__badge--try">Try Me</span>
+          </div>
+          <div class="hub__grid">
+            <a class="hub-card" href="linkedin.html">
+              <span class="hub-card__id">LinkedIn</span>
+              <h3 class="hub-card__title">LinkedIn images</h3>
+              <p class="hub-card__desc">
+                Create square &amp; landscape posts — pick a layout, edit, download.
+              </p>
+            </a>
+            <a class="hub-card" href="youtube.html">
+              <span class="hub-card__id">YouTube</span>
+              <h3 class="hub-card__title">YouTube thumbnails</h3>
+              <p class="hub-card__desc">
+                Create 1280×720 thumbnails — pick a layout, edit, download.
+              </p>
+            </a>
+          </div>
+        </section>
 
         <section class="hub__section" aria-labelledby="hub-kit">
-          <h2 class="hub__section-title" id="hub-kit">Brand kit</h2>
+          <div class="hub__section-head">
+            <h2 class="hub__section-title" id="hub-kit">Brand kit</h2>
+            <span class="hub__badge hub__badge--progress">In Progress</span>
+          </div>
           <div class="hub__grid">
             <a class="hub-card" href="slides.html">
               <span class="hub-card__id">16:9</span>
@@ -46,20 +67,6 @@
               <h3 class="hub-card__title">Layout gallery</h3>
               <p class="hub-card__desc">
                 Browse and reorder slide layout recipes.
-              </p>
-            </a>
-            <a class="hub-card" href="linkedin.html">
-              <span class="hub-card__id">LinkedIn</span>
-              <h3 class="hub-card__title">LinkedIn layouts</h3>
-              <p class="hub-card__desc">
-                Square &amp; landscape LI-BG / LI-LY assets.
-              </p>
-            </a>
-            <a class="hub-card" href="youtube.html">
-              <span class="hub-card__id">YouTube</span>
-              <h3 class="hub-card__title">YouTube thumbnails</h3>
-              <p class="hub-card__desc">
-                1280×720 YT-BG / YT-DX / YT-01…10 hook recipes.
               </p>
             </a>
             <a class="hub-card" href="backgrounds.html">

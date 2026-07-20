@@ -30,7 +30,6 @@ async function waitForFonts() {
   if (!document.fonts?.ready) return;
   try {
     await document.fonts.ready;
-    // Nudge common brand faces so metrics match the on-screen preview
     await Promise.allSettled([
       document.fonts.load("700 28px 'Mozilla Text'"),
       document.fonts.load("600 16px 'Mozilla Text'"),
@@ -40,6 +39,24 @@ async function waitForFonts() {
   } catch {
     /* ignore */
   }
+}
+
+/** Flatten host chips in the clone so export can't double-paint text. */
+function hardenHostForExport(clonedDoc) {
+  clonedDoc.querySelectorAll(".yt-host__hl").forEach((span) => {
+    const parent = span.parentElement;
+    if (!parent) return;
+    parent.textContent = span.textContent;
+  });
+  clonedDoc.querySelectorAll(".yt-host__name, .yt-host__role").forEach((el) => {
+    el.style.boxDecorationBreak = "unset";
+    el.style.webkitBoxDecorationBreak = "unset";
+    el.style.textShadow = "none";
+    el.style.webkitTextStroke = "0";
+    el.style.filter = "none";
+    el.style.transform = "none";
+    el.style.whiteSpace = "nowrap";
+  });
 }
 
 /**
@@ -54,7 +71,6 @@ export async function downloadElementPng(el, filename, opts = {}) {
 
   await waitForImages(el);
   await waitForFonts();
-  // One frame so layout (margins, flex) settles before capture
   await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
 
   const dataUrl = await toPng(el, {
@@ -76,6 +92,9 @@ export async function downloadElementPng(el, filename, opts = {}) {
       opacity: "1",
       position: "relative",
     },
+    onclone(clonedDoc) {
+      hardenHostForExport(clonedDoc);
+    },
   });
 
   const a = document.createElement("a");
@@ -90,8 +109,6 @@ export async function downloadElementPng(el, filename, opts = {}) {
 
 /**
  * Build an offscreen 1280×720 canvas, paint it, download, then remove.
- * Kept in the layout viewport (not opacity:0 / far offscreen) so capture
- * matches on-screen typography and spacing.
  * @param {(canvas: HTMLElement) => void} paint
  * @param {string} filename
  * @param {{ className?: string, width?: number, height?: number }} [opts]
@@ -101,17 +118,17 @@ export async function downloadPaintedThumbnail(paint, filename, opts = {}) {
   const height = opts.height ?? DESIGN_H;
   const mount = document.createElement("div");
   mount.setAttribute("aria-hidden", "true");
+  // Keep in normal paint path (no clip-path / opacity:0 — those cause text ghosts)
   mount.style.cssText = [
     "position:fixed",
-    "left:0",
+    "left:-100vw",
     "top:0",
     `width:${width}px`,
     `height:${height}px`,
     "overflow:hidden",
     "pointer-events:none",
-    "z-index:-1",
-    /* Visible to the renderer, clipped from view — opacity:0 blurs/skips paint */
-    "clip-path:inset(50%)",
+    "z-index:0",
+    "opacity:1",
   ].join(";");
 
   const canvas = document.createElement("div");

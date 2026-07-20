@@ -607,6 +607,7 @@ body.li-lightbox-open {
 .li-cta {
   max-width: 1600px;
   margin-top: 28px;
+  margin-bottom: 48px;
   display: flex;
   justify-content: center;
 }

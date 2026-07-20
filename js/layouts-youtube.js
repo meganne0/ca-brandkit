@@ -113,6 +113,7 @@ function hostCard(content, variant = "stack") {
       : variant === "overlay"
         ? " yt-host--overlay"
         : "";
+  // Plain text nodes only — nested highlight spans double-paint in html-to-image.
   return `
     <div class="yt-host${mod}">
       <div class="yt-host__ring">
@@ -120,12 +121,8 @@ function hostCard(content, variant = "stack") {
         <span class="yt-host__spark" aria-hidden="true"></span>
       </div>
       <div class="yt-host__meta">
-        <p class="yt-host__name"><span class="yt-host__hl">${name}</span></p>
-        ${
-          role
-            ? `<p class="yt-host__role"><span class="yt-host__hl">${role}</span></p>`
-            : ""
-        }
+        <p class="yt-host__name">${name}</p>
+        ${role ? `<p class="yt-host__role">${role}</p>` : ""}
       </div>
     </div>
   `;
