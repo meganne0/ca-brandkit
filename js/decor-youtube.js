@@ -132,9 +132,9 @@ export const YOUTUBE_DECORS = {
     kind: "matrix",
   },
   "YT-DX-02": {
-    label: "Matrix binary",
-    description: "Scanlines, noise, and floating hex / binary strings.",
-    kind: "matrix",
+    label: "Code Elements",
+    description: "Floating malware-analysis strings, hex, and chips — some large and blurred off-frame.",
+    kind: "digital",
   },
   "YT-DX-03": {
     label: "Digital windows",
@@ -142,8 +142,8 @@ export const YOUTUBE_DECORS = {
     kind: "digital",
   },
   "YT-DX-04": {
-    label: "Ripple mesh",
-    description: "15° tilted grid with gradient opacity and a soft ripple.",
+    label: "Tilted mesh",
+    description: "15° tilted grid with gradient opacity.",
     kind: "digital",
   },
   "YT-DX-06": {
@@ -198,10 +198,16 @@ function buildMatrixBinary() {
       <span class="yt-decor__binary yt-decor__binary--e">0b11010110 · kerberos_tgt · sideload</span>
       <span class="yt-decor__binary yt-decor__binary--f">pcap://eth0 drop=0.02 · SYN flood?</span>
       <span class="yt-decor__binary yt-decor__binary--g">SHA256:a7f3…c91e VERIFIED_FAIL</span>
+      <span class="yt-decor__binary yt-decor__binary--h">mov eax, [ebp+shellcode] · call VirtualAlloc</span>
+      <span class="yt-decor__binary yt-decor__binary--i">PE32+ · .text · .rdata · UPX0 · entry=0x00401000</span>
+      <span class="yt-decor__binary yt-decor__binary--j">yara::malware/stealer · matches=3 · unpack_stage2</span>
+      <span class="yt-decor__binary yt-decor__binary--k">IDA · Ghidra · x64dbg · strings.exe · pe_header</span>
       <span class="yt-decor__chip yt-decor__chip--a">AUTH_BYPASS</span>
       <span class="yt-decor__chip yt-decor__chip--b">0xDEAD</span>
       <span class="yt-decor__chip yt-decor__chip--c">LATERAL</span>
       <span class="yt-decor__chip yt-decor__chip--d">beacon.dll</span>
+      <span class="yt-decor__chip yt-decor__chip--e">SHELLCODE</span>
+      <span class="yt-decor__chip yt-decor__chip--f">UNPACK</span>
     </div>
   `;
 }
@@ -233,12 +239,6 @@ function buildDigitalGrid() {
 function buildRippleMesh() {
   return `
     <div class="yt-decor yt-decor--ripple-mesh" aria-hidden="true">
-      <svg class="yt-decor__mesh-filter" width="0" height="0" aria-hidden="true">
-        <filter id="yt-mesh-warp-dx04" x="-20%" y="-20%" width="140%" height="140%">
-          <feTurbulence type="fractalNoise" baseFrequency="0.014 0.018" numOctaves="2" seed="4" result="noise" />
-          <feDisplacementMap in="SourceGraphic" in2="noise" scale="14" xChannelSelector="R" yChannelSelector="G" />
-        </filter>
-      </svg>
       <span class="yt-decor__mesh yt-decor__mesh--a"></span>
       <span class="yt-decor__mesh yt-decor__mesh--b"></span>
       <span class="yt-decor__mesh yt-decor__mesh--c"></span>
