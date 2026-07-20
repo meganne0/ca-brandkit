@@ -1541,7 +1541,7 @@ body.yt-picker-open {
   gap: 12px;
   align-self: start;
   margin-top: 8px;
-  max-width: 280px;
+  max-width: 320px;
 }
 
 .yt-layout-flow--with-host .yt-host__ring {
@@ -1564,10 +1564,13 @@ body.yt-picker-open {
 
 .yt-layout-flow--with-host .yt-host__name {
   font-size: 18px;
+  margin-bottom: 8px;
+  line-height: 1.2;
 }
 
 .yt-layout-flow--with-host .yt-host__role {
   font-size: 11px;
+  line-height: 1.25;
 }
 
 .yt-layout-evidence--with-host .yt-evidence {
@@ -1802,7 +1805,8 @@ body.yt-picker-open {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 6px;
+  /* Prefer margins over gap — html-to-image/SVG foreignObject often collapses gap */
+  gap: 0;
   padding: 0;
   background: none;
   border: 0;
@@ -1822,6 +1826,8 @@ body.yt-picker-open {
 .yt-host--row .yt-host__meta {
   align-items: flex-start;
   text-align: left;
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
 /* Face over screenshots (right media zone) */
@@ -1841,6 +1847,7 @@ body.yt-picker-open {
   width: 168px;
   height: 168px;
   padding: 5px;
+  flex-shrink: 0;
 }
 
 .yt-host--overlay .yt-host__spark {
@@ -1871,13 +1878,19 @@ body.yt-picker-open {
 .yt-host__role {
   margin: 0;
   max-width: 100%;
+  position: relative;
+  z-index: 1;
 }
 
 .yt-host__hl {
-  padding: 0.12em 0.45em;
-  background: rgba(0, 0, 0, 0.72);
+  display: inline-block;
+  max-width: 100%;
+  padding: 0.18em 0.5em;
+  background: rgba(0, 0, 0, 0.78);
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
+  line-height: inherit;
+  vertical-align: top;
 }
 
 .yt-host__name {
@@ -1885,7 +1898,9 @@ body.yt-picker-open {
   font-size: 28px;
   font-weight: 700;
   color: #fff;
-  line-height: 1.35;
+  line-height: 1.25;
+  /* Explicit margin so name/title never stack on top of each other in PNG export */
+  margin: 0 0 10px;
 }
 
 .yt-host__name .yt-host__hl {
@@ -1900,7 +1915,8 @@ body.yt-picker-open {
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: rgba(255, 255, 255, 0.9);
-  line-height: 1.4;
+  line-height: 1.3;
+  margin: 0;
 }
 
 /* YT-05 Hook + host */

@@ -11,25 +11,19 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/backgrounds.css?v=21" />
-    <link rel="stylesheet" href="css/linkedin.css?v=21" />
-      <script src="js/auth-gate.js?v=4"></script>
-</head>
+    <link rel="stylesheet" href="css/linkedin.css?v=22" />
+    <script src="js/auth-gate.js?v=4"></script>
+  </head>
   <body>
     <div class="bg-gallery">
       <header class="bg-gallery__header">
         <h1>LinkedIn assets</h1>
         <p>
-          Separate <code>LI-BG</code> / <code>LI-LY</code> recipes — square
-          (1080×1080) and landscape (1200×627). Shared brand colors, logos, and
-          glow assets; LinkedIn type scale + crop. Click any thumbnail to
-          enlarge.
+          Build square (1080×1080) and landscape (1200×627) CyberArmor posts.
+          Create a new image from a layout, or edit any example below.
           <a class="gallery-nav" href="index.html">← hub</a>
           ·
           <a class="gallery-nav" href="slides.html">slides</a>
-          ·
-          <a class="gallery-nav" href="backgrounds.html">slide BGs</a>
-          ·
-          <a class="gallery-nav" href="layouts.html">slide LYs</a>
           ·
           <a class="gallery-nav" href="youtube.html">YouTube</a>
           ·
@@ -37,33 +31,132 @@
         </p>
       </header>
 
-      <section class="bg-gallery__section" aria-labelledby="li-bg-square">
-        <h2 class="bg-gallery__section-title" id="li-bg-square">
-          Backgrounds · LI-BG (square)
-        </h2>
-        <div class="bg-gallery__grid bg-gallery__grid--tiles" id="bg-gallery-square"></div>
+      <section class="li-cta" aria-labelledby="li-cta-title">
+        <button type="button" class="li-cta__btn" id="li-create-btn">
+          <span class="li-cta__eyebrow">Start here</span>
+          <span class="li-cta__title" id="li-cta-title">Create New Image</span>
+          <span class="li-cta__sub">
+            Pick a layout · auto background · edit text &amp; images
+          </span>
+        </button>
       </section>
 
-      <section class="bg-gallery__section" aria-labelledby="li-bg-land">
-        <h2 class="bg-gallery__section-title" id="li-bg-land">
-          Backgrounds · LI-BG (landscape)
+      <section class="bg-gallery__section" aria-labelledby="li-ex">
+        <h2 class="bg-gallery__section-title" id="li-ex">
+          Examples · composed posts
         </h2>
-        <div class="bg-gallery__grid bg-gallery__grid--tiles-land" id="bg-gallery-landscape"></div>
+        <p class="li-ex-hint">
+          Left-click to edit · Right-click to duplicate or download
+        </p>
+        <div class="bg-gallery__grid bg-gallery__grid--tiles-li" id="ex-gallery"></div>
       </section>
 
-      <section class="bg-gallery__section" aria-labelledby="li-ly-square">
-        <h2 class="bg-gallery__section-title" id="li-ly-square">
-          Layouts · LI-LY (square)
-        </h2>
+      <details class="li-collapse bg-gallery__section" id="li-ly-square-section">
+        <summary class="li-collapse__summary">
+          <span class="bg-gallery__section-title" id="li-ly-square">Layouts · LI-LY (square)</span>
+          <span class="li-collapse__hint">Reference only · click to expand</span>
+        </summary>
         <div class="bg-gallery__grid bg-gallery__grid--tiles" id="ly-gallery-square"></div>
-      </section>
+      </details>
 
-      <section class="bg-gallery__section" aria-labelledby="li-ly-land">
-        <h2 class="bg-gallery__section-title" id="li-ly-land">
-          Layouts · LI-LY (landscape)
-        </h2>
+      <details class="li-collapse bg-gallery__section" id="li-ly-land-section">
+        <summary class="li-collapse__summary">
+          <span class="bg-gallery__section-title" id="li-ly-land">Layouts · LI-LY (landscape)</span>
+          <span class="li-collapse__hint">Reference only · click to expand</span>
+        </summary>
         <div class="bg-gallery__grid bg-gallery__grid--tiles-land" id="ly-gallery-landscape"></div>
-      </section>
+      </details>
+
+      <details class="li-collapse bg-gallery__section" id="li-bg-square-section">
+        <summary class="li-collapse__summary">
+          <span class="bg-gallery__section-title" id="li-bg-square">Backgrounds · LI-BG (square)</span>
+          <span class="li-collapse__hint">Reference only · click to expand</span>
+        </summary>
+        <div class="bg-gallery__grid bg-gallery__grid--tiles" id="bg-gallery-square"></div>
+      </details>
+
+      <details class="li-collapse bg-gallery__section" id="li-bg-land-section">
+        <summary class="li-collapse__summary">
+          <span class="bg-gallery__section-title" id="li-bg-land">Backgrounds · LI-BG (landscape)</span>
+          <span class="li-collapse__hint">Reference only · click to expand</span>
+        </summary>
+        <div class="bg-gallery__grid bg-gallery__grid--tiles-land" id="bg-gallery-landscape"></div>
+      </details>
+    </div>
+
+    <div class="li-layout-picker" id="li-layout-picker" hidden>
+      <button
+        type="button"
+        class="li-layout-picker__backdrop"
+        aria-label="Close layout picker"
+      ></button>
+      <div
+        class="li-layout-picker__dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="li-layout-picker-title"
+      >
+        <header class="li-layout-picker__header">
+          <div>
+            <p class="li-layout-picker__eyebrow">New image</p>
+            <h2 id="li-layout-picker-title">Choose a layout</h2>
+            <p>A matching background is assigned automatically. You can change it in the editor.</p>
+          </div>
+          <button
+            type="button"
+            class="li-editor__btn li-editor__btn--ghost"
+            id="li-layout-picker-close"
+          >
+            Close
+          </button>
+        </header>
+        <div class="li-layout-picker__grid" id="li-layout-picker-grid"></div>
+      </div>
+    </div>
+
+    <div class="li-editor" id="li-editor" hidden>
+      <button
+        type="button"
+        class="li-editor__backdrop"
+        aria-label="Close editor"
+      ></button>
+      <div
+        class="li-editor__dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="li-editor-title"
+      >
+        <header class="li-editor__header">
+          <div>
+            <p class="li-editor__eyebrow" id="li-editor-id">EX</p>
+            <h2 id="li-editor-title">Edit image</h2>
+          </div>
+          <div class="li-editor__header-actions">
+            <button type="button" class="li-editor__btn" id="li-editor-download">
+              Download PNG
+            </button>
+            <button
+              type="button"
+              class="li-editor__btn li-editor__btn--ghost"
+              id="li-editor-close"
+            >
+              Close
+            </button>
+          </div>
+        </header>
+        <div class="li-editor__body">
+          <div class="li-editor__preview-wrap">
+            <div class="li-editor__stage" id="li-editor-stage"></div>
+            <p class="li-editor__preview-hint">
+              Click an avatar or media image on the preview to replace it
+            </p>
+          </div>
+          <aside class="li-editor__panel">
+            <form class="li-editor__form" id="li-editor-form"></form>
+            <div class="li-editor__slots" id="li-editor-slots"></div>
+          </aside>
+        </div>
+      </div>
     </div>
 
     <div class="li-lightbox" id="li-lightbox" hidden>
@@ -85,6 +178,17 @@
       </div>
     </div>
 
+    <div class="li-ex-menu" id="li-ex-menu" hidden>
+      <button type="button" class="li-ex-menu__item" role="menuitem" data-action="duplicate">
+        Duplicate
+      </button>
+      <button type="button" class="li-ex-menu__item" role="menuitem" data-action="download">
+        Download PNG
+      </button>
+    </div>
+
+    <input type="file" id="li-file-input" accept="image/*" hidden />
+
     <script type="module">
       import {
         LINKEDIN_BACKGROUNDS,
@@ -94,7 +198,8 @@
       import {
         LINKEDIN_LAYOUTS,
         renderLinkedInLayout,
-      } from "./js/layouts-linkedin.js?v=20";
+      } from "./js/layouts-linkedin.js?v=21";
+      import { downloadPaintedThumbnail } from "./js/youtube-download.js?v=2";
 
       const LAYOUT_SAMPLES = {
         "LI-LY-01": {
@@ -109,8 +214,7 @@
         "LI-LY-02": {
           bg: "LI-BG-02",
           content: {
-            quote:
-              "Session theft turns MFA into a speed bump — not a barrier.",
+            quote: "Session theft turns MFA into a speed bump — not a barrier.",
             attribution: "CyberArmor Threat Research",
           },
         },
@@ -184,16 +288,14 @@
         "LI-LY-11": {
           bg: "LI-BG-05",
           content: {
-            quote:
-              "Session theft turns MFA into a speed bump — not a barrier.",
+            quote: "Session theft turns MFA into a speed bump — not a barrier.",
             attribution: "CyberArmor Threat Research",
           },
         },
         "LI-LY-12": {
           bg: "LI-BG-02",
           content: {
-            quote:
-              "Session theft turns MFA into a speed bump — not a barrier.",
+            quote: "Session theft turns MFA into a speed bump — not a barrier.",
             attribution: "Nguyen Nguyen, CEO",
             speaker: "Nguyen Nguyen",
             avatar: "visual%20assets/avatars/avatar-nguyen-circle.png",
@@ -202,8 +304,7 @@
         "LI-LY-13": {
           bg: "LI-BG-06",
           content: {
-            quote:
-              "Session theft turns MFA into a speed bump — not a barrier.",
+            quote: "Session theft turns MFA into a speed bump — not a barrier.",
             attribution: "Nguyen Nguyen, CEO",
             speaker: "Nguyen Nguyen",
             avatar: "visual%20assets/avatars/avatar-nguyen-circle.png",
@@ -211,10 +312,100 @@
         },
       };
 
+      const FIELD_LABELS = {
+        headline: "Headline",
+        accent: "Accent phrase",
+        subtitle: "Subtitle",
+        quote: "Quote",
+        attribution: "Attribution",
+        speaker: "Speaker name",
+        label: "Label",
+        value: "Metric value",
+        context: "Context",
+        title: "Title",
+        body: "Body",
+        cta: "CTA text",
+        placeholder: "Media placeholder label",
+      };
+
+      const MULTILINE = new Set(["subtitle", "quote", "body", "context"]);
+
+      function clone(obj) {
+        return JSON.parse(JSON.stringify(obj));
+      }
+
+      function escapeHtml(s) {
+        return String(s ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function escapeAttr(s) {
+        return escapeHtml(s).replace(/'/g, "&#39;");
+      }
+
+      function backgroundsForFormat(formatId) {
+        return Object.entries(LINKEDIN_BACKGROUNDS).filter(
+          ([, recipe]) => (recipe.format ?? "square") === formatId,
+        );
+      }
+
+      function pickBackground(formatId, preferId) {
+        const list = backgroundsForFormat(formatId);
+        if (!list.length) return preferId ?? "LI-BG-01";
+        if (preferId && list.some(([id]) => id === preferId)) return preferId;
+        return list[Math.floor(Math.random() * list.length)][0];
+      }
+
+      function formatForExample(example) {
+        return LINKEDIN_LAYOUTS[example.layout]?.format ?? "square";
+      }
+
+      function paintPost(canvas, example, layoutId = example.layout) {
+        const layout = LINKEDIN_LAYOUTS[layoutId];
+        const formatId = layout?.format ?? "square";
+        const format = LINKEDIN_FORMATS[formatId];
+        canvas.className = `canvas ${format.className}`;
+        canvas.dataset.bg = example.bg;
+        canvas.dataset.layout = layoutId;
+        canvas.replaceChildren();
+        const layers = document.createElement("div");
+        layers.className = "slide-layers";
+        canvas.appendChild(layers);
+        renderLinkedInBackground(layers, example.bg);
+        renderLinkedInLayout(canvas, layoutId, example.content ?? {});
+      }
+
+      let examples = Object.entries(LAYOUT_SAMPLES).map(([layout, sample], i) => ({
+        id: `EX-${String(i + 1).padStart(2, "0")}`,
+        label: LINKEDIN_LAYOUTS[layout]?.label ?? layout,
+        layout,
+        bg: sample.bg,
+        content: clone(sample.content),
+      }));
+
+      let nextExNum = examples.length + 1;
+      let editorState = null;
+      let menuExampleId = null;
+      let replaceTarget = null;
+
       const lightbox = document.getElementById("li-lightbox");
       const lightboxStage = document.getElementById("li-lightbox-stage");
       const lightboxId = document.getElementById("li-lightbox-id");
       const lightboxLabel = document.getElementById("li-lightbox-label");
+      const editor = document.getElementById("li-editor");
+      const editorStage = document.getElementById("li-editor-stage");
+      const editorForm = document.getElementById("li-editor-form");
+      const editorSlots = document.getElementById("li-editor-slots");
+      const editorIdEl = document.getElementById("li-editor-id");
+      const editorTitleEl = document.getElementById("li-editor-title");
+      const layoutPicker = document.getElementById("li-layout-picker");
+      const layoutPickerGrid = document.getElementById("li-layout-picker-grid");
+      const exGallery = document.getElementById("ex-gallery");
+      const exMenu = document.getElementById("li-ex-menu");
+      const fileInput = document.getElementById("li-file-input");
 
       function fitCanvas(stage, canvas, formatId) {
         const format = LINKEDIN_FORMATS[formatId] ?? LINKEDIN_FORMATS.square;
@@ -222,8 +413,7 @@
         const scaleByH = stage.clientHeight
           ? stage.clientHeight / format.h
           : scaleByW;
-        const scale = Math.min(scaleByW, scaleByH);
-        canvas.style.transform = `scale(${scale})`;
+        canvas.style.transform = `scale(${Math.min(scaleByW, scaleByH)})`;
       }
 
       function closeLightbox() {
@@ -238,33 +428,329 @@
         lightboxLabel.textContent = label;
         lightboxStage.replaceChildren();
         lightboxStage.style.aspectRatio = `${format.w} / ${format.h}`;
-
         const canvas = build();
         lightboxStage.appendChild(canvas);
         lightbox.hidden = false;
         document.body.classList.add("li-lightbox-open");
+        requestAnimationFrame(() => fitCanvas(lightboxStage, canvas, formatId));
+      }
 
-        requestAnimationFrame(() => {
-          fitCanvas(lightboxStage, canvas, formatId);
+      function hideExMenu() {
+        exMenu.hidden = true;
+        menuExampleId = null;
+      }
+
+      function showExMenu(x, y, exampleId) {
+        menuExampleId = exampleId;
+        exMenu.hidden = false;
+        const pad = 8;
+        const rect = exMenu.getBoundingClientRect();
+        const left = Math.min(x, window.innerWidth - rect.width - pad);
+        const top = Math.min(y, window.innerHeight - rect.height - pad);
+        exMenu.style.left = `${Math.max(pad, left)}px`;
+        exMenu.style.top = `${Math.max(pad, top)}px`;
+      }
+
+      async function downloadExample(example) {
+        const formatId = formatForExample(example);
+        const format = LINKEDIN_FORMATS[formatId];
+        await downloadPaintedThumbnail(
+          (canvas) => paintPost(canvas, example, example.layout),
+          `${example.id.toLowerCase()}-${example.layout.toLowerCase()}.png`,
+          {
+            className: `canvas ${format.className}`,
+            width: format.w,
+            height: format.h,
+          },
+        );
+      }
+
+      function closeEditor() {
+        editor.hidden = true;
+        editorStage.replaceChildren();
+        editorForm.innerHTML = "";
+        editorSlots.innerHTML = "";
+        editorState = null;
+        document.body.classList.remove("li-editor-open");
+      }
+
+      function closeLayoutPicker() {
+        layoutPicker.hidden = true;
+        layoutPickerGrid.replaceChildren();
+        document.body.classList.remove("li-picker-open");
+      }
+
+      function buildEditorForm(example) {
+        const c = example.content ?? {};
+        const layout = LINKEDIN_LAYOUTS[example.layout];
+        const formatId = layout?.format ?? "square";
+        const rows = [];
+
+        const bgOptions = backgroundsForFormat(formatId)
+          .map(
+            ([id, recipe]) =>
+              `<option value="${id}"${example.bg === id ? " selected" : ""}>${id} · ${recipe.label}</option>`,
+          )
+          .join("");
+
+        rows.push(`
+          <label class="li-editor__field" for="li-field-bg">
+            <span>Background</span>
+            <select id="li-field-bg" name="bg" class="li-editor__select">
+              ${bgOptions}
+            </select>
+          </label>
+        `);
+
+        Object.keys(FIELD_LABELS).forEach((name) => {
+          if (c[name] === undefined || name === "avatar" || name === "image") return;
+          const id = `li-field-${name}`;
+          const label = FIELD_LABELS[name];
+          const value = c[name] ?? "";
+          if (MULTILINE.has(name)) {
+            rows.push(`
+              <label class="li-editor__field" for="${id}">
+                <span>${label}</span>
+                <textarea id="${id}" name="${name}" rows="3">${escapeHtml(value)}</textarea>
+              </label>
+            `);
+          } else {
+            rows.push(`
+              <label class="li-editor__field" for="${id}">
+                <span>${label}</span>
+                <input id="${id}" name="${name}" type="text" value="${escapeAttr(value)}" />
+              </label>
+            `);
+          }
+        });
+
+        editorForm.innerHTML = rows.join("");
+      }
+
+      function readEditorForm(example) {
+        const c = example.content;
+        const bgEl = editorForm.elements.namedItem("bg");
+        if (bgEl) example.bg = bgEl.value;
+
+        [...editorForm.elements].forEach((el) => {
+          if (!el.name || el.name === "bg") return;
+          c[el.name] = el.value;
         });
       }
 
-      lightbox.querySelector(".li-lightbox__backdrop").addEventListener("click", closeLightbox);
-      document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && !lightbox.hidden) closeLightbox();
-      });
-      window.addEventListener("resize", () => {
-        if (lightbox.hidden) return;
-        const canvas = lightboxStage.querySelector(".canvas, .slide-layers");
-        const host = canvas?.closest(".canvas") ?? canvas;
-        if (!host) return;
-        const formatId = host.classList.contains("canvas--li-landscape")
-          ? "landscape"
-          : "square";
-        if (host.classList.contains("canvas")) {
-          fitCanvas(lightboxStage, host, formatId);
+      function buildEditorSlots(example) {
+        const c = example.content ?? {};
+        const slots = [];
+        if (c.avatar !== undefined || example.layout === "LI-LY-12" || example.layout === "LI-LY-13") {
+          slots.push(
+            `<button type="button" class="li-editor__slot-btn" data-slot="avatar">Replace speaker avatar</button>`,
+          );
         }
-      });
+        if (
+          example.layout === "LI-LY-08" ||
+          example.layout === "LI-LY-09" ||
+          example.layout === "LI-LY-10" ||
+          c.image !== undefined ||
+          c.placeholder !== undefined
+        ) {
+          slots.push(
+            `<button type="button" class="li-editor__slot-btn" data-slot="image">Replace media image</button>`,
+          );
+        }
+        editorSlots.innerHTML = slots.length
+          ? `<p class="li-editor__slots-title">Images</p>${slots.join("")}`
+          : "";
+      }
+
+      function paintEditorPreview() {
+        if (!editorState) return;
+        const example = editorState.example;
+        const formatId = formatForExample(example);
+        const format = LINKEDIN_FORMATS[formatId];
+        editorStage.replaceChildren();
+        editorStage.style.aspectRatio = `${format.w} / ${format.h}`;
+        const canvas = document.createElement("div");
+        paintPost(canvas, example, example.layout);
+        editorStage.appendChild(canvas);
+        requestAnimationFrame(() => fitCanvas(editorStage, canvas, formatId));
+        wirePreviewReplace(canvas);
+      }
+
+      function wirePreviewReplace(canvas) {
+        canvas.querySelectorAll(".li-layout-quote__avatar").forEach((img) => {
+          img.classList.add("li-replaceable");
+          img.style.cursor = "pointer";
+          img.addEventListener("click", (e) => {
+            e.stopPropagation();
+            replaceTarget = "avatar";
+            fileInput.click();
+          });
+        });
+        canvas.querySelectorAll(".li-layout-media__img, .li-layout-media__frame").forEach((el) => {
+          el.classList.add("li-replaceable");
+          el.style.cursor = "pointer";
+          el.addEventListener("click", (e) => {
+            e.stopPropagation();
+            replaceTarget = "image";
+            fileInput.click();
+          });
+        });
+      }
+
+      function openEditor(example) {
+        closeLayoutPicker();
+        closeLightbox();
+        hideExMenu();
+        editorState = { example };
+        editorIdEl.textContent = example.id;
+        editorTitleEl.textContent = example.label || "Edit image";
+        buildEditorForm(example);
+        buildEditorSlots(example);
+        editor.hidden = false;
+        document.body.classList.add("li-editor-open");
+        paintEditorPreview();
+      }
+
+      function createExampleFromLayout(layoutId) {
+        const layout = LINKEDIN_LAYOUTS[layoutId];
+        if (!layout) return;
+        const sample = LAYOUT_SAMPLES[layoutId] ?? { content: {} };
+        const formatId = layout.format ?? "square";
+        const example = {
+          id: `EX-${String(nextExNum++).padStart(2, "0")}`,
+          label: layout.label,
+          layout: layoutId,
+          bg: pickBackground(formatId, sample.bg),
+          content: clone(sample.content ?? {}),
+        };
+        examples.unshift(example);
+        renderExamples();
+        openEditor(example);
+      }
+
+      function openLayoutPicker() {
+        closeEditor();
+        closeLightbox();
+        hideExMenu();
+        layoutPickerGrid.replaceChildren();
+        Object.entries(LINKEDIN_LAYOUTS).forEach(([id, layout]) => {
+          const sample = LAYOUT_SAMPLES[id] ?? { content: {}, bg: pickBackground(layout.format) };
+          const formatId = layout.format ?? "square";
+          const format = LINKEDIN_FORMATS[formatId];
+          const card = document.createElement("button");
+          card.type = "button";
+          card.className = "li-layout-picker__card";
+          card.setAttribute("aria-label", `Use layout ${id}: ${layout.label}`);
+
+          const stage = document.createElement("div");
+          stage.className = `li-layout-picker__stage${
+            formatId === "landscape" ? " li-layout-picker__stage--landscape" : ""
+          }`;
+          const canvas = document.createElement("div");
+          paintPost(
+            canvas,
+            { bg: sample.bg ?? pickBackground(formatId), content: sample.content ?? {}, layout: id },
+            id,
+          );
+          stage.appendChild(canvas);
+
+          const meta = document.createElement("div");
+          meta.className = "li-layout-picker__meta";
+          meta.innerHTML = `
+            <span class="li-layout-picker__id">${id}</span>
+            <span class="li-layout-picker__label">${layout.label}</span>
+            <span class="li-layout-picker__desc">${layout.description}</span>
+          `;
+
+          card.append(stage, meta);
+          card.addEventListener("click", () => {
+            closeLayoutPicker();
+            createExampleFromLayout(id);
+          });
+          layoutPickerGrid.appendChild(card);
+          requestAnimationFrame(() => fitCanvas(stage, canvas, formatId));
+        });
+
+        layoutPicker.hidden = false;
+        document.body.classList.add("li-picker-open");
+      }
+
+      function makeExCard(example) {
+        const layout = LINKEDIN_LAYOUTS[example.layout];
+        const formatId = formatForExample(example);
+        const format = LINKEDIN_FORMATS[formatId];
+
+        const card = document.createElement("article");
+        card.className = "bg-card li-ex-card";
+        card.dataset.exId = example.id;
+        card.tabIndex = 0;
+        card.setAttribute("role", "button");
+        card.setAttribute(
+          "aria-label",
+          `Edit ${example.id}. Right-click to duplicate or download.`,
+        );
+
+        const stage = document.createElement("div");
+        stage.className = `li-preview-stage${
+          formatId === "landscape" ? " li-preview-stage--landscape" : ""
+        }`;
+        const canvas = document.createElement("div");
+        paintPost(canvas, example, example.layout);
+        stage.appendChild(canvas);
+
+        const meta = document.createElement("div");
+        meta.className = "bg-card__meta";
+        meta.innerHTML = `
+          <span class="bg-card__id">${example.id}</span>
+          <span class="bg-card__label">${example.label}</span>
+          <span class="bg-card__desc">${example.layout} · ${example.bg} · ${formatId}</span>
+        `;
+
+        card.append(stage, meta);
+        card.addEventListener("click", () => openEditor(example));
+        card.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            openEditor(example);
+          }
+        });
+        card.addEventListener("contextmenu", (e) => {
+          e.preventDefault();
+          showExMenu(e.clientX, e.clientY, example.id);
+        });
+
+        requestAnimationFrame(() => fitCanvas(stage, canvas, formatId));
+        new ResizeObserver(() => fitCanvas(stage, canvas, formatId)).observe(stage);
+        return card;
+      }
+
+      function renderExamples() {
+        exGallery.replaceChildren();
+        examples.forEach((ex) => exGallery.appendChild(makeExCard(ex)));
+      }
+
+      function refreshExampleCard(example) {
+        const card = exGallery.querySelector(`[data-ex-id="${example.id}"]`);
+        if (!card) {
+          renderExamples();
+          return;
+        }
+        const formatId = formatForExample(example);
+        const stage = card.querySelector(".li-preview-stage");
+        const canvas = card.querySelector(".canvas");
+        if (canvas && stage) {
+          paintPost(canvas, example, example.layout);
+          requestAnimationFrame(() => fitCanvas(stage, canvas, formatId));
+        }
+        const idEl = card.querySelector(".bg-card__id");
+        const labelEl = card.querySelector(".bg-card__label");
+        const descEl = card.querySelector(".bg-card__desc");
+        if (idEl) idEl.textContent = example.id;
+        if (labelEl) labelEl.textContent = example.label;
+        if (descEl) {
+          descEl.textContent = `${example.layout} · ${example.bg} · ${formatId}`;
+        }
+      }
 
       function makeBgCard(id, recipe, grid) {
         const formatId = recipe.format ?? "square";
@@ -279,9 +765,7 @@
         preview.className = `bg-card__preview${
           formatId === "landscape" ? "" : " bg-card__preview--square"
         }`;
-        if (formatId === "landscape") {
-          preview.style.aspectRatio = "1200 / 627";
-        }
+        if (formatId === "landscape") preview.style.aspectRatio = "1200 / 627";
         const layers = document.createElement("div");
         layers.className = "slide-layers";
         preview.appendChild(layers);
@@ -319,7 +803,6 @@
             open();
           }
         });
-
         card.append(preview, meta);
         grid.appendChild(card);
       }
@@ -327,7 +810,6 @@
       function makeLyCard(id, layout, grid) {
         const sample = LAYOUT_SAMPLES[id];
         if (!sample) return;
-
         const formatId = layout.format ?? "square";
         const format = LINKEDIN_FORMATS[formatId];
 
@@ -342,20 +824,9 @@
         stage.className = `li-preview-stage${
           formatId === "landscape" ? " li-preview-stage--landscape" : ""
         }`;
-
         const canvas = document.createElement("div");
-        canvas.className = `canvas ${format.className}`;
-        canvas.dataset.bg = sample.bg;
-        canvas.dataset.layout = id;
-
-        const layers = document.createElement("div");
-        layers.className = "slide-layers";
-        canvas.appendChild(layers);
+        paintPost(canvas, { bg: sample.bg, content: sample.content, layout: id }, id);
         stage.appendChild(canvas);
-
-        renderLinkedInBackground(layers, sample.bg);
-        renderLinkedInLayout(canvas, id, sample.content);
-        fitCanvas(stage, canvas, formatId);
 
         const meta = document.createElement("div");
         meta.className = "bg-card__meta";
@@ -372,12 +843,7 @@
             formatId,
             build() {
               const big = document.createElement("div");
-              big.className = `canvas ${format.className}`;
-              const layerHost = document.createElement("div");
-              layerHost.className = "slide-layers";
-              big.appendChild(layerHost);
-              renderLinkedInBackground(layerHost, sample.bg);
-              renderLinkedInLayout(big, id, sample.content);
+              paintPost(big, { bg: sample.bg, content: sample.content, layout: id }, id);
               return big;
             },
           });
@@ -390,32 +856,141 @@
             open();
           }
         });
-
         card.append(stage, meta);
         grid.appendChild(card);
-
-        const ro = new ResizeObserver(() => fitCanvas(stage, canvas, formatId));
-        ro.observe(stage);
+        requestAnimationFrame(() => fitCanvas(stage, canvas, formatId));
+        new ResizeObserver(() => fitCanvas(stage, canvas, formatId)).observe(stage);
       }
+
+      /* Events */
+      document.getElementById("li-create-btn").addEventListener("click", openLayoutPicker);
+      document.getElementById("li-layout-picker-close").addEventListener("click", closeLayoutPicker);
+      layoutPicker.querySelector(".li-layout-picker__backdrop").addEventListener("click", closeLayoutPicker);
+      document.getElementById("li-editor-close").addEventListener("click", () => {
+        if (editorState) refreshExampleCard(editorState.example);
+        closeEditor();
+      });
+      editor.querySelector(".li-editor__backdrop").addEventListener("click", () => {
+        if (editorState) refreshExampleCard(editorState.example);
+        closeEditor();
+      });
+      document.getElementById("li-editor-download").addEventListener("click", async () => {
+        if (!editorState) return;
+        const btn = document.getElementById("li-editor-download");
+        btn.disabled = true;
+        try {
+          readEditorForm(editorState.example);
+          await downloadExample(editorState.example);
+          refreshExampleCard(editorState.example);
+        } finally {
+          btn.disabled = false;
+        }
+      });
+
+      editorForm.addEventListener("input", () => {
+        if (!editorState) return;
+        readEditorForm(editorState.example);
+        paintEditorPreview();
+        refreshExampleCard(editorState.example);
+      });
+      editorForm.addEventListener("change", () => {
+        if (!editorState) return;
+        readEditorForm(editorState.example);
+        paintEditorPreview();
+        refreshExampleCard(editorState.example);
+      });
+
+      editorSlots.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-slot]");
+        if (!btn || !editorState) return;
+        replaceTarget = btn.dataset.slot;
+        fileInput.click();
+      });
+
+      fileInput.addEventListener("change", () => {
+        const file = fileInput.files?.[0];
+        fileInput.value = "";
+        if (!file || !editorState || !replaceTarget) return;
+        const url = URL.createObjectURL(file);
+        if (replaceTarget === "avatar") {
+          editorState.example.content.avatar = url;
+        } else if (replaceTarget === "image") {
+          editorState.example.content.image = url;
+        }
+        replaceTarget = null;
+        paintEditorPreview();
+        refreshExampleCard(editorState.example);
+      });
+
+      exMenu.addEventListener("click", async (e) => {
+        const btn = e.target.closest("[data-action]");
+        if (!btn || !menuExampleId) return;
+        const example = examples.find((x) => x.id === menuExampleId);
+        const action = btn.dataset.action;
+        hideExMenu();
+        if (!example) return;
+        if (action === "duplicate") {
+          const copy = {
+            ...clone(example),
+            id: `EX-${String(nextExNum++).padStart(2, "0")}`,
+            label: `${example.label} copy`,
+          };
+          examples.unshift(copy);
+          renderExamples();
+          openEditor(copy);
+        }
+        if (action === "download") await downloadExample(example);
+      });
+
+      document.addEventListener("click", (e) => {
+        if (!exMenu.hidden && !exMenu.contains(e.target)) hideExMenu();
+      });
+
+      lightbox.querySelector(".li-lightbox__backdrop").addEventListener("click", closeLightbox);
+      document.addEventListener("keydown", (e) => {
+        if (e.key !== "Escape") return;
+        if (!editor.hidden) {
+          if (editorState) refreshExampleCard(editorState.example);
+          closeEditor();
+          return;
+        }
+        if (!layoutPicker.hidden) {
+          closeLayoutPicker();
+          return;
+        }
+        if (!lightbox.hidden) closeLightbox();
+        hideExMenu();
+      });
+
+      window.addEventListener("resize", () => {
+        if (!lightbox.hidden) {
+          const host = lightboxStage.querySelector(".canvas");
+          if (host) {
+            const formatId = host.classList.contains("canvas--li-landscape")
+              ? "landscape"
+              : "square";
+            fitCanvas(lightboxStage, host, formatId);
+          }
+        }
+        if (!editor.hidden && editorState) {
+          const host = editorStage.querySelector(".canvas");
+          if (host) fitCanvas(editorStage, host, formatForExample(editorState.example));
+        }
+      });
+
+      /* Boot galleries */
+      renderExamples();
 
       const bgSquare = document.getElementById("bg-gallery-square");
       const bgLand = document.getElementById("bg-gallery-landscape");
       Object.entries(LINKEDIN_BACKGROUNDS).forEach(([id, recipe]) => {
-        makeBgCard(
-          id,
-          recipe,
-          recipe.format === "landscape" ? bgLand : bgSquare,
-        );
+        makeBgCard(id, recipe, recipe.format === "landscape" ? bgLand : bgSquare);
       });
 
       const lySquare = document.getElementById("ly-gallery-square");
       const lyLand = document.getElementById("ly-gallery-landscape");
       Object.entries(LINKEDIN_LAYOUTS).forEach(([id, layout]) => {
-        makeLyCard(
-          id,
-          layout,
-          layout.format === "landscape" ? lyLand : lySquare,
-        );
+        makeLyCard(id, layout, layout.format === "landscape" ? lyLand : lySquare);
       });
     </script>
   </body>

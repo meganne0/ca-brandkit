@@ -185,11 +185,21 @@ function renderQuotePortrait(content, { landscape = false } = {}) {
   return el;
 }
 
-function mediaPlaceholder(alt = "Image placeholder") {
+function mediaBlock(content) {
+  const placeholder = content.placeholder ?? "Image";
+  if (content.image) {
+    return `
+      <div class="li-layout-media__media">
+        <div class="li-layout-media__frame">
+          <img class="li-layout-media__img" src="${content.image}" alt="" />
+        </div>
+      </div>
+    `;
+  }
   return `
     <div class="li-layout-media__media" aria-hidden="true">
       <div class="li-layout-media__frame">
-        <span class="li-layout-media__hint">${alt}</span>
+        <span class="li-layout-media__hint">${placeholder}</span>
       </div>
     </div>
   `;
@@ -201,7 +211,6 @@ function renderMedia(content, side = "left") {
   const label = content.label ?? "";
   const title = content.title ?? content.headline ?? "";
   const body = content.body ?? content.subtitle ?? "";
-  const placeholder = content.placeholder ?? "Image";
 
   const copy = `
     <div class="li-layout-media__copy">
@@ -210,7 +219,7 @@ function renderMedia(content, side = "left") {
       ${body ? `<p class="type-body">${body}</p>` : ""}
     </div>
   `;
-  const media = mediaPlaceholder(placeholder);
+  const media = mediaBlock(content);
 
   el.innerHTML = side === "right" ? `${copy}${media}` : `${media}${copy}`;
   return el;

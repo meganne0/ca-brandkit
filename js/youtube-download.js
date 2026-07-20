@@ -1,7 +1,13 @@
 /**
- * Export a YouTube thumbnail canvas (1280×720) as a PNG download.
+ * Export a YouTube thumbnail canvas as a high-res PNG download.
+ * Design size stays 1280×720; raster output is 2× for crisp uploads.
  */
 import { toPng } from "../vendor/html-to-image.esm.js";
+
+const DESIGN_W = 1280;
+const DESIGN_H = 720;
+/** 2× export — sharp on retina / when YouTube downscales */
+const EXPORT_SCALE = 2;
 
 export async function waitForImages(root) {
   const imgs = [...root.querySelectorAll("img")];
@@ -20,29 +26,55 @@ export async function waitForImages(root) {
   );
 }
 
+async function waitForFonts() {
+  if (!document.fonts?.ready) return;
+  try {
+    await document.fonts.ready;
+    // Nudge common brand faces so metrics match the on-screen preview
+    await Promise.allSettled([
+      document.fonts.load("700 28px 'Mozilla Text'"),
+      document.fonts.load("600 16px 'Mozilla Text'"),
+      document.fonts.load("700 96px 'Mozilla Headline'"),
+      document.fonts.load("600 16px Inter"),
+    ]);
+  } catch {
+    /* ignore */
+  }
+}
+
 /**
  * @param {HTMLElement} el — unscaled .canvas at design size
  * @param {string} filename
  * @param {{ width?: number, height?: number, pixelRatio?: number }} [opts]
  */
 export async function downloadElementPng(el, filename, opts = {}) {
-  const width = opts.width ?? 1280;
-  const height = opts.height ?? 720;
+  const width = opts.width ?? DESIGN_W;
+  const height = opts.height ?? DESIGN_H;
+  const scale = opts.pixelRatio ?? EXPORT_SCALE;
+
   await waitForImages(el);
-  if (document.fonts?.ready) await document.fonts.ready;
+  await waitForFonts();
+  // One frame so layout (margins, flex) settles before capture
+  await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
 
   const dataUrl = await toPng(el, {
     width,
     height,
-    canvasWidth: width,
-    canvasHeight: height,
-    pixelRatio: opts.pixelRatio ?? 1,
+    pixelRatio: scale,
     cacheBust: true,
+    skipAutoScale: true,
     style: {
       transform: "none",
+      transformOrigin: "top left",
       margin: "0",
       left: "0",
       top: "0",
+      right: "auto",
+      bottom: "auto",
+      width: `${width}px`,
+      height: `${height}px`,
+      opacity: "1",
+      position: "relative",
     },
   });
 
@@ -58,29 +90,41 @@ export async function downloadElementPng(el, filename, opts = {}) {
 
 /**
  * Build an offscreen 1280×720 canvas, paint it, download, then remove.
+ * Kept in the layout viewport (not opacity:0 / far offscreen) so capture
+ * matches on-screen typography and spacing.
  * @param {(canvas: HTMLElement) => void} paint
  * @param {string} filename
  * @param {{ className?: string, width?: number, height?: number }} [opts]
  */
 export async function downloadPaintedThumbnail(paint, filename, opts = {}) {
-  const width = opts.width ?? 1280;
-  const height = opts.height ?? 720;
+  const width = opts.width ?? DESIGN_W;
+  const height = opts.height ?? DESIGN_H;
   const mount = document.createElement("div");
   mount.setAttribute("aria-hidden", "true");
   mount.style.cssText = [
     "position:fixed",
-    "left:-10000px",
+    "left:0",
     "top:0",
     `width:${width}px`,
     `height:${height}px`,
     "overflow:hidden",
     "pointer-events:none",
-    "opacity:0",
+    "z-index:-1",
+    /* Visible to the renderer, clipped from view — opacity:0 blurs/skips paint */
+    "clip-path:inset(50%)",
   ].join(";");
 
   const canvas = document.createElement("div");
   canvas.className = opts.className ?? "canvas canvas--yt";
-  canvas.style.cssText = `width:${width}px;height:${height}px;transform:none;`;
+  canvas.style.cssText = [
+    `width:${width}px`,
+    `height:${height}px`,
+    "transform:none",
+    "transform-origin:top left",
+    "margin:0",
+    "position:relative",
+    "opacity:1",
+  ].join(";");
   mount.appendChild(canvas);
   document.body.appendChild(mount);
 
