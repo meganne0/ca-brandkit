@@ -1,0 +1,32 @@
+/**
+ * YouTube thumbnail channel — type + spacing scale.
+ * Louder than slides/LinkedIn: oversized hook, tight leading, high contrast.
+ */
+
+.canvas--yt {
+  --canvas-w: 1280;
+  --canvas-h: 720;
+
+  --space-xs: 10px;
+  --space-sm: 16px;
+  --space-md: 24px;
+  --space-lg: 36px;
+  --space-xl: 40px;
+  --space-content: 48px;
+
+  --type-h1-size: 96px;
+  --type-h1-weight: 700;
+  --type-h1-line: 0.9;
+  --type-h1-tracking: -0.03em;
+  --type-h1-color: #ffffff;
+
+  --type-h4-size: 26px;
+  --type-h4-weight: 600;
+  --type-h4-line: 1.2;
+  --type-h4-tracking: 0;
+  --type-h4-color: #fff;
+
+  --type-metric-size: 148px;
+  --type-metric-weight: 800;
+  --type-metric-color: var(--ca-orange);
+}

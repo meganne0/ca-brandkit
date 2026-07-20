@@ -1,0 +1,45 @@
+/* Component: ImageLightbox */
+
+body.lightbox-open {
+  overflow: hidden;
+}
+
+.ca-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  place-items: center;
+  padding: 32px;
+}
+
+.ca-lightbox[hidden] {
+  display: none;
+}
+
+.ca-lightbox__backdrop {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  padding: 0;
+  margin: 0;
+  cursor: zoom-out;
+  background: rgba(5, 3, 13, 0.88);
+}
+
+.ca-lightbox__image {
+  position: relative;
+  z-index: 1;
+  max-width: min(96vw, 1600px);
+  max-height: 92vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 8px;
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.65);
+  cursor: zoom-out;
+}
+
+.slide img:not(.logo):not(.logo--cover):not(.ca-footer__logo) {
+  cursor: zoom-in;
+}

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CyberArmor — Background Recipes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Mozilla+Text:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/slides.css" />
+  </head>
+  <body>
+    <div class="bg-gallery">
+      <header class="bg-gallery__header">
+        <h1>Background recipes</h1>
+        <p>
+          BG-01 … BG-12 · grouped by base. Fill = cover (≥ slide W×H); swirl = full width; dots.svg stays positioned.
+          <a href="index.html" style="color: var(--ca-orange)">← hub</a>
+          ·
+          <a href="slides.html" style="color: var(--ca-orange)">slides</a>
+          ·
+          <a href="linkedin.html" style="color: var(--ca-orange)">LinkedIn</a>
+          ·
+          <a href="tokens.html" style="color: var(--ca-orange)">colors &amp; type</a>
+        </p>
+      </header>
+      <div id="gallery"></div>
+    </div>
+
+    <script type="module">
+      import { BACKGROUNDS, renderBackground } from "./js/backgrounds.js?v=37";
+
+      const GROUPS = [
+        { id: "base-nodot", title: "base-nodot" },
+        { id: "base-dot1", title: "base-dot1" },
+        { id: "base-dot2", title: "base-dot2" },
+      ];
+
+      const gallery = document.getElementById("gallery");
+
+      GROUPS.forEach((group) => {
+        const section = document.createElement("section");
+        section.className = "bg-gallery__section";
+        section.innerHTML = `<h2 class="bg-gallery__section-title">${group.title}</h2>`;
+
+        const grid = document.createElement("div");
+        grid.className = "bg-gallery__grid";
+
+        Object.entries(BACKGROUNDS)
+          .filter(([, recipe]) => recipe.group === group.id)
+          .forEach(([id, recipe]) => {
+            const card = document.createElement("article");
+            card.className = "bg-card";
+
+            const preview = document.createElement("div");
+            preview.className = "bg-card__preview";
+
+            const layers = document.createElement("div");
+            layers.className = "slide-layers";
+            preview.appendChild(layers);
+
+            const meta = document.createElement("div");
+            meta.className = "bg-card__meta";
+            meta.innerHTML = `
+              <span class="bg-card__id">${id}</span>
+              <span class="bg-card__label">${recipe.label}</span>
+            `;
+
+            card.append(preview, meta);
+            grid.appendChild(card);
+            renderBackground(layers, id);
+          });
+
+        section.appendChild(grid);
+        gallery.appendChild(section);
+      });
+    </script>
+  </body>
+</html>

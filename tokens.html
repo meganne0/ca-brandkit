@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CyberArmor — Colors &amp; Type</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Mozilla+Headline:wght@300&family=Mozilla+Text:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/slides.css" />
+    <link rel="stylesheet" href="css/tokens-page.css" />
+  </head>
+  <body>
+    <div class="tokens-page">
+      <header class="tokens-page__header">
+        <h1>Colors &amp; type</h1>
+        <p>
+          Source of truth for brand colors and type roles. Brand tokens live in
+          <code>css/tokens.css</code>; slide type scale in
+          <code>css/type-slides.css</code>; LinkedIn type scale in
+          <code>css/type-linkedin.css</code>. Role classes
+          (<code>.type-h3</code>, <code>.type-body</code>, …) are shared — retag
+          an element to change its style without rewriting layout CSS.
+          <a href="index.html">← hub</a>
+          ·
+          <a href="slides.html">slides</a>
+          ·
+          <a href="backgrounds.html">backgrounds</a>
+          ·
+          <a href="layouts.html">layouts</a>
+          ·
+          <a href="linkedin.html">LinkedIn</a>
+        </p>
+      </header>
+
+      <main class="tokens-page__main">
+        <section class="tokens-section" aria-labelledby="colors-heading">
+          <h2 id="colors-heading">Colors</h2>
+          <p class="tokens-section__lead">
+            Brand palette and surface tokens. Prefer variables over hard-coded hex.
+          </p>
+          <div class="tokens-grid tokens-grid--colors">
+            <article class="token-card">
+              <div class="token-card__swatch" style="background: #f25835"></div>
+              <div class="token-card__body">
+                <h3 class="token-card__name">Orange</h3>
+                <p class="token-card__meta"><code>--ca-orange</code> · #F25835</p>
+                <p class="token-card__usage">
+                  H2 / H3 / H5 color, accents, captions, icons, bullet markers, metric
+                  values.
+                </p>
+              </div>
+            </article>
+
+            <article class="token-card">
+              <div class="token-card__swatch" style="background: #ec6b15"></div>
+              <div class="token-card__body">
+                <h3 class="token-card__name">Warm orange</h3>
+                <p class="token-card__meta"><code>--ca-orange-warm</code> · #EC6B15</p>
+                <p class="token-card__usage">Panel stroke gradient start (quote + step panels).</p>
+              </div>
+            </article>
+
+            <article class="token-card">
+              <div class="token-card__swatch" style="background: #ffbbb8"></div>
+              <div class="token-card__body">
+                <h3 class="token-card__name">Tagline peach</h3>
+                <p class="token-card__meta"><code>--ca-tagline</code> · #FFBBB8</p>
+                <p class="token-card__usage">
+                  H4 slide subtitles, labels, numerals, footer tagline, metric sources.
+                </p>
+              </div>
+            </article>
+
+            <article class="token-card">
+              <div class="token-card__swatch" style="background: #ffffff"></div>
+              <div class="token-card__body">
+                <h3 class="token-card__name">White</h3>
+                <p class="token-card__meta"><code>--ca-white</code> · #FFFFFF</p>
+                <p class="token-card__usage">H1 and H6 default color; high-contrast light text.</p>
+              </div>
+            </article>
+
+            <article class="token-card">
+              <div class="token-card__swatch" style="background: #0a061a"></div>
+              <div class="token-card__body">
+                <h3 class="token-card__name">Purple deep</h3>
+                <p class="token-card__meta"><code>--ca-purple-deep</code> · #0A061A</p>
+                <p class="token-card__usage">Stage / canvas fallback behind slide layers.</p>
+              </div>
+            </article>
+
+            <article class="token-card">
+              <div class="token-card__swatch" style="background: #1e0b36"></div>
+              <div class="token-card__body">
+                <h3 class="token-card__name">Purple mid</h3>
+                <p class="token-card__meta"><code>--ca-purple-mid</code> · #1E0B36</p>
+                <p class="token-card__usage">Mid purple for brand depth / future surfaces.</p>
+              </div>
+            </article>
+
+            <article class="token-card">
+              <div class="token-card__swatch" style="background: #4d208c"></div>
+              <div class="token-card__body">
+                <h3 class="token-card__name">Purple border</h3>
+                <p class="token-card__meta"><code>--ca-purple-border</code> · #4D208C</p>
+                <p class="token-card__usage">Basis for <code>--panel-border</code>.</p>
+              </div>
+            </article>
+
+            <article class="token-card">
+              <div class="token-card__swatch" style="background: #160054"></div>
+              <div class="token-card__body">
+                <h3 class="token-card__name">Indigo</h3>
+                <p class="token-card__meta"><code>--ca-indigo</code> · #160054</p>
+                <p class="token-card__usage">Deep indigo companion for layered surfaces.</p>
+              </div>
+            </article>
+
+            <article class="token-card">
+              <div class="token-card__swatch" style="background: #16305f"></div>
+              <div class="token-card__body">
+                <h3 class="token-card__name">Blue glow</h3>
+                <p class="token-card__meta"><code>--ca-blue-glow</code> · #16305F</p>
+                <p class="token-card__usage">Cool glow for atmospheric backgrounds.</p>
+              </div>
+            </article>
+
+            <article class="token-card">
+              <div class="token-card__swatch" style="background: rgba(18, 8, 40, 0.92)"></div>
+              <div class="token-card__body">
+                <h3 class="token-card__name">Panel fill</h3>
+                <p class="token-card__meta"><code>--panel-bg</code> · rgba(18, 8, 40, 0.72)</p>
+                <p class="token-card__usage">Quote + step panel interiors (LY-05, LY-09, LY-10).</p>
+              </div>
+            </article>
+
+            <article class="token-card">
+              <div
+                class="token-card__swatch"
+                style="background: linear-gradient(135deg, #ec6b15 0%, #f72ebe 85%, #2c00a5 100%)"
+              ></div>
+              <div class="token-card__body">
+                <h3 class="token-card__name">Panel stroke gradient</h3>
+                <p class="token-card__meta">
+                  <code>--panel-stroke-gradient</code> · #EC6B15 → #F72EBE → #2C00A5
+                </p>
+                <p class="token-card__usage">2px gradient border on quote and step panels.</p>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="tokens-section" aria-labelledby="fonts-heading">
+          <h2 id="fonts-heading">Fonts</h2>
+          <p class="tokens-section__lead">
+            Families used by type roles. Weights listed are loaded in the kit.
+          </p>
+          <div class="tokens-grid tokens-grid--fonts">
+            <article class="font-card">
+              <div class="font-card__label">
+                <h3 class="font-card__name">Mozilla Text</h3>
+                <p class="font-card__meta"><code>--font-headline</code> · H1–H6, Metric</p>
+              </div>
+              <p class="font-card__specimen type-h3" style="max-width: none">
+                From signal to defense
+              </p>
+              <div class="font-card__weights">
+                <span class="font-card__weight">300</span>
+                <span class="font-card__weight">400</span>
+                <span class="font-card__weight">500</span>
+                <span class="font-card__weight">600</span>
+                <span class="font-card__weight">700</span>
+              </div>
+            </article>
+
+            <article class="font-card">
+              <div class="font-card__label">
+                <h3 class="font-card__name">Mozilla Headline</h3>
+                <p class="font-card__meta"><code>--font-headline-display</code> · Numeral</p>
+              </div>
+              <p class="font-card__specimen type-numeral type-numeral--xl" style="opacity: 1">
+                01
+              </p>
+              <div class="font-card__weights">
+                <span class="font-card__weight">300 Light</span>
+              </div>
+            </article>
+
+            <article class="font-card">
+              <div class="font-card__label">
+                <h3 class="font-card__name">Inter</h3>
+                <p class="font-card__meta"><code>--font-body</code> · Body, Label, Caption</p>
+              </div>
+              <p class="font-card__specimen type-body">
+                Proactive defense for credentials and identity assets — before the breach.
+              </p>
+              <div class="font-card__weights">
+                <span class="font-card__weight">300 Light</span>
+                <span class="font-card__weight">400</span>
+                <span class="font-card__weight">500 Medium</span>
+                <span class="font-card__weight">600</span>
+                <span class="font-card__weight">700</span>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="tokens-section" aria-labelledby="roles-heading">
+          <h2 id="roles-heading">Type roles</h2>
+          <p class="tokens-section__lead">
+            Assign roles in markup (<code>class="type-h6"</code>). Tags show which layout
+            elements use each role — change a tag’s class to remapping without editing the
+            role’s CSS.
+          </p>
+
+          <div class="role-list">
+            <article class="role-card">
+              <div class="role-card__head">
+                <h3 class="role-card__id">H1</h3>
+                <p class="role-card__spec">
+                  <code>.type-h1</code> · 88px · Mozilla Text 600 · white
+                </p>
+                <div class="role-card__tags">
+                  <span class="role-tag">Cover headline</span>
+                  <span class="role-tag role-tag--ly">LY-01</span>
+                </div>
+              </div>
+              <p class="type-h1 role-card__sample">Identity threats start in the collection phase</p>
+            </article>
+
+            <article class="role-card">
+              <div class="role-card__head">
+                <h3 class="role-card__id">H2</h3>
+                <p class="role-card__spec">
+                  <code>.type-h2</code> · 60px · Mozilla Text 600 · orange
+                </p>
+                <div class="role-card__tags">
+                  <span class="role-tag">Section opener name</span>
+                  <span class="role-tag role-tag--ly">LY-04</span>
+                </div>
+              </div>
+              <p class="type-h2 role-card__sample">Collection</p>
+            </article>
+
+            <article class="role-card">
+              <div class="role-card__head">
+                <h3 class="role-card__id">H3</h3>
+                <p class="role-card__spec">
+                  <code>.type-h3</code> · 56px · Mozilla Text 600 · orange
+                </p>
+                <div class="role-card__tags">
+                  <span class="role-tag">Slide title</span>
+                  <span class="role-tag role-tag--ly">LY-02–03, LY-06–12</span>
+                </div>
+              </div>
+              <p class="type-h3 role-card__sample">From signal to defense</p>
+            </article>
+
+            <article class="role-card">
+              <div class="role-card__head">
+                <h3 class="role-card__id">H4</h3>
+                <p class="role-card__spec">
+                  <code>.type-h4</code> · 50px · Mozilla Text 400 · tagline peach
+                </p>
+                <div class="role-card__tags">
+                  <span class="role-tag">Slide subtitle</span>
+                  <span class="role-tag">Question aside</span>
+                  <span class="role-tag role-tag--ly">Content slides, LY-14</span>
+                </div>
+              </div>
+              <p class="type-h4 role-card__sample">
+                A three-step loop for turning exposure into action.
+              </p>
+            </article>
+
+            <article class="role-card">
+              <div class="role-card__head">
+                <h3 class="role-card__id">H5</h3>
+                <p class="role-card__spec">
+                  <code>.type-h5</code> · 40px · Mozilla Text 600 · orange
+                </p>
+                <div class="role-card__tags">
+                  <span class="role-tag">TOC item title</span>
+                  <span class="role-tag">Team name</span>
+                  <span class="role-tag">Step title</span>
+                  <span class="role-tag role-tag--ly">LY-02, LY-03, LY-09, LY-10</span>
+                </div>
+              </div>
+              <p class="type-h5 role-card__sample">Detection · Nguyen Nguyen · Observe</p>
+            </article>
+
+            <article class="role-card">
+              <div class="role-card__head">
+                <h3 class="role-card__id">H6</h3>
+                <p class="role-card__spec">
+                  <code>.type-h6</code> · 36px · Mozilla Text 600 · white
+                </p>
+                <div class="role-card__tags">
+                  <span class="role-tag">Unused — available for remapping</span>
+                </div>
+              </div>
+              <p class="type-h6 role-card__sample">Available heading role</p>
+            </article>
+
+            <article class="role-card">
+              <div class="role-card__head">
+                <h3 class="role-card__id">Body</h3>
+                <p class="role-card__spec">
+                  <code>.type-body</code> · 40px · Inter 500
+                </p>
+                <div class="role-card__tags">
+                  <span class="role-tag">Cover subtitle</span>
+                  <span class="role-tag">Section subtitle</span>
+                  <span class="role-tag">Quote text</span>
+                  <span class="role-tag">Insight / bullets</span>
+                  <span class="role-tag">Step description</span>
+                  <span class="role-tag">Metric text</span>
+                  <span class="role-tag role-tag--ly">LY-01, LY-04–12</span>
+                </div>
+              </div>
+              <p class="type-body role-card__sample">
+                Early identity signals give defenders context before compromised credentials
+                become a disclosed incident.
+              </p>
+            </article>
+
+            <article class="role-card">
+              <div class="role-card__head">
+                <h3 class="role-card__id">Label</h3>
+                <p class="role-card__spec">
+                  <code>.type-label</code> · 24px · Inter 600 · uppercase · peach
+                </p>
+                <div class="role-card__tags">
+                  <span class="role-tag">Corner section</span>
+                  <span class="role-tag">TOC description <code>.type-label--plain</code></span>
+                  <span class="role-tag role-tag--ly">Content slides, LY-03</span>
+                </div>
+              </div>
+              <p class="type-label role-card__sample">03 &nbsp; Detection</p>
+            </article>
+
+            <article class="role-card">
+              <div class="role-card__head">
+                <h3 class="role-card__id">Caption</h3>
+                <p class="role-card__spec">
+                  <code>.type-caption</code> · 22px · Inter 500 · uppercase · orange
+                </p>
+                <div class="role-card__tags">
+                  <span class="role-tag">Team role</span>
+                  <span class="role-tag role-tag--ly">LY-02</span>
+                </div>
+              </div>
+              <p class="type-caption role-card__sample">CEO</p>
+            </article>
+
+            <article class="role-card">
+              <div class="role-card__head">
+                <h3 class="role-card__id">Numeral</h3>
+                <p class="role-card__spec">
+                  <code>.type-numeral</code> · Mozilla Headline 300 · peach · 56 / 80 / 22px
+                </p>
+                <div class="role-card__tags">
+                  <span class="role-tag">TOC number (default)</span>
+                  <span class="role-tag">Section number <code>--xl</code></span>
+                  <span class="role-tag">Step number / footer <code>--sm</code></span>
+                  <span class="role-tag role-tag--ly">LY-03, LY-04, LY-09–10, footer</span>
+                </div>
+              </div>
+              <div class="role-card__sample-row">
+                <span class="type-numeral type-numeral--xl">01</span>
+                <span class="type-numeral">03</span>
+                <span class="type-numeral type-numeral--sm">02</span>
+              </div>
+            </article>
+
+            <article class="role-card">
+              <div class="role-card__head">
+                <h3 class="role-card__id">Metric</h3>
+                <p class="role-card__spec">
+                  <code>.type-metric</code> · Mozilla Text 700 · orange · 140 / 96 / 80px
+                </p>
+                <div class="role-card__tags">
+                  <span class="role-tag">Spotlight (default)</span>
+                  <span class="role-tag">Row 2-up <code>--lg</code></span>
+                  <span class="role-tag">Row 3-up / question <code>--md</code></span>
+                  <span class="role-tag role-tag--ly">LY-11, LY-12, LY-13, LY-14</span>
+                </div>
+              </div>
+              <div class="role-card__sample-row">
+                <span class="type-metric" style="font-size: 80px">+160%</span>
+              </div>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

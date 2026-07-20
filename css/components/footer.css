@@ -1,0 +1,33 @@
+/* Component: SlideFooter */
+
+.slide--with-footer .slide-content {
+  padding-bottom: 128px;
+}
+
+.ca-footer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.ca-footer__inner {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  /* Push logo further left than content padding */
+  padding: 26px 96px 26px 48px;
+}
+
+.ca-footer__logo {
+  display: block;
+  width: 240px;
+  height: auto;
+  flex-shrink: 0;
+}
+
+.ca-footer__tagline {
+  opacity: 0.72;
+}

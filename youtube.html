@@ -1,0 +1,1759 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CyberArmor — YouTube Thumbnails</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Mozilla+Headline:wght@300&family=Mozilla+Text:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/youtube.css?v=42" />
+  </head>
+  <body>
+    <div class="bg-gallery">
+      <header class="bg-gallery__header">
+        <h1>YouTube thumbnails</h1>
+        <p>
+          Build 1280×720 CyberArmor thumbnails. Create a new one from a layout,
+          or edit any example below.
+          <a class="gallery-nav" href="index.html">← hub</a>
+          ·
+          <a class="gallery-nav" href="slides.html">slides</a>
+          ·
+          <a class="gallery-nav" href="linkedin.html">LinkedIn</a>
+          ·
+          <a class="gallery-nav" href="tokens.html">colors &amp; type</a>
+        </p>
+      </header>
+
+      <section class="yt-cta" aria-labelledby="yt-cta-title">
+        <button type="button" class="yt-cta__btn" id="yt-create-btn">
+          <span class="yt-cta__eyebrow">Start here</span>
+          <span class="yt-cta__title" id="yt-cta-title">Create New Thumbnail</span>
+          <span class="yt-cta__sub">
+            Pick a layout · auto background + decor · edit text &amp; images
+          </span>
+        </button>
+      </section>
+
+      <section class="bg-gallery__section" aria-labelledby="yt-ex">
+        <h2 class="bg-gallery__section-title" id="yt-ex">
+          Examples · composed thumbnails
+        </h2>
+        <p class="yt-ex-hint">
+          Left-click to edit · Right-click to duplicate or download
+        </p>
+        <div class="bg-gallery__grid bg-gallery__grid--tiles-yt" id="ex-gallery"></div>
+      </section>
+
+      <details class="yt-collapse bg-gallery__section" id="yt-ly-section">
+        <summary class="yt-collapse__summary">
+          <span class="bg-gallery__section-title" id="yt-ly">Layouts · YT-01…10</span>
+          <span class="yt-collapse__hint">Reference only · click to expand</span>
+        </summary>
+        <p class="yt-ex-hint">
+          Left-click to enlarge · Right-click → New example
+        </p>
+        <div class="bg-gallery__grid bg-gallery__grid--tiles-yt" id="ly-gallery"></div>
+      </details>
+
+      <details class="yt-collapse bg-gallery__section" id="yt-bg-section">
+        <summary class="yt-collapse__summary">
+          <span class="bg-gallery__section-title" id="yt-bg">Backgrounds · YT-BG</span>
+          <span class="yt-collapse__hint">Reference only · click to expand</span>
+        </summary>
+        <div class="bg-gallery__grid bg-gallery__grid--tiles-yt" id="bg-gallery"></div>
+      </details>
+
+      <details class="yt-collapse bg-gallery__section" id="yt-dx-section">
+        <summary class="yt-collapse__summary">
+          <span class="bg-gallery__section-title" id="yt-dx">Decor · YT-DX</span>
+          <span class="yt-collapse__hint">Reference only · click to expand</span>
+        </summary>
+        <div class="bg-gallery__grid bg-gallery__grid--tiles-yt" id="dx-gallery"></div>
+      </details>
+    </div>
+
+    <div class="yt-layout-picker" id="yt-layout-picker" hidden>
+      <button
+        type="button"
+        class="yt-layout-picker__backdrop"
+        aria-label="Close layout picker"
+      ></button>
+      <div
+        class="yt-layout-picker__dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="yt-layout-picker-title"
+      >
+        <header class="yt-layout-picker__header">
+          <div>
+            <p class="yt-layout-picker__eyebrow">New thumbnail</p>
+            <h2 id="yt-layout-picker-title">Choose a layout</h2>
+            <p>Background and decor are assigned automatically. You can edit everything next.</p>
+          </div>
+          <button
+            type="button"
+            class="yt-editor__btn yt-editor__btn--ghost"
+            id="yt-layout-picker-close"
+          >
+            Close
+          </button>
+        </header>
+        <div class="yt-layout-picker__grid" id="yt-layout-picker-grid"></div>
+      </div>
+    </div>
+
+    <div class="yt-lightbox" id="yt-lightbox" hidden>
+      <button
+        type="button"
+        class="yt-lightbox__backdrop"
+        aria-label="Close preview"
+      ></button>
+      <div
+        class="yt-lightbox__dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="yt-lightbox-label"
+      >
+        <div class="yt-lightbox__stage" id="yt-lightbox-stage"></div>
+        <div class="yt-lightbox__meta">
+          <div>
+            <span class="yt-lightbox__id" id="yt-lightbox-id"></span>
+            ·
+            <span class="yt-lightbox__label" id="yt-lightbox-label"></span>
+          </div>
+          <span class="yt-lightbox__hint">Click outside or press Esc to close</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="yt-ex-menu" id="yt-ex-menu" hidden role="menu">
+      <button type="button" class="yt-ex-menu__item" role="menuitem" data-action="duplicate">
+        Duplicate
+      </button>
+      <button type="button" class="yt-ex-menu__item" role="menuitem" data-action="download">
+        Download PNG
+      </button>
+    </div>
+
+    <div class="yt-ly-menu" id="yt-ly-menu" hidden role="menu">
+      <button type="button" class="yt-ex-menu__item" role="menuitem" data-action="new">
+        New example
+      </button>
+    </div>
+
+    <div class="yt-editor" id="yt-editor" hidden>
+      <button
+        type="button"
+        class="yt-editor__backdrop"
+        aria-label="Close editor"
+      ></button>
+      <div
+        class="yt-editor__dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="yt-editor-title"
+      >
+        <header class="yt-editor__header">
+          <div>
+            <p class="yt-editor__eyebrow" id="yt-editor-id">EX</p>
+            <h2 id="yt-editor-title">Edit thumbnail</h2>
+          </div>
+          <div class="yt-editor__header-actions">
+            <button type="button" class="yt-editor__btn" id="yt-editor-download">
+              Download PNG
+            </button>
+            <button
+              type="button"
+              class="yt-editor__btn yt-editor__btn--ghost"
+              id="yt-editor-close"
+            >
+              Close
+            </button>
+          </div>
+        </header>
+        <div class="yt-editor__body">
+          <div class="yt-editor__preview-wrap">
+            <div class="yt-editor__stage" id="yt-editor-stage"></div>
+            <p class="yt-editor__preview-hint">
+              Click a screenshot or avatar on the preview to replace it with a
+              local file
+            </p>
+          </div>
+          <aside class="yt-editor__panel">
+            <form class="yt-editor__form" id="yt-editor-form"></form>
+            <div class="yt-editor__slots" id="yt-editor-slots"></div>
+          </aside>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import {
+        YOUTUBE_BACKGROUNDS,
+        YOUTUBE_FORMATS,
+        renderYouTubeBackground,
+      } from "./js/backgrounds-youtube.js?v=4";
+      import {
+        YOUTUBE_DECORS,
+        renderYouTubeDecor,
+      } from "./js/decor-youtube.js?v=11";
+      import {
+        YOUTUBE_LAYOUTS,
+        renderYouTubeLayout,
+      } from "./js/layouts-youtube.js?v=17";
+      import { downloadPaintedThumbnail } from "./js/youtube-download.js?v=1";
+
+      const SHOT_RMM =
+        "/visual%20assets/screenshots/Phish%20campaign%20impersonnating%20SSA%20which%20installs%20remotePC%2C%20a%20legit%20remote%20access%20tool.%20Once%20an%20attacker%20has%20remote%20access%20to%20a%20machine%2C%20they%20can%20access%20files%2C%20monitor%20activity%2C%20and%20collect%20credentials.%20And%20because%20RemotePC%20is%20legitimate%20software%2C%20i.png";
+      const SHOT_CRA =
+        "/visual%20assets/screenshots/CRA%20phish%20that%20downloads%20installer%20for%20legitimate%20remote%20monitoring%20and%20management%20tool%20pre-configured%20to%20connect%20back%20to%20attackers%20console.png";
+      const SHOT_KALI =
+        "/visual%20assets/screenshots/kali365%20product%20marketing%20using%20tokenvault%20-%20top%20of%20the%20page.png";
+      const SHOT_EVILTOKENS =
+        "/visual%20assets/screenshots/Eviltokens%20phish%20with%20HR%20department%20and%20Docusign%20for%20_Salary%20Adjustment%20Document_%20the%20victim%20successfully%20logs%20in%20themselves.%20The%20attacker%20captures%20the%20session%20token%20and%20reuses%20it%20to%20impersonate%20the%20user%20without%20triggering%20a%20normal%20MFA%20challenge..png";
+      const SHOT_TOKEN =
+        "/visual%20assets/screenshots/Example%20of%20acces%20token%20that%20is%20sent%20to%20the%20threat%20actor%20as%20captured%20on%20cyberarmor%20platform.png";
+      const SHOT_PHAAS =
+        "/visual%20assets/screenshots/PhaaS-Kali365-microsoftphish%20screenshot%20with%20a%20pdf%20attachment%20and%20verification%20code.png";
+      const SHOT_DOMAINS =
+        "/visual%20assets/screenshots/Purchase%20of%20recently%20expired%2C%20clean%20domains.png";
+      const SHOT_YT_KMS =
+        "/visual%20assets/screenshots/Youtube%20channel%20that%20teaches%20how%20to%20install%20windows%20illegally%20using%20license%20activator%20%28KMS%29%2C%20which%20actually%20downloads%20an%20infostealer%20that%20steals%20credentials%20and%20takes%20screenshots.png";
+      const SHOT_XLSX =
+        "/visual%20assets/screenshots/kali365%20product%20marketing%20using%20tokenvault%20-%20screenshot%20showing%20the%20phishing%20bait%20for%20report_2026.xlsx%20with%20a%20verification%20code%20for%20microsoft%20sign%20in.png";
+      const SHOT_KMS =
+        "/visual%20assets/screenshots/the%20_license%20killer_%20kms%20tool%20that%20the%20youtube%20channel%20references.png";
+
+      const HOST = {
+        host: "Nguyen Nguyen",
+        role: "CEO, CyberArmor",
+        avatar: "/visual%20assets/avatars/avatar-nguyen-circle.png",
+      };
+
+      const LAYOUT_SAMPLES = {
+        "YT-01": {
+          bg: "YT-BG-01",
+          decor: "YT-DX-01",
+          content: {
+            badge: "BREAKDOWN",
+            hook: "REMOTE ACCESS, HIJACKED",
+            accent: "HIJACKED",
+            subline: "Legitimate RMM used as the foothold",
+            shots: [
+              { src: SHOT_RMM, alt: "Remote access phishing campaign" },
+              { src: SHOT_CRA, alt: "CRA phish delivering RMM installer" },
+            ],
+          },
+        },
+        "YT-02": {
+          bg: "YT-BG-02",
+          decor: "YT-DX-02",
+          content: {
+            badge: "KILL CHAIN",
+            hook: "CLEAN DOMAIN, REAL PHISH",
+            accent: "REAL PHISH",
+            subline: "How expired reputation bypasses the SEG",
+            ...HOST,
+            steps: [
+              { label: "Buy expired domain" },
+              { label: "Keep clean score" },
+              { label: "Land the payload" },
+              { label: "Harvest credentials" },
+            ],
+          },
+        },
+        "YT-03": {
+          bg: "YT-BG-03",
+          decor: "YT-DX-03",
+          content: {
+            badge: "COMPARE",
+            hook: "LEGIT TOOL, MALICIOUS USE",
+            accent: "MALICIOUS USE",
+            subline: "Trusted software that antivirus won’t stop",
+            left: {
+              label: "Looks legit",
+              image: SHOT_KALI,
+              alt: "Phishing kit marketing page",
+            },
+            right: {
+              label: "Abused in the wild",
+              image: SHOT_CRA,
+              alt: "CRA phish with RMM payload",
+            },
+          },
+        },
+        "YT-04": {
+          bg: "YT-BG-04",
+          decor: "YT-DX-04",
+          content: {
+            badge: "SIGNAL",
+            hook: "CREDENTIAL THEFT IS SCALING",
+            accent: "SCALING",
+            subline: "AI phishing + reseller-as-a-service",
+            metric: {
+              value: "+160%",
+              label: "Rise in credential theft",
+            },
+          },
+        },
+        "YT-05": {
+          bg: "YT-BG-02",
+          decor: "YT-DX-02",
+          content: {
+            badge: "LIVE TAKE",
+            hook: "I BROKE DOWN A LIVE PHISH",
+            accent: "LIVE PHISH",
+            subline: "Collection-phase signals, step by step",
+            ...HOST,
+          },
+        },
+        "YT-06": {
+          bg: "YT-BG-01",
+          decor: "YT-DX-03",
+          content: {
+            badge: "FIELD NOTE",
+            hook: "THIS RMM WAS WEAPONIZED",
+            accent: "WEAPONIZED",
+            subline: "How a legit remote tool became the foothold",
+            ...HOST,
+            shots: [
+              {
+                src: SHOT_RMM,
+                alt: "Remote access phishing campaign evidence",
+              },
+            ],
+          },
+        },
+        "YT-08": {
+          bg: "YT-BG-01",
+          decor: "YT-DX-06",
+          content: {
+            badge: "CAPTURE",
+            hook: "ONE SCREENSHOT, FULL STORY",
+            accent: "FULL STORY",
+            subline: "What the victim actually clicked",
+            shots: [
+              {
+                src: SHOT_EVILTOKENS,
+                alt: "EvilTokens phishing capturing session",
+              },
+            ],
+          },
+        },
+        "YT-09": {
+          bg: "YT-BG-02",
+          decor: "YT-DX-06",
+          content: {
+            badge: "KEY POINTS",
+            hook: "WHAT TO WATCH FOR",
+            accent: "WATCH FOR",
+            subline: "Collection-phase tells in one glance",
+            ...HOST,
+            bullets: [
+              { label: "Clean domain, dirty intent" },
+              { label: "Lookalike OAuth page" },
+              { label: "Token leave, not password" },
+              { label: "MFA never fires again" },
+            ],
+          },
+        },
+        "YT-10": {
+          bg: "YT-BG-04",
+          decor: "YT-DX-04",
+          content: {
+            badge: "SIGNALS",
+            hook: "TWO NUMBERS THAT MATTER",
+            accent: "THAT MATTER",
+            subline: "Scale vs detection at drop",
+            metrics: [
+              { value: "+160%", label: "Credential theft rise" },
+              { value: "0 DET", label: "AV hits at first stage" },
+            ],
+          },
+        },
+      };
+
+      /** Extra composed examples inspired by malware-breakdown thumbnail refs. */
+      const EXTRA_EXAMPLES = [
+        {
+          id: "EX-01",
+          label: "Stealer C2 chain",
+          layout: "YT-02",
+          bg: "YT-BG-03",
+          decor: "YT-DX-05",
+          content: {
+            badge: "C2 MAP",
+            hook: "INSIDE THE STEALER C2",
+            accent: "STEALER C2",
+            subline: "Telegram bot as the command channel",
+            ...HOST,
+            steps: [
+              { label: "Initial drop" },
+              { label: "Beacon home" },
+              { label: "Exfil tokens" },
+              { label: "Remote tasking" },
+            ],
+          },
+        },
+        {
+          id: "EX-02",
+          label: "Doc → full compromise",
+          layout: "YT-02",
+          bg: "YT-BG-01",
+          decor: "YT-DX-01",
+          content: {
+            badge: "KILL CHAIN",
+            hook: "VIEW & SIGN → FULL COMPROMISE",
+            accent: "FULL COMPROMISE",
+            subline: "Phish doc that ends in remote access",
+            ...HOST,
+            steps: [
+              { label: "Lure doc" },
+              { label: "Macro / click" },
+              { label: "Payload runs" },
+              { label: "Remote access" },
+            ],
+          },
+        },
+        {
+          id: "EX-03",
+          label: "Zero detection claim",
+          layout: "YT-05",
+          bg: "YT-BG-04",
+          decor: "YT-DX-04",
+          content: {
+            badge: "LIVE TAKE",
+            hook: "7 LAYERS OF OBFUSCATION",
+            accent: "OBFUSCATION",
+            subline: "Packed RAT that still ships “0 detection”",
+            ...HOST,
+          },
+        },
+        {
+          id: "EX-04",
+          label: "Fake doc, real malware",
+          layout: "YT-08",
+          bg: "YT-BG-02",
+          decor: "YT-DX-03",
+          content: {
+            badge: "CAPTURE",
+            hook: "FAKE WORD DOC, REAL MALWARE",
+            accent: "REAL MALWARE",
+            subline: "Office lure that actually executes",
+            shots: [
+              {
+                src: SHOT_XLSX,
+                alt: "Phishing bait spreadsheet with verification code",
+              },
+            ],
+          },
+        },
+        {
+          id: "EX-05",
+          label: "Decrypt the payload",
+          layout: "YT-02",
+          bg: "YT-BG-03",
+          decor: "YT-DX-02",
+          content: {
+            badge: "LIVE TAKE",
+            hook: "DECRYPTING THE REAL PAYLOAD",
+            accent: "REAL PAYLOAD",
+            subline: "Shellcode unwrap from the first stage",
+            steps: [
+              { label: "Stage 0" },
+              { label: "Unpack" },
+              { label: "Decode" },
+              { label: "Final RAT" },
+            ],
+            ...HOST,
+          },
+        },
+        {
+          id: "EX-06",
+          label: "Email → DLL hijack",
+          layout: "YT-01",
+          bg: "YT-BG-01",
+          decor: "YT-DX-05",
+          content: {
+            badge: "EVIDENCE",
+            hook: "EMAIL → DLL HIJACKING",
+            accent: "DLL HIJACKING",
+            subline: "From inbox lure to sideloaded persistence",
+            shots: [
+              { src: SHOT_PHAAS, alt: "Phishing email with PDF attachment" },
+              { src: SHOT_KMS, alt: "Malicious license activator tool" },
+            ],
+          },
+        },
+        {
+          id: "EX-07",
+          label: "Social as C2",
+          layout: "YT-06",
+          bg: "YT-BG-02",
+          decor: "YT-DX-01",
+          content: {
+            badge: "FIELD NOTE",
+            hook: "SOCIAL MEDIA AS THE C2",
+            accent: "C2",
+            subline: "Public platforms hiding command traffic",
+            ...HOST,
+            shots: [
+              {
+                src: SHOT_YT_KMS,
+                alt: "YouTube channel used as malware distribution",
+              },
+            ],
+          },
+        },
+        {
+          id: "EX-08",
+          label: "GitHub-style drop",
+          layout: "YT-10",
+          bg: "YT-BG-04",
+          decor: "YT-DX-04",
+          content: {
+            badge: "SIGNALS",
+            hook: "CLEAN REPO, DIRTY PAYLOAD",
+            accent: "DIRTY PAYLOAD",
+            subline: "Trusted hosting that still delivers malware",
+            metrics: [
+              { value: "0 DET", label: "AV hits at upload" },
+              { value: "48h", label: "Until first victim" },
+            ],
+          },
+        },
+        {
+          id: "EX-10",
+          label: "Host breakdown",
+          layout: "YT-05",
+          bg: "YT-BG-01",
+          decor: "YT-DX-05",
+          content: {
+            badge: "LIVE TAKE",
+            hook: "I UNPACKED THIS STEALER LIVE",
+            accent: "STEALER",
+            subline: "From first beacon to token vault",
+            ...HOST,
+          },
+        },
+        {
+          id: "EX-11",
+          label: "OAuth lure browser",
+          layout: "YT-09",
+          bg: "YT-BG-02",
+          decor: "YT-DX-06",
+          content: {
+            badge: "KEY POINTS",
+            hook: "FAKE LOGIN, REAL TOKEN THEFT",
+            accent: "TOKEN THEFT",
+            subline: "Lookalike Microsoft OAuth pages in the wild",
+            ...HOST,
+            bullets: [
+              { label: "Clean URL, fake IdP" },
+              { label: "Consent screen clone" },
+              { label: "Token leave, not password" },
+              { label: "MFA never fires again" },
+            ],
+          },
+        },
+        {
+          id: "EX-12",
+          label: "Phish page chain",
+          layout: "YT-09",
+          bg: "YT-BG-03",
+          decor: "YT-DX-06",
+          content: {
+            badge: "KEY POINTS",
+            hook: "FROM INBOX TO OAUTH CAPTURE",
+            accent: "OAUTH CAPTURE",
+            subline: "Browser lures that never hit the real IdP",
+            ...HOST,
+            bullets: [
+              { label: "Phish email lands" },
+              { label: "Fake portal loads" },
+              { label: "Creds enter clean UI" },
+              { label: "Session token stolen" },
+            ],
+          },
+        },
+        {
+          id: "EX-13",
+          label: "Session replay evidence",
+          layout: "YT-08",
+          bg: "YT-BG-01",
+          decor: "YT-DX-06",
+          content: {
+            badge: "CAPTURE",
+            hook: "THE BROWSER LIED TO THE USER",
+            accent: "LIED",
+            subline: "What the victim saw vs what was captured",
+            shots: [
+              { src: SHOT_EVILTOKENS, alt: "EvilTokens phishing capturing session" },
+            ],
+          },
+        },
+        {
+          id: "EX-14",
+          label: "Host + browser decoy",
+          layout: "YT-06",
+          bg: "YT-BG-04",
+          decor: "YT-DX-06",
+          content: {
+            badge: "FIELD NOTE",
+            hook: "THIS LOGIN PAGE WAS A DECOY",
+            accent: "DECOY",
+            subline: "Adversary-in-the-middle behind a clean URL bar",
+            ...HOST,
+            shots: [
+              {
+                src: SHOT_PHAAS,
+                alt: "Phishing page with verification code",
+              },
+            ],
+          },
+        },
+        {
+          id: "EX-15",
+          label: "Flow · 5 steps",
+          layout: "YT-02",
+          bg: "YT-BG-02",
+          decor: "YT-DX-01",
+          content: {
+            badge: "KILL CHAIN",
+            hook: "FIVE STEPS TO DOMAIN ADMIN",
+            accent: "DOMAIN ADMIN",
+            subline: "From phish click to privileged persistence",
+            ...HOST,
+            steps: [
+              { label: "Initial access" },
+              { label: "Exec payload" },
+              { label: "Cred dump" },
+              { label: "Lateral move" },
+              { label: "Domain admin" },
+            ],
+          },
+        },
+        {
+          id: "EX-17",
+          label: "Dual signal drop",
+          layout: "YT-10",
+          bg: "YT-BG-01",
+          decor: "YT-DX-05",
+          content: {
+            badge: "SIGNALS",
+            hook: "SCALE VS DETECTION",
+            accent: "DETECTION",
+            subline: "What the first-stage numbers actually say",
+            metrics: [
+              { value: "+160%", label: "Credential theft rise" },
+              { value: "0 DET", label: "AV hits at first stage" },
+            ],
+          },
+        },
+        {
+          id: "EX-18",
+          label: "Flow · 8 steps",
+          layout: "YT-02",
+          bg: "YT-BG-04",
+          decor: "YT-DX-02",
+          content: {
+            badge: "KILL CHAIN",
+            hook: "EIGHT MOVES IN THE BREACH",
+            accent: "THE BREACH",
+            subline: "Full intrusion timeline compressed",
+            ...HOST,
+            steps: [
+              { label: "Recon" },
+              { label: "Phish" },
+              { label: "Foothold" },
+              { label: "Discovery" },
+              { label: "Creds" },
+              { label: "Lateral" },
+              { label: "Exfil" },
+              { label: "Impact" },
+            ],
+          },
+        },
+      ];
+
+      const lightbox = document.getElementById("yt-lightbox");
+      const lightboxStage = document.getElementById("yt-lightbox-stage");
+      const lightboxId = document.getElementById("yt-lightbox-id");
+      const lightboxLabel = document.getElementById("yt-lightbox-label");
+      const format = YOUTUBE_FORMATS.thumbnail;
+
+      function fitCanvas(stage, canvas) {
+        const scale = Math.min(
+          stage.clientWidth / format.w,
+          stage.clientHeight ? stage.clientHeight / format.h : stage.clientWidth / format.w,
+        );
+        canvas.style.transform = `scale(${scale})`;
+      }
+
+      function closeLightbox() {
+        lightbox.hidden = true;
+        lightboxStage.replaceChildren();
+        document.body.classList.remove("yt-lightbox-open");
+      }
+
+      function openLightbox({ id, label, build }) {
+        lightboxId.textContent = id;
+        lightboxLabel.textContent = label;
+        lightboxStage.replaceChildren();
+        const canvas = build();
+        lightboxStage.appendChild(canvas);
+        lightbox.hidden = false;
+        document.body.classList.add("yt-lightbox-open");
+        requestAnimationFrame(() => fitCanvas(lightboxStage, canvas));
+      }
+
+      lightbox
+        .querySelector(".yt-lightbox__backdrop")
+        .addEventListener("click", closeLightbox);
+      document.addEventListener("keydown", (e) => {
+        if (e.key !== "Escape") return;
+        if (!editor.hidden) {
+          closeEditor();
+          return;
+        }
+        if (!layoutPicker.hidden) {
+          closeLayoutPicker();
+          return;
+        }
+        if (!lightbox.hidden) closeLightbox();
+        closeExMenu();
+        closeLyMenu();
+      });
+      window.addEventListener("resize", () => {
+        if (!lightbox.hidden) {
+          const canvas = lightboxStage.querySelector(".canvas");
+          if (canvas) fitCanvas(lightboxStage, canvas);
+        }
+        if (!editor.hidden) {
+          const canvas = editorStage.querySelector(".canvas");
+          if (canvas) fitCanvas(editorStage, canvas);
+        }
+      });
+
+      /* ---- Example context menu + editor ---- */
+      const exMenu = document.getElementById("yt-ex-menu");
+      const lyMenu = document.getElementById("yt-ly-menu");
+      const editor = document.getElementById("yt-editor");
+      const editorStage = document.getElementById("yt-editor-stage");
+      const editorForm = document.getElementById("yt-editor-form");
+      const editorSlots = document.getElementById("yt-editor-slots");
+      const editorIdEl = document.getElementById("yt-editor-id");
+      const editorTitleEl = document.getElementById("yt-editor-title");
+      const exGrid = document.getElementById("ex-gallery");
+      let exMenuTarget = null;
+      let lyMenuTarget = null;
+      let suppressExClick = false;
+      let suppressLyClick = false;
+      let editorState = null;
+      let stackPickCounter = 0;
+
+      const LAYOUT_STACK_PRESETS = {
+        "YT-01": [
+          ["YT-BG-01", "YT-DX-01"],
+          ["YT-BG-01", "YT-DX-05"],
+          ["YT-BG-03", "YT-DX-06"],
+        ],
+        "YT-02": [
+          ["YT-BG-02", "YT-DX-02"],
+          ["YT-BG-01", "YT-DX-01"],
+          ["YT-BG-03", "YT-DX-05"],
+        ],
+        "YT-03": [
+          ["YT-BG-03", "YT-DX-03"],
+          ["YT-BG-02", "YT-DX-06"],
+        ],
+        "YT-04": [
+          ["YT-BG-04", "YT-DX-04"],
+          ["YT-BG-01", "YT-DX-04"],
+        ],
+        "YT-05": [
+          ["YT-BG-02", "YT-DX-02"],
+          ["YT-BG-04", "YT-DX-05"],
+        ],
+        "YT-06": [
+          ["YT-BG-01", "YT-DX-03"],
+          ["YT-BG-04", "YT-DX-06"],
+          ["YT-BG-02", "YT-DX-01"],
+        ],
+        "YT-08": [
+          ["YT-BG-01", "YT-DX-06"],
+          ["YT-BG-02", "YT-DX-03"],
+          ["YT-BG-03", "YT-DX-01"],
+        ],
+        "YT-09": [
+          ["YT-BG-02", "YT-DX-06"],
+          ["YT-BG-03", "YT-DX-06"],
+          ["YT-BG-01", "YT-DX-02"],
+        ],
+        "YT-10": [
+          ["YT-BG-04", "YT-DX-04"],
+          ["YT-BG-01", "YT-DX-05"],
+          ["YT-BG-03", "YT-DX-04"],
+        ],
+      };
+
+      function closeExMenu() {
+        exMenu.hidden = true;
+        exMenuTarget = null;
+      }
+
+      function closeLyMenu() {
+        lyMenu.hidden = true;
+        lyMenuTarget = null;
+      }
+
+      function placeMenu(menu, x, y) {
+        menu.hidden = false;
+        const pad = 8;
+        const mw = menu.offsetWidth;
+        const mh = menu.offsetHeight;
+        menu.style.left = `${Math.min(x, window.innerWidth - mw - pad)}px`;
+        menu.style.top = `${Math.min(y, window.innerHeight - mh - pad)}px`;
+      }
+
+      function openExMenu(card, x, y) {
+        closeLyMenu();
+        exMenuTarget = card;
+        placeMenu(exMenu, x, y);
+      }
+
+      function openLyMenu(card, x, y) {
+        closeExMenu();
+        lyMenuTarget = card;
+        placeMenu(lyMenu, x, y);
+      }
+
+      document.addEventListener("pointerdown", (e) => {
+        if (!exMenu.hidden && !exMenu.contains(e.target)) closeExMenu();
+        if (!lyMenu.hidden && !lyMenu.contains(e.target)) closeLyMenu();
+      });
+
+      function cloneExample(example) {
+        return structuredClone(example);
+      }
+
+      function nextExampleId() {
+        const ids = [...exGrid.querySelectorAll(".bg-card")]
+          .map((c) => c._example?.id)
+          .filter(Boolean);
+        let max = 0;
+        ids.forEach((id) => {
+          const m = /^EX-(\d+)/i.exec(id);
+          if (m) max = Math.max(max, Number(m[1]));
+        });
+        return `EX-${String(max + 1).padStart(2, "0")}`;
+      }
+
+      function pickStack(layoutId) {
+        const presets = LAYOUT_STACK_PRESETS[layoutId];
+        if (presets?.length) {
+          const pair = presets[stackPickCounter++ % presets.length];
+          return { bg: pair[0], decor: pair[1] };
+        }
+        const sample = LAYOUT_SAMPLES[layoutId];
+        const bgs = Object.keys(YOUTUBE_BACKGROUNDS);
+        const dxs = Object.keys(YOUTUBE_DECORS);
+        return {
+          bg: sample?.bg ?? bgs[stackPickCounter++ % bgs.length],
+          decor: sample?.decor ?? dxs[stackPickCounter++ % dxs.length],
+        };
+      }
+
+      function createExampleFromLayout(layoutId) {
+        const sample = LAYOUT_SAMPLES[layoutId];
+        const layout = YOUTUBE_LAYOUTS[layoutId];
+        if (!sample || !layout) return null;
+
+        const { bg, decor } = pickStack(layoutId);
+        const example = {
+          id: nextExampleId(),
+          label: `New · ${layout.label}`,
+          layout: layoutId,
+          bg,
+          decor,
+          content: structuredClone(sample.content),
+        };
+
+        if (layoutId === "YT-02" && !Array.isArray(example.content.steps)) {
+          example.content.steps = [
+            { label: "Step 1" },
+            { label: "Step 2" },
+            { label: "Step 3" },
+            { label: "Step 4" },
+          ];
+        }
+        if (layoutId === "YT-09" && !Array.isArray(example.content.bullets)) {
+          example.content.bullets = [
+            { label: "Point one" },
+            { label: "Point two" },
+            { label: "Point three" },
+          ];
+        }
+
+        const card = makeExCard(example, exGrid);
+        card?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        if (card) openEditor(card);
+        return card;
+      }
+
+      const layoutPicker = document.getElementById("yt-layout-picker");
+      const layoutPickerGrid = document.getElementById("yt-layout-picker-grid");
+
+      function closeLayoutPicker() {
+        layoutPicker.hidden = true;
+        document.body.classList.remove("yt-picker-open");
+      }
+
+      function openLayoutPicker() {
+        closeExMenu();
+        closeLyMenu();
+        layoutPicker.hidden = false;
+        document.body.classList.add("yt-picker-open");
+      }
+
+      function buildLayoutPicker() {
+        layoutPickerGrid.replaceChildren();
+        Object.entries(YOUTUBE_LAYOUTS).forEach(([id, layout]) => {
+          const sample = LAYOUT_SAMPLES[id];
+          if (!sample) return;
+
+          const card = document.createElement("button");
+          card.type = "button";
+          card.className = "yt-layout-picker__card";
+          card.setAttribute("aria-label", `Use layout ${id}: ${layout.label}`);
+
+          const stage = document.createElement("div");
+          stage.className = "yt-layout-picker__stage";
+          const canvas = document.createElement("div");
+          canvas.className = `canvas ${format.className}`;
+          stage.appendChild(canvas);
+          paintLayoutPlain(canvas, sample, id);
+          requestAnimationFrame(() => fitCanvas(stage, canvas));
+          new ResizeObserver(() => fitCanvas(stage, canvas)).observe(stage);
+
+          const meta = document.createElement("div");
+          meta.className = "yt-layout-picker__meta";
+          meta.innerHTML = `
+            <span class="yt-layout-picker__id">${id}</span>
+            <span class="yt-layout-picker__label">${layout.label}</span>
+            <span class="yt-layout-picker__desc">${layout.description}</span>
+          `;
+
+          card.append(stage, meta);
+          card.addEventListener("click", () => {
+            closeLayoutPicker();
+            createExampleFromLayout(id);
+          });
+          layoutPickerGrid.appendChild(card);
+        });
+      }
+
+      document.getElementById("yt-create-btn").addEventListener("click", openLayoutPicker);
+      document
+        .getElementById("yt-layout-picker-close")
+        .addEventListener("click", closeLayoutPicker);
+      layoutPicker
+        .querySelector(".yt-layout-picker__backdrop")
+        .addEventListener("click", closeLayoutPicker);
+
+      function pickLocalImage() {
+        return new Promise((resolve) => {
+          const input = document.createElement("input");
+          input.type = "file";
+          input.accept = "image/*";
+          input.addEventListener("change", () => {
+            const file = input.files?.[0];
+            if (!file) {
+              resolve(null);
+              return;
+            }
+            resolve(URL.createObjectURL(file));
+          });
+          input.click();
+        });
+      }
+
+      async function downloadExample(example) {
+        const safe = String(example.id || "thumbnail").replace(/[^\w.-]+/g, "-");
+        await downloadPaintedThumbnail(
+          (canvas) => paintThumbnail(canvas, example, example.layout),
+          `${safe}-1280x720.png`,
+          { className: `canvas ${format.className}`, width: format.w, height: format.h },
+        );
+      }
+
+      function buildEditorForm(example) {
+        const c = example.content ?? {};
+        if (c.showBadge === undefined) c.showBadge = true;
+        const rows = [];
+        const field = (name, label, value, { multiline = false, caps = false } = {}) => {
+          const id = `yt-field-${name}`;
+          const capsClass = caps ? " yt-editor__control--caps" : "";
+          if (multiline) {
+            rows.push(`
+              <label class="yt-editor__field" for="${id}">
+                <span>${label}</span>
+                <textarea id="${id}" name="${name}" rows="2" class="${capsClass.trim()}"${caps ? ' data-caps="1"' : ""}>${escapeHtml(value ?? "")}</textarea>
+              </label>
+            `);
+          } else {
+            rows.push(`
+              <label class="yt-editor__field" for="${id}">
+                <span>${label}</span>
+                <input id="${id}" name="${name}" type="text" class="${capsClass.trim()}" value="${escapeAttr(value ?? "")}"${caps ? ' data-caps="1"' : ""} />
+              </label>
+            `);
+          }
+        };
+
+        const decorOptions = [
+          `<option value="">None</option>`,
+          ...Object.entries(YOUTUBE_DECORS).map(
+            ([id, recipe]) =>
+              `<option value="${id}"${example.decor === id ? " selected" : ""}>${id} · ${recipe.label}</option>`,
+          ),
+        ].join("");
+
+        rows.push(`
+          <label class="yt-editor__field" for="yt-field-decor">
+            <span>Decor</span>
+            <select id="yt-field-decor" name="decor" class="yt-editor__select">
+              ${decorOptions}
+            </select>
+          </label>
+          <label class="yt-editor__check" for="yt-field-show-badge">
+            <input id="yt-field-show-badge" name="showBadge" type="checkbox"${c.showBadge !== false ? " checked" : ""} />
+            <span>Show badge</span>
+          </label>
+        `);
+
+        field("badge", "Badge text", c.badge);
+        field("hook", "Hook", String(c.hook ?? "").toUpperCase(), {
+          multiline: true,
+          caps: true,
+        });
+        field("accent", "Accent phrase (inside hook)", String(c.accent ?? "").toUpperCase(), {
+          caps: true,
+        });
+        field("subline", "Subline", c.subline, { multiline: true });
+
+        if (c.host || c.avatar || c.role || example.layout === "YT-05" || example.layout === "YT-06") {
+          field("host", "Host name", c.host ?? "Nguyen Nguyen");
+          field("role", "Host title", c.role ?? "CEO, CyberArmor");
+        }
+
+        if (example.layout === "YT-02" || Array.isArray(c.steps)) {
+          if (!Array.isArray(c.steps)) c.steps = [];
+          const n = c.steps.length;
+          rows.push(`
+            <div class="yt-editor__list-head">
+              <span>Steps (${n}/8)</span>
+              <div class="yt-editor__list-actions">
+                <button type="button" class="yt-editor__mini-btn" data-list-action="add-step"${n >= 8 ? " disabled" : ""}>Add</button>
+                <button type="button" class="yt-editor__mini-btn" data-list-action="remove-step"${n <= 1 ? " disabled" : ""}>Remove</button>
+              </div>
+            </div>
+          `);
+          c.steps.forEach((step, i) => {
+            field(`step-${i}`, `Step ${i + 1}`, step.label ?? step.title ?? "");
+          });
+        }
+
+        if (example.layout === "YT-09" || (Array.isArray(c.bullets) && example.layout !== "YT-02")) {
+          if (!Array.isArray(c.bullets)) c.bullets = [];
+          const n = c.bullets.length;
+          rows.push(`
+            <div class="yt-editor__list-head">
+              <span>Bullets (${n}/6)</span>
+              <div class="yt-editor__list-actions">
+                <button type="button" class="yt-editor__mini-btn" data-list-action="add-bullet"${n >= 6 ? " disabled" : ""}>Add</button>
+                <button type="button" class="yt-editor__mini-btn" data-list-action="remove-bullet"${n <= 1 ? " disabled" : ""}>Remove</button>
+              </div>
+            </div>
+          `);
+          c.bullets.forEach((item, i) => {
+            field(
+              `bullet-${i}`,
+              `Bullet ${i + 1}`,
+              typeof item === "string" ? item : item.label ?? item.title ?? "",
+            );
+          });
+        }
+
+        if (c.metric && example.layout !== "YT-10") {
+          field("metric-value", "Metric value", c.metric.value);
+          field("metric-label", "Metric label", c.metric.label);
+        }
+        if (example.layout === "YT-10" || Array.isArray(c.metrics)) {
+          if (!Array.isArray(c.metrics)) c.metrics = [];
+          const n = c.metrics.length;
+          rows.push(`
+            <div class="yt-editor__list-head">
+              <span>Metrics (${n}/8)</span>
+              <div class="yt-editor__list-actions">
+                <button type="button" class="yt-editor__mini-btn" data-list-action="add-metric"${n >= 8 ? " disabled" : ""}>Add</button>
+                <button type="button" class="yt-editor__mini-btn" data-list-action="remove-metric"${n <= 1 ? " disabled" : ""}>Remove</button>
+              </div>
+            </div>
+          `);
+          c.metrics.forEach((m, i) => {
+            field(`metric-${i}-value`, `Metric ${i + 1} value`, m.value);
+            field(`metric-${i}-label`, `Metric ${i + 1} label`, m.label);
+          });
+        }
+        if (c.left) field("left-label", "Left panel label", c.left.label);
+        if (c.right) field("right-label", "Right panel label", c.right.label);
+
+        if (Array.isArray(c.shots) && c.shots.length) {
+          rows.push(`
+            <div class="yt-editor__list-head">
+              <span>Image labels</span>
+            </div>
+          `);
+          c.shots.forEach((shot, i) => {
+            const defaults = ["EVIDENCE", "ZOOM", "CAPTURE"];
+            field(
+              `shot-${i}-tag`,
+              `Screenshot ${i + 1} label`,
+              shot.tag ?? defaults[i] ?? "EVIDENCE",
+            );
+          });
+        } else if (c.shot) {
+          rows.push(`
+            <div class="yt-editor__list-head">
+              <span>Image labels</span>
+            </div>
+          `);
+          field("shot-0-tag", "Screenshot label", c.shot.tag ?? "EVIDENCE");
+        }
+
+        editorForm.innerHTML = rows.join("");
+      }
+
+      function escapeHtml(str) {
+        return String(str)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;");
+      }
+
+      function escapeAttr(str) {
+        return escapeHtml(str).replace(/"/g, "&quot;");
+      }
+
+      function readEditorForm(example) {
+        const c = example.content;
+        const val = (name) => {
+          const el = editorForm.elements.namedItem(name);
+          return el ? el.value : "";
+        };
+
+        const decorEl = editorForm.elements.namedItem("decor");
+        if (decorEl) {
+          example.decor = decorEl.value || undefined;
+        }
+
+        const showBadgeEl = editorForm.elements.namedItem("showBadge");
+        if (showBadgeEl) {
+          c.showBadge = !!showBadgeEl.checked;
+        }
+
+        c.badge = val("badge");
+        c.hook = val("hook").toUpperCase();
+        c.accent = val("accent").toUpperCase();
+        c.subline = val("subline");
+
+        if (editorForm.elements.namedItem("host")) {
+          c.host = val("host");
+          c.role = val("role");
+        }
+
+        if (Array.isArray(c.steps)) {
+          c.steps.forEach((step, i) => {
+            step.label = val(`step-${i}`);
+          });
+        }
+        if (Array.isArray(c.bullets)) {
+          c.bullets.forEach((item, i) => {
+            const text = val(`bullet-${i}`);
+            if (typeof item === "string") c.bullets[i] = text;
+            else item.label = text;
+          });
+        }
+        if (c.metric) {
+          c.metric.value = val("metric-value");
+          c.metric.label = val("metric-label");
+        }
+        if (Array.isArray(c.metrics)) {
+          c.metrics.forEach((m, i) => {
+            m.value = val(`metric-${i}-value`);
+            m.label = val(`metric-${i}-label`);
+          });
+        }
+        if (c.left) c.left.label = val("left-label");
+        if (c.right) c.right.label = val("right-label");
+
+        if (Array.isArray(c.shots)) {
+          c.shots.forEach((shot, i) => {
+            if (editorForm.elements.namedItem(`shot-${i}-tag`)) {
+              shot.tag = val(`shot-${i}-tag`);
+            }
+          });
+        }
+        if (c.shot && editorForm.elements.namedItem("shot-0-tag")) {
+          c.shot.tag = val("shot-0-tag");
+        }
+      }
+
+      function buildImageSlots(example) {
+        const c = example.content ?? {};
+        const buttons = [];
+        const add = (slot, label) => {
+          buttons.push(
+            `<button type="button" class="yt-editor__slot-btn" data-slot="${slot}">${label}</button>`,
+          );
+        };
+
+        if (c.host || c.avatar || example.layout === "YT-05" || example.layout === "YT-06") {
+          add("avatar", "Replace host avatar");
+        }
+        if (Array.isArray(c.shots) && c.shots.length) {
+          c.shots.forEach((_, i) => add(`shot-${i}`, `Replace screenshot ${i + 1}`));
+        } else if (c.shot) {
+          add("shot-0", "Replace screenshot");
+        }
+        if (c.left?.image) add("left", "Replace left panel image");
+        if (c.right?.image) add("right", "Replace right panel image");
+
+        editorSlots.innerHTML = buttons.length
+          ? `<p class="yt-editor__slots-title">Images</p>${buttons.join("")}`
+          : "";
+      }
+
+      async function applyImageSlot(example, slot, url) {
+        const c = example.content;
+        if (slot === "avatar") {
+          c.avatar = url;
+          return;
+        }
+        if (slot === "left" && c.left) {
+          c.left.image = url;
+          return;
+        }
+        if (slot === "right" && c.right) {
+          c.right.image = url;
+          return;
+        }
+        const shotMatch = /^shot-(\d+)$/.exec(slot);
+        if (shotMatch) {
+          const i = Number(shotMatch[1]);
+          if (!Array.isArray(c.shots)) c.shots = [];
+          if (!c.shots[i]) c.shots[i] = { src: url, alt: "" };
+          else c.shots[i].src = url;
+          if (i === 0 && c.shot) c.shot.src = url;
+        }
+      }
+
+      function resolveImageSlotFromEl(img, canvas) {
+        if (img.classList.contains("yt-host__avatar")) return "avatar";
+        if (img.closest(".yt-contrast__panel--left")) return "left";
+        if (img.closest(".yt-contrast__panel--right")) return "right";
+        const shotImgs = [
+          ...canvas.querySelectorAll(
+            ".yt-evidence__shot img, .yt-single-shot img, .yt-host-evidence__shot img",
+          ),
+        ];
+        const idx = shotImgs.indexOf(img);
+        if (idx >= 0) return `shot-${idx}`;
+        return null;
+      }
+
+      function paintEditorPreview() {
+        if (!editorState) return;
+        const { example, card } = editorState;
+        editorStage.replaceChildren();
+        const canvas = document.createElement("div");
+        canvas.className = `canvas ${format.className}`;
+        editorStage.appendChild(canvas);
+        paintThumbnail(canvas, example, example.layout);
+        canvas.querySelectorAll("img").forEach((img) => {
+          img.classList.add("yt-replaceable");
+          img.title = "Click to replace with a local image";
+        });
+        requestAnimationFrame(() => fitCanvas(editorStage, canvas));
+
+        const cardCanvas = card.querySelector(".canvas");
+        if (cardCanvas) {
+          cardCanvas.replaceChildren();
+          if (example.decor) cardCanvas.dataset.decor = example.decor;
+          else delete cardCanvas.dataset.decor;
+          paintThumbnail(cardCanvas, example, example.layout);
+          const stage = card.querySelector(".yt-preview-stage");
+          if (stage) requestAnimationFrame(() => fitCanvas(stage, cardCanvas));
+        }
+
+        const idEl = card.querySelector(".bg-card__id");
+        const labelEl = card.querySelector(".bg-card__label");
+        const descEl = card.querySelector(".bg-card__desc");
+        if (idEl) idEl.textContent = example.id;
+        if (labelEl) labelEl.textContent = example.label;
+        if (descEl) {
+          descEl.textContent = `${example.layout} · ${example.bg}${
+            example.decor ? ` · ${example.decor}` : ""
+          }`;
+        }
+      }
+
+      function openEditor(card) {
+        const example = card._example;
+        if (!example) return;
+        editorState = { card, example };
+        editorIdEl.textContent = example.id;
+        editorTitleEl.textContent = example.label || "Edit thumbnail";
+        buildEditorForm(example);
+        buildImageSlots(example);
+        editor.hidden = false;
+        document.body.classList.add("yt-editor-open");
+        paintEditorPreview();
+      }
+
+      function closeEditor() {
+        editor.hidden = true;
+        document.body.classList.remove("yt-editor-open");
+        editorStage.replaceChildren();
+        editorForm.replaceChildren();
+        editorSlots.replaceChildren();
+        editorState = null;
+      }
+
+      editorForm.addEventListener("input", (e) => {
+        if (!editorState) return;
+        const target = e.target;
+        if (target?.dataset?.caps === "1") {
+          const start = target.selectionStart;
+          const end = target.selectionEnd;
+          const next = target.value.toUpperCase();
+          if (target.value !== next) {
+            target.value = next;
+            if (typeof start === "number") {
+              target.setSelectionRange(start, end);
+            }
+          }
+        }
+        readEditorForm(editorState.example);
+        paintEditorPreview();
+      });
+
+      editorForm.addEventListener("change", () => {
+        if (!editorState) return;
+        readEditorForm(editorState.example);
+        paintEditorPreview();
+      });
+
+      editorForm.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-list-action]");
+        if (!btn || !editorState || btn.disabled) return;
+        e.preventDefault();
+        readEditorForm(editorState.example);
+        const c = editorState.example.content;
+        const action = btn.dataset.listAction;
+
+        if (action === "add-step") {
+          if (!Array.isArray(c.steps)) c.steps = [];
+          if (c.steps.length >= 8) return;
+          c.steps.push({ label: `Step ${c.steps.length + 1}` });
+        } else if (action === "remove-step") {
+          if (Array.isArray(c.steps) && c.steps.length > 1) c.steps.pop();
+        } else if (action === "add-bullet") {
+          if (!Array.isArray(c.bullets)) c.bullets = [];
+          if (c.bullets.length >= 6) return;
+          c.bullets.push({ label: `Point ${c.bullets.length + 1}` });
+        } else if (action === "remove-bullet") {
+          if (Array.isArray(c.bullets) && c.bullets.length > 1) c.bullets.pop();
+        } else if (action === "add-metric") {
+          if (!Array.isArray(c.metrics)) c.metrics = [];
+          if (c.metrics.length >= 8) return;
+          c.metrics.push({
+            value: "+0%",
+            label: `Signal ${c.metrics.length + 1}`,
+          });
+        } else if (action === "remove-metric") {
+          if (Array.isArray(c.metrics) && c.metrics.length > 1) c.metrics.pop();
+        } else {
+          return;
+        }
+
+        buildEditorForm(editorState.example);
+        buildImageSlots(editorState.example);
+        paintEditorPreview();
+      });
+
+      editorSlots.addEventListener("click", async (e) => {
+        const btn = e.target.closest("[data-slot]");
+        if (!btn || !editorState) return;
+        const url = await pickLocalImage();
+        if (!url) return;
+        await applyImageSlot(editorState.example, btn.dataset.slot, url);
+        paintEditorPreview();
+      });
+
+      editorStage.addEventListener("click", async (e) => {
+        if (!editorState) return;
+        const img = e.target.closest("img");
+        if (!img || !editorStage.contains(img)) return;
+        e.preventDefault();
+        e.stopPropagation();
+        const canvas = editorStage.querySelector(".canvas");
+        const slot = resolveImageSlotFromEl(img, canvas);
+        if (!slot) return;
+        const url = await pickLocalImage();
+        if (!url) return;
+        await applyImageSlot(editorState.example, slot, url);
+        paintEditorPreview();
+      });
+
+      document.getElementById("yt-editor-close").addEventListener("click", closeEditor);
+      editor.querySelector(".yt-editor__backdrop").addEventListener("click", closeEditor);
+      document.getElementById("yt-editor-download").addEventListener("click", async () => {
+        if (!editorState) return;
+        readEditorForm(editorState.example);
+        const btn = document.getElementById("yt-editor-download");
+        btn.disabled = true;
+        btn.textContent = "Exporting…";
+        try {
+          await downloadExample(editorState.example);
+        } catch (err) {
+          console.error(err);
+          alert("Could not export PNG. Try again after images finish loading.");
+        } finally {
+          btn.disabled = false;
+          btn.textContent = "Download PNG";
+        }
+      });
+
+      exMenu.addEventListener("click", async (e) => {
+        const btn = e.target.closest("[data-action]");
+        if (!btn || !exMenuTarget) return;
+        const card = exMenuTarget;
+        const example = card._example;
+        const action = btn.dataset.action;
+        closeExMenu();
+        suppressExClick = true;
+        setTimeout(() => {
+          suppressExClick = false;
+        }, 0);
+
+        if (action === "duplicate") {
+          const copy = cloneExample(example);
+          copy.id = `${example.id}-copy`;
+          copy.label = `${example.label} (copy)`;
+          let n = 2;
+          while (
+            [...exGrid.querySelectorAll(".bg-card")].some(
+              (c) => c._example?.id === copy.id,
+            )
+          ) {
+            copy.id = `${example.id}-copy-${n}`;
+            n += 1;
+          }
+          makeExCard(copy, exGrid, card.nextSibling);
+          return;
+        }
+
+        if (action === "download" && example) {
+          try {
+            await downloadExample(example);
+          } catch (err) {
+            console.error(err);
+            alert("Could not export PNG. Try again after images finish loading.");
+          }
+        }
+      });
+
+      lyMenu.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-action]");
+        if (!btn || !lyMenuTarget) return;
+        const layoutId = lyMenuTarget.dataset.layoutId;
+        closeLyMenu();
+        suppressLyClick = true;
+        setTimeout(() => {
+          suppressLyClick = false;
+        }, 0);
+        if (btn.dataset.action === "new" && layoutId) {
+          createExampleFromLayout(layoutId);
+        }
+      });
+
+      function makeBgCard(id, recipe, grid) {
+        const card = document.createElement("article");
+        card.className = "bg-card";
+        card.style.cursor = "zoom-in";
+        card.tabIndex = 0;
+        card.setAttribute("role", "button");
+        card.setAttribute("aria-label", `Preview ${id}`);
+
+        const preview = document.createElement("div");
+        preview.className = "bg-card__preview";
+        const layers = document.createElement("div");
+        layers.className = "slide-layers";
+        preview.appendChild(layers);
+        renderYouTubeBackground(layers, id);
+
+        const meta = document.createElement("div");
+        meta.className = "bg-card__meta";
+        meta.innerHTML = `
+          <span class="bg-card__id">${id}</span>
+          <span class="bg-card__label">${recipe.label}</span>
+          <span class="bg-card__desc">1280×720 · ${recipe.focus ?? "center"}</span>
+        `;
+
+        const open = () => {
+          openLightbox({
+            id,
+            label: recipe.label,
+            build() {
+              const canvas = document.createElement("div");
+              canvas.className = `canvas ${format.className}`;
+              const layerHost = document.createElement("div");
+              layerHost.className = "slide-layers";
+              canvas.appendChild(layerHost);
+              renderYouTubeBackground(layerHost, id);
+              return canvas;
+            },
+          });
+        };
+
+        card.addEventListener("click", open);
+        card.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            open();
+          }
+        });
+        card.append(preview, meta);
+        grid.appendChild(card);
+      }
+
+      function makeDxCard(id, recipe, grid) {
+        const card = document.createElement("article");
+        card.className = "bg-card";
+        card.style.cursor = "zoom-in";
+        card.tabIndex = 0;
+        card.setAttribute("role", "button");
+        card.setAttribute("aria-label", `Preview ${id}`);
+
+        const stage = document.createElement("div");
+        stage.className = "yt-preview-stage";
+
+        const canvas = document.createElement("div");
+        canvas.className = `canvas ${format.className}`;
+        stage.appendChild(canvas);
+        renderYouTubeDecor(canvas, id);
+        requestAnimationFrame(() => fitCanvas(stage, canvas));
+
+        const meta = document.createElement("div");
+        meta.className = "bg-card__meta";
+        meta.innerHTML = `
+          <span class="bg-card__id">${id}</span>
+          <span class="bg-card__label">${recipe.label}</span>
+          <span class="bg-card__desc">${recipe.description}</span>
+        `;
+
+        const open = () => {
+          openLightbox({
+            id,
+            label: recipe.label,
+            build() {
+              const big = document.createElement("div");
+              big.className = `canvas ${format.className}`;
+              renderYouTubeDecor(big, id);
+              return big;
+            },
+          });
+        };
+
+        card.addEventListener("click", open);
+        card.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            open();
+          }
+        });
+        card.append(stage, meta);
+        grid.appendChild(card);
+        new ResizeObserver(() => fitCanvas(stage, canvas)).observe(stage);
+      }
+
+      function paintThumbnail(canvas, sample, layoutId) {
+        const layerHost = document.createElement("div");
+        layerHost.className = "slide-layers";
+        canvas.appendChild(layerHost);
+        renderYouTubeBackground(layerHost, sample.bg);
+        if (sample.decor) renderYouTubeDecor(canvas, sample.decor);
+        renderYouTubeLayout(canvas, layoutId, sample.content);
+      }
+
+      /** Layouts gallery only — plain grey so structure reads without BG/decor. */
+      function paintLayoutPlain(canvas, sample, layoutId) {
+        canvas.classList.add("canvas--yt-plain");
+        const layerHost = document.createElement("div");
+        layerHost.className = "slide-layers slide-layers--plain";
+        layerHost.innerHTML = `<div class="slide-layer slide-layer--base yt-plain-bg"></div>`;
+        canvas.appendChild(layerHost);
+        renderYouTubeLayout(canvas, layoutId, sample.content);
+      }
+
+      function makeLyCard(id, layout, grid) {
+        const sample = LAYOUT_SAMPLES[id];
+        if (!sample) return;
+
+        const card = document.createElement("article");
+        card.className = "bg-card bg-card--layout";
+        card.style.cursor = "zoom-in";
+        card.tabIndex = 0;
+        card.dataset.layoutId = id;
+        card.setAttribute("role", "button");
+        card.setAttribute(
+          "aria-label",
+          `Preview ${id}. Right-click to create a new example.`,
+        );
+
+        const stage = document.createElement("div");
+        stage.className = "yt-preview-stage";
+
+        const canvas = document.createElement("div");
+        canvas.className = `canvas ${format.className}`;
+        canvas.dataset.layout = id;
+        stage.appendChild(canvas);
+
+        paintLayoutPlain(canvas, sample, id);
+        requestAnimationFrame(() => fitCanvas(stage, canvas));
+
+        const meta = document.createElement("div");
+        meta.className = "bg-card__meta";
+        meta.innerHTML = `
+          <span class="bg-card__id">${id}</span>
+          <span class="bg-card__label">${layout.label}</span>
+          <span class="bg-card__desc">${layout.description} · plain layout</span>
+        `;
+
+        const open = () => {
+          if (suppressLyClick) return;
+          openLightbox({
+            id,
+            label: layout.label,
+            build() {
+              const big = document.createElement("div");
+              big.className = `canvas ${format.className}`;
+              paintLayoutPlain(big, sample, id);
+              return big;
+            },
+          });
+        };
+
+        card.addEventListener("click", open);
+        card.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            open();
+          }
+        });
+        card.addEventListener("contextmenu", (e) => {
+          e.preventDefault();
+          openLyMenu(card, e.clientX, e.clientY);
+        });
+        card.append(stage, meta);
+        grid.appendChild(card);
+        new ResizeObserver(() => fitCanvas(stage, canvas)).observe(stage);
+      }
+
+      function makeExCard(example, grid, insertBefore = null) {
+        const layout = YOUTUBE_LAYOUTS[example.layout];
+        if (!layout) return null;
+
+        const card = document.createElement("article");
+        card.className = "bg-card bg-card--example";
+        card.style.cursor = "pointer";
+        card.tabIndex = 0;
+        card.setAttribute("role", "button");
+        card.setAttribute(
+          "aria-label",
+          `Edit ${example.id}. Right-click to duplicate or download.`,
+        );
+        card._example = example;
+
+        const stage = document.createElement("div");
+        stage.className = "yt-preview-stage";
+
+        const canvas = document.createElement("div");
+        canvas.className = `canvas ${format.className}`;
+        canvas.dataset.bg = example.bg;
+        canvas.dataset.layout = example.layout;
+        if (example.decor) canvas.dataset.decor = example.decor;
+        stage.appendChild(canvas);
+
+        paintThumbnail(canvas, example, example.layout);
+        requestAnimationFrame(() => fitCanvas(stage, canvas));
+
+        const meta = document.createElement("div");
+        meta.className = "bg-card__meta";
+        meta.innerHTML = `
+          <span class="bg-card__id">${example.id}</span>
+          <span class="bg-card__label">${example.label}</span>
+          <span class="bg-card__desc">${example.layout} · ${example.bg}${
+            example.decor ? ` · ${example.decor}` : ""
+          }</span>
+        `;
+
+        card.addEventListener("click", () => {
+          if (suppressExClick) return;
+          openEditor(card);
+        });
+        card.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            openEditor(card);
+          }
+        });
+        card.addEventListener("contextmenu", (e) => {
+          e.preventDefault();
+          openExMenu(card, e.clientX, e.clientY);
+        });
+
+        card.append(stage, meta);
+        if (insertBefore) grid.insertBefore(card, insertBefore);
+        else grid.appendChild(card);
+        new ResizeObserver(() => fitCanvas(stage, canvas)).observe(stage);
+        return card;
+      }
+
+      const bgGrid = document.getElementById("bg-gallery");
+      const dxGrid = document.getElementById("dx-gallery");
+      const lyGrid = document.getElementById("ly-gallery");
+
+      Object.entries(YOUTUBE_BACKGROUNDS).forEach(([id, recipe]) => {
+        makeBgCard(id, recipe, bgGrid);
+      });
+      Object.entries(YOUTUBE_DECORS).forEach(([id, recipe]) => {
+        makeDxCard(id, recipe, dxGrid);
+      });
+      Object.entries(YOUTUBE_LAYOUTS).forEach(([id, layout]) => {
+        makeLyCard(id, layout, lyGrid);
+      });
+      EXTRA_EXAMPLES.forEach((example) => {
+        makeExCard(cloneExample(example), exGrid);
+      });
+      buildLayoutPicker();
+    </script>
+  </body>
+</html>

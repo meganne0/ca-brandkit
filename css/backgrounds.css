@@ -1,0 +1,231 @@
+/* Fill: W and H ≥ canvas (cover). Swirl: full width.
+ * Shared by slides + LinkedIn. */
+
+.slide-layers {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.slide-layer {
+  position: absolute;
+  inset: 0;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.slide-layer--base {
+  z-index: 0;
+}
+
+.slide-layer--overlay {
+  z-index: 1;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+.slide-layer--swirl {
+  /* Full canvas width; height scales */
+  background-size: 100% auto;
+  background-position: center;
+}
+
+.slide-layer--dots {
+  inset: auto;
+  width: 42%;
+  height: auto;
+  aspect-ratio: 755 / 137;
+  background-size: contain;
+  opacity: 0.95;
+  z-index: 2;
+}
+
+.slide-layer--dots.tl {
+  top: 8%;
+  left: 4%;
+}
+
+.slide-layer--dots.bl {
+  bottom: 8%;
+  left: 3%;
+}
+
+.slide-layer--dots.br {
+  bottom: 7%;
+  right: 4%;
+  left: auto;
+}
+
+.slide-layer--dots.tr {
+  top: 10%;
+  right: 5%;
+  left: auto;
+}
+
+/* ---- Background gallery ---- */
+
+.bg-gallery {
+  min-height: 100vh;
+  padding: 40px 32px 64px;
+  background: #05030d;
+}
+
+.bg-gallery__header {
+  max-width: 1400px;
+  margin: 0 auto 40px;
+}
+
+.bg-gallery__header h1 {
+  font-family: var(--font-headline);
+  font-size: 32px;
+  font-weight: 600;
+  margin: 0 0 8px;
+  color: #fff;
+}
+
+.bg-gallery__header p {
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: rgba(255, 255, 255, 0.55);
+  margin: 0;
+}
+
+.bg-gallery__header a,
+.bg-gallery__header a:link,
+.bg-gallery__header a:visited {
+  color: var(--ca-orange);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.bg-gallery__header a:hover {
+  color: #ff7a5c;
+}
+
+.bg-gallery__grid {
+  max-width: 1400px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 36px 24px;
+}
+
+.bg-gallery__section {
+  max-width: 1400px;
+  margin: 0 auto 48px;
+}
+
+.bg-gallery__section-title {
+  font-family: var(--font-headline);
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.45);
+  margin: 0 0 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.bg-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  background: none;
+  border: none;
+  border-radius: 0;
+  overflow: visible;
+  cursor: grab;
+  touch-action: none;
+}
+
+.bg-card:active {
+  cursor: grabbing;
+}
+
+.bg-card.is-dragging {
+  opacity: 0.55;
+}
+
+.bg-card.is-drag-over {
+  outline: 2px dashed var(--ca-orange);
+  outline-offset: 8px;
+  border-radius: 12px;
+}
+
+.bg-card__preview {
+  aspect-ratio: 16 / 9;
+  position: relative;
+  overflow: hidden;
+  background: var(--ca-purple-deep);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+.bg-card__preview--square {
+  aspect-ratio: 1 / 1;
+}
+
+.bg-card__preview .slide-layers {
+  position: absolute;
+  inset: 0;
+}
+
+.bg-card__preview .slide-layer {
+  background-size: cover;
+}
+
+.bg-card__meta {
+  padding: 0 2px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bg-card__id {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ca-orange);
+}
+
+.bg-card__label {
+  font-family: var(--font-body);
+  font-size: 15px;
+  font-weight: 500;
+  line-height: 1.35;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.bg-gallery__grid--slide-tiles {
+  max-width: 1600px;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px 16px;
+}
+
+.bg-gallery__grid--slide-tiles .bg-card {
+  gap: 8px;
+  cursor: grab;
+}
+
+.bg-gallery__grid--slide-tiles .bg-card__id {
+  font-size: 11px;
+}
+
+.bg-gallery__grid--slide-tiles .bg-card__label {
+  font-size: 13px;
+}
+
+.bg-card__desc {
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.45);
+}

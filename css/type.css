@@ -1,0 +1,153 @@
+/**
+ * Type roles — source of truth.
+ * Assign these classes in layouts; retag an element to change its style.
+ * Usage map lives on tokens.html.
+ */
+
+.type-h1,
+.type-h2,
+.type-h3,
+.type-h4,
+.type-h5,
+.type-h6 {
+  font-family: var(--font-headline);
+  margin: 0;
+}
+
+.type-h1 {
+  font-size: var(--type-h1-size);
+  font-weight: var(--type-h1-weight);
+  line-height: var(--type-h1-line);
+  letter-spacing: var(--type-h1-tracking);
+  color: var(--type-h1-color);
+}
+
+.type-h2 {
+  font-size: var(--type-h2-size);
+  font-weight: var(--type-h2-weight);
+  line-height: var(--type-h2-line);
+  letter-spacing: var(--type-h2-tracking);
+  color: var(--type-h2-color);
+}
+
+.type-h3 {
+  font-size: var(--type-h3-size);
+  font-weight: var(--type-h3-weight);
+  line-height: var(--type-h3-line);
+  letter-spacing: var(--type-h3-tracking);
+  color: var(--type-h3-color);
+}
+
+.type-h4 {
+  font-size: var(--type-h4-size);
+  font-weight: var(--type-h4-weight);
+  line-height: var(--type-h4-line);
+  letter-spacing: var(--type-h4-tracking);
+  color: var(--type-h4-color);
+  max-width: 1100px;
+}
+
+.type-h5 {
+  font-size: var(--type-h5-size);
+  font-weight: var(--type-h5-weight);
+  line-height: var(--type-h5-line);
+  letter-spacing: var(--type-h5-tracking);
+  color: var(--type-h5-color);
+}
+
+.type-h6 {
+  font-size: var(--type-h6-size);
+  font-weight: var(--type-h6-weight);
+  line-height: var(--type-h6-line);
+  letter-spacing: var(--type-h6-tracking);
+  color: var(--type-h6-color);
+}
+
+.type-body {
+  font-family: var(--font-body);
+  font-size: var(--type-body-size);
+  font-weight: var(--type-body-weight);
+  line-height: var(--type-body-line);
+  color: var(--type-body-color);
+  margin: 0;
+}
+
+.type-label {
+  font-family: var(--font-body);
+  font-size: var(--type-label-size);
+  font-weight: var(--type-label-weight);
+  line-height: var(--type-label-line);
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+  color: var(--type-label-color);
+  opacity: 0.8;
+  margin: 0;
+}
+
+.type-label--plain {
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 400;
+  opacity: 1;
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.type-caption {
+  font-family: var(--font-body);
+  font-size: var(--type-caption-size);
+  font-weight: var(--type-caption-weight);
+  line-height: var(--type-caption-line);
+  letter-spacing: var(--type-caption-tracking);
+  text-transform: uppercase;
+  color: var(--type-caption-color);
+  margin: 0;
+}
+
+.type-numeral {
+  font-family: var(--font-headline-display);
+  font-size: var(--type-numeral-size);
+  font-weight: var(--type-numeral-weight);
+  line-height: 1;
+  letter-spacing: -0.02em;
+  color: var(--type-numeral-color);
+  opacity: 0.8;
+  margin: 0;
+}
+
+.type-numeral--xl {
+  font-size: var(--type-numeral-size-xl);
+}
+
+.type-numeral--sm {
+  font-size: var(--type-numeral-size-sm);
+  letter-spacing: -0.01em;
+  line-height: 1.2;
+}
+
+.type-metric {
+  font-family: var(--font-headline);
+  font-size: var(--type-metric-size);
+  font-weight: var(--type-metric-weight);
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  color: var(--type-metric-color);
+  margin: 0;
+}
+
+.type-metric--lg {
+  font-size: var(--type-metric-size-lg);
+}
+
+.type-metric--md {
+  font-size: var(--type-metric-size-md);
+}
+
+/* Accent phrase inside headlines / body */
+.type-h1 .accent,
+.type-h2 .accent,
+.type-h3 .accent,
+.type-body .accent,
+.accent {
+  color: var(--ca-orange);
+  font-weight: 700;
+}

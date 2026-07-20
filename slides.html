@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CyberArmor Brand Kit — Slide layouts</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Mozilla+Headline:wght@300&family=Mozilla+Text:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/light/style.css"
+    />
+    <link rel="stylesheet" href="css/slides.css?v=13" />
+  </head>
+  <body>
+    <div class="deck">
+      <div class="deck-meta">
+        <div>
+          <strong>CyberArmor</strong> · 16:9 slide kit · tiled ·
+          <span id="slide-label">— slides</span>
+          · <a href="index.html">← hub</a>
+          · <a href="backgrounds.html">BG recipes</a>
+          · <a href="layouts.html">LY recipes</a>
+          · <a href="linkedin.html">LinkedIn</a>
+          · <a href="tokens.html">Colors &amp; type</a>
+          · <a href="briefs/presentation-brief.md">Presentation brief</a>
+        </div>
+      </div>
+
+      <div class="slide-board" id="board"></div>
+
+      <!-- Source slides (moved into tiles by JS) -->
+      <div id="slide-source" hidden>
+        <section
+          class="slide"
+          id="slide-1"
+          data-title="Cover"
+          data-layout="LY-01"
+          data-bg="BG-01"
+          data-content='{"headline":"Identity threats start in the collection phase","accent":"collection phase","subtitle":"Proactive defense for credentials and identity assets — before the breach."}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <section
+          class="slide"
+          id="slide-2"
+          data-title="Team"
+          data-layout="LY-02"
+          data-bg="BG-08"
+          data-content='{"sectionTitle":"Leadership","title":"The people behind CyberArmor","subtitle":"The team building prebreach defense.","people":[{"name":"Nguyen Nguyen","role":"CEO","avatar":"visual%20assets/avatars/avatar-nguyen-circle.png"},{"name":"Ali Alame","role":"CTO","avatar":"visual%20assets/avatars/avatar-ali-circle.png"},{"name":"Meganne Ohata","role":"CXO","avatar":"visual%20assets/avatars/avatar-meganne-circle.png"}]}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <section
+          class="slide"
+          id="slide-3"
+          data-title="Table of contents"
+          data-layout="LY-03"
+          data-bg="BG-02"
+          data-content='{"sectionTitle":"Roadmap","title":"What we’ll cover","subtitle":"Three phases of the identity threat lifecycle.","items":[{"number":"01","title":"Collection","description":"Where credentials and identity assets are harvested before breach disclosure."},{"number":"02","title":"Delivery","description":"How clean reputation and trusted tooling help attacks bypass controls."},{"number":"03","title":"Detection","description":"How prebreach signals become earlier defensive action."}]}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <section
+          class="slide"
+          id="slide-4"
+          data-title="Section"
+          data-layout="LY-04"
+          data-bg="BG-03"
+          data-content='{"number":"01","sectionTitle":"Collection","subtitle":"Before the breach, attackers assemble identity assets in the open."}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <section
+          class="slide"
+          id="slide-5"
+          data-title="Quote"
+          data-layout="LY-05"
+          data-bg="BG-02"
+          data-content='{"text":"Instead of focusing primarily on public breaches or broad threat analytics, we monitor the collection phase, where credentials and identity assets are actively being harvested","accent":"we monitor the collection phase, where credentials and identity assets are actively being harvested"}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <section
+          class="slide"
+          id="slide-6"
+          data-title="Section"
+          data-layout="LY-04"
+          data-bg="BG-03"
+          data-content='{"number":"02","sectionTitle":"Delivery","subtitle":"Expired domains and trusted software still walk past legacy filters."}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <section
+          class="slide"
+          id="slide-7"
+          data-title="Insight + evidence"
+          data-layout="LY-06"
+          data-bg="BG-03"
+          data-content='{"number":"02","sectionTitle":"Delivery","title":"SEGs miss expired clean domains","subtitle":"Reputation alone is not a defense.","text":"Legacy secure email gateways (SEGs) rely on reputation scoring. When an attacker buys a recently expired domain that historically had a “clean” reputation, it glides right past your filters.","shots":[{"src":"visual%20assets/screenshots/Purchase%20of%20recently%20expired%2C%20clean%20domains.png","alt":"Expired domain purchase evidence"},{"src":"visual%20assets/screenshots/Using%20bitcoin%20to%20pay%20for%20expired%20domains.png","alt":"Crypto payment for domain purchase"}]}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <section
+          class="slide"
+          id="slide-8"
+          data-title="Evidence + insight"
+          data-layout="LY-07"
+          data-bg="BG-05"
+          data-content='{"number":"02","sectionTitle":"Delivery","title":"Evidence leads the story","subtitle":"Screenshots first, insight second.","text":"Same content structure as LY-06, mirrored — screenshots on the left, insight copy on the right.","shots":[{"src":"visual%20assets/screenshots/Purchase%20of%20recently%20expired%2C%20clean%20domains.png","alt":"Expired domain purchase evidence"},{"src":"visual%20assets/screenshots/Using%20bitcoin%20to%20pay%20for%20expired%20domains.png","alt":"Crypto payment for domain purchase"}]}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <section
+          class="slide"
+          id="slide-9"
+          data-title="Quote"
+          data-layout="LY-05"
+          data-bg="BG-05"
+          data-content='{"text":"Layouts and backgrounds mix freely — this quote panel is LY-05 on BG-05.","accent":"mix freely"}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <section
+          class="slide"
+          id="slide-10"
+          data-title="Text + bullets"
+          data-layout="LY-08"
+          data-bg="BG-06"
+          data-content='{"number":"03","sectionTitle":"Detection","title":"Turn collection signals into action","subtitle":"From early exposure to focused response.","text":"Early identity signals give defenders context before compromised credentials become a disclosed incident.","bullets":["See credential harvesting as it happens","Prioritize identities by exposure and intent","Act before attackers operationalize access"]}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <section
+          class="slide"
+          id="slide-11"
+          data-title="Three steps"
+          data-layout="LY-09"
+          data-bg="BG-09"
+          data-content='{"number":"03","sectionTitle":"Detection","title":"From signal to defense","subtitle":"A three-step loop for turning exposure into action.","steps":[{"title":"Observe","icon":"ph-eye","description":"Monitor where credentials and identity assets are actively collected."},{"title":"Correlate","icon":"ph-graph","description":"Connect exposed identities to attacker infrastructure and intent."},{"title":"Defend","icon":"ph-shield-check","description":"Trigger focused action before access becomes a breach."}]}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <section
+          class="slide"
+          id="slide-12"
+          data-title="Four steps"
+          data-layout="LY-10"
+          data-bg="BG-12"
+          data-content='{"number":"03","sectionTitle":"Detection","title":"The prebreach workflow","subtitle":"How CyberArmor moves from raw signal to focused response.","steps":[{"title":"Collect","icon":"ph-download-simple","description":"Capture active credential-harvesting signals."},{"title":"Enrich","icon":"ph-circles-three-plus","description":"Add identity, infrastructure, and campaign context."},{"title":"Prioritize","icon":"ph-ranking","description":"Surface the exposures with the highest operational risk."},{"title":"Respond","icon":"ph-lightning","description":"Take focused action before attackers gain access."}]}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <section
+          class="slide"
+          id="slide-13"
+          data-title="Metric spotlight"
+          data-layout="LY-11"
+          data-bg="BG-01"
+          data-content='{"number":"03","sectionTitle":"Detection","title":"The scale of the threat","subtitle":"Credential theft is accelerating.","metric":{"value":"+160%","text":"Increase of credential theft due to AI powered phishing and malware-as-a-service","source":"ITPro"}}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <section
+          class="slide"
+          id="slide-14"
+          data-title="Metrics row"
+          data-layout="LY-12"
+          data-bg="BG-04"
+          data-content='{"number":"03","sectionTitle":"Detection","title":"Signals that matter","subtitle":"A few numbers that frame the problem.","metrics":[{"value":"+160%","text":"Increase in credential theft from AI-powered phishing and malware-as-a-service","source":"ITPro"},{"value":"80%","text":"Of breaches involve compromised or stolen credentials","source":"Verizon DBIR"},{"value":"24h","text":"Median time from credential exposure to attempted reuse","source":"CyberArmor"}]}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <section
+          class="slide"
+          id="slide-15"
+          data-title="Single Line"
+          data-layout="LY-13"
+          data-bg="BG-02"
+          data-content='{"number":"03","sectionTitle":"Detection","question":"What is malware?"}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <section
+          class="slide"
+          id="slide-16"
+          data-title="Single Line with Sub-line"
+          data-layout="LY-14"
+          data-bg="BG-05"
+          data-content='{"number":"03","sectionTitle":"Detection","question":"What is malware?","subtitle":"(Spoiler alert: It’s bad news)"}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <section
+          class="slide"
+          id="slide-17"
+          data-title="Image title · center"
+          data-layout="LY-15"
+          data-bg="BG-01"
+          data-content='{"number":"02","sectionTitle":"Delivery","title":"Trusted tools, hijacked","subtitle":"Legitimate remote access software used as the payload.","image":"visual%20assets/screenshots/Phish%20campaign%20impersonnating%20SSA%20which%20installs%20remotePC%2C%20a%20legit%20remote%20access%20tool.%20Once%20an%20attacker%20has%20remote%20access%20to%20a%20machine%2C%20they%20can%20access%20files%2C%20monitor%20activity%2C%20and%20collect%20credentials.%20And%20because%20RemotePC%20is%20legitimate%20software%2C%20i.png?v=27","alt":"Remote access phishing campaign evidence"}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <section
+          class="slide"
+          id="slide-18"
+          data-title="Image title · top"
+          data-layout="LY-16"
+          data-bg="BG-03"
+          data-content='{"number":"02","sectionTitle":"Delivery","title":"Phishing kits for sale","subtitle":"Commodity platforms make session theft turnkey.","bullets":["Ready-made phishing pages and token capture","Session replay that bypasses MFA","Priced for volume — free tiers included"],"image":"visual%20assets/screenshots/kali365%20product%20marketing%20using%20tokenvault%20-%20top%20of%20the%20page.png?v=27","alt":"Kali365 TokenVault product marketing"}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <section
+          class="slide"
+          id="slide-19"
+          data-title="Image title · bottom"
+          data-layout="LY-17"
+          data-bg="BG-06"
+          data-content='{"number":"01","sectionTitle":"Collection","title":"Infostealers hide in plain sight","subtitle":"Piracy tutorials that deliver credential theft.","image":"visual%20assets/screenshots/Youtube%20channel%20that%20teaches%20how%20to%20install%20windows%20illegally%20using%20license%20activator%20%28KMS%29%2C%20which%20actually%20downloads%20an%20infostealer%20that%20steals%20credentials%20and%20takes%20screenshots.png?v=27","alt":"YouTube channel promoting malicious activators"}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <section
+          class="slide"
+          id="slide-20"
+          data-title="Timeline · start"
+          data-layout="LY-18"
+          data-bg="BG-09"
+          data-content='{"number":"03","sectionTitle":"Detection","title":"The prebreach workflow","subtitle":"How CyberArmor moves from raw signal to focused response.","startNumber":1,"steps":[{"title":"Collect","description":"Capture active credential-harvesting signals across the collection surface."}]}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <section
+          class="slide"
+          id="slide-21"
+          data-title="Timeline · full"
+          data-layout="LY-19"
+          data-bg="BG-12"
+          data-content='{"number":"03","sectionTitle":"Detection","startNumber":2,"steps":[{"title":"Enrich","description":"Add identity, infrastructure, and campaign context to each signal."},{"title":"Prioritize","description":"Surface the exposures with the highest operational risk."},{"title":"Correlate","description":"Connect identities to attacker infrastructure and intent."}]}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <section
+          class="slide"
+          id="slide-22"
+          data-title="Timeline · end"
+          data-layout="LY-20"
+          data-bg="BG-04"
+          data-content='{"number":"03","sectionTitle":"Detection","startNumber":5,"closing":"From signal to action — before the breach.","steps":[{"title":"Respond","description":"Take focused action before attackers gain durable access."},{"title":"Verify","description":"Confirm remediation and close the loop on exposed identities."}]}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+      </div>
+    </div>
+
+    <div class="slide-lightbox" id="slide-lightbox" hidden>
+      <button
+        type="button"
+        class="slide-lightbox__backdrop"
+        aria-label="Close preview"
+      ></button>
+      <div class="slide-lightbox__dialog" role="dialog" aria-modal="true">
+        <div class="slide-lightbox__stage" id="lightbox-stage"></div>
+        <div class="slide-lightbox__meta">
+          <div>
+            <strong id="lightbox-label">Slide</strong>
+          </div>
+          <div class="deck-nav">
+            <button type="button" id="prev" aria-label="Previous slide">← Prev</button>
+            <button type="button" id="next" aria-label="Next slide">Next →</button>
+          </div>
+          <span class="slide-lightbox__hint">Esc to close · ← → to browse</span>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { initEditableSlideBoard } from "./js/components/slide-board.js?v=7";
+      import { refreshImageTitleLayouts } from "./js/layouts.js?v=39";
+
+      const board = document.getElementById("board");
+      const source = document.getElementById("slide-source");
+      const label = document.getElementById("slide-label");
+      const lightbox = document.getElementById("slide-lightbox");
+      const lightboxStage = document.getElementById("lightbox-stage");
+      const lightboxLabel = document.getElementById("lightbox-label");
+      const prev = document.getElementById("prev");
+      const next = document.getElementById("next");
+
+      const slides = [...source.querySelectorAll(".slide")];
+      source.remove();
+      let index = 0;
+
+      const boardApi = initEditableSlideBoard({
+        board,
+        slides,
+        showBgInMeta: true,
+        onOpen: openLightbox,
+        onChange: (count) => {
+          label.textContent = `${count} slides`;
+        },
+      });
+
+      function openLightbox(i) {
+        if (!slides.length) return;
+        index = Math.max(0, Math.min(slides.length - 1, i));
+        lightbox.hidden = false;
+        document.body.classList.add("slide-lightbox-open");
+        renderLightbox();
+      }
+
+      function closeLightbox() {
+        lightbox.hidden = true;
+        lightboxStage.replaceChildren();
+        document.body.classList.remove("slide-lightbox-open");
+      }
+
+      function renderLightbox() {
+        const slide = slides[index];
+        lightboxLabel.textContent = `${index + 1} / ${slides.length} · ${slide.dataset.layout} + ${slide.dataset.bg} · ${slide.dataset.title || ""}`;
+        prev.disabled = index === 0;
+        next.disabled = index === slides.length - 1;
+
+        const clone = slide.cloneNode(true);
+        clone.hidden = false;
+        clone.removeAttribute("id");
+        lightboxStage.replaceChildren(clone);
+        // Fit after layout — hidden stages report clientWidth 0 → scale(0)
+        requestAnimationFrame(() => {
+          boardApi.fitSlide(clone, lightboxStage);
+          refreshImageTitleLayouts(clone);
+        });
+      }
+
+      prev.addEventListener("click", (e) => {
+        e.stopPropagation();
+        openLightbox(index - 1);
+      });
+      next.addEventListener("click", (e) => {
+        e.stopPropagation();
+        openLightbox(index + 1);
+      });
+      lightbox.querySelector(".slide-lightbox__backdrop").addEventListener("click", closeLightbox);
+
+      window.addEventListener("keydown", (e) => {
+        if (lightbox.hidden) return;
+        if (e.key === "Escape") closeLightbox();
+        if (e.key === "ArrowRight" || e.key === " ") {
+          e.preventDefault();
+          if (index < slides.length - 1) openLightbox(index + 1);
+        }
+        if (e.key === "ArrowLeft") {
+          e.preventDefault();
+          if (index > 0) openLightbox(index - 1);
+        }
+      });
+
+      window.addEventListener("resize", () => {
+        if (!lightbox.hidden) {
+          const clone = lightboxStage.querySelector(".slide");
+          if (clone) boardApi.fitSlide(clone, lightboxStage);
+        }
+      });
+
+      const params = new URLSearchParams(location.search);
+      const startLayout = params.get("layout");
+      if (startLayout) {
+        const startIndex = slides.findIndex((s) => s.dataset.layout === startLayout);
+        if (startIndex >= 0) openLightbox(startIndex);
+      }
+    </script>
+  </body>
+</html>

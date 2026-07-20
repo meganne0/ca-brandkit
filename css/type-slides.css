@@ -1,0 +1,82 @@
+/**
+ * Slide channel — type + spacing scale (1920×1080 design space).
+ * Applied on :root for the slide kit, and on .canvas--slide.
+ */
+
+:root,
+.canvas--slide {
+  --slide-w: 1920;
+  --slide-h: 1080;
+
+  --space-xs: 12px;
+  --space-sm: 24px;
+  --space-md: 40px;
+  --space-lg: 64px;
+  --space-xl: 96px;
+  --space-content-left: 140px;
+
+  --type-h1-size: 88px;
+  --type-h1-weight: 600;
+  --type-h1-line: 1.08;
+  --type-h1-tracking: -0.02em;
+  --type-h1-color: var(--ca-white);
+
+  --type-h2-size: 60px;
+  --type-h2-weight: 600;
+  --type-h2-line: 1.1;
+  --type-h2-tracking: -0.02em;
+  --type-h2-color: var(--ca-orange);
+
+  --type-h3-size: 56px;
+  --type-h3-weight: 600;
+  --type-h3-line: 1.2;
+  --type-h3-tracking: -0.01em;
+  --type-h3-color: var(--ca-orange);
+
+  --type-h4-size: 50px;
+  --type-h4-weight: 400;
+  --type-h4-line: 1.25;
+  --type-h4-tracking: -0.01em;
+  --type-h4-color: var(--ca-tagline);
+
+  --type-h5-size: 40px;
+  --type-h5-weight: 600;
+  --type-h5-line: 1.15;
+  --type-h5-tracking: -0.01em;
+  --type-h5-color: var(--ca-orange);
+
+  --type-h6-size: 36px;
+  --type-h6-weight: 600;
+  --type-h6-line: 1.15;
+  --type-h6-tracking: -0.01em;
+  --type-h6-color: var(--ca-white);
+
+  --type-body-size: 40px;
+  --type-body-weight: 500;
+  --type-body-line: 1.25;
+  --type-body-color: rgba(255, 255, 255, 0.92);
+
+  --type-label-size: 24px;
+  --type-label-weight: 600;
+  --type-label-line: 1.35;
+  --type-label-tracking: 0.08em;
+  --type-label-color: var(--ca-tagline);
+
+  --type-caption-size: 22px;
+  --type-caption-weight: 500;
+  --type-caption-line: 1.3;
+  --type-caption-tracking: 0.08em;
+  --type-caption-color: var(--ca-orange);
+
+  --type-numeral-size: 56px;
+  --type-numeral-size-xl: 80px;
+  --type-numeral-size-sm: 22px;
+  --type-numeral-weight: 300;
+  --type-numeral-color: var(--ca-tagline);
+
+  --type-metric-size: 140px;
+  --type-metric-size-lg: 96px;
+  --type-metric-size-md: 80px;
+  --type-metric-weight: 700;
+  --type-metric-color: var(--ca-orange);
+}

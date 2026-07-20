@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CyberArmor Brand Kit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Mozilla+Text:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/hub.css?v=1" />
+  </head>
+  <body>
+    <main class="hub">
+      <div class="hub__inner">
+        <p class="hub__eyebrow">CyberArmor brand kit</p>
+        <div class="hub__brand">
+          <img
+            class="hub__logo"
+            src="visual%20assets/logo/logo-horizontal-white-orange.svg"
+            alt="CyberArmor"
+          />
+        </div>
+        <h1 class="hub__title">What do you want to open?</h1>
+        <p class="hub__lead">
+          Jump into slide recipes, LinkedIn assets, YouTube thumbnails, type
+          tokens, or an existing draft deck. New decks start from the
+          <a href="briefs/presentation-brief.md">presentation brief</a>.
+        </p>
+
+        <section class="hub__section" aria-labelledby="hub-kit">
+          <h2 class="hub__section-title" id="hub-kit">Brand kit</h2>
+          <div class="hub__grid">
+            <a class="hub-card" href="slides.html">
+              <span class="hub-card__id">16:9</span>
+              <h3 class="hub-card__title">Slide layouts</h3>
+              <p class="hub-card__desc">
+                Full recipe kit — tiled LY-01…20 deck with backgrounds.
+              </p>
+            </a>
+            <a class="hub-card" href="layouts.html">
+              <span class="hub-card__id">LY recipes</span>
+              <h3 class="hub-card__title">Layout gallery</h3>
+              <p class="hub-card__desc">
+                Browse and reorder slide layout recipes.
+              </p>
+            </a>
+            <a class="hub-card" href="linkedin.html">
+              <span class="hub-card__id">LinkedIn</span>
+              <h3 class="hub-card__title">LinkedIn layouts</h3>
+              <p class="hub-card__desc">
+                Square &amp; landscape LI-BG / LI-LY assets.
+              </p>
+            </a>
+            <a class="hub-card" href="youtube.html">
+              <span class="hub-card__id">YouTube</span>
+              <h3 class="hub-card__title">YouTube thumbnails</h3>
+              <p class="hub-card__desc">
+                1280×720 YT-BG / YT-DX / YT-01…10 hook recipes.
+              </p>
+            </a>
+            <a class="hub-card" href="backgrounds.html">
+              <span class="hub-card__id">BG recipes</span>
+              <h3 class="hub-card__title">Slide backgrounds</h3>
+              <p class="hub-card__desc">
+                BG-01…12 glow stacks for 16:9 slides.
+              </p>
+            </a>
+            <a class="hub-card" href="tokens.html">
+              <span class="hub-card__id">Tokens</span>
+              <h3 class="hub-card__title">Colors &amp; type</h3>
+              <p class="hub-card__desc">
+                Brand palette and type roles (source of truth).
+              </p>
+            </a>
+            <a class="hub-card" href="briefs/presentation-brief.md">
+              <span class="hub-card__id">Brief</span>
+              <h3 class="hub-card__title">New presentation brief</h3>
+              <p class="hub-card__desc">
+                Fill-in markdown to generate a deck automatically.
+              </p>
+            </a>
+          </div>
+        </section>
+
+        <section class="hub__section" aria-labelledby="hub-drafts">
+          <h2 class="hub__section-title" id="hub-drafts">Drafts</h2>
+          <div class="hub__grid" id="drafts-grid">
+            <p class="hub__empty">Loading drafts…</p>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script type="module">
+      const grid = document.getElementById("drafts-grid");
+
+      try {
+        const res = await fetch("./drafts/manifest.json?v=1");
+        const drafts = await res.json();
+        grid.replaceChildren();
+
+        if (!drafts.length) {
+          grid.innerHTML =
+            '<p class="hub__empty">No drafts yet. Fill a presentation brief to create one.</p>';
+        } else {
+          drafts.forEach((draft) => {
+            const card = document.createElement("a");
+            card.className = "hub-card hub-card--draft";
+            card.href = draft.href;
+            card.innerHTML = `
+              <span class="hub-card__id">${draft.status || "Draft"}</span>
+              <h3 class="hub-card__title">${draft.title}</h3>
+              <p class="hub-card__desc">${draft.description || ""}</p>
+              <span class="hub-card__meta">${draft.meta || ""}</span>
+            `;
+            grid.appendChild(card);
+          });
+        }
+      } catch {
+        grid.innerHTML =
+          '<p class="hub__empty">Could not load drafts/manifest.json.</p>';
+      }
+    </script>
+  </body>
+</html>

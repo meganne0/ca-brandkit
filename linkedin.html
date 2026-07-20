@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CyberArmor — LinkedIn Assets</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Mozilla+Headline:wght@300&family=Mozilla+Text:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/backgrounds.css?v=21" />
+    <link rel="stylesheet" href="css/linkedin.css?v=21" />
+  </head>
+  <body>
+    <div class="bg-gallery">
+      <header class="bg-gallery__header">
+        <h1>LinkedIn assets</h1>
+        <p>
+          Separate <code>LI-BG</code> / <code>LI-LY</code> recipes — square
+          (1080×1080) and landscape (1200×627). Shared brand colors, logos, and
+          glow assets; LinkedIn type scale + crop. Click any thumbnail to
+          enlarge.
+          <a class="gallery-nav" href="index.html">← hub</a>
+          ·
+          <a class="gallery-nav" href="slides.html">slides</a>
+          ·
+          <a class="gallery-nav" href="backgrounds.html">slide BGs</a>
+          ·
+          <a class="gallery-nav" href="layouts.html">slide LYs</a>
+          ·
+          <a class="gallery-nav" href="youtube.html">YouTube</a>
+          ·
+          <a class="gallery-nav" href="tokens.html">colors &amp; type</a>
+        </p>
+      </header>
+
+      <section class="bg-gallery__section" aria-labelledby="li-bg-square">
+        <h2 class="bg-gallery__section-title" id="li-bg-square">
+          Backgrounds · LI-BG (square)
+        </h2>
+        <div class="bg-gallery__grid bg-gallery__grid--tiles" id="bg-gallery-square"></div>
+      </section>
+
+      <section class="bg-gallery__section" aria-labelledby="li-bg-land">
+        <h2 class="bg-gallery__section-title" id="li-bg-land">
+          Backgrounds · LI-BG (landscape)
+        </h2>
+        <div class="bg-gallery__grid bg-gallery__grid--tiles-land" id="bg-gallery-landscape"></div>
+      </section>
+
+      <section class="bg-gallery__section" aria-labelledby="li-ly-square">
+        <h2 class="bg-gallery__section-title" id="li-ly-square">
+          Layouts · LI-LY (square)
+        </h2>
+        <div class="bg-gallery__grid bg-gallery__grid--tiles" id="ly-gallery-square"></div>
+      </section>
+
+      <section class="bg-gallery__section" aria-labelledby="li-ly-land">
+        <h2 class="bg-gallery__section-title" id="li-ly-land">
+          Layouts · LI-LY (landscape)
+        </h2>
+        <div class="bg-gallery__grid bg-gallery__grid--tiles-land" id="ly-gallery-landscape"></div>
+      </section>
+    </div>
+
+    <div class="li-lightbox" id="li-lightbox" hidden>
+      <button
+        type="button"
+        class="li-lightbox__backdrop"
+        aria-label="Close preview"
+      ></button>
+      <div class="li-lightbox__dialog" role="dialog" aria-modal="true" aria-labelledby="li-lightbox-label">
+        <div class="li-lightbox__stage" id="li-lightbox-stage"></div>
+        <div class="li-lightbox__meta">
+          <div>
+            <span class="li-lightbox__id" id="li-lightbox-id"></span>
+            ·
+            <span class="li-lightbox__label" id="li-lightbox-label"></span>
+          </div>
+          <span class="li-lightbox__hint">Click outside or press Esc to close</span>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import {
+        LINKEDIN_BACKGROUNDS,
+        LINKEDIN_FORMATS,
+        renderLinkedInBackground,
+      } from "./js/backgrounds-linkedin.js?v=18";
+      import {
+        LINKEDIN_LAYOUTS,
+        renderLinkedInLayout,
+      } from "./js/layouts-linkedin.js?v=20";
+
+      const LAYOUT_SAMPLES = {
+        "LI-LY-01": {
+          bg: "LI-BG-01",
+          content: {
+            headline: "Identity threats start in the collection phase",
+            accent: "collection phase",
+            subtitle:
+              "Proactive defense for credentials and identity assets — before the breach.",
+          },
+        },
+        "LI-LY-02": {
+          bg: "LI-BG-02",
+          content: {
+            quote:
+              "Session theft turns MFA into a speed bump — not a barrier.",
+            attribution: "CyberArmor Threat Research",
+          },
+        },
+        "LI-LY-03": {
+          bg: "LI-BG-03",
+          content: {
+            label: "Exposed sessions",
+            value: "12k+",
+            context: "Credential-harvesting kits priced for volume.",
+          },
+        },
+        "LI-LY-04": {
+          bg: "LI-BG-04",
+          content: {
+            title: "Stop the breach before it starts",
+            body: "Prebreach visibility across collection, delivery, and session theft.",
+            cta: "Talk to us",
+          },
+        },
+        "LI-LY-05": {
+          bg: "LI-BG-05",
+          content: {
+            headline: "Identity threats start in the collection phase",
+            accent: "collection phase",
+            subtitle:
+              "Proactive defense for credentials and identity assets — before the breach.",
+          },
+        },
+        "LI-LY-06": {
+          bg: "LI-BG-06",
+          content: {
+            label: "Detection",
+            title: "See the attack before access sticks",
+            body: "Correlate harvested credentials, phishing kits, and session theft into one prebreach picture.",
+          },
+        },
+        "LI-LY-07": {
+          bg: "LI-BG-07",
+          content: {
+            value: "12k+",
+            label: "Exposed sessions",
+            context:
+              "Commodity platforms make session replay turnkey — priced for volume.",
+          },
+        },
+        "LI-LY-08": {
+          bg: "LI-BG-05",
+          content: {
+            title: "Trusted tools, hijacked",
+            body: "Legitimate remote access software used as the payload — and missed by reputation checks.",
+            placeholder: "Screenshot",
+          },
+        },
+        "LI-LY-09": {
+          bg: "LI-BG-06",
+          content: {
+            title: "Phishing kits for sale",
+            body: "Commodity platforms make session theft turnkey — priced for volume.",
+            placeholder: "Screenshot",
+          },
+        },
+        "LI-LY-10": {
+          bg: "LI-BG-07",
+          content: {
+            label: "Collection",
+            title: "Infostealers hide in plain sight",
+            body: "Piracy tutorials that deliver credential theft at scale.",
+            placeholder: "Evidence",
+          },
+        },
+        "LI-LY-11": {
+          bg: "LI-BG-05",
+          content: {
+            quote:
+              "Session theft turns MFA into a speed bump — not a barrier.",
+            attribution: "CyberArmor Threat Research",
+          },
+        },
+        "LI-LY-12": {
+          bg: "LI-BG-02",
+          content: {
+            quote:
+              "Session theft turns MFA into a speed bump — not a barrier.",
+            attribution: "Nguyen Nguyen, CEO",
+            speaker: "Nguyen Nguyen",
+            avatar: "visual%20assets/avatars/avatar-nguyen-circle.png",
+          },
+        },
+        "LI-LY-13": {
+          bg: "LI-BG-06",
+          content: {
+            quote:
+              "Session theft turns MFA into a speed bump — not a barrier.",
+            attribution: "Nguyen Nguyen, CEO",
+            speaker: "Nguyen Nguyen",
+            avatar: "visual%20assets/avatars/avatar-nguyen-circle.png",
+          },
+        },
+      };
+
+      const lightbox = document.getElementById("li-lightbox");
+      const lightboxStage = document.getElementById("li-lightbox-stage");
+      const lightboxId = document.getElementById("li-lightbox-id");
+      const lightboxLabel = document.getElementById("li-lightbox-label");
+
+      function fitCanvas(stage, canvas, formatId) {
+        const format = LINKEDIN_FORMATS[formatId] ?? LINKEDIN_FORMATS.square;
+        const scaleByW = stage.clientWidth / format.w;
+        const scaleByH = stage.clientHeight
+          ? stage.clientHeight / format.h
+          : scaleByW;
+        const scale = Math.min(scaleByW, scaleByH);
+        canvas.style.transform = `scale(${scale})`;
+      }
+
+      function closeLightbox() {
+        lightbox.hidden = true;
+        lightboxStage.replaceChildren();
+        document.body.classList.remove("li-lightbox-open");
+      }
+
+      function openLightbox({ id, label, formatId, build }) {
+        const format = LINKEDIN_FORMATS[formatId] ?? LINKEDIN_FORMATS.square;
+        lightboxId.textContent = id;
+        lightboxLabel.textContent = label;
+        lightboxStage.replaceChildren();
+        lightboxStage.style.aspectRatio = `${format.w} / ${format.h}`;
+
+        const canvas = build();
+        lightboxStage.appendChild(canvas);
+        lightbox.hidden = false;
+        document.body.classList.add("li-lightbox-open");
+
+        requestAnimationFrame(() => {
+          fitCanvas(lightboxStage, canvas, formatId);
+        });
+      }
+
+      lightbox.querySelector(".li-lightbox__backdrop").addEventListener("click", closeLightbox);
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && !lightbox.hidden) closeLightbox();
+      });
+      window.addEventListener("resize", () => {
+        if (lightbox.hidden) return;
+        const canvas = lightboxStage.querySelector(".canvas, .slide-layers");
+        const host = canvas?.closest(".canvas") ?? canvas;
+        if (!host) return;
+        const formatId = host.classList.contains("canvas--li-landscape")
+          ? "landscape"
+          : "square";
+        if (host.classList.contains("canvas")) {
+          fitCanvas(lightboxStage, host, formatId);
+        }
+      });
+
+      function makeBgCard(id, recipe, grid) {
+        const formatId = recipe.format ?? "square";
+        const card = document.createElement("article");
+        card.className = "bg-card";
+        card.style.cursor = "zoom-in";
+        card.tabIndex = 0;
+        card.setAttribute("role", "button");
+        card.setAttribute("aria-label", `Preview ${id}`);
+
+        const preview = document.createElement("div");
+        preview.className = `bg-card__preview${
+          formatId === "landscape" ? "" : " bg-card__preview--square"
+        }`;
+        if (formatId === "landscape") {
+          preview.style.aspectRatio = "1200 / 627";
+        }
+        const layers = document.createElement("div");
+        layers.className = "slide-layers";
+        preview.appendChild(layers);
+        renderLinkedInBackground(layers, id);
+
+        const meta = document.createElement("div");
+        meta.className = "bg-card__meta";
+        meta.innerHTML = `
+          <span class="bg-card__id">${id}</span>
+          <span class="bg-card__label">${recipe.label}</span>
+          <span class="bg-card__desc">${recipe.format} · focus ${recipe.focus ?? "center"}</span>
+        `;
+
+        const open = () => {
+          openLightbox({
+            id,
+            label: recipe.label,
+            formatId,
+            build() {
+              const canvas = document.createElement("div");
+              canvas.className = `canvas ${LINKEDIN_FORMATS[formatId].className}`;
+              const layerHost = document.createElement("div");
+              layerHost.className = "slide-layers";
+              canvas.appendChild(layerHost);
+              renderLinkedInBackground(layerHost, id);
+              return canvas;
+            },
+          });
+        };
+
+        card.addEventListener("click", open);
+        card.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            open();
+          }
+        });
+
+        card.append(preview, meta);
+        grid.appendChild(card);
+      }
+
+      function makeLyCard(id, layout, grid) {
+        const sample = LAYOUT_SAMPLES[id];
+        if (!sample) return;
+
+        const formatId = layout.format ?? "square";
+        const format = LINKEDIN_FORMATS[formatId];
+
+        const card = document.createElement("article");
+        card.className = "bg-card";
+        card.style.cursor = "zoom-in";
+        card.tabIndex = 0;
+        card.setAttribute("role", "button");
+        card.setAttribute("aria-label", `Preview ${id}`);
+
+        const stage = document.createElement("div");
+        stage.className = `li-preview-stage${
+          formatId === "landscape" ? " li-preview-stage--landscape" : ""
+        }`;
+
+        const canvas = document.createElement("div");
+        canvas.className = `canvas ${format.className}`;
+        canvas.dataset.bg = sample.bg;
+        canvas.dataset.layout = id;
+
+        const layers = document.createElement("div");
+        layers.className = "slide-layers";
+        canvas.appendChild(layers);
+        stage.appendChild(canvas);
+
+        renderLinkedInBackground(layers, sample.bg);
+        renderLinkedInLayout(canvas, id, sample.content);
+        fitCanvas(stage, canvas, formatId);
+
+        const meta = document.createElement("div");
+        meta.className = "bg-card__meta";
+        meta.innerHTML = `
+          <span class="bg-card__id">${id}</span>
+          <span class="bg-card__label">${layout.label}</span>
+          <span class="bg-card__desc">${layout.description}</span>
+        `;
+
+        const open = () => {
+          openLightbox({
+            id,
+            label: layout.label,
+            formatId,
+            build() {
+              const big = document.createElement("div");
+              big.className = `canvas ${format.className}`;
+              const layerHost = document.createElement("div");
+              layerHost.className = "slide-layers";
+              big.appendChild(layerHost);
+              renderLinkedInBackground(layerHost, sample.bg);
+              renderLinkedInLayout(big, id, sample.content);
+              return big;
+            },
+          });
+        };
+
+        card.addEventListener("click", open);
+        card.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            open();
+          }
+        });
+
+        card.append(stage, meta);
+        grid.appendChild(card);
+
+        const ro = new ResizeObserver(() => fitCanvas(stage, canvas, formatId));
+        ro.observe(stage);
+      }
+
+      const bgSquare = document.getElementById("bg-gallery-square");
+      const bgLand = document.getElementById("bg-gallery-landscape");
+      Object.entries(LINKEDIN_BACKGROUNDS).forEach(([id, recipe]) => {
+        makeBgCard(
+          id,
+          recipe,
+          recipe.format === "landscape" ? bgLand : bgSquare,
+        );
+      });
+
+      const lySquare = document.getElementById("ly-gallery-square");
+      const lyLand = document.getElementById("ly-gallery-landscape");
+      Object.entries(LINKEDIN_LAYOUTS).forEach(([id, layout]) => {
+        makeLyCard(
+          id,
+          layout,
+          layout.format === "landscape" ? lyLand : lySquare,
+        );
+      });
+    </script>
+  </body>
+</html>

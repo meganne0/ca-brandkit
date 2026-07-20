@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CyberArmor — Layout Recipes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Mozilla+Headline:wght@300&family=Mozilla+Text:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/light/style.css"
+    />
+    <link rel="stylesheet" href="css/slides.css?v=9" />
+  </head>
+  <body>
+    <div class="bg-gallery">
+      <header class="bg-gallery__header">
+        <h1>Layout recipes</h1>
+        <p>
+          Drag to reorder — thumbnail IDs update to LY-01, LY-02… by position.
+          <a href="index.html" style="color: var(--ca-orange)">← hub</a>
+          ·
+          <a href="slides.html" style="color: var(--ca-orange)">slides</a>
+          ·
+          <a href="backgrounds.html" style="color: var(--ca-orange)">backgrounds</a>
+          ·
+          <a href="linkedin.html" style="color: var(--ca-orange)">LinkedIn</a>
+          ·
+          <a href="tokens.html" style="color: var(--ca-orange)">colors &amp; type</a>
+        </p>
+      </header>
+      <div class="bg-gallery__grid bg-gallery__grid--slide-tiles" id="gallery"></div>
+    </div>
+
+    <script type="module">
+      import { renderBackground } from "./js/backgrounds.js?v=37";
+      import { LAYOUTS, renderLayout, refreshImageTitleLayouts } from "./js/layouts.js?v=39";
+      import { initImageLightbox } from "./js/components/lightbox.js?v=28";
+      import { LAYOUT_SAMPLES as SAMPLES } from "./js/layout-samples.js?v=2";
+
+      const gallery = document.getElementById("gallery");
+      let dragCard = null;
+
+      function padLy(n) {
+        return `LY-${String(n).padStart(2, "0")}`;
+      }
+
+      function refreshOrderNames() {
+        [...gallery.querySelectorAll(".bg-card")].forEach((card, i) => {
+          const idEl = card.querySelector(".bg-card__id");
+          if (idEl) idEl.textContent = padLy(i + 1);
+        });
+      }
+
+      function createCard(recipeId, layout) {
+        const sample = SAMPLES[recipeId];
+        if (!sample) return null;
+
+        const card = document.createElement("article");
+        card.className = "bg-card";
+        card.draggable = true;
+        card.dataset.recipeId = recipeId;
+
+        const preview = document.createElement("div");
+        preview.className = "bg-card__preview";
+        preview.style.aspectRatio = "16 / 9";
+
+        const slide = document.createElement("div");
+        slide.className = "slide";
+        slide.style.position = "absolute";
+        slide.style.inset = "0";
+        slide.style.width = "1920px";
+        slide.style.height = "1080px";
+        slide.style.transformOrigin = "top left";
+
+        const layers = document.createElement("div");
+        layers.className = "slide-layers";
+        slide.appendChild(layers);
+        preview.appendChild(slide);
+
+        const meta = document.createElement("div");
+        meta.className = "bg-card__meta";
+        meta.innerHTML = `
+          <span class="bg-card__id"></span>
+          <span class="bg-card__label">${layout.label}</span>
+        `;
+
+        card.append(preview, meta);
+
+        const scale = () => {
+          slide.style.transform = `scale(${preview.clientWidth / 1920})`;
+        };
+        new ResizeObserver(scale).observe(preview);
+        requestAnimationFrame(scale);
+
+        renderBackground(layers, sample.bg);
+        renderLayout(slide, recipeId, sample.content);
+
+        card.addEventListener("dragstart", (e) => {
+          dragCard = card;
+          card.classList.add("is-dragging");
+          e.dataTransfer.effectAllowed = "move";
+          e.dataTransfer.setData("text/plain", recipeId);
+        });
+
+        card.addEventListener("dragend", () => {
+          card.classList.remove("is-dragging");
+          gallery.querySelectorAll(".bg-card").forEach((c) => {
+            c.classList.remove("is-drag-over");
+          });
+          dragCard = null;
+          refreshOrderNames();
+        });
+
+        card.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = "move";
+          if (!dragCard || dragCard === card) return;
+          card.classList.add("is-drag-over");
+
+          const rect = card.getBoundingClientRect();
+          const before = e.clientY < rect.top + rect.height / 2;
+          gallery.insertBefore(dragCard, before ? card : card.nextSibling);
+          refreshOrderNames();
+        });
+
+        card.addEventListener("dragleave", () => {
+          card.classList.remove("is-drag-over");
+        });
+
+        card.addEventListener("drop", (e) => {
+          e.preventDefault();
+          card.classList.remove("is-drag-over");
+          refreshOrderNames();
+        });
+
+        return card;
+      }
+
+      Object.entries(LAYOUTS).forEach(([id, layout]) => {
+        const card = createCard(id, layout);
+        if (card) gallery.appendChild(card);
+      });
+
+      refreshOrderNames();
+      refreshImageTitleLayouts();
+      initImageLightbox(document);
+    </script>
+  </body>
+</html>

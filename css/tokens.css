@@ -1,0 +1,31 @@
+:root {
+  /* Brand — shared across slides + LinkedIn */
+  --ca-orange: #f25835;
+  --ca-orange-warm: #ec6b15;
+  --ca-tagline: #ffbbb8;
+  --ca-white: #ffffff;
+  --ca-purple-deep: #0a061a;
+  --ca-purple-mid: #1e0b36;
+  --ca-purple-border: #4d208c;
+  --ca-indigo: #160054;
+  --ca-blue-glow: #16305f;
+
+  /* Type families */
+  --font-headline: "Mozilla Text", system-ui, sans-serif;
+  --font-headline-display: "Mozilla Headline", "Mozilla Text", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, sans-serif;
+
+  /* Surfaces */
+  --panel-bg: rgba(18, 8, 40, 0.72);
+  --panel-border: rgba(77, 32, 140, 0.65);
+  --panel-radius: 28px;
+  --panel-stroke-gradient: linear-gradient(
+    135deg,
+    #ec6b15 0%,
+    #f72ebe 85%,
+    #2c00a5 100%
+  );
+
+  /* Asset paths */
+  --asset-base: "../visual assets";
+}
