@@ -11,7 +11,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/backgrounds.css?v=21" />
-    <link rel="stylesheet" href="css/linkedin.css?v=23" />
+    <link rel="stylesheet" href="css/linkedin.css?v=25" />
     <script src="js/auth-gate.js?v=4"></script>
   </head>
   <body>
@@ -198,7 +198,7 @@
       import {
         LINKEDIN_LAYOUTS,
         renderLinkedInLayout,
-      } from "./js/layouts-linkedin.js?v=21";
+      } from "./js/layouts-linkedin.js?v=22";
       import { downloadPaintedThumbnail } from "./js/youtube-download.js?v=2";
 
       const LAYOUT_SAMPLES = {
@@ -646,11 +646,15 @@
         closeLightbox();
         hideExMenu();
         layoutPickerGrid.replaceChildren();
-        Object.entries(LINKEDIN_LAYOUTS).forEach(([id, layout]) => {
-          if (!isCreateLayout(id)) return;
+
+        const squareRow = document.createElement("div");
+        squareRow.className = "li-layout-picker__row li-layout-picker__row--square";
+        const landscapeRow = document.createElement("div");
+        landscapeRow.className = "li-layout-picker__row li-layout-picker__row--landscape";
+
+        function appendPickerCard(id, layout, row) {
           const sample = LAYOUT_SAMPLES[id] ?? { content: {}, bg: pickBackground(layout.format) };
           const formatId = layout.format ?? "square";
-          const format = LINKEDIN_FORMATS[formatId];
           const card = document.createElement("button");
           card.type = "button";
           card.className = "li-layout-picker__card";
@@ -681,9 +685,22 @@
             closeLayoutPicker();
             createExampleFromLayout(id);
           });
-          layoutPickerGrid.appendChild(card);
+          row.appendChild(card);
           requestAnimationFrame(() => fitCanvas(stage, canvas, formatId));
+        }
+
+        Object.entries(LINKEDIN_LAYOUTS).forEach(([id, layout]) => {
+          if (!isCreateLayout(id)) return;
+          const formatId = layout.format ?? "square";
+          appendPickerCard(
+            id,
+            layout,
+            formatId === "landscape" ? landscapeRow : squareRow,
+          );
         });
+
+        if (squareRow.childElementCount) layoutPickerGrid.appendChild(squareRow);
+        if (landscapeRow.childElementCount) layoutPickerGrid.appendChild(landscapeRow);
 
         layoutPicker.hidden = false;
         document.body.classList.add("li-picker-open");

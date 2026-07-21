@@ -31,3 +31,9 @@
 .ca-footer__tagline {
   opacity: 0.72;
 }
+
+.ca-footer__url {
+  margin-left: auto;
+  opacity: 0.72;
+  white-space: nowrap;
+}

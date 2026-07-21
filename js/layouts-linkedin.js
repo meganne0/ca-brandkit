@@ -6,7 +6,7 @@
  * footer: same SlideFooter as LY kits (except LI-LY-01 + LI-LY-04)
  */
 
-import { mountSlideFooter } from "./components/footer.js?v=8";
+import { mountSlideFooter } from "./components/footer.js?v=9";
 
 const LOGO_SRC = "/visual%20assets/logo/logo-horizontal-white-orange.svg";
 const LOGO_MARK_SRC = "/visual%20assets/logo/logo-vertical-white-orange.svg";

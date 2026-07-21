@@ -2,7 +2,7 @@
 @import url("./type-linkedin.css?v=21");
 @import url("./type.css?v=21");
 @import url("./backgrounds.css?v=21");
-@import url("./components/footer.css?v=21");
+@import url("./components/footer.css?v=22");
 
 *,
 *::before,
@@ -138,7 +138,8 @@ body.li-lightbox-open {
   width: 150px;
 }
 
-.canvas--li-landscape .ca-footer__tagline {
+.canvas--li-landscape .ca-footer__tagline,
+.canvas--li-landscape .ca-footer__url {
   font-size: 16px;
 }
 
@@ -836,15 +837,30 @@ body.li-editor-open {
 }
 
 .li-layout-picker__grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(240px, 280px));
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: 20px;
-  justify-content: center;
   width: 100%;
   max-height: min(68vh, 100%);
   overflow: auto;
   padding: 8px 12px 16px;
   box-sizing: border-box;
+}
+
+.li-layout-picker__row {
+  display: grid;
+  gap: 20px;
+  justify-content: center;
+  width: 100%;
+}
+
+.li-layout-picker__row--square {
+  grid-template-columns: repeat(2, minmax(220px, 260px));
+}
+
+.li-layout-picker__row--landscape {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 280px));
 }
 
 .li-layout-picker__card {
@@ -875,6 +891,8 @@ body.li-editor-open {
   overflow: hidden;
   border-radius: 10px;
   background: #2c2c2c;
+  /* Don't inherit modal/card text-align — keep each layout's real alignment */
+  text-align: left;
 }
 
 .li-layout-picker__stage--landscape {
@@ -883,6 +901,7 @@ body.li-editor-open {
 
 .li-layout-picker__stage .canvas {
   transform-origin: top left;
+  text-align: initial;
 }
 
 .li-layout-picker__meta {

@@ -1,4 +1,4 @@
-import { mountSlideFooter } from "./components/footer.js?v=28";
+import { mountSlideFooter } from "./components/footer.js?v=29";
 import { initImageLightbox } from "./components/lightbox.js?v=28";
 
 const LOGO_COVER_SRC = "/visual%20assets/logo/logo-vertical-white-orange.svg";
