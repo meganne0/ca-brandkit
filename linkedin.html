@@ -11,7 +11,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/backgrounds.css?v=21" />
-    <link rel="stylesheet" href="css/linkedin.css?v=25" />
+    <link rel="stylesheet" href="css/linkedin.css?v=27" />
     <script src="js/auth-gate.js?v=4"></script>
   </head>
   <body>
@@ -46,10 +46,18 @@
           Examples · composed posts
         </h2>
         <p class="li-ex-hint">
-          Left-click to edit · Right-click to duplicate or download
+          Left-click to edit · Right-click to duplicate, download, or delete
         </p>
         <div class="bg-gallery__grid bg-gallery__grid--tiles-li" id="ex-gallery"></div>
       </section>
+
+      <details class="li-collapse bg-gallery__section" id="li-dx-section" open>
+        <summary class="li-collapse__summary">
+          <span class="bg-gallery__section-title" id="li-dx">Decor · LI-DX</span>
+          <span class="li-collapse__hint">Optional overlays · click to collapse</span>
+        </summary>
+        <div class="bg-gallery__grid bg-gallery__grid--tiles" id="dx-gallery"></div>
+      </details>
 
       <details class="li-collapse bg-gallery__section" id="li-ly-square-section">
         <summary class="li-collapse__summary">
@@ -100,7 +108,7 @@
           <div>
             <p class="li-layout-picker__eyebrow">New image</p>
             <h2 id="li-layout-picker-title">Choose a layout</h2>
-            <p>A matching background is assigned automatically. You can change it in the editor.</p>
+            <p>A matching background is assigned automatically. You can change background and decor in the editor.</p>
           </div>
           <button
             type="button"
@@ -140,7 +148,7 @@
               class="li-editor__btn li-editor__btn--ghost"
               id="li-editor-close"
             >
-              Close
+              Save and Close
             </button>
           </div>
         </header>
@@ -185,6 +193,9 @@
       <button type="button" class="li-ex-menu__item" role="menuitem" data-action="download">
         Download PNG
       </button>
+      <button type="button" class="li-ex-menu__item li-ex-menu__item--danger" role="menuitem" data-action="delete">
+        Delete
+      </button>
     </div>
 
     <input type="file" id="li-file-input" accept="image/*" hidden />
@@ -199,6 +210,10 @@
         LINKEDIN_LAYOUTS,
         renderLinkedInLayout,
       } from "./js/layouts-linkedin.js?v=22";
+      import {
+        LINKEDIN_DECORS,
+        renderLinkedInDecor,
+      } from "./js/decor-linkedin.js?v=1";
       import { downloadPaintedThumbnail } from "./js/youtube-download.js?v=2";
 
       const LAYOUT_SAMPLES = {
@@ -333,6 +348,42 @@
       /** Square layouts kept in examples + create picker; all landscape stay. */
       const CREATE_SQUARE_LAYOUTS = new Set(["LI-LY-02", "LI-LY-12"]);
 
+      /** Curated posts — copy kept verbatim (split across title/body at sentence breaks only). */
+      const CURATED_EXAMPLES = [
+        {
+          label: "CRA kit rebrand",
+          layout: "LI-LY-09",
+          bg: "LI-BG-06",
+          content: {
+            title: "Cybercrime is a franchised business.",
+            body: "In this case, the hackers got lazy: they slapped a CRA logo on the page, but named the file CRA_1099.pdf (a US tax form) and left US Social Security text in the footer. It was clearly an American phishing kit rebranded for Canada.",
+            placeholder: "Screenshot",
+          },
+        },
+        {
+          label: "Ethereum C2",
+          layout: "LI-LY-06",
+          bg: "LI-BG-05",
+          content: {
+            title:
+              "we're seeing some malware families use Ethereum smart contracts to help them find their way home.",
+            body: "Instead of relying on infrastructure that can disappear overnight, they can store instructions in a place that's public, decentralized, and extremely difficult to remove.",
+          },
+        },
+        {
+          label: "ClickFix · Hunt Graph",
+          layout: "LI-LY-09",
+          bg: "LI-BG-07",
+          decor: "LI-DX-01",
+          content: {
+            title:
+              "The Polygon-based ClickFix campaign we documented this week rotates infrastructure by updating a smart contract, not by touching every compromised site.",
+            body: "That's exactly the kind of infrastructure-level pattern DarkArmor's Hunt Graph is built to surface: not a single flagged domain, but the actor, the campaign, and the infrastructure chain behind it.",
+            placeholder: "Screenshot",
+          },
+        },
+      ];
+
       function isCreateLayout(layoutId) {
         const layout = LINKEDIN_LAYOUTS[layoutId];
         if (!layout) return false;
@@ -380,23 +431,36 @@
         canvas.className = `canvas ${format.className}`;
         canvas.dataset.bg = example.bg;
         canvas.dataset.layout = layoutId;
+        if (example.decor) canvas.dataset.decor = example.decor;
+        else delete canvas.dataset.decor;
         canvas.replaceChildren();
         const layers = document.createElement("div");
         layers.className = "slide-layers";
         canvas.appendChild(layers);
         renderLinkedInBackground(layers, example.bg);
         renderLinkedInLayout(canvas, layoutId, example.content ?? {});
+        if (example.decor) renderLinkedInDecor(canvas, example.decor);
       }
 
-      let examples = Object.entries(LAYOUT_SAMPLES)
-        .filter(([layout]) => isCreateLayout(layout))
-        .map(([layout, sample], i) => ({
+      let examples = [
+        ...CURATED_EXAMPLES.map((ex, i) => ({
           id: `EX-${String(i + 1).padStart(2, "0")}`,
-          label: LINKEDIN_LAYOUTS[layout]?.label ?? layout,
-          layout,
-          bg: sample.bg,
-          content: clone(sample.content),
-        }));
+          label: ex.label,
+          layout: ex.layout,
+          bg: ex.bg,
+          decor: ex.decor,
+          content: clone(ex.content),
+        })),
+        ...Object.entries(LAYOUT_SAMPLES)
+          .filter(([layout]) => isCreateLayout(layout))
+          .map(([layout, sample], i) => ({
+            id: `EX-${String(CURATED_EXAMPLES.length + i + 1).padStart(2, "0")}`,
+            label: LINKEDIN_LAYOUTS[layout]?.label ?? layout,
+            layout,
+            bg: sample.bg,
+            content: clone(sample.content),
+          })),
+      ];
 
       let nextExNum = examples.length + 1;
       let editorState = null;
@@ -486,6 +550,14 @@
         document.body.classList.remove("li-editor-open");
       }
 
+      function saveAndCloseEditor() {
+        if (editorState) {
+          readEditorForm(editorState.example);
+          refreshExampleCard(editorState.example);
+        }
+        closeEditor();
+      }
+
       function closeLayoutPicker() {
         layoutPicker.hidden = true;
         layoutPickerGrid.replaceChildren();
@@ -510,6 +582,23 @@
             <span>Background</span>
             <select id="li-field-bg" name="bg" class="li-editor__select">
               ${bgOptions}
+            </select>
+          </label>
+        `);
+
+        const decorOptions = [
+          `<option value=""${!example.decor ? " selected" : ""}>None</option>`,
+          ...Object.entries(LINKEDIN_DECORS).map(
+            ([id, recipe]) =>
+              `<option value="${id}"${example.decor === id ? " selected" : ""}>${id} · ${recipe.label}</option>`,
+          ),
+        ].join("");
+
+        rows.push(`
+          <label class="li-editor__field" for="li-field-decor">
+            <span>Decor</span>
+            <select id="li-field-decor" name="decor" class="li-editor__select">
+              ${decorOptions}
             </select>
           </label>
         `);
@@ -543,9 +632,11 @@
         const c = example.content;
         const bgEl = editorForm.elements.namedItem("bg");
         if (bgEl) example.bg = bgEl.value;
+        const decorEl = editorForm.elements.namedItem("decor");
+        if (decorEl) example.decor = decorEl.value || undefined;
 
         [...editorForm.elements].forEach((el) => {
-          if (!el.name || el.name === "bg") return;
+          if (!el.name || el.name === "bg" || el.name === "decor") return;
           c[el.name] = el.value;
         });
       }
@@ -718,7 +809,7 @@
         card.setAttribute("role", "button");
         card.setAttribute(
           "aria-label",
-          `Edit ${example.id}. Right-click to duplicate or download.`,
+          `Edit ${example.id}. Right-click to duplicate, download, or delete.`,
         );
 
         const stage = document.createElement("div");
@@ -893,18 +984,74 @@
         new ResizeObserver(() => fitCanvas(stage, canvas, formatId)).observe(stage);
       }
 
+      function makeDxCard(id, recipe, grid) {
+        const formatId = "square";
+        const format = LINKEDIN_FORMATS[formatId];
+        const bgId = "LI-BG-01";
+
+        const card = document.createElement("article");
+        card.className = "bg-card";
+        card.style.cursor = "zoom-in";
+        card.tabIndex = 0;
+        card.setAttribute("role", "button");
+        card.setAttribute("aria-label", `Preview ${id}`);
+
+        const stage = document.createElement("div");
+        stage.className = "li-preview-stage";
+        const canvas = document.createElement("div");
+        canvas.className = `canvas ${format.className}`;
+        const layers = document.createElement("div");
+        layers.className = "slide-layers";
+        canvas.appendChild(layers);
+        renderLinkedInBackground(layers, bgId);
+        renderLinkedInDecor(canvas, id);
+        stage.appendChild(canvas);
+
+        const meta = document.createElement("div");
+        meta.className = "bg-card__meta";
+        meta.innerHTML = `
+          <span class="bg-card__id">${id}</span>
+          <span class="bg-card__label">${recipe.label}</span>
+          <span class="bg-card__desc">${recipe.description}</span>
+        `;
+
+        const open = () => {
+          openLightbox({
+            id,
+            label: recipe.label,
+            formatId,
+            build() {
+              const big = document.createElement("div");
+              big.className = `canvas ${format.className}`;
+              const layerHost = document.createElement("div");
+              layerHost.className = "slide-layers";
+              big.appendChild(layerHost);
+              renderLinkedInBackground(layerHost, bgId);
+              renderLinkedInDecor(big, id);
+              return big;
+            },
+          });
+        };
+
+        card.addEventListener("click", open);
+        card.addEventListener("keydown", (e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            open();
+          }
+        });
+        card.append(stage, meta);
+        grid.appendChild(card);
+        requestAnimationFrame(() => fitCanvas(stage, canvas, formatId));
+        new ResizeObserver(() => fitCanvas(stage, canvas, formatId)).observe(stage);
+      }
+
       /* Events */
       document.getElementById("li-create-btn").addEventListener("click", openLayoutPicker);
       document.getElementById("li-layout-picker-close").addEventListener("click", closeLayoutPicker);
       layoutPicker.querySelector(".li-layout-picker__backdrop").addEventListener("click", closeLayoutPicker);
-      document.getElementById("li-editor-close").addEventListener("click", () => {
-        if (editorState) refreshExampleCard(editorState.example);
-        closeEditor();
-      });
-      editor.querySelector(".li-editor__backdrop").addEventListener("click", () => {
-        if (editorState) refreshExampleCard(editorState.example);
-        closeEditor();
-      });
+      document.getElementById("li-editor-close").addEventListener("click", saveAndCloseEditor);
+      editor.querySelector(".li-editor__backdrop").addEventListener("click", saveAndCloseEditor);
       document.getElementById("li-editor-download").addEventListener("click", async () => {
         if (!editorState) return;
         const btn = document.getElementById("li-editor-download");
@@ -971,6 +1118,11 @@
           openEditor(copy);
         }
         if (action === "download") await downloadExample(example);
+        if (action === "delete") {
+          if (editorState?.example?.id === example.id) closeEditor();
+          examples = examples.filter((x) => x.id !== example.id);
+          renderExamples();
+        }
       });
 
       document.addEventListener("click", (e) => {
@@ -981,8 +1133,7 @@
       document.addEventListener("keydown", (e) => {
         if (e.key !== "Escape") return;
         if (!editor.hidden) {
-          if (editorState) refreshExampleCard(editorState.example);
-          closeEditor();
+          saveAndCloseEditor();
           return;
         }
         if (!layoutPicker.hidden) {
@@ -1022,6 +1173,11 @@
       const lyLand = document.getElementById("ly-gallery-landscape");
       Object.entries(LINKEDIN_LAYOUTS).forEach(([id, layout]) => {
         makeLyCard(id, layout, layout.format === "landscape" ? lyLand : lySquare);
+      });
+
+      const dxGrid = document.getElementById("dx-gallery");
+      Object.entries(LINKEDIN_DECORS).forEach(([id, recipe]) => {
+        makeDxCard(id, recipe, dxGrid);
       });
     </script>
   </body>
