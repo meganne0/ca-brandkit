@@ -188,10 +188,16 @@ function renderQuotePortrait(content, { landscape = false } = {}) {
 function mediaBlock(content) {
   const placeholder = content.placeholder ?? "Image";
   if (content.image) {
+    const fit = content.imageFit === "contain" ? "contain" : "cover";
+    const hasAspect = fit === "contain" && content.imageAspect;
+    const frameClass = hasAspect ? " li-layout-media__frame--contain" : "";
+    const aspectStyle = hasAspect
+      ? ` style="--li-media-aspect:${content.imageAspect}"`
+      : "";
     return `
       <div class="li-layout-media__media">
-        <div class="li-layout-media__frame">
-          <img class="li-layout-media__img" src="${content.image}" alt="" />
+        <div class="li-layout-media__frame${frameClass}"${aspectStyle}>
+          <img class="li-layout-media__img li-layout-media__img--${fit}" src="${content.image}" alt="" />
         </div>
       </div>
     `;
@@ -207,7 +213,11 @@ function mediaBlock(content) {
 
 function renderMedia(content, side = "left") {
   const el = document.createElement("div");
-  el.className = `li-content li-layout-media li-layout-media--${side}`;
+  const natural =
+    content.image && content.imageFit === "contain"
+      ? " li-layout-media--natural"
+      : "";
+  el.className = `li-content li-layout-media li-layout-media--${side}${natural}`;
   const label = content.label ?? "";
   const title = content.title ?? content.headline ?? "";
   const body = content.body ?? content.subtitle ?? "";

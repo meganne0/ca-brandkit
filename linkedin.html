@@ -11,7 +11,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/backgrounds.css?v=21" />
-    <link rel="stylesheet" href="css/linkedin.css?v=27" />
+    <link rel="stylesheet" href="css/linkedin.css?v=28" />
     <script src="js/auth-gate.js?v=4"></script>
   </head>
   <body>
@@ -209,7 +209,7 @@
       import {
         LINKEDIN_LAYOUTS,
         renderLinkedInLayout,
-      } from "./js/layouts-linkedin.js?v=22";
+      } from "./js/layouts-linkedin.js?v=23";
       import {
         LINKEDIN_DECORS,
         renderLinkedInDecor,
@@ -634,10 +634,36 @@
         if (bgEl) example.bg = bgEl.value;
         const decorEl = editorForm.elements.namedItem("decor");
         if (decorEl) example.decor = decorEl.value || undefined;
+        const fitEl = document.getElementById("li-field-imageFit");
+        if (fitEl) c.imageFit = fitEl.checked ? "contain" : "cover";
 
         [...editorForm.elements].forEach((el) => {
           if (!el.name || el.name === "bg" || el.name === "decor") return;
           c[el.name] = el.value;
+        });
+      }
+
+      function readFileAsDataUrl(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      }
+
+      function measureImageAspect(url) {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.onload = () => {
+            if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+              resolve(img.naturalWidth / img.naturalHeight);
+            } else {
+              resolve(undefined);
+            }
+          };
+          img.onerror = () => resolve(undefined);
+          img.src = url;
         });
       }
 
@@ -649,16 +675,27 @@
             `<button type="button" class="li-editor__slot-btn" data-slot="avatar">Replace speaker avatar</button>`,
           );
         }
-        if (
+        const hasImage =
           example.layout === "LI-LY-08" ||
           example.layout === "LI-LY-09" ||
           example.layout === "LI-LY-10" ||
           c.image !== undefined ||
-          c.placeholder !== undefined
-        ) {
+          c.placeholder !== undefined;
+        if (hasImage) {
           slots.push(
             `<button type="button" class="li-editor__slot-btn" data-slot="image">Replace media image</button>`,
           );
+          slots.push(`
+            <label class="li-editor__check" for="li-field-imageFit">
+              <input
+                type="checkbox"
+                id="li-field-imageFit"
+                name="imageFit"
+                value="contain"${c.imageFit === "contain" ? " checked" : ""}
+              />
+              <span>Keep original image ratio</span>
+            </label>
+          `);
         }
         editorSlots.innerHTML = slots.length
           ? `<p class="li-editor__slots-title">Images</p>${slots.join("")}`
@@ -1071,9 +1108,26 @@
         paintEditorPreview();
         refreshExampleCard(editorState.example);
       });
-      editorForm.addEventListener("change", () => {
+      editorForm.addEventListener("change", async () => {
         if (!editorState) return;
         readEditorForm(editorState.example);
+        const c = editorState.example.content;
+        if (c.imageFit === "contain" && c.image && !c.imageAspect) {
+          const aspect = await measureImageAspect(c.image);
+          if (aspect) c.imageAspect = aspect;
+        }
+        paintEditorPreview();
+        refreshExampleCard(editorState.example);
+      });
+
+      editorSlots.addEventListener("change", async (e) => {
+        if (!editorState || e.target?.name !== "imageFit") return;
+        readEditorForm(editorState.example);
+        const c = editorState.example.content;
+        if (c.imageFit === "contain" && c.image && !c.imageAspect) {
+          const aspect = await measureImageAspect(c.image);
+          if (aspect) c.imageAspect = aspect;
+        }
         paintEditorPreview();
         refreshExampleCard(editorState.example);
       });
@@ -1085,25 +1139,27 @@
         fileInput.click();
       });
 
-      fileInput.addEventListener("change", () => {
+      fileInput.addEventListener("change", async () => {
         const file = fileInput.files?.[0];
         fileInput.value = "";
         if (!file || !editorState || !replaceTarget) return;
-        const reader = new FileReader();
         const slot = replaceTarget;
         replaceTarget = null;
-        reader.onload = () => {
-          const url = reader.result;
+        try {
+          const url = await readFileAsDataUrl(file);
           if (typeof url !== "string" || !editorState) return;
           if (slot === "avatar") {
             editorState.example.content.avatar = url;
           } else if (slot === "image") {
             editorState.example.content.image = url;
+            const aspect = await measureImageAspect(url);
+            if (aspect) editorState.example.content.imageAspect = aspect;
           }
           paintEditorPreview();
           refreshExampleCard(editorState.example);
-        };
-        reader.readAsDataURL(file);
+        } catch {
+          /* ignore failed reads */
+        }
       });
 
       exMenu.addEventListener("click", async (e) => {
