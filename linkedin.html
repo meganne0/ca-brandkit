@@ -214,7 +214,7 @@
         LINKEDIN_DECORS,
         renderLinkedInDecor,
       } from "./js/decor-linkedin.js?v=1";
-      import { downloadPaintedThumbnail } from "./js/youtube-download.js?v=2";
+      import { downloadPaintedThumbnail } from "./js/youtube-download.js?v=4";
 
       const LAYOUT_SAMPLES = {
         "LI-LY-01": {
@@ -1089,15 +1089,21 @@
         const file = fileInput.files?.[0];
         fileInput.value = "";
         if (!file || !editorState || !replaceTarget) return;
-        const url = URL.createObjectURL(file);
-        if (replaceTarget === "avatar") {
-          editorState.example.content.avatar = url;
-        } else if (replaceTarget === "image") {
-          editorState.example.content.image = url;
-        }
+        const reader = new FileReader();
+        const slot = replaceTarget;
         replaceTarget = null;
-        paintEditorPreview();
-        refreshExampleCard(editorState.example);
+        reader.onload = () => {
+          const url = reader.result;
+          if (typeof url !== "string" || !editorState) return;
+          if (slot === "avatar") {
+            editorState.example.content.avatar = url;
+          } else if (slot === "image") {
+            editorState.example.content.image = url;
+          }
+          paintEditorPreview();
+          refreshExampleCard(editorState.example);
+        };
+        reader.readAsDataURL(file);
       });
 
       exMenu.addEventListener("click", async (e) => {

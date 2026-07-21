@@ -26,6 +26,31 @@ export async function waitForImages(root) {
   );
 }
 
+/** blob: URLs often fail inside html-to-image clones — rewrite as data URLs. */
+async function inlineBlobImages(root) {
+  const imgs = [...root.querySelectorAll("img")].filter((img) =>
+    (img.currentSrc || img.src || "").startsWith("blob:"),
+  );
+  await Promise.all(
+    imgs.map(async (img) => {
+      const src = img.currentSrc || img.src;
+      try {
+        const res = await fetch(src);
+        const blob = await res.blob();
+        const dataUrl = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(blob);
+        });
+        img.src = dataUrl;
+      } catch {
+        /* leave original src */
+      }
+    }),
+  );
+}
+
 async function waitForFonts() {
   if (!document.fonts?.ready) return;
   try {
@@ -69,6 +94,7 @@ export async function downloadElementPng(el, filename, opts = {}) {
   const height = opts.height ?? DESIGN_H;
   const scale = opts.pixelRatio ?? EXPORT_SCALE;
 
+  await inlineBlobImages(el);
   await waitForImages(el);
   await waitForFonts();
   await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
