@@ -150,6 +150,26 @@ body {
   color: var(--ca-orange);
 }
 
+.hub-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.hub-card__top .hub__badge {
+  flex-shrink: 0;
+}
+
+.hub-card--progress {
+  border-style: dashed;
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.hub-card--progress:hover {
+  border-style: solid;
+}
+
 .hub-card__title {
   margin: 0;
   font-family: var(--font-headline);

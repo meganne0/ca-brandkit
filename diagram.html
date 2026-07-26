@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CyberArmor — Diagram Creator</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Mozilla+Headline:wght@300&family=Mozilla+Text:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/diagram.css?v=4" />
+    <script src="js/auth-gate.js?v=4"></script>
+  </head>
+  <body>
+    <div class="diagram-page">
+      <header class="diagram-page__header">
+        <div class="diagram-page__title-row">
+          <h1>Diagram Creator</h1>
+          <span class="diagram-badge">In Progress</span>
+        </div>
+        <p>
+          Upload a diagram screenshot — we recover its structure and redraw it in
+          CyberArmor style without changing the information architecture.
+          <a class="gallery-nav" href="index.html">← hub</a>
+          ·
+          <a class="gallery-nav" href="linkedin.html">LinkedIn</a>
+          ·
+          <a class="gallery-nav" href="youtube.html">YouTube</a>
+        </p>
+      </header>
+
+      <main class="diagram-page__main">
+        <section class="diagram-panel" aria-labelledby="diagram-upload-title">
+          <h2 class="diagram-panel__title" id="diagram-upload-title">Source</h2>
+          <p class="diagram-panel__lead">
+            The upload is the source of truth. We preserve nodes, labels, groups,
+            connectors, and arrow direction — then restyle colors, type, borders,
+            and polish. We never merge, split, rewrite, invent, or simplify.
+          </p>
+          <p class="diagram-status" id="diagram-status" hidden></p>
+
+          <label class="diagram-drop" id="diagram-drop" for="diagram-file">
+            <input
+              id="diagram-file"
+              type="file"
+              accept="image/png,image/jpeg,image/webp,image/gif"
+              hidden
+            />
+            <span class="diagram-drop__icon" aria-hidden="true">↑</span>
+            <span class="diagram-drop__label">Drop diagram or click to upload</span>
+            <span class="diagram-drop__hint">PNG · JPG · WebP · structure preserved, style only</span>
+          </label>
+
+          <div class="diagram-controls">
+            <label class="diagram-field">
+              <span class="diagram-field__label">Optional title</span>
+              <input
+                id="diagram-title"
+                class="diagram-field__input"
+                type="text"
+                placeholder="e.g. ClickFix attack chain"
+                maxlength="80"
+              />
+            </label>
+            <div class="diagram-actions">
+              <button type="button" class="diagram-btn diagram-btn--primary" id="diagram-remake" disabled>
+                Remake in brand style
+              </button>
+              <button type="button" class="diagram-btn" id="diagram-download" disabled>
+                Download PNG
+              </button>
+              <button type="button" class="diagram-btn diagram-btn--ghost" id="diagram-clear" disabled>
+                Clear
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="diagram-preview" aria-labelledby="diagram-preview-title">
+          <h2 class="diagram-panel__title" id="diagram-preview-title">Preview</h2>
+          <div class="diagram-stages">
+            <figure class="diagram-stage">
+              <figcaption class="diagram-stage__cap">Original</figcaption>
+              <div class="diagram-stage__frame" id="diagram-original">
+                <p class="diagram-stage__empty">No upload yet</p>
+              </div>
+            </figure>
+            <figure class="diagram-stage">
+              <figcaption class="diagram-stage__cap">Brand remake</figcaption>
+              <div class="diagram-stage__frame diagram-stage__frame--canvas" id="diagram-remade">
+                <p class="diagram-stage__empty">Remake appears here</p>
+              </div>
+            </figure>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="js/diagram.js?v=6"></script>
+  </body>
+</html>

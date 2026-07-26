@@ -11,7 +11,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/backgrounds.css?v=21" />
-    <link rel="stylesheet" href="css/linkedin.css?v=28" />
+    <link rel="stylesheet" href="css/linkedin.css?v=33" />
     <script src="js/auth-gate.js?v=4"></script>
   </head>
   <body>
@@ -156,7 +156,7 @@
           <div class="li-editor__preview-wrap">
             <div class="li-editor__stage" id="li-editor-stage"></div>
             <p class="li-editor__preview-hint">
-              Click an avatar or media image on the preview to replace it
+              Click an avatar or media image on the preview to replace it, or pick from the library in the panel.
             </p>
           </div>
           <aside class="li-editor__panel">
@@ -209,12 +209,58 @@
       import {
         LINKEDIN_LAYOUTS,
         renderLinkedInLayout,
-      } from "./js/layouts-linkedin.js?v=23";
+      } from "./js/layouts-linkedin.js?v=25";
       import {
         LINKEDIN_DECORS,
         renderLinkedInDecor,
       } from "./js/decor-linkedin.js?v=1";
       import { downloadPaintedThumbnail } from "./js/youtube-download.js?v=4";
+
+      const SPEAKERS = [
+        {
+          id: "nguyen",
+          name: "Nguyen Nguyen",
+          role: "CEO",
+          avatar: "/visual%20assets/avatars/avatar-nguyen-circle.png",
+        },
+        {
+          id: "ali",
+          name: "Ali Alame",
+          role: "CTO",
+          avatar: "/visual%20assets/avatars/avatar-ali-circle.png",
+        },
+        {
+          id: "meganne",
+          name: "Meganne Ohata",
+          role: "CXO",
+          avatar: "/visual%20assets/avatars/avatar-meganne-circle.png",
+        },
+      ];
+
+      const SCREENSHOT_FILES = [
+        "CRA phish that downloads installer for legitimate remote monitoring and management tool pre-configured to connect back to attackers console.png",
+        "Eviltokens phish with HR department and Docusign for _Salary Adjustment Document_ the victim successfully logs in themselves. The attacker captures the session token and reuses it to impersonate the user without triggering a normal MFA challenge..png",
+        "Example of acces token that is sent to the threat actor as captured on cyberarmor platform.png",
+        "PhaaS-Kali365-microsoftphish screenshot with a pdf attachment and verification code.png",
+        "Phish campaign impersonnating SSA which installs remotePC, a legit remote access tool. Once an attacker has remote access to a machine, they can access files, monitor activity, and collect credentials. And because RemotePC is legitimate software, i.png",
+        "Purchase of recently expired, clean domains.png",
+        "Using bitcoin to pay for expired domains.png",
+        "Youtube channel that teaches how to install windows illegally using license activator (KMS), which actually downloads an infostealer that steals credentials and takes screenshots.png",
+        "kali365 product marketing using tokenvault - pricing tiers including a free version with basic support, 1 api key and 5 sessions, 100 api calls a day.png",
+        "kali365 product marketing using tokenvault - screenshot showing the phishing bait for report_2026.xlsx with a verification code for microsoft sign in.png",
+        "kali365 product marketing using tokenvault - supported azure services and login.png",
+        "kali365 product marketing using tokenvault - top of the page.png",
+        "the _license killer_ kms tool that the youtube channel references.png",
+      ];
+
+      const SCREENSHOTS = SCREENSHOT_FILES.map((file) => {
+        const label = file.replace(/\.png$/i, "");
+        return {
+          id: file,
+          label: label.length > 48 ? `${label.slice(0, 46).trim()}…` : label,
+          src: `/visual%20assets/screenshots/${encodeURIComponent(file)}`,
+        };
+      });
 
       const LAYOUT_SAMPLES = {
         "LI-LY-01": {
@@ -323,6 +369,29 @@
             attribution: "Nguyen Nguyen, CEO",
             speaker: "Nguyen Nguyen",
             avatar: "visual%20assets/avatars/avatar-nguyen-circle.png",
+          },
+        },
+        "LI-LY-14": {
+          bg: "LI-BG-05",
+          content: {
+            title: "How identity attacks unfold",
+            columns: [
+              {
+                number: "1",
+                title: "Collect",
+                body: "Threat actors harvest credentials and session material at scale.",
+              },
+              {
+                number: "2",
+                title: "Deliver",
+                body: "Kits and lures move the payload into the victim’s environment.",
+              },
+              {
+                number: "3",
+                title: "Exploit",
+                body: "Stolen sessions bypass MFA and turn access into impact.",
+              },
+            ],
           },
         },
       };
@@ -625,6 +694,37 @@
           }
         });
 
+        if (Array.isArray(c.columns) || example.layout === "LI-LY-14") {
+          if (c.title === undefined && example.layout === "LI-LY-14") {
+            rows.push(`
+              <label class="li-editor__field" for="li-field-title">
+                <span>Title</span>
+                <input id="li-field-title" name="title" type="text" value="" />
+              </label>
+            `);
+          }
+          const columns = Array.isArray(c.columns) ? c.columns : [{}, {}, {}];
+          for (let i = 0; i < 3; i++) {
+            const col = columns[i] ?? {};
+            const n = i + 1;
+            rows.push(`<p class="li-editor__group-label">Column ${n}</p>`);
+            rows.push(`
+              <label class="li-editor__field" for="li-field-col-${i}-number">
+                <span>Number</span>
+                <input id="li-field-col-${i}-number" name="col-${i}-number" type="text" value="${escapeAttr(col.number ?? String(n))}" />
+              </label>
+              <label class="li-editor__field" for="li-field-col-${i}-title">
+                <span>Column title</span>
+                <input id="li-field-col-${i}-title" name="col-${i}-title" type="text" value="${escapeAttr(col.title ?? "")}" />
+              </label>
+              <label class="li-editor__field" for="li-field-col-${i}-body">
+                <span>Body</span>
+                <textarea id="li-field-col-${i}-body" name="col-${i}-body" rows="3">${escapeHtml(col.body ?? "")}</textarea>
+              </label>
+            `);
+          }
+        }
+
         editorForm.innerHTML = rows.join("");
       }
 
@@ -637,10 +737,27 @@
         const fitEl = document.getElementById("li-field-imageFit");
         if (fitEl) c.imageFit = fitEl.checked ? "contain" : "cover";
 
+        const colFields = {};
         [...editorForm.elements].forEach((el) => {
           if (!el.name || el.name === "bg" || el.name === "decor") return;
+          const colMatch = /^col-(\d)-(number|title|body)$/.exec(el.name);
+          if (colMatch) {
+            const idx = Number(colMatch[1]);
+            const key = colMatch[2];
+            if (!colFields[idx]) colFields[idx] = {};
+            colFields[idx][key] = el.value;
+            return;
+          }
           c[el.name] = el.value;
         });
+
+        if (Object.keys(colFields).length || example.layout === "LI-LY-14") {
+          c.columns = [0, 1, 2].map((i) => ({
+            number: colFields[i]?.number ?? c.columns?.[i]?.number ?? String(i + 1),
+            title: colFields[i]?.title ?? c.columns?.[i]?.title ?? "",
+            body: colFields[i]?.body ?? c.columns?.[i]?.body ?? "",
+          }));
+        }
       }
 
       function readFileAsDataUrl(file) {
@@ -667,25 +784,89 @@
         });
       }
 
+      function activeSpeakerId(content = {}) {
+        const hit = SPEAKERS.find(
+          (s) =>
+            s.avatar === content.avatar ||
+            s.name === content.speaker ||
+            (content.attribution && content.attribution.startsWith(s.name)),
+        );
+        return hit?.id ?? "";
+      }
+
+      function applySpeaker(example, speakerId) {
+        const speaker = SPEAKERS.find((s) => s.id === speakerId);
+        if (!speaker) return;
+        const c = example.content;
+        c.avatar = speaker.avatar;
+        c.speaker = speaker.name;
+        c.attribution = `${speaker.name}, ${speaker.role}`;
+      }
+
+      function applyLibraryImage(example, src) {
+        const c = example.content;
+        c.image = src;
+        return measureImageAspect(src).then((aspect) => {
+          if (aspect) c.imageAspect = aspect;
+        });
+      }
+
       function buildEditorSlots(example) {
         const c = example.content ?? {};
-        const slots = [];
-        if (c.avatar !== undefined || example.layout === "LI-LY-12" || example.layout === "LI-LY-13") {
-          slots.push(
-            `<button type="button" class="li-editor__slot-btn" data-slot="avatar">Replace speaker avatar</button>`,
-          );
-        }
+        const parts = [];
+        const hasAvatar =
+          c.avatar !== undefined ||
+          example.layout === "LI-LY-12" ||
+          example.layout === "LI-LY-13";
         const hasImage =
           example.layout === "LI-LY-08" ||
           example.layout === "LI-LY-09" ||
           example.layout === "LI-LY-10" ||
           c.image !== undefined ||
           c.placeholder !== undefined;
-        if (hasImage) {
-          slots.push(
-            `<button type="button" class="li-editor__slot-btn" data-slot="image">Replace media image</button>`,
+
+        if (hasAvatar) {
+          const active = activeSpeakerId(c);
+          parts.push(`
+            <label class="li-editor__field" for="li-field-speaker">
+              <span>Speaker</span>
+              <select id="li-field-speaker" name="speakerPick" class="li-editor__select">
+                <option value=""${!active ? " selected" : ""}>Custom / none</option>
+                ${SPEAKERS.map(
+                  (s) =>
+                    `<option value="${s.id}"${active === s.id ? " selected" : ""}>${escapeHtml(s.name)}</option>`,
+                ).join("")}
+              </select>
+            </label>
+          `);
+          parts.push(
+            `<button type="button" class="li-editor__slot-btn" data-slot="avatar">Upload custom avatar</button>`,
           );
-          slots.push(`
+        }
+
+        if (hasImage) {
+          const activeShot = c.image || "";
+          const shotInLibrary = SCREENSHOTS.some((shot) => shot.src === activeShot);
+          parts.push(`
+            <label class="li-editor__field" for="li-field-shot">
+              <span>Media image</span>
+              <select id="li-field-shot" name="shotPick" class="li-editor__select">
+                <option value=""${!shotInLibrary ? " selected" : ""}>${
+                  activeShot && !shotInLibrary ? "Custom upload" : "Choose a screenshot…"
+                }</option>
+                ${SCREENSHOTS.map(
+                  (shot) =>
+                    `<option value="${escapeAttr(shot.src)}"${
+                      activeShot === shot.src ? " selected" : ""
+                    }>${escapeHtml(shot.label)}</option>`,
+                ).join("")}
+              </select>
+            </label>
+          `);
+          parts.push(
+            `<button type="button" class="li-editor__slot-btn" data-slot="image">Upload custom image</button>`,
+          );
+          parts.push(`
             <label class="li-editor__check" for="li-field-imageFit">
               <input
                 type="checkbox"
@@ -697,9 +878,8 @@
             </label>
           `);
         }
-        editorSlots.innerHTML = slots.length
-          ? `<p class="li-editor__slots-title">Images</p>${slots.join("")}`
-          : "";
+
+        editorSlots.innerHTML = parts.join("");
       }
 
       function paintEditorPreview() {
@@ -1121,7 +1301,28 @@
       });
 
       editorSlots.addEventListener("change", async (e) => {
-        if (!editorState || e.target?.name !== "imageFit") return;
+        if (!editorState) return;
+        const target = e.target;
+        if (target?.name === "speakerPick") {
+          if (target.value) {
+            applySpeaker(editorState.example, target.value);
+            buildEditorForm(editorState.example);
+          }
+          buildEditorSlots(editorState.example);
+          paintEditorPreview();
+          refreshExampleCard(editorState.example);
+          return;
+        }
+        if (target?.name === "shotPick") {
+          if (target.value) {
+            await applyLibraryImage(editorState.example, target.value);
+          }
+          buildEditorSlots(editorState.example);
+          paintEditorPreview();
+          refreshExampleCard(editorState.example);
+          return;
+        }
+        if (target?.name !== "imageFit") return;
         readEditorForm(editorState.example);
         const c = editorState.example.content;
         if (c.imageFit === "contain" && c.image && !c.imageAspect) {
@@ -1132,9 +1333,10 @@
         refreshExampleCard(editorState.example);
       });
 
-      editorSlots.addEventListener("click", (e) => {
+      editorSlots.addEventListener("click", async (e) => {
+        if (!editorState) return;
         const btn = e.target.closest("[data-slot]");
-        if (!btn || !editorState) return;
+        if (!btn) return;
         replaceTarget = btn.dataset.slot;
         fileInput.click();
       });
@@ -1155,6 +1357,7 @@
             const aspect = await measureImageAspect(url);
             if (aspect) editorState.example.content.imageAspect = aspect;
           }
+          buildEditorSlots(editorState.example);
           paintEditorPreview();
           refreshExampleCard(editorState.example);
         } catch {

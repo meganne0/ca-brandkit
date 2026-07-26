@@ -105,6 +105,13 @@ export const LINKEDIN_LAYOUTS = {
     footer: true,
     className: "li-layout-quote li-layout-quote--landscape li-layout-quote--portrait",
   },
+  "LI-LY-14": {
+    label: "Three columns",
+    description: "Title above three equal columns: number, orange title, body. Top-aligned. Landscape. Footer.",
+    format: "landscape",
+    footer: true,
+    className: "li-layout-columns",
+  },
 };
 
 function accentHeadline(text, accent) {
@@ -317,6 +324,47 @@ function renderStatStrip(content) {
   return el;
 }
 
+function renderColumns(content) {
+  const el = document.createElement("div");
+  el.className = "li-content li-layout-columns";
+  const heading = content.title ?? content.headline ?? "";
+  const defaults = [
+    { number: "1", title: "Collect", body: "Threat actors harvest credentials and session material at scale." },
+    { number: "2", title: "Deliver", body: "Kits and lures move the payload into the victim’s environment." },
+    { number: "3", title: "Exploit", body: "Stolen sessions bypass MFA and turn access into impact." },
+  ];
+  const columns = (content.columns ?? defaults).slice(0, 3);
+  while (columns.length < 3) {
+    const i = columns.length;
+    columns.push({
+      number: String(i + 1),
+      title: defaults[i].title,
+      body: defaults[i].body,
+    });
+  }
+
+  const colsHtml = columns
+    .map((col, index) => {
+      const number = col.number ?? String(index + 1);
+      const title = col.title ?? "";
+      const body = col.body ?? "";
+      return `
+        <article class="li-layout-columns__col">
+          <p class="type-numeral type-numeral--xl li-layout-columns__num">${number}</p>
+          ${title ? `<h3 class="type-h5 li-layout-columns__title">${title}</h3>` : ""}
+          ${body ? `<p class="type-body li-layout-columns__body">${body}</p>` : ""}
+        </article>
+      `;
+    })
+    .join("");
+
+  el.innerHTML = `
+    ${heading ? `<h2 class="type-h2 li-layout-columns__heading">${heading}</h2>` : ""}
+    <div class="li-layout-columns__grid">${colsHtml}</div>
+  `;
+  return el;
+}
+
 const RENDERERS = {
   "LI-LY-01": renderHook,
   "LI-LY-02": renderQuote,
@@ -331,6 +379,7 @@ const RENDERERS = {
   "LI-LY-11": renderQuoteLandscape,
   "LI-LY-12": (content) => renderQuotePortrait(content, { landscape: false }),
   "LI-LY-13": (content) => renderQuotePortrait(content, { landscape: true }),
+  "LI-LY-14": renderColumns,
 };
 
 export function renderLinkedInLayout(canvas, layoutId, content = {}) {
