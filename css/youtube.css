@@ -1566,6 +1566,20 @@ body.yt-picker-open {
   object-fit: cover;
 }
 
+.yt-evidence__media--contain {
+  aspect-ratio: var(--yt-media-aspect, 16 / 9);
+  height: auto;
+  width: 100%;
+}
+
+.yt-evidence__media--contain img,
+.yt-evidence__img--contain {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
 .yt-evidence__shot--primary {
   width: 90%;
   transform: rotate(-2deg);
@@ -1887,13 +1901,32 @@ body.yt-picker-open {
   transform: rotate(5deg);
 }
 
-.yt-contrast__panel img {
+.yt-contrast__panel img,
+.yt-contrast__media img {
   width: 100%;
   height: 250px;
   object-fit: cover;
   object-position: top left;
   border-radius: 6px;
   background: #0a0614;
+}
+
+.yt-contrast__media {
+  overflow: hidden;
+  border-radius: 6px;
+  background: #0a0614;
+}
+
+.yt-contrast__media--contain {
+  aspect-ratio: var(--yt-media-aspect, 16 / 9);
+  height: auto;
+}
+
+.yt-contrast__media--contain img,
+.yt-contrast__img--contain {
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
 }
 
 .yt-contrast__label {
@@ -2253,6 +2286,12 @@ body.yt-picker-open {
   object-position: top left;
 }
 
+.yt-host-evidence__shot .yt-evidence__media--contain img {
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
 /* YT-08 Hook + single shot — tall vertical frame bleeding off the right */
 .yt-layout-single-shot__grid {
   display: grid;
@@ -2301,6 +2340,12 @@ body.yt-picker-open {
   height: 620px;
   object-fit: cover;
   object-position: top center;
+}
+
+.yt-single-shot .yt-evidence__media--contain img {
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
 }
 
 .yt-single-shot .yt-evidence__tag--a {
@@ -2958,6 +3003,21 @@ body.yt-editor-open {
 .yt-editor__slot-btn:hover {
   border-color: rgba(242, 88, 53, 0.55);
   background: rgba(242, 88, 53, 0.1);
+}
+
+.yt-editor__slot-btn--ghost {
+  border-style: solid;
+  border-color: transparent;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.55);
+  text-align: center;
+  margin-top: 2px;
+}
+
+.yt-editor__slot-btn--ghost:hover {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.06);
+  color: rgba(255, 255, 255, 0.85);
 }
 
 .yt-editor__list-head {

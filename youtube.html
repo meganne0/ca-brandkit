@@ -10,7 +10,7 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Mozilla+Headline:wght@300&family=Mozilla+Text:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/youtube.css?v=57" />
+    <link rel="stylesheet" href="css/youtube.css?v=59" />
       <script src="js/auth-gate.js?v=5"></script>
 </head>
   <body>
@@ -206,7 +206,7 @@
       import {
         YOUTUBE_LAYOUTS,
         renderYouTubeLayout,
-      } from "./js/layouts-youtube.js?v=18";
+      } from "./js/layouts-youtube.js?v=19";
       import { downloadPaintedThumbnail } from "./js/youtube-download.js?v=4";
 
       const SHOT_RMM =
@@ -1010,6 +1010,42 @@
         });
       }
 
+      function measureImageAspect(url) {
+        return new Promise((resolve) => {
+          const img = new Image();
+          img.onload = () => {
+            if (img.naturalWidth > 0 && img.naturalHeight > 0) {
+              resolve(img.naturalWidth / img.naturalHeight);
+            } else {
+              resolve(undefined);
+            }
+          };
+          img.onerror = () => resolve(undefined);
+          img.src = url;
+        });
+      }
+
+      async function ensureImageAspects(example) {
+        const c = example.content ?? {};
+        if (c.imageFit !== "contain") return;
+        const jobs = [];
+        const measureInto = (obj, src) => {
+          if (!obj || !src || obj.imageAspect) return;
+          jobs.push(
+            measureImageAspect(src).then((aspect) => {
+              if (aspect) obj.imageAspect = aspect;
+            }),
+          );
+        };
+        if (Array.isArray(c.shots)) {
+          c.shots.forEach((shot) => measureInto(shot, shot?.src));
+        }
+        if (c.shot) measureInto(c.shot, c.shot.src);
+        if (c.left) measureInto(c.left, c.left.image);
+        if (c.right) measureInto(c.right, c.right.image);
+        if (jobs.length) await Promise.all(jobs);
+      }
+
       async function downloadExample(example) {
         const safe = String(example.id || "thumbnail").replace(/[^\w.-]+/g, "-");
         await downloadPaintedThumbnail(
@@ -1258,6 +1294,9 @@
         if (c.shot && editorForm.elements.namedItem("shot-0-tag")) {
           c.shot.tag = val("shot-0-tag");
         }
+
+        const fitEl = document.getElementById("yt-field-imageFit");
+        if (fitEl) c.imageFit = fitEl.checked ? "contain" : "cover";
       }
 
       function buildImageSlots(example) {
@@ -1272,31 +1311,87 @@
         if (c.host || c.avatar || example.layout === "YT-05" || example.layout === "YT-06") {
           add("avatar", "Replace host avatar");
         }
+        let hasMediaImages = false;
         if (Array.isArray(c.shots) && c.shots.length) {
+          hasMediaImages = true;
           c.shots.forEach((_, i) => add(`shot-${i}`, `Replace screenshot ${i + 1}`));
         } else if (c.shot) {
+          hasMediaImages = true;
           add("shot-0", "Replace screenshot");
         }
-        if (c.left?.image) add("left", "Replace left panel image");
-        if (c.right?.image) add("right", "Replace right panel image");
+        if (c.left?.image) {
+          hasMediaImages = true;
+          add("left", "Replace left panel image");
+        }
+        if (c.right?.image) {
+          hasMediaImages = true;
+          add("right", "Replace right panel image");
+        }
+
+        if (hasMediaImages) {
+          buttons.push(`
+            <label class="yt-editor__check" for="yt-field-imageFit">
+              <input
+                type="checkbox"
+                id="yt-field-imageFit"
+                name="imageFit"
+                value="contain"${c.imageFit === "contain" ? " checked" : ""}
+              />
+              <span>Keep original image ratio</span>
+            </label>
+          `);
+          buttons.push(
+            `<button type="button" class="yt-editor__slot-btn yt-editor__slot-btn--ghost" data-action="reset-images">Reset images</button>`,
+          );
+        }
 
         editorSlots.innerHTML = buttons.length
           ? `<p class="yt-editor__slots-title">Images</p>${buttons.join("")}`
           : "";
       }
 
+      function resetExampleImages(example) {
+        const sample = LAYOUT_SAMPLES[example.layout];
+        const c = example.content ?? {};
+        const defaults = sample?.content ?? {};
+
+        if (Array.isArray(defaults.shots)) {
+          c.shots = structuredClone(defaults.shots);
+        } else {
+          delete c.shots;
+        }
+        if (defaults.shot) c.shot = structuredClone(defaults.shot);
+        else delete c.shot;
+
+        if (c.left && defaults.left) {
+          c.left.image = defaults.left.image;
+          c.left.alt = defaults.left.alt;
+          delete c.left.imageAspect;
+        }
+        if (c.right && defaults.right) {
+          c.right.image = defaults.right.image;
+          c.right.alt = defaults.right.alt;
+          delete c.right.imageAspect;
+        }
+
+        delete c.imageFit;
+      }
+
       async function applyImageSlot(example, slot, url) {
         const c = example.content;
+        const aspect = await measureImageAspect(url);
         if (slot === "avatar") {
           c.avatar = url;
           return;
         }
         if (slot === "left" && c.left) {
           c.left.image = url;
+          if (aspect) c.left.imageAspect = aspect;
           return;
         }
         if (slot === "right" && c.right) {
           c.right.image = url;
+          if (aspect) c.right.imageAspect = aspect;
           return;
         }
         const shotMatch = /^shot-(\d+)$/.exec(slot);
@@ -1305,7 +1400,11 @@
           if (!Array.isArray(c.shots)) c.shots = [];
           if (!c.shots[i]) c.shots[i] = { src: url, alt: "" };
           else c.shots[i].src = url;
-          if (i === 0 && c.shot) c.shot.src = url;
+          if (aspect) c.shots[i].imageAspect = aspect;
+          if (i === 0 && c.shot) {
+            c.shot.src = url;
+            if (aspect) c.shot.imageAspect = aspect;
+          }
         }
       }
 
@@ -1458,11 +1557,28 @@
       });
 
       editorSlots.addEventListener("click", async (e) => {
+        if (!editorState) return;
+        const resetBtn = e.target.closest("[data-action='reset-images']");
+        if (resetBtn) {
+          resetExampleImages(editorState.example);
+          buildImageSlots(editorState.example);
+          paintEditorPreview();
+          return;
+        }
         const btn = e.target.closest("[data-slot]");
-        if (!btn || !editorState) return;
+        if (!btn) return;
         const url = await pickLocalImage();
         if (!url) return;
         await applyImageSlot(editorState.example, btn.dataset.slot, url);
+        paintEditorPreview();
+      });
+
+      editorSlots.addEventListener("change", async (e) => {
+        if (!editorState) return;
+        const target = e.target;
+        if (target?.name !== "imageFit") return;
+        readEditorForm(editorState.example);
+        await ensureImageAspects(editorState.example);
         paintEditorPreview();
       });
 

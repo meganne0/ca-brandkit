@@ -144,6 +144,38 @@ function shotTagMarkup(shot, index = 0) {
   return `<span class="yt-evidence__tag yt-evidence__tag--${tone}">${shotTagLabel(shot, index)}</span>`;
 }
 
+function shotMediaHtml(shot, content = {}) {
+  if (!shot?.src) return "";
+  const fit = content.imageFit === "contain" ? "contain" : "cover";
+  const aspect = shot.imageAspect;
+  const containFrame = fit === "contain" && aspect;
+  const frameClass = containFrame ? " yt-evidence__media--contain" : "";
+  const aspectStyle = containFrame
+    ? ` style="--yt-media-aspect:${aspect}"`
+    : "";
+  return `
+    <div class="yt-evidence__media${frameClass}"${aspectStyle}>
+      <img class="yt-evidence__img yt-evidence__img--${fit}" src="${shot.src}" alt="${shot.alt ?? ""}" />
+    </div>
+  `;
+}
+
+function contrastMediaHtml(panel, content = {}) {
+  if (!panel?.image) return "";
+  const fit = content.imageFit === "contain" ? "contain" : "cover";
+  const aspect = panel.imageAspect;
+  const containFrame = fit === "contain" && aspect;
+  const frameClass = containFrame ? " yt-contrast__media--contain" : "";
+  const aspectStyle = containFrame
+    ? ` style="--yt-media-aspect:${aspect}"`
+    : "";
+  return `
+    <div class="yt-contrast__media${frameClass}"${aspectStyle}>
+      <img class="yt-contrast__img yt-contrast__img--${fit}" src="${panel.image}" alt="${panel.alt ?? ""}" />
+    </div>
+  `;
+}
+
 function renderEvidence(content) {
   const el = document.createElement("div");
   const withHost = hasHost(content);
@@ -158,9 +190,7 @@ function renderEvidence(content) {
             (shot, i) => `
               <figure class="yt-evidence__shot yt-evidence__shot--${i === 0 ? "primary" : "secondary"}">
                 ${shotTagMarkup(shot, i)}
-                <div class="yt-evidence__media">
-                  <img src="${shot.src}" alt="${shot.alt ?? ""}" />
-                </div>
+                ${shotMediaHtml(shot, content)}
               </figure>
             `,
           )
@@ -217,13 +247,13 @@ function renderContrast(content) {
     <div class="yt-contrast">
       <div class="yt-contrast__panel yt-contrast__panel--left">
         <span class="yt-contrast__stamp">SAFE?</span>
-        ${left.image ? `<img src="${left.image}" alt="${left.alt ?? ""}" />` : ""}
+        ${contrastMediaHtml(left, content)}
         <p class="yt-contrast__label">${left.label ?? ""}</p>
       </div>
       <div class="yt-contrast__vs" aria-hidden="true"><span>VS</span></div>
       <div class="yt-contrast__panel yt-contrast__panel--right">
         <span class="yt-contrast__stamp yt-contrast__stamp--hot">THREAT</span>
-        ${right.image ? `<img src="${right.image}" alt="${right.alt ?? ""}" />` : ""}
+        ${contrastMediaHtml(right, content)}
         <p class="yt-contrast__label">${right.label ?? ""}</p>
       </div>
     </div>
@@ -275,9 +305,7 @@ function renderHostEvidence(content) {
           ? `<div class="yt-layout-host-evidence__media">
               <figure class="yt-host-evidence__shot">
                 ${shotTagMarkup(shot, 2)}
-                <div class="yt-evidence__media">
-                  <img src="${shot.src}" alt="${shot.alt ?? ""}" />
-                </div>
+                ${shotMediaHtml(shot, content)}
               </figure>
             </div>`
           : ""
@@ -300,9 +328,7 @@ function renderSingleShot(content) {
           ? `<div class="yt-single-shot-wrap">
               <figure class="yt-single-shot">
                 ${shotTagMarkup(shot, 0)}
-                <div class="yt-evidence__media">
-                  <img src="${shot.src}" alt="${shot.alt ?? ""}" />
-                </div>
+                ${shotMediaHtml(shot, content)}
               </figure>
               ${withHost ? hostCard(content, "overlay") : ""}
             </div>`

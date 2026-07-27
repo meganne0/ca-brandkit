@@ -412,6 +412,9 @@
       /** Square layouts kept in examples + create picker; all landscape stay. */
       const CREATE_SQUARE_LAYOUTS = new Set(["LI-LY-02", "LI-LY-12"]);
 
+      /** Layout samples hidden from the examples gallery (still in Create). */
+      const HIDE_FROM_EXAMPLES = new Set(["LI-LY-02", "LI-LY-09", "LI-LY-12"]);
+
       /** Curated posts — copy kept verbatim (split across title/body at sentence breaks only). */
       const CURATED_EXAMPLES = [
         {
@@ -431,6 +434,10 @@
         if (!layout) return false;
         if ((layout.format ?? "square") === "landscape") return true;
         return CREATE_SQUARE_LAYOUTS.has(layoutId);
+      }
+
+      function isExampleLayout(layoutId) {
+        return isCreateLayout(layoutId) && !HIDE_FROM_EXAMPLES.has(layoutId);
       }
 
       function clone(obj) {
@@ -492,7 +499,7 @@
           content: clone(ex.content),
         })),
         ...Object.entries(LAYOUT_SAMPLES)
-          .filter(([layout]) => isCreateLayout(layout))
+          .filter(([layout]) => isExampleLayout(layout))
           .map(([layout, sample], i) => ({
             id: `EX-${String(CURATED_EXAMPLES.length + i + 1).padStart(2, "0")}`,
             label: LINKEDIN_LAYOUTS[layout]?.label ?? layout,
