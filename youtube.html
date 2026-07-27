@@ -11,7 +11,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/youtube.css?v=57" />
-      <script src="js/auth-gate.js?v=4"></script>
+      <script src="js/auth-gate.js?v=5"></script>
 </head>
   <body>
     <div class="bg-gallery">
@@ -230,11 +230,34 @@
       const SHOT_KMS =
         "/visual%20assets/screenshots/the%20_license%20killer_%20kms%20tool%20that%20the%20youtube%20channel%20references.png";
 
-      const HOST = {
-        host: "Nguyen Nguyen",
-        role: "CEO, CyberArmor",
-        avatar: "/visual%20assets/avatars/avatar-nguyen-circle.png",
-      };
+      const HOSTS = [
+        {
+          id: "nguyen",
+          host: "Nguyen Nguyen",
+          role: "CEO, CyberArmor",
+          avatar: "/visual%20assets/avatars/avatar-nguyen-circle.png",
+        },
+        {
+          id: "ali",
+          host: "Ali Alame",
+          role: "CTO, CyberArmor",
+          avatar: "/visual%20assets/avatars/avatar-ali-circle.png",
+        },
+        {
+          id: "meganne",
+          host: "Meganne Ohata",
+          role: "CXO, CyberArmor",
+          avatar: "/visual%20assets/avatars/avatar-meganne-circle.png",
+        },
+        {
+          id: "kyle",
+          host: "Kyle Dunker",
+          role: "CyberArmor",
+          avatar: "/visual%20assets/avatars/avatar-kyle-circle.png",
+        },
+      ];
+
+      const HOST = HOSTS[0];
 
       const LAYOUT_SAMPLES = {
         "YT-01": {
@@ -1052,6 +1075,24 @@
         field("subline", "Subline", c.subline, { multiline: true });
 
         if (c.host || c.avatar || c.role || example.layout === "YT-05" || example.layout === "YT-06") {
+          const activeHost =
+            HOSTS.find(
+              (h) =>
+                h.avatar === c.avatar ||
+                h.host === c.host,
+            )?.id ?? "";
+          rows.push(`
+            <label class="yt-editor__field" for="yt-field-hostPick">
+              <span>Host</span>
+              <select id="yt-field-hostPick" name="hostPick" class="yt-editor__select">
+                <option value=""${!activeHost ? " selected" : ""}>Custom</option>
+                ${HOSTS.map(
+                  (h) =>
+                    `<option value="${h.id}"${h.id === activeHost ? " selected" : ""}>${h.host}${h.role ? ` · ${h.role}` : ""}</option>`,
+                ).join("")}
+              </select>
+            </label>
+          `);
           field("host", "Host name", c.host ?? "Nguyen Nguyen");
           field("role", "Host title", c.role ?? "CEO, CyberArmor");
         }
@@ -1360,6 +1401,20 @@
 
       editorForm.addEventListener("change", () => {
         if (!editorState) return;
+        const pick = editorForm.elements.namedItem("hostPick");
+        if (pick?.value) {
+          const host = HOSTS.find((h) => h.id === pick.value);
+          if (host) {
+            const c = editorState.example.content;
+            c.host = host.host;
+            c.role = host.role;
+            c.avatar = host.avatar;
+            buildEditorForm(editorState.example);
+            buildImageSlots(editorState.example);
+            paintEditorPreview();
+            return;
+          }
+        }
         readEditorForm(editorState.example);
         paintEditorPreview();
       });

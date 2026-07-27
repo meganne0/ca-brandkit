@@ -11,8 +11,8 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/backgrounds.css?v=21" />
-    <link rel="stylesheet" href="css/linkedin.css?v=33" />
-    <script src="js/auth-gate.js?v=4"></script>
+    <link rel="stylesheet" href="css/linkedin.css?v=34" />
+    <script src="js/auth-gate.js?v=5"></script>
   </head>
   <body>
     <div class="bg-gallery">
@@ -50,14 +50,6 @@
         </p>
         <div class="bg-gallery__grid bg-gallery__grid--tiles-li" id="ex-gallery"></div>
       </section>
-
-      <details class="li-collapse bg-gallery__section" id="li-dx-section" open>
-        <summary class="li-collapse__summary">
-          <span class="bg-gallery__section-title" id="li-dx">Decor · LI-DX</span>
-          <span class="li-collapse__hint">Optional overlays · click to collapse</span>
-        </summary>
-        <div class="bg-gallery__grid bg-gallery__grid--tiles" id="dx-gallery"></div>
-      </details>
 
       <details class="li-collapse bg-gallery__section" id="li-ly-square-section">
         <summary class="li-collapse__summary">
@@ -108,7 +100,7 @@
           <div>
             <p class="li-layout-picker__eyebrow">New image</p>
             <h2 id="li-layout-picker-title">Choose a layout</h2>
-            <p>A matching background is assigned automatically. You can change background and decor in the editor.</p>
+            <p>A matching background is assigned automatically. You can change background in the editor.</p>
           </div>
           <button
             type="button"
@@ -210,10 +202,7 @@
         LINKEDIN_LAYOUTS,
         renderLinkedInLayout,
       } from "./js/layouts-linkedin.js?v=25";
-      import {
-        LINKEDIN_DECORS,
-        renderLinkedInDecor,
-      } from "./js/decor-linkedin.js?v=1";
+      import { renderLinkedInDecor } from "./js/decor-linkedin.js?v=2";
       import { downloadPaintedThumbnail } from "./js/youtube-download.js?v=4";
 
       const SPEAKERS = [
@@ -234,6 +223,12 @@
           name: "Meganne Ohata",
           role: "CXO",
           avatar: "/visual%20assets/avatars/avatar-meganne-circle.png",
+        },
+        {
+          id: "kyle",
+          name: "Kyle Dunker",
+          role: "",
+          avatar: "/visual%20assets/avatars/avatar-kyle-circle.png",
         },
       ];
 
@@ -443,7 +438,6 @@
           label: "ClickFix · Hunt Graph",
           layout: "LI-LY-09",
           bg: "LI-BG-07",
-          decor: "LI-DX-01",
           content: {
             title:
               "The Polygon-based ClickFix campaign we documented this week rotates infrastructure by updating a smart contract, not by touching every compromised site.",
@@ -500,15 +494,14 @@
         canvas.className = `canvas ${format.className}`;
         canvas.dataset.bg = example.bg;
         canvas.dataset.layout = layoutId;
-        if (example.decor) canvas.dataset.decor = example.decor;
-        else delete canvas.dataset.decor;
+        delete canvas.dataset.decor;
         canvas.replaceChildren();
         const layers = document.createElement("div");
         layers.className = "slide-layers";
         canvas.appendChild(layers);
         renderLinkedInBackground(layers, example.bg);
         renderLinkedInLayout(canvas, layoutId, example.content ?? {});
-        if (example.decor) renderLinkedInDecor(canvas, example.decor);
+        renderLinkedInDecor(canvas, null);
       }
 
       let examples = [
@@ -517,7 +510,6 @@
           label: ex.label,
           layout: ex.layout,
           bg: ex.bg,
-          decor: ex.decor,
           content: clone(ex.content),
         })),
         ...Object.entries(LAYOUT_SAMPLES)
@@ -655,23 +647,6 @@
           </label>
         `);
 
-        const decorOptions = [
-          `<option value=""${!example.decor ? " selected" : ""}>None</option>`,
-          ...Object.entries(LINKEDIN_DECORS).map(
-            ([id, recipe]) =>
-              `<option value="${id}"${example.decor === id ? " selected" : ""}>${id} · ${recipe.label}</option>`,
-          ),
-        ].join("");
-
-        rows.push(`
-          <label class="li-editor__field" for="li-field-decor">
-            <span>Decor</span>
-            <select id="li-field-decor" name="decor" class="li-editor__select">
-              ${decorOptions}
-            </select>
-          </label>
-        `);
-
         Object.keys(FIELD_LABELS).forEach((name) => {
           if (c[name] === undefined || name === "avatar" || name === "image") return;
           const id = `li-field-${name}`;
@@ -732,8 +707,8 @@
         const c = example.content;
         const bgEl = editorForm.elements.namedItem("bg");
         if (bgEl) example.bg = bgEl.value;
-        const decorEl = editorForm.elements.namedItem("decor");
-        if (decorEl) example.decor = decorEl.value || undefined;
+        // Decor removed — clear any leftover id
+        delete example.decor;
         const fitEl = document.getElementById("li-field-imageFit");
         if (fitEl) c.imageFit = fitEl.checked ? "contain" : "cover";
 
@@ -800,7 +775,9 @@
         const c = example.content;
         c.avatar = speaker.avatar;
         c.speaker = speaker.name;
-        c.attribution = `${speaker.name}, ${speaker.role}`;
+        c.attribution = speaker.role
+          ? `${speaker.name}, ${speaker.role}`
+          : speaker.name;
       }
 
       function applyLibraryImage(example, src) {
@@ -1201,68 +1178,6 @@
         new ResizeObserver(() => fitCanvas(stage, canvas, formatId)).observe(stage);
       }
 
-      function makeDxCard(id, recipe, grid) {
-        const formatId = "square";
-        const format = LINKEDIN_FORMATS[formatId];
-        const bgId = "LI-BG-01";
-
-        const card = document.createElement("article");
-        card.className = "bg-card";
-        card.style.cursor = "zoom-in";
-        card.tabIndex = 0;
-        card.setAttribute("role", "button");
-        card.setAttribute("aria-label", `Preview ${id}`);
-
-        const stage = document.createElement("div");
-        stage.className = "li-preview-stage";
-        const canvas = document.createElement("div");
-        canvas.className = `canvas ${format.className}`;
-        const layers = document.createElement("div");
-        layers.className = "slide-layers";
-        canvas.appendChild(layers);
-        renderLinkedInBackground(layers, bgId);
-        renderLinkedInDecor(canvas, id);
-        stage.appendChild(canvas);
-
-        const meta = document.createElement("div");
-        meta.className = "bg-card__meta";
-        meta.innerHTML = `
-          <span class="bg-card__id">${id}</span>
-          <span class="bg-card__label">${recipe.label}</span>
-          <span class="bg-card__desc">${recipe.description}</span>
-        `;
-
-        const open = () => {
-          openLightbox({
-            id,
-            label: recipe.label,
-            formatId,
-            build() {
-              const big = document.createElement("div");
-              big.className = `canvas ${format.className}`;
-              const layerHost = document.createElement("div");
-              layerHost.className = "slide-layers";
-              big.appendChild(layerHost);
-              renderLinkedInBackground(layerHost, bgId);
-              renderLinkedInDecor(big, id);
-              return big;
-            },
-          });
-        };
-
-        card.addEventListener("click", open);
-        card.addEventListener("keydown", (e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault();
-            open();
-          }
-        });
-        card.append(stage, meta);
-        grid.appendChild(card);
-        requestAnimationFrame(() => fitCanvas(stage, canvas, formatId));
-        new ResizeObserver(() => fitCanvas(stage, canvas, formatId)).observe(stage);
-      }
-
       /* Events */
       document.getElementById("li-create-btn").addEventListener("click", openLayoutPicker);
       document.getElementById("li-layout-picker-close").addEventListener("click", closeLayoutPicker);
@@ -1438,11 +1353,6 @@
       const lyLand = document.getElementById("ly-gallery-landscape");
       Object.entries(LINKEDIN_LAYOUTS).forEach(([id, layout]) => {
         makeLyCard(id, layout, layout.format === "landscape" ? lyLand : lySquare);
-      });
-
-      const dxGrid = document.getElementById("dx-gallery");
-      Object.entries(LINKEDIN_DECORS).forEach(([id, recipe]) => {
-        makeDxCard(id, recipe, dxGrid);
       });
     </script>
   </body>
