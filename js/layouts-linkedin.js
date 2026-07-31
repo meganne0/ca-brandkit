@@ -114,6 +114,10 @@ export const LINKEDIN_LAYOUTS = {
   },
 };
 
+function withBreaks(text) {
+  return String(text ?? "").replace(/\r\n|\r|\n/g, "<br>");
+}
+
 function accentHeadline(text, accent) {
   if (!accent || !text.includes(accent)) return text;
   return text.replace(accent, `<span class="accent">${accent}</span>`);
@@ -127,8 +131,8 @@ function renderHook(content) {
   const subtitle = content.subtitle ?? "";
   el.innerHTML = `
     <img class="li-layout-hook__brand" src="${LOGO_SRC}" alt="CyberArmor" />
-    ${headline ? `<h2 class="type-h2">${accentHeadline(headline, accent)}</h2>` : ""}
-    ${subtitle ? `<p class="type-h4">${subtitle}</p>` : ""}
+    ${headline ? `<h2 class="type-h2">${withBreaks(accentHeadline(headline, accent))}</h2>` : ""}
+    ${subtitle ? `<p class="type-h4">${withBreaks(subtitle)}</p>` : ""}
   `;
   return el;
 }
@@ -140,8 +144,8 @@ function renderQuote(content) {
   const attribution = content.attribution ?? content.source ?? "";
   el.innerHTML = `
     <div class="li-layout-quote__panel">
-      ${quote ? `<p class="type-h3 li-layout-quote__text">${quote}</p>` : ""}
-      ${attribution ? `<p class="type-label li-layout-quote__attr">${attribution}</p>` : ""}
+      ${quote ? `<p class="type-h3 li-layout-quote__text">${withBreaks(quote)}</p>` : ""}
+      ${attribution ? `<p class="type-label li-layout-quote__attr">${withBreaks(attribution)}</p>` : ""}
     </div>
   `;
   return el;
@@ -154,8 +158,8 @@ function renderQuoteLandscape(content) {
   const attribution = content.attribution ?? content.source ?? "";
   el.innerHTML = `
     <div class="li-layout-quote__panel">
-      ${quote ? `<p class="type-h3 li-layout-quote__text">${quote}</p>` : ""}
-      ${attribution ? `<p class="type-label li-layout-quote__attr">${attribution}</p>` : ""}
+      ${quote ? `<p class="type-h3 li-layout-quote__text">${withBreaks(quote)}</p>` : ""}
+      ${attribution ? `<p class="type-label li-layout-quote__attr">${withBreaks(attribution)}</p>` : ""}
     </div>
   `;
   return el;
@@ -180,10 +184,10 @@ function renderQuotePortrait(content, { landscape = false } = {}) {
       <span class="li-layout-quote__mark li-layout-quote__mark--open" aria-hidden="true">“</span>
       <span class="li-layout-quote__mark li-layout-quote__mark--close" aria-hidden="true">”</span>
       <div class="li-layout-quote__panel">
-        ${quote ? `<p class="type-h3 li-layout-quote__text">${quote}</p>` : ""}
+        ${quote ? `<p class="type-h3 li-layout-quote__text">${withBreaks(quote)}</p>` : ""}
         ${
           attribution
-            ? `<p class="type-label li-layout-quote__attr">${attribution}</p>`
+            ? `<p class="type-label li-layout-quote__attr">${withBreaks(attribution)}</p>`
             : ""
         }
       </div>
@@ -231,9 +235,9 @@ function renderMedia(content, side = "left") {
 
   const copy = `
     <div class="li-layout-media__copy">
-      ${label ? `<p class="type-label">${label}</p>` : ""}
-      ${title ? `<h2 class="type-h2">${title}</h2>` : ""}
-      ${body ? `<p class="type-body">${body}</p>` : ""}
+      ${label ? `<p class="type-label">${withBreaks(label)}</p>` : ""}
+      ${title ? `<h2 class="type-h2">${withBreaks(title)}</h2>` : ""}
+      ${body ? `<p class="type-body">${withBreaks(body)}</p>` : ""}
     </div>
   `;
   const media = mediaBlock(content);
@@ -249,9 +253,9 @@ function renderStat(content) {
   const label = content.label ?? "";
   const context = content.context ?? content.subtitle ?? "";
   el.innerHTML = `
-    ${label ? `<p class="type-label">${label}</p>` : ""}
-    ${value ? `<p class="type-metric">${value}</p>` : ""}
-    ${context ? `<p class="type-h4">${context}</p>` : ""}
+    ${label ? `<p class="type-label">${withBreaks(label)}</p>` : ""}
+    ${value ? `<p class="type-metric">${withBreaks(value)}</p>` : ""}
+    ${context ? `<p class="type-h4">${withBreaks(context)}</p>` : ""}
   `;
   return el;
 }
@@ -265,8 +269,8 @@ function renderCta(content) {
   el.innerHTML = `
     <img class="li-layout-cta__logo" src="${LOGO_MARK_SRC}" alt="CyberArmor" />
     <div class="li-layout-cta__copy">
-      ${title ? `<h2 class="type-h2">${title}</h2>` : ""}
-      ${body ? `<p class="type-body">${body}</p>` : ""}
+      ${title ? `<h2 class="type-h2">${withBreaks(title)}</h2>` : ""}
+      ${body ? `<p class="type-body">${withBreaks(body)}</p>` : ""}
       <span class="li-layout-cta__pill">${cta}</span>
     </div>
   `;
@@ -281,8 +285,8 @@ function renderBanner(content) {
   const subtitle = content.subtitle ?? "";
   el.innerHTML = `
     <div class="li-layout-banner__copy">
-      ${headline ? `<h2 class="type-h2">${accentHeadline(headline, accent)}</h2>` : ""}
-      ${subtitle ? `<p class="type-h4">${subtitle}</p>` : ""}
+      ${headline ? `<h2 class="type-h2">${withBreaks(accentHeadline(headline, accent))}</h2>` : ""}
+      ${subtitle ? `<p class="type-h4">${withBreaks(subtitle)}</p>` : ""}
     </div>
   `;
   return el;
@@ -296,11 +300,11 @@ function renderSplit(content) {
   const label = content.label ?? "";
   el.innerHTML = `
     <div class="li-layout-split__left">
-      ${label ? `<p class="type-label">${label}</p>` : ""}
-      ${title ? `<h2 class="type-h2">${title}</h2>` : ""}
+      ${label ? `<p class="type-label">${withBreaks(label)}</p>` : ""}
+      ${title ? `<h2 class="type-h2">${withBreaks(title)}</h2>` : ""}
     </div>
     <div class="li-layout-split__right">
-      ${body ? `<p class="type-body">${body}</p>` : ""}
+      ${body ? `<p class="type-body">${withBreaks(body)}</p>` : ""}
     </div>
   `;
   return el;
@@ -314,11 +318,11 @@ function renderStatStrip(content) {
   const context = content.context ?? content.subtitle ?? "";
   el.innerHTML = `
     <div class="li-layout-stat-strip__metric">
-      ${value ? `<p class="type-metric type-metric--lg">${value}</p>` : ""}
-      ${label ? `<p class="type-label">${label}</p>` : ""}
+      ${value ? `<p class="type-metric type-metric--lg">${withBreaks(value)}</p>` : ""}
+      ${label ? `<p class="type-label">${withBreaks(label)}</p>` : ""}
     </div>
     <div class="li-layout-stat-strip__aside">
-      ${context ? `<p class="type-h4">${context}</p>` : ""}
+      ${context ? `<p class="type-h4">${withBreaks(context)}</p>` : ""}
     </div>
   `;
   return el;
@@ -351,15 +355,15 @@ function renderColumns(content) {
       return `
         <article class="li-layout-columns__col">
           <p class="type-numeral type-numeral--xl li-layout-columns__num">${number}</p>
-          ${title ? `<h3 class="type-h5 li-layout-columns__title">${title}</h3>` : ""}
-          ${body ? `<p class="type-body li-layout-columns__body">${body}</p>` : ""}
+          ${title ? `<h3 class="type-h5 li-layout-columns__title">${withBreaks(title)}</h3>` : ""}
+          ${body ? `<p class="type-body li-layout-columns__body">${withBreaks(body)}</p>` : ""}
         </article>
       `;
     })
     .join("");
 
   el.innerHTML = `
-    ${heading ? `<h2 class="type-h2 li-layout-columns__heading">${heading}</h2>` : ""}
+    ${heading ? `<h2 class="type-h2 li-layout-columns__heading">${withBreaks(heading)}</h2>` : ""}
     <div class="li-layout-columns__grid">${colsHtml}</div>
   `;
   return el;

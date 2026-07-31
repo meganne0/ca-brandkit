@@ -206,7 +206,7 @@
       import {
         YOUTUBE_LAYOUTS,
         renderYouTubeLayout,
-      } from "./js/layouts-youtube.js?v=19";
+      } from "./js/layouts-youtube.js?v=20";
       import { downloadPaintedThumbnail } from "./js/youtube-download.js?v=4";
 
       const SHOT_RMM =
@@ -1146,7 +1146,9 @@
             </div>
           `);
           c.steps.forEach((step, i) => {
-            field(`step-${i}`, `Step ${i + 1}`, step.label ?? step.title ?? "");
+            field(`step-${i}`, `Step ${i + 1}`, step.label ?? step.title ?? "", {
+              multiline: true,
+            });
           });
         }
 
@@ -1167,13 +1169,14 @@
               `bullet-${i}`,
               `Bullet ${i + 1}`,
               typeof item === "string" ? item : item.label ?? item.title ?? "",
+              { multiline: true },
             );
           });
         }
 
         if (c.metric && example.layout !== "YT-10") {
           field("metric-value", "Metric value", c.metric.value);
-          field("metric-label", "Metric label", c.metric.label);
+          field("metric-label", "Metric label", c.metric.label, { multiline: true });
         }
         if (example.layout === "YT-10" || Array.isArray(c.metrics)) {
           if (!Array.isArray(c.metrics)) c.metrics = [];
@@ -1189,11 +1192,13 @@
           `);
           c.metrics.forEach((m, i) => {
             field(`metric-${i}-value`, `Metric ${i + 1} value`, m.value);
-            field(`metric-${i}-label`, `Metric ${i + 1} label`, m.label);
+            field(`metric-${i}-label`, `Metric ${i + 1} label`, m.label, {
+              multiline: true,
+            });
           });
         }
-        if (c.left) field("left-label", "Left panel label", c.left.label);
-        if (c.right) field("right-label", "Right panel label", c.right.label);
+        if (c.left) field("left-label", "Left panel label", c.left.label, { multiline: true });
+        if (c.right) field("right-label", "Right panel label", c.right.label, { multiline: true });
 
         if (Array.isArray(c.shots) && c.shots.length) {
           rows.push(`

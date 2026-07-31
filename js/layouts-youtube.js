@@ -73,6 +73,10 @@ export const YOUTUBE_LAYOUTS = {
   },
 };
 
+function withBreaks(text) {
+  return String(text ?? "").replace(/\r\n|\r|\n/g, "<br>");
+}
+
 function accentize(text, accent) {
   if (!accent || !text.includes(accent)) return text;
   return text.replace(accent, `<span class="accent">${accent}</span>`);
@@ -93,10 +97,10 @@ function hookBlock(content) {
           ? `<span class="yt-hook__badge">${badge}</span>`
           : ""
       }
-      ${hook ? `<h1 class="yt-hook__text">${accentize(hook, accent)}</h1>` : ""}
+      ${hook ? `<h1 class="yt-hook__text">${withBreaks(accentize(hook, accent))}</h1>` : ""}
       ${
         subline
-          ? `<p class="yt-hook__sub"><span class="yt-hook__sub-inner">${subline}</span></p>`
+          ? `<p class="yt-hook__sub"><span class="yt-hook__sub-inner">${withBreaks(subline)}</span></p>`
           : ""
       }
     </div>
@@ -215,7 +219,7 @@ function renderFlow(content) {
           (step, i) => `
             <li class="yt-flow__step">
               <span class="yt-flow__num">${String(i + 1).padStart(2, "0")}</span>
-              <span class="yt-flow__label">${step.label ?? step.title ?? ""}</span>
+              <span class="yt-flow__label">${withBreaks(step.label ?? step.title ?? "")}</span>
             </li>
           `,
         )
@@ -248,13 +252,13 @@ function renderContrast(content) {
       <div class="yt-contrast__panel yt-contrast__panel--left">
         <span class="yt-contrast__stamp">SAFE?</span>
         ${contrastMediaHtml(left, content)}
-        <p class="yt-contrast__label">${left.label ?? ""}</p>
+        <p class="yt-contrast__label">${withBreaks(left.label ?? "")}</p>
       </div>
       <div class="yt-contrast__vs" aria-hidden="true"><span>VS</span></div>
       <div class="yt-contrast__panel yt-contrast__panel--right">
         <span class="yt-contrast__stamp yt-contrast__stamp--hot">THREAT</span>
         ${contrastMediaHtml(right, content)}
-        <p class="yt-contrast__label">${right.label ?? ""}</p>
+        <p class="yt-contrast__label">${withBreaks(right.label ?? "")}</p>
       </div>
     </div>
   `;
@@ -270,8 +274,8 @@ function renderMetric(content) {
       ${hookBlock({ ...content, badge: content.badge ?? "SIGNAL" })}
       <div class="yt-metric">
         <div class="yt-metric__burst" aria-hidden="true"></div>
-        <p class="yt-metric__value">${metric.value ?? ""}</p>
-        <p class="yt-metric__label">${metric.label ?? ""}</p>
+        <p class="yt-metric__value">${withBreaks(metric.value ?? "")}</p>
+        <p class="yt-metric__label">${withBreaks(metric.label ?? "")}</p>
       </div>
     </div>
   `;
@@ -358,7 +362,7 @@ function renderBullets(content) {
             (item, i) => `
               <li class="yt-bullets__item">
                 <span class="yt-bullets__num">${String(i + 1).padStart(2, "0")}</span>
-                <span class="yt-bullets__text">${item.label ?? item.title ?? item}</span>
+                <span class="yt-bullets__text">${withBreaks(item.label ?? item.title ?? item)}</span>
               </li>
             `,
           )
@@ -394,8 +398,8 @@ function renderDualMetric(content) {
           .map(
             (m, i) => `
               <div class="yt-dual-metrics__tile yt-dual-metrics__tile--${tones[i % 3]}">
-                <p class="yt-dual-metrics__value">${m.value ?? ""}</p>
-                <p class="yt-dual-metrics__label">${m.label ?? ""}</p>
+                <p class="yt-dual-metrics__value">${withBreaks(m.value ?? "")}</p>
+                <p class="yt-dual-metrics__label">${withBreaks(m.label ?? "")}</p>
               </div>
             `,
           )

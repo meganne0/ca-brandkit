@@ -201,7 +201,7 @@
       import {
         LINKEDIN_LAYOUTS,
         renderLinkedInLayout,
-      } from "./js/layouts-linkedin.js?v=25";
+      } from "./js/layouts-linkedin.js?v=26";
       import { renderLinkedInDecor } from "./js/decor-linkedin.js?v=2";
       import { downloadPaintedThumbnail } from "./js/youtube-download.js?v=4";
 
@@ -407,7 +407,14 @@
         placeholder: "Media placeholder label",
       };
 
-      const MULTILINE = new Set(["subtitle", "quote", "body", "context"]);
+      const MULTILINE = new Set([
+        "headline",
+        "title",
+        "subtitle",
+        "quote",
+        "body",
+        "context",
+      ]);
 
       /** Square layouts kept in examples + create picker; all landscape stay. */
       const CREATE_SQUARE_LAYOUTS = new Set(["LI-LY-02", "LI-LY-12"]);
@@ -660,7 +667,7 @@
             rows.push(`
               <label class="li-editor__field" for="li-field-title">
                 <span>Title</span>
-                <input id="li-field-title" name="title" type="text" value="" />
+                <textarea id="li-field-title" name="title" rows="2"></textarea>
               </label>
             `);
           }
