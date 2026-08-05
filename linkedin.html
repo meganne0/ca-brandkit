@@ -11,7 +11,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/backgrounds.css?v=21" />
-    <link rel="stylesheet" href="css/linkedin.css?v=34" />
+    <link rel="stylesheet" href="css/linkedin.css?v=35" />
     <script src="js/auth-gate.js?v=5"></script>
   </head>
   <body>
@@ -201,7 +201,7 @@
       import {
         LINKEDIN_LAYOUTS,
         renderLinkedInLayout,
-      } from "./js/layouts-linkedin.js?v=26";
+      } from "./js/layouts-linkedin.js?v=27";
       import { renderLinkedInDecor } from "./js/decor-linkedin.js?v=2";
       import { downloadPaintedThumbnail } from "./js/youtube-download.js?v=4";
 
@@ -389,6 +389,31 @@
             ],
           },
         },
+        "LI-LY-15": {
+          bg: "LI-BG-01",
+          content: {
+            title: "Trusted tools, hijacked",
+            body: "Legitimate remote access software used as the payload — and missed by reputation checks.",
+            placeholder: "Photo",
+          },
+        },
+        "LI-LY-16": {
+          bg: "LI-BG-03",
+          content: {
+            title: "Phishing kits for sale",
+            body: "Commodity platforms make session theft turnkey — priced for volume.",
+            placeholder: "Photo",
+          },
+        },
+        "LI-LY-17": {
+          bg: "LI-BG-04",
+          content: {
+            label: "Collection",
+            title: "Infostealers hide in plain sight",
+            body: "Piracy tutorials that deliver credential theft at scale.",
+            placeholder: "Photo",
+          },
+        },
       };
 
       const FIELD_LABELS = {
@@ -417,7 +442,13 @@
       ]);
 
       /** Square layouts kept in examples + create picker; all landscape stay. */
-      const CREATE_SQUARE_LAYOUTS = new Set(["LI-LY-02", "LI-LY-12"]);
+      const CREATE_SQUARE_LAYOUTS = new Set([
+        "LI-LY-02",
+        "LI-LY-12",
+        "LI-LY-15",
+        "LI-LY-16",
+        "LI-LY-17",
+      ]);
 
       /** Layout samples hidden from the examples gallery (still in Create). */
       const HIDE_FROM_EXAMPLES = new Set(["LI-LY-02", "LI-LY-09", "LI-LY-12"]);
@@ -792,6 +823,9 @@
           example.layout === "LI-LY-08" ||
           example.layout === "LI-LY-09" ||
           example.layout === "LI-LY-10" ||
+          example.layout === "LI-LY-15" ||
+          example.layout === "LI-LY-16" ||
+          example.layout === "LI-LY-17" ||
           c.image !== undefined ||
           c.placeholder !== undefined;
 

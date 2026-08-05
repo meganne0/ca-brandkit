@@ -112,6 +112,27 @@ export const LINKEDIN_LAYOUTS = {
     footer: true,
     className: "li-layout-columns",
   },
+  "LI-LY-15": {
+    label: "Media · top",
+    description: "Photo placeholder on top, headline + body below. Square. Footer.",
+    format: "square",
+    footer: true,
+    className: "li-layout-media li-layout-media--top",
+  },
+  "LI-LY-16": {
+    label: "Media · bottom",
+    description: "Headline + body on top, photo placeholder below. Square. Footer.",
+    format: "square",
+    footer: true,
+    className: "li-layout-media li-layout-media--bottom",
+  },
+  "LI-LY-17": {
+    label: "Media · stacked insight",
+    description: "Label + title + body above a photo placeholder. Square. Footer.",
+    format: "square",
+    footer: true,
+    className: "li-layout-media li-layout-media--bottom",
+  },
 };
 
 function withBreaks(text) {
@@ -241,8 +262,9 @@ function renderMedia(content, side = "left") {
     </div>
   `;
   const media = mediaBlock(content);
+  const mediaFirst = side === "left" || side === "top";
 
-  el.innerHTML = side === "right" ? `${copy}${media}` : `${media}${copy}`;
+  el.innerHTML = mediaFirst ? `${media}${copy}` : `${copy}${media}`;
   return el;
 }
 
@@ -384,6 +406,9 @@ const RENDERERS = {
   "LI-LY-12": (content) => renderQuotePortrait(content, { landscape: false }),
   "LI-LY-13": (content) => renderQuotePortrait(content, { landscape: true }),
   "LI-LY-14": renderColumns,
+  "LI-LY-15": (content) => renderMedia(content, "top"),
+  "LI-LY-16": (content) => renderMedia(content, "bottom"),
+  "LI-LY-17": (content) => renderMedia(content, "bottom"),
 };
 
 export function renderLinkedInLayout(canvas, layoutId, content = {}) {
