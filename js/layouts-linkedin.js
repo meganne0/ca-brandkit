@@ -133,6 +133,13 @@ export const LINKEDIN_LAYOUTS = {
     footer: true,
     className: "li-layout-media li-layout-media--bottom",
   },
+  "LI-LY-18": {
+    label: "Four cards",
+    description: "Label + title + subtitle above a 2×2 card grid. Square. Footer.",
+    format: "square",
+    footer: true,
+    className: "li-layout-cards",
+  },
 };
 
 function withBreaks(text) {
@@ -391,6 +398,58 @@ function renderColumns(content) {
   return el;
 }
 
+function renderFourCards(content) {
+  const el = document.createElement("div");
+  el.className = "li-content li-layout-cards";
+  const label = content.label ?? "";
+  const title = content.title ?? content.headline ?? "";
+  const subtitle = content.subtitle ?? content.body ?? "";
+  const cards = [
+    {
+      label: content.card1Label ?? "Attack",
+      body: content.attack ?? content.card1 ?? content.cards?.attack ?? "",
+    },
+    {
+      label: content.card2Label ?? "Result",
+      body: content.result ?? content.card2 ?? content.cards?.result ?? "",
+    },
+    {
+      label: content.card3Label ?? "Method",
+      body: content.method ?? content.card3 ?? content.cards?.method ?? "",
+    },
+    {
+      label: content.card4Label ?? "Financial Impact",
+      body:
+        content.financial ??
+        content.financialImpact ??
+        content.card4 ??
+        content.cards?.financial ??
+        "",
+    },
+  ];
+
+  el.innerHTML = `
+    <div class="li-layout-cards__copy">
+      ${label ? `<p class="type-label">${withBreaks(label)}</p>` : ""}
+      ${title ? `<h2 class="type-h2">${withBreaks(title)}</h2>` : ""}
+      ${subtitle ? `<p class="type-h4">${withBreaks(subtitle)}</p>` : ""}
+    </div>
+    <div class="li-layout-cards__grid">
+      ${cards
+        .map(
+          (card) => `
+            <article class="li-layout-cards__card">
+              ${card.label ? `<p class="type-label">${withBreaks(card.label)}</p>` : ""}
+              ${card.body ? `<p class="type-body">${withBreaks(card.body)}</p>` : ""}
+            </article>
+          `,
+        )
+        .join("")}
+    </div>
+  `;
+  return el;
+}
+
 const RENDERERS = {
   "LI-LY-01": renderHook,
   "LI-LY-02": renderQuote,
@@ -409,6 +468,7 @@ const RENDERERS = {
   "LI-LY-15": (content) => renderMedia(content, "top"),
   "LI-LY-16": (content) => renderMedia(content, "bottom"),
   "LI-LY-17": (content) => renderMedia(content, "bottom"),
+  "LI-LY-18": renderFourCards,
 };
 
 export function renderLinkedInLayout(canvas, layoutId, content = {}) {

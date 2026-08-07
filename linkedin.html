@@ -11,7 +11,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/backgrounds.css?v=21" />
-    <link rel="stylesheet" href="css/linkedin.css?v=35" />
+    <link rel="stylesheet" href="css/linkedin.css?v=38" />
     <script src="js/auth-gate.js?v=5"></script>
   </head>
   <body>
@@ -201,7 +201,7 @@
       import {
         LINKEDIN_LAYOUTS,
         renderLinkedInLayout,
-      } from "./js/layouts-linkedin.js?v=27";
+      } from "./js/layouts-linkedin.js?v=30";
       import { renderLinkedInDecor } from "./js/decor-linkedin.js?v=2";
       import { downloadPaintedThumbnail } from "./js/youtube-download.js?v=4";
 
@@ -414,6 +414,22 @@
             placeholder: "Photo",
           },
         },
+        "LI-LY-18": {
+          bg: "LI-BG-01",
+          content: {
+            label: "Case study",
+            title: "Trusted access, real damage",
+            subtitle: "How credential theft turned a quiet login into a full operational outage.",
+            attack:
+              "March 2026 on Stryker, $25B med-tech company. Goal was geopolitical disruption.",
+            result:
+              "200k devices wiped, cardiac transmission system offline, +5k employees sent home.",
+            method:
+              "Likely spear phish and credential theft of a legitimate admin-level account; no malware or ransomware was used.",
+            financial:
+              "Estimated $24–$40M in direct hardware cost, $15M–$50M in operational disruption, $62M–$140M total.",
+          },
+        },
       };
 
       const FIELD_LABELS = {
@@ -430,6 +446,10 @@
         body: "Body",
         cta: "CTA text",
         placeholder: "Media placeholder label",
+        attack: "Attack",
+        result: "Result",
+        method: "Method",
+        financial: "Financial Impact",
       };
 
       const MULTILINE = new Set([
@@ -439,6 +459,10 @@
         "quote",
         "body",
         "context",
+        "attack",
+        "result",
+        "method",
+        "financial",
       ]);
 
       /** Square layouts kept in examples + create picker; all landscape stay. */
@@ -448,6 +472,7 @@
         "LI-LY-15",
         "LI-LY-16",
         "LI-LY-17",
+        "LI-LY-18",
       ]);
 
       /** Layout samples hidden from the examples gallery (still in Create). */
