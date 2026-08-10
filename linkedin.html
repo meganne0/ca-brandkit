@@ -11,7 +11,7 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/backgrounds.css?v=21" />
-    <link rel="stylesheet" href="css/linkedin.css?v=38" />
+    <link rel="stylesheet" href="css/linkedin.css?v=40" />
     <script src="js/auth-gate.js?v=5"></script>
   </head>
   <body>
@@ -201,7 +201,7 @@
       import {
         LINKEDIN_LAYOUTS,
         renderLinkedInLayout,
-      } from "./js/layouts-linkedin.js?v=30";
+      } from "./js/layouts-linkedin.js?v=32";
       import { renderLinkedInDecor } from "./js/decor-linkedin.js?v=2";
       import { downloadPaintedThumbnail } from "./js/youtube-download.js?v=4";
 
@@ -760,6 +760,13 @@
         delete example.decor;
         const fitEl = document.getElementById("li-field-imageFit");
         if (fitEl) c.imageFit = fitEl.checked ? "contain" : "cover";
+        const checkedPos = document.querySelector(
+          '#li-editor-slots input[name="imagePosition"]:checked',
+        );
+        if (checkedPos) c.imagePosition = checkedPos.value;
+        else if (c.imageFit !== "contain" && !c.imagePosition) {
+          c.imagePosition = "center";
+        }
 
         const colFields = {};
         [...editorForm.elements].forEach((el) => {
@@ -906,6 +913,40 @@
               <span>Keep original image ratio</span>
             </label>
           `);
+          if (c.imageFit !== "contain") {
+            const posOptions = [
+              { value: "center", label: "True center" },
+              { value: "top-left", label: "Top left" },
+              { value: "top-right", label: "Top right" },
+              { value: "bottom-left", label: "Bottom left" },
+              { value: "bottom-right", label: "Bottom right" },
+              { value: "left-center", label: "Left center" },
+              { value: "right-center", label: "Right center" },
+            ];
+            const pos = posOptions.some((o) => o.value === c.imagePosition)
+              ? c.imagePosition
+              : "center";
+            parts.push(`
+              <fieldset class="li-editor__radios">
+                <legend class="li-editor__radios-title">Crop position</legend>
+                ${posOptions
+                  .map(
+                    (o) => `
+                  <label class="li-editor__radio" for="li-field-imagePos-${o.value}">
+                    <input
+                      type="radio"
+                      id="li-field-imagePos-${o.value}"
+                      name="imagePosition"
+                      value="${o.value}"${pos === o.value ? " checked" : ""}
+                    />
+                    <span>${o.label}</span>
+                  </label>
+                `,
+                  )
+                  .join("")}
+              </fieldset>
+            `);
+          }
         }
 
         editorSlots.innerHTML = parts.join("");
@@ -1289,15 +1330,26 @@
           refreshExampleCard(editorState.example);
           return;
         }
-        if (target?.name !== "imageFit") return;
-        readEditorForm(editorState.example);
-        const c = editorState.example.content;
-        if (c.imageFit === "contain" && c.image && !c.imageAspect) {
-          const aspect = await measureImageAspect(c.image);
-          if (aspect) c.imageAspect = aspect;
+        if (target?.name === "imageFit") {
+          readEditorForm(editorState.example);
+          const c = editorState.example.content;
+          if (c.imageFit === "contain" && c.image && !c.imageAspect) {
+            const aspect = await measureImageAspect(c.image);
+            if (aspect) c.imageAspect = aspect;
+          }
+          if (c.imageFit !== "contain" && !c.imagePosition) {
+            c.imagePosition = "center";
+          }
+          buildEditorSlots(editorState.example);
+          paintEditorPreview();
+          refreshExampleCard(editorState.example);
+          return;
         }
-        paintEditorPreview();
-        refreshExampleCard(editorState.example);
+        if (target?.name === "imagePosition") {
+          readEditorForm(editorState.example);
+          paintEditorPreview();
+          refreshExampleCard(editorState.example);
+        }
       });
 
       editorSlots.addEventListener("click", async (e) => {

@@ -233,10 +233,16 @@ function mediaBlock(content) {
     const aspectStyle = hasAspect
       ? ` style="--li-media-aspect:${content.imageAspect}"`
       : "";
+    const pos =
+      fit === "cover"
+        ? normalizeImagePosition(content.imagePosition)
+        : "center";
+    const posClass =
+      fit === "cover" ? ` li-layout-media__img--pos-${pos}` : "";
     return `
       <div class="li-layout-media__media">
         <div class="li-layout-media__frame${frameClass}"${aspectStyle}>
-          <img class="li-layout-media__img li-layout-media__img--${fit}" src="${content.image}" alt="" />
+          <img class="li-layout-media__img li-layout-media__img--${fit}${posClass}" src="${content.image}" alt="" />
         </div>
       </div>
     `;
@@ -248,6 +254,22 @@ function mediaBlock(content) {
       </div>
     </div>
   `;
+}
+
+const IMAGE_POSITIONS = new Set([
+  "center",
+  "top-left",
+  "top-right",
+  "bottom-left",
+  "bottom-right",
+  "left-center",
+  "right-center",
+]);
+
+function normalizeImagePosition(value) {
+  if (value === "true-center") return "center";
+  if (IMAGE_POSITIONS.has(value)) return value;
+  return "center";
 }
 
 function renderMedia(content, side = "left") {
