@@ -337,8 +337,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 22px;
-  width: 520px;
-  max-width: 78%;
+  box-sizing: border-box;
   padding: 36px 40px;
   border-radius: 28px;
   text-align: left;
@@ -374,20 +373,27 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: min(620px, 78%);
+  width: 560px;
+  min-width: 500px;
+  min-height: 500px;
+}
+
+.ca-modals-stage--n2 .ca-modal {
+  min-width: 400px;
+  min-height: 400px;
 }
 
 .ca-modals-stage--n2 .ca-modal--back {
   top: 118px;
   left: 72px;
-  width: 540px;
+  width: 440px;
   z-index: 1;
 }
 
 .ca-modals-stage--n2 .ca-modal--front {
   top: 280px;
   left: 340px;
-  width: 560px;
+  width: 460px;
   z-index: 2;
 }
 
@@ -400,7 +406,7 @@ body {
 
 .ca-modal__title {
   margin: 0;
-  font-family: var(--font-headline);
+  font-family: "Mozilla Text", var(--font-headline);
   font-size: 42px;
   font-weight: 700;
   line-height: 1.12;
