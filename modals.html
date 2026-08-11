@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CyberArmor — Modals</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Mozilla+Headline:wght@300&family=Mozilla+Text:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/backgrounds.css?v=21" />
+    <link rel="stylesheet" href="css/modals.css?v=2" />
+    <script src="js/auth-gate.js?v=5"></script>
+  </head>
+  <body>
+    <div class="modals-page">
+      <header class="modals-page__header">
+        <div class="modals-page__title-row">
+          <h1>Modals</h1>
+          <span class="modals-badge">In Progress</span>
+        </div>
+        <p>
+          Compose one or two overlapping glass modals for square LinkedIn-style
+          posts, or export with a transparent background as a PNG.
+          <a class="gallery-nav" href="index.html">← hub</a>
+          ·
+          <a class="gallery-nav" href="linkedin.html">LinkedIn</a>
+          ·
+          <a class="gallery-nav" href="diagram.html">Diagram</a>
+        </p>
+      </header>
+
+      <main class="modals-page__main">
+        <section class="modals-panel" aria-labelledby="modals-editor-title">
+          <h2 class="modals-panel__title" id="modals-editor-title">Editor</h2>
+          <p class="modals-panel__lead">
+            Leave a field blank to hide it. New lines become new lines in the
+            modal. Wrap sensitive text in
+            <code>[[like this]]</code> to blur/redact it.
+          </p>
+
+          <fieldset class="modals-fieldset">
+            <legend class="modals-fieldset__legend">Export</legend>
+            <div class="modals-radios" role="radiogroup" aria-label="Export mode">
+              <label class="modals-radio">
+                <input type="radio" name="export-mode" value="square" checked />
+                Square background
+              </label>
+              <label class="modals-radio">
+                <input type="radio" name="export-mode" value="transparent" />
+                Transparent PNG
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="modals-bg-row" id="modals-bg-row">
+            <label class="modals-field">
+              <span class="modals-field__label">Background</span>
+              <select class="modals-field__select" id="modals-bg"></select>
+            </label>
+          </div>
+
+          <fieldset class="modals-fieldset">
+            <legend class="modals-fieldset__legend">Composition</legend>
+            <div class="modals-radios" role="radiogroup" aria-label="Modal count">
+              <label class="modals-radio">
+                <input type="radio" name="modal-count" value="1" />
+                One modal
+              </label>
+              <label class="modals-radio">
+                <input type="radio" name="modal-count" value="2" checked />
+                Two overlapping
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="modals-modal-block" data-modal-index="0">
+            <h3 class="modals-modal-block__title">Modal 1 · back</h3>
+            <label class="modals-field">
+              <span class="modals-field__label">Title</span>
+              <input class="modals-field__input" data-field="title" type="text" />
+            </label>
+            <label class="modals-field">
+              <span class="modals-field__label">Subtitle</span>
+              <input class="modals-field__input" data-field="subtitle" type="text" />
+            </label>
+            <label class="modals-field">
+              <span class="modals-field__label">Body</span>
+              <textarea class="modals-field__textarea" data-field="body" rows="3"></textarea>
+            </label>
+            <label class="modals-field">
+              <span class="modals-field__label">Window title</span>
+              <input class="modals-field__input" data-field="windowTitle" type="text" />
+            </label>
+            <label class="modals-field">
+              <span class="modals-field__label">Window content</span>
+              <textarea
+                class="modals-field__textarea"
+                data-field="windowBody"
+                rows="8"
+              ></textarea>
+            </label>
+            <label class="modals-field">
+              <span class="modals-field__label">Accent</span>
+              <select class="modals-field__select" data-field="accent">
+                <option value="violet">Violet</option>
+                <option value="blue">Blue</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="modals-modal-block" data-modal-index="1" id="modals-block-2">
+            <h3 class="modals-modal-block__title">Modal 2 · front</h3>
+            <label class="modals-field">
+              <span class="modals-field__label">Title</span>
+              <input class="modals-field__input" data-field="title" type="text" />
+            </label>
+            <label class="modals-field">
+              <span class="modals-field__label">Subtitle</span>
+              <input class="modals-field__input" data-field="subtitle" type="text" />
+            </label>
+            <label class="modals-field">
+              <span class="modals-field__label">Body</span>
+              <textarea class="modals-field__textarea" data-field="body" rows="3"></textarea>
+            </label>
+            <label class="modals-field">
+              <span class="modals-field__label">Window title</span>
+              <input class="modals-field__input" data-field="windowTitle" type="text" />
+            </label>
+            <label class="modals-field">
+              <span class="modals-field__label">Window content</span>
+              <textarea
+                class="modals-field__textarea"
+                data-field="windowBody"
+                rows="8"
+              ></textarea>
+            </label>
+            <label class="modals-field">
+              <span class="modals-field__label">Accent</span>
+              <select class="modals-field__select" data-field="accent">
+                <option value="violet">Violet</option>
+                <option value="blue">Blue</option>
+              </select>
+            </label>
+          </div>
+
+          <div class="modals-actions">
+            <button type="button" class="modals-btn modals-btn--primary" id="modals-download">
+              Download PNG
+            </button>
+            <button type="button" class="modals-btn modals-btn--ghost" id="modals-reset">
+              Reset sample
+            </button>
+          </div>
+        </section>
+
+        <section class="modals-preview" aria-labelledby="modals-preview-title">
+          <div class="modals-preview__head">
+            <h2 class="modals-panel__title" id="modals-preview-title">Preview</h2>
+            <p class="modals-preview__meta" id="modals-preview-meta">1080 × 1080</p>
+          </div>
+          <div class="modals-stage" id="modals-stage"></div>
+        </section>
+      </main>
+    </div>
+
+    <script type="module">
+      import {
+        LINKEDIN_BACKGROUNDS,
+        renderLinkedInBackground,
+      } from "./js/backgrounds-linkedin.js?v=18";
+      import {
+        defaultModalState,
+        paintModals,
+        MODAL_FORMAT,
+      } from "./js/modals.js?v=2";
+      import { downloadPaintedThumbnail } from "./js/youtube-download.js?v=5";
+
+      const state = defaultModalState();
+      const stage = document.getElementById("modals-stage");
+      const bgSelect = document.getElementById("modals-bg");
+      const bgRow = document.getElementById("modals-bg-row");
+      const block2 = document.getElementById("modals-block-2");
+      const previewMeta = document.getElementById("modals-preview-meta");
+
+      const squareBgs = Object.entries(LINKEDIN_BACKGROUNDS).filter(
+        ([, bg]) => bg.format === "square" || bg.group === "square",
+      );
+
+      squareBgs.forEach(([id, bg]) => {
+        const opt = document.createElement("option");
+        opt.value = id;
+        opt.textContent = `${id} · ${bg.label}`;
+        bgSelect.appendChild(opt);
+      });
+
+      function syncFormFromState() {
+        document.querySelector(
+          `input[name="export-mode"][value="${state.exportMode}"]`,
+        ).checked = true;
+        document.querySelector(
+          `input[name="modal-count"][value="${state.modalCount}"]`,
+        ).checked = true;
+        bgSelect.value = state.bg;
+        bgRow.hidden = state.exportMode !== "square";
+        block2.hidden = state.modalCount !== 2;
+
+        document.querySelectorAll("[data-modal-index]").forEach((block) => {
+          const i = Number(block.dataset.modalIndex);
+          const modal = state.modals[i];
+          block.querySelectorAll("[data-field]").forEach((el) => {
+            const key = el.dataset.field;
+            el.value = modal[key] ?? "";
+          });
+        });
+      }
+
+      function readFormIntoState() {
+        state.exportMode = document.querySelector(
+          'input[name="export-mode"]:checked',
+        ).value;
+        state.modalCount = Number(
+          document.querySelector('input[name="modal-count"]:checked').value,
+        );
+        state.bg = bgSelect.value || "LI-BG-01";
+        document.querySelectorAll("[data-modal-index]").forEach((block) => {
+          const i = Number(block.dataset.modalIndex);
+          const modal = state.modals[i];
+          block.querySelectorAll("[data-field]").forEach((el) => {
+            modal[el.dataset.field] = el.value;
+          });
+        });
+        bgRow.hidden = state.exportMode !== "square";
+        block2.hidden = state.modalCount !== 2;
+      }
+
+      function fitCanvas() {
+        const canvas = stage.querySelector(".canvas");
+        if (!canvas) return;
+        const scale = Math.min(
+          stage.clientWidth / MODAL_FORMAT.w,
+          stage.clientHeight / MODAL_FORMAT.h,
+        );
+        canvas.style.transform = `scale(${scale})`;
+      }
+
+      function paint() {
+        let canvas = stage.querySelector(".canvas");
+        if (!canvas) {
+          canvas = document.createElement("div");
+          stage.appendChild(canvas);
+        }
+        stage.classList.toggle(
+          "modals-stage--checker",
+          state.exportMode === "transparent",
+        );
+        paintModals(canvas, state, {
+          renderBackground: renderLinkedInBackground,
+        });
+        previewMeta.textContent =
+          state.exportMode === "transparent"
+            ? "1080 × 1080 · transparent"
+            : `1080 × 1080 · ${state.bg}`;
+        requestAnimationFrame(fitCanvas);
+      }
+
+      function refresh() {
+        readFormIntoState();
+        paint();
+      }
+
+      document
+        .querySelectorAll(
+          'input[name="export-mode"], input[name="modal-count"], #modals-bg',
+        )
+        .forEach((el) => el.addEventListener("change", refresh));
+
+      document.querySelectorAll("[data-field]").forEach((el) => {
+        el.addEventListener("input", refresh);
+        el.addEventListener("change", refresh);
+      });
+
+      document.getElementById("modals-reset").addEventListener("click", () => {
+        Object.assign(state, defaultModalState());
+        syncFormFromState();
+        paint();
+      });
+
+      document.getElementById("modals-download").addEventListener("click", async () => {
+        readFormIntoState();
+        const stamp = new Date().toISOString().slice(0, 10);
+        const suffix = state.exportMode === "transparent" ? "transparent" : "square";
+        const btn = document.getElementById("modals-download");
+        btn.disabled = true;
+        try {
+          await downloadPaintedThumbnail(
+            (canvas) => {
+              paintModals(canvas, state, {
+                renderBackground: renderLinkedInBackground,
+              });
+            },
+            `ca-modal-${suffix}-${stamp}.png`,
+            {
+              width: MODAL_FORMAT.w,
+              height: MODAL_FORMAT.h,
+              className: "canvas canvas--li-square ca-modals-canvas",
+              ...(state.exportMode === "transparent"
+                ? { backgroundColor: null }
+                : {}),
+            },
+          );
+        } catch (err) {
+          console.error(err);
+          alert("Download failed. Check the console for details.");
+        } finally {
+          btn.disabled = false;
+        }
+      });
+
+      new ResizeObserver(() => fitCanvas()).observe(stage);
+      syncFormFromState();
+      paint();
+    </script>
+  </body>
+</html>

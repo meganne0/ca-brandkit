@@ -87,12 +87,13 @@ function hardenHostForExport(clonedDoc) {
 /**
  * @param {HTMLElement} el — unscaled .canvas at design size
  * @param {string} filename
- * @param {{ width?: number, height?: number, pixelRatio?: number }} [opts]
+ * @param {{ width?: number, height?: number, pixelRatio?: number, backgroundColor?: string | null }} [opts]
  */
 export async function downloadElementPng(el, filename, opts = {}) {
   const width = opts.width ?? DESIGN_W;
   const height = opts.height ?? DESIGN_H;
   const scale = opts.pixelRatio ?? EXPORT_SCALE;
+  const hasBg = Object.prototype.hasOwnProperty.call(opts, "backgroundColor");
 
   await inlineBlobImages(el);
   await waitForImages(el);
@@ -105,6 +106,7 @@ export async function downloadElementPng(el, filename, opts = {}) {
     pixelRatio: scale,
     cacheBust: true,
     skipAutoScale: true,
+    ...(hasBg ? { backgroundColor: opts.backgroundColor } : {}),
     style: {
       transform: "none",
       transformOrigin: "top left",
@@ -137,7 +139,7 @@ export async function downloadElementPng(el, filename, opts = {}) {
  * Build an offscreen 1280×720 canvas, paint it, download, then remove.
  * @param {(canvas: HTMLElement) => void} paint
  * @param {string} filename
- * @param {{ className?: string, width?: number, height?: number }} [opts]
+ * @param {{ className?: string, width?: number, height?: number, backgroundColor?: string | null }} [opts]
  */
 export async function downloadPaintedThumbnail(paint, filename, opts = {}) {
   const width = opts.width ?? DESIGN_W;
@@ -173,7 +175,13 @@ export async function downloadPaintedThumbnail(paint, filename, opts = {}) {
 
   try {
     paint(canvas);
-    await downloadElementPng(canvas, filename, { width, height });
+    await downloadElementPng(canvas, filename, {
+      width,
+      height,
+      ...(Object.prototype.hasOwnProperty.call(opts, "backgroundColor")
+        ? { backgroundColor: opts.backgroundColor }
+        : {}),
+    });
   } finally {
     mount.remove();
   }
