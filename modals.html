@@ -11,7 +11,8 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/backgrounds.css?v=21" />
-    <link rel="stylesheet" href="css/modals.css?v=3" />
+    <link rel="stylesheet" href="css/decor-youtube.css?v=1" />
+    <link rel="stylesheet" href="css/modals.css?v=5" />
     <script src="js/auth-gate.js?v=5"></script>
   </head>
   <body>
@@ -62,6 +63,11 @@
             </label>
           </div>
 
+          <label class="modals-field">
+            <span class="modals-field__label">Decor (behind modals)</span>
+            <select class="modals-field__select" id="modals-decor"></select>
+          </label>
+
           <fieldset class="modals-fieldset">
             <legend class="modals-fieldset__legend">Composition</legend>
             <div class="modals-radios" role="radiogroup" aria-label="Modal count">
@@ -103,10 +109,14 @@
               ></textarea>
             </label>
             <label class="modals-field">
-              <span class="modals-field__label">Accent</span>
+              <span class="modals-field__label">Stroke / accent</span>
               <select class="modals-field__select" data-field="accent">
                 <option value="violet">Violet</option>
                 <option value="blue">Blue</option>
+                <option value="brand">Brand gradient</option>
+                <option value="ember">Ember gradient</option>
+                <option value="aurora">Aurora gradient</option>
+                <option value="cool">Cool gradient</option>
               </select>
             </label>
           </div>
@@ -138,10 +148,14 @@
               ></textarea>
             </label>
             <label class="modals-field">
-              <span class="modals-field__label">Accent</span>
+              <span class="modals-field__label">Stroke / accent</span>
               <select class="modals-field__select" data-field="accent">
                 <option value="violet">Violet</option>
                 <option value="blue">Blue</option>
+                <option value="brand">Brand gradient</option>
+                <option value="ember">Ember gradient</option>
+                <option value="aurora">Aurora gradient</option>
+                <option value="cool">Cool gradient</option>
               </select>
             </label>
           </div>
@@ -172,15 +186,20 @@
         renderLinkedInBackground,
       } from "./js/backgrounds-linkedin.js?v=18";
       import {
+        YOUTUBE_DECORS,
+        renderYouTubeDecor,
+      } from "./js/decor-youtube.js?v=2";
+      import {
         defaultModalState,
         paintModals,
         MODAL_FORMAT,
-      } from "./js/modals.js?v=2";
-      import { downloadPaintedThumbnail } from "./js/youtube-download.js?v=5";
+      } from "./js/modals.js?v=3";
+      import { downloadPaintedThumbnail } from "./js/youtube-download.js?v=6";
 
       const state = defaultModalState();
       const stage = document.getElementById("modals-stage");
       const bgSelect = document.getElementById("modals-bg");
+      const decorSelect = document.getElementById("modals-decor");
       const bgRow = document.getElementById("modals-bg-row");
       const block2 = document.getElementById("modals-block-2");
       const previewMeta = document.getElementById("modals-preview-meta");
@@ -196,6 +215,17 @@
         bgSelect.appendChild(opt);
       });
 
+      const noneDecor = document.createElement("option");
+      noneDecor.value = "";
+      noneDecor.textContent = "None";
+      decorSelect.appendChild(noneDecor);
+      Object.entries(YOUTUBE_DECORS).forEach(([id, recipe]) => {
+        const opt = document.createElement("option");
+        opt.value = id;
+        opt.textContent = `${id} · ${recipe.label}`;
+        decorSelect.appendChild(opt);
+      });
+
       function syncFormFromState() {
         document.querySelector(
           `input[name="export-mode"][value="${state.exportMode}"]`,
@@ -204,6 +234,7 @@
           `input[name="modal-count"][value="${state.modalCount}"]`,
         ).checked = true;
         bgSelect.value = state.bg;
+        decorSelect.value = state.decor || "";
         bgRow.hidden = state.exportMode !== "square";
         block2.hidden = state.modalCount !== 2;
 
@@ -225,6 +256,7 @@
           document.querySelector('input[name="modal-count"]:checked').value,
         );
         state.bg = bgSelect.value || "LI-BG-01";
+        state.decor = decorSelect.value || "";
         document.querySelectorAll("[data-modal-index]").forEach((block) => {
           const i = Number(block.dataset.modalIndex);
           const modal = state.modals[i];
@@ -246,6 +278,13 @@
         canvas.style.transform = `scale(${scale})`;
       }
 
+      function paintDeps() {
+        return {
+          renderBackground: renderLinkedInBackground,
+          renderDecor: renderYouTubeDecor,
+        };
+      }
+
       function paint() {
         let canvas = stage.querySelector(".canvas");
         if (!canvas) {
@@ -256,12 +295,10 @@
           "modals-stage--checker",
           state.exportMode === "transparent",
         );
-        paintModals(canvas, state, {
-          renderBackground: renderLinkedInBackground,
-        });
+        paintModals(canvas, state, paintDeps());
         previewMeta.textContent =
           state.exportMode === "transparent"
-            ? "1080 × 1080 · transparent"
+            ? "Transparent · crops to content on download"
             : `1080 × 1080 · ${state.bg}`;
         requestAnimationFrame(fitCanvas);
       }
@@ -273,7 +310,7 @@
 
       document
         .querySelectorAll(
-          'input[name="export-mode"], input[name="modal-count"], #modals-bg',
+          'input[name="export-mode"], input[name="modal-count"], #modals-bg, #modals-decor',
         )
         .forEach((el) => el.addEventListener("change", refresh));
 
@@ -297,9 +334,7 @@
         try {
           await downloadPaintedThumbnail(
             (canvas) => {
-              paintModals(canvas, state, {
-                renderBackground: renderLinkedInBackground,
-              });
+              paintModals(canvas, state, paintDeps());
             },
             `ca-modal-${suffix}-${stamp}.png`,
             {
@@ -307,7 +342,7 @@
               height: MODAL_FORMAT.h,
               className: "canvas canvas--li-square ca-modals-canvas",
               ...(state.exportMode === "transparent"
-                ? { backgroundColor: null }
+                ? { backgroundColor: null, cropToContent: true }
                 : {}),
             },
           );

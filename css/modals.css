@@ -314,6 +314,8 @@ body {
 
 .canvas.ca-modals-canvas--transparent {
   background: transparent !important;
+  /* Keep shadows/glow in the raster so transparent export can crop to them */
+  overflow: visible;
 }
 
 .modals-stage .canvas {
@@ -353,6 +355,11 @@ body {
     0 0 40px rgba(77, 32, 140, 0.35);
 }
 
+.ca-modal > * {
+  position: relative;
+  z-index: 1;
+}
+
 .ca-modal--violet {
   border-color: rgba(168, 130, 255, 0.5);
   box-shadow:
@@ -367,6 +374,83 @@ body {
     0 0 0 1px rgba(255, 255, 255, 0.04) inset,
     0 24px 60px rgba(0, 0, 0, 0.45),
     0 0 48px rgba(60, 120, 220, 0.35);
+}
+
+/* Gradient stroke accents (hollow ring via mask) */
+.ca-modal--grad {
+  border-color: transparent;
+}
+
+.ca-modal--grad::before,
+.ca-modal--grad::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  pointer-events: none;
+  z-index: 0;
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+
+.ca-modal--grad::after {
+  filter: blur(10px);
+  opacity: 0.72;
+}
+
+.ca-modal--stroke-brand::before,
+.ca-modal--stroke-brand::after {
+  background: var(--panel-stroke-gradient);
+}
+
+.ca-modal--stroke-ember::before,
+.ca-modal--stroke-ember::after {
+  background: linear-gradient(135deg, #ec6b15 0%, #f25835 45%, #f72ebe 100%);
+}
+
+.ca-modal--stroke-aurora::before,
+.ca-modal--stroke-aurora::after {
+  background: linear-gradient(135deg, #3de7c9 0%, #5b8cff 45%, #c084fc 100%);
+}
+
+.ca-modal--stroke-cool::before,
+.ca-modal--stroke-cool::after {
+  background: linear-gradient(135deg, #7dd3fc 0%, #6366f1 55%, #2c00a5 100%);
+}
+
+.ca-modal--stroke-brand {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 24px 60px rgba(0, 0, 0, 0.45),
+    0 0 48px rgba(247, 46, 190, 0.28);
+}
+
+.ca-modal--stroke-ember {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 24px 60px rgba(0, 0, 0, 0.45),
+    0 0 48px rgba(242, 88, 53, 0.35);
+}
+
+.ca-modal--stroke-aurora {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 24px 60px rgba(0, 0, 0, 0.45),
+    0 0 48px rgba(91, 140, 255, 0.35);
+}
+
+.ca-modal--stroke-cool {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.04) inset,
+    0 24px 60px rgba(0, 0, 0, 0.45),
+    0 0 48px rgba(99, 102, 241, 0.35);
 }
 
 .ca-modals-stage--n1 .ca-modal--back {

@@ -87,7 +87,7 @@ function hardenHostForExport(clonedDoc) {
 /**
  * @param {HTMLElement} el — unscaled .canvas at design size
  * @param {string} filename
- * @param {{ width?: number, height?: number, pixelRatio?: number, backgroundColor?: string | null }} [opts]
+ * @param {{ width?: number, height?: number, pixelRatio?: number, backgroundColor?: string | null, cropToContent?: boolean }} [opts]
  */
 export async function downloadElementPng(el, filename, opts = {}) {
   const width = opts.width ?? DESIGN_W;
@@ -100,7 +100,7 @@ export async function downloadElementPng(el, filename, opts = {}) {
   await waitForFonts();
   await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
 
-  const dataUrl = await toPng(el, {
+  let dataUrl = await toPng(el, {
     width,
     height,
     pixelRatio: scale,
@@ -125,6 +125,10 @@ export async function downloadElementPng(el, filename, opts = {}) {
     },
   });
 
+  if (opts.cropToContent) {
+    dataUrl = await cropPngToOpaqueBounds(dataUrl);
+  }
+
   const a = document.createElement("a");
   a.href = dataUrl;
   a.download = filename.toLowerCase().endsWith(".png")
@@ -136,10 +140,71 @@ export async function downloadElementPng(el, filename, opts = {}) {
 }
 
 /**
+ * Trim fully transparent padding from a PNG data URL (keeps soft shadow/glow).
+ * @param {string} dataUrl
+ * @param {{ padding?: number, alphaThreshold?: number }} [opts]
+ */
+export async function cropPngToOpaqueBounds(dataUrl, opts = {}) {
+  const padding = opts.padding ?? 12;
+  const alphaThreshold = opts.alphaThreshold ?? 8;
+
+  const img = await new Promise((resolve, reject) => {
+    const el = new Image();
+    el.onload = () => resolve(el);
+    el.onerror = reject;
+    el.src = dataUrl;
+  });
+
+  const src = document.createElement("canvas");
+  src.width = img.naturalWidth || img.width;
+  src.height = img.naturalHeight || img.height;
+  const ctx = src.getContext("2d", { willReadFrequently: true });
+  if (!ctx) return dataUrl;
+  ctx.drawImage(img, 0, 0);
+
+  const { width, height } = src;
+  const { data } = ctx.getImageData(0, 0, width, height);
+
+  let minX = width;
+  let minY = height;
+  let maxX = -1;
+  let maxY = -1;
+
+  for (let y = 0; y < height; y++) {
+    const row = y * width;
+    for (let x = 0; x < width; x++) {
+      if (data[(row + x) * 4 + 3] > alphaThreshold) {
+        if (x < minX) minX = x;
+        if (y < minY) minY = y;
+        if (x > maxX) maxX = x;
+        if (y > maxY) maxY = y;
+      }
+    }
+  }
+
+  if (maxX < 0) return dataUrl;
+
+  minX = Math.max(0, minX - padding);
+  minY = Math.max(0, minY - padding);
+  maxX = Math.min(width - 1, maxX + padding);
+  maxY = Math.min(height - 1, maxY + padding);
+
+  const cropW = maxX - minX + 1;
+  const cropH = maxY - minY + 1;
+  const out = document.createElement("canvas");
+  out.width = cropW;
+  out.height = cropH;
+  const outCtx = out.getContext("2d");
+  if (!outCtx) return dataUrl;
+  outCtx.drawImage(src, minX, minY, cropW, cropH, 0, 0, cropW, cropH);
+  return out.toDataURL("image/png");
+}
+
+/**
  * Build an offscreen 1280×720 canvas, paint it, download, then remove.
  * @param {(canvas: HTMLElement) => void} paint
  * @param {string} filename
- * @param {{ className?: string, width?: number, height?: number, backgroundColor?: string | null }} [opts]
+ * @param {{ className?: string, width?: number, height?: number, backgroundColor?: string | null, cropToContent?: boolean }} [opts]
  */
 export async function downloadPaintedThumbnail(paint, filename, opts = {}) {
   const width = opts.width ?? DESIGN_W;
@@ -153,7 +218,7 @@ export async function downloadPaintedThumbnail(paint, filename, opts = {}) {
     "top:0",
     `width:${width}px`,
     `height:${height}px`,
-    "overflow:hidden",
+    opts.cropToContent ? "overflow:visible" : "overflow:hidden",
     "pointer-events:none",
     "z-index:0",
     "opacity:1",
@@ -181,6 +246,7 @@ export async function downloadPaintedThumbnail(paint, filename, opts = {}) {
       ...(Object.prototype.hasOwnProperty.call(opts, "backgroundColor")
         ? { backgroundColor: opts.backgroundColor }
         : {}),
+      ...(opts.cropToContent ? { cropToContent: true } : {}),
     });
   } finally {
     mount.remove();

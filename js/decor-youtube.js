@@ -446,7 +446,10 @@ const BUILDERS = {
  */
 export function renderYouTubeDecor(canvas, decorId) {
   canvas.querySelector(".yt-decor")?.remove();
-  if (!decorId) return;
+  if (!decorId) {
+    delete canvas.dataset.decor;
+    return;
+  }
 
   const recipe = YOUTUBE_DECORS[decorId];
   const builder = BUILDERS[decorId];
@@ -460,7 +463,9 @@ export function renderYouTubeDecor(canvas, decorId) {
   const node = wrap.firstElementChild;
   canvas.dataset.decor = decorId;
 
-  const content = canvas.querySelector(".yt-content");
+  const content = canvas.querySelector(
+    ".yt-content, .ca-modals-stage, .li-content",
+  );
   if (content) canvas.insertBefore(node, content);
   else canvas.appendChild(node);
 }
