@@ -5,9 +5,9 @@
  * the current URL so the page boots normally — never redirects to hub.
  */
 (function () {
-  const AUTH_KEY = "ca-brandkit-auth-v2";
+  const AUTH_KEY = "ca-brandkit-auth-v3";
   const PASS_HASH =
-    "cc426ce347477d043a5608438b864960b687803a5d40d61565d7ca003496a3ef";
+    "9b72b7752adde29098555700de1526f9dbf256b0d08bd5cb82ab35c560c2269f";
 
   async function sha256Hex(text) {
     const data = new TextEncoder().encode(text);

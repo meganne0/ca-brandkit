@@ -1356,6 +1356,20 @@ body.li-editor-open {
   color: #fff;
 }
 
+.li-editor__slot-btn--ghost {
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.12);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.li-editor__hint {
+  margin: 0;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.4;
+}
+
 .li-editor .li-replaceable:hover {
   outline: 2px solid var(--ca-orange);
   outline-offset: 2px;
@@ -1425,6 +1439,15 @@ body.li-editor-open {
   accent-color: var(--ca-orange);
   cursor: pointer;
   flex-shrink: 0;
+}
+
+.li-editor__check--disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.li-editor__check--disabled input {
+  cursor: not-allowed;
 }
 
 .li-editor__radios {
@@ -1509,4 +1532,241 @@ body.li-editor-open {
 .li-ex-menu__item--danger:hover {
   background: rgba(242, 88, 53, 0.22);
   color: #ffb4a6;
+}
+
+/* ---- LI-LY-19 / 20 · Event ---- */
+.li-layout-event {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  height: 100%;
+  gap: 0;
+  text-align: center;
+}
+
+/* Equal room above the logo and below the speaker row */
+.li-layout-event__edge {
+  flex: 1 1 0;
+  min-height: 16px;
+}
+
+.li-layout-event__logo-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 12px 56px 8px;
+  box-sizing: border-box;
+  flex: 0 0 auto;
+}
+
+.li-layout-event__logo {
+  display: block;
+  max-width: 100%;
+  max-height: 240px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  object-position: center;
+}
+
+/* Grows between logo and speakers; centers the text block so
+   space above and below it stay equal for 1–3 lines */
+.li-layout-event__text-zone {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex: 1 1 auto;
+  min-height: 0;
+  width: 100%;
+  padding: 12px 0;
+  box-sizing: border-box;
+}
+
+.li-layout-event__text-zone--empty {
+  padding: 0;
+}
+
+.li-layout-event__copy {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  max-width: 860px;
+  width: 100%;
+  text-align: center;
+  flex: 0 0 auto;
+}
+
+.li-layout-event__name,
+.li-layout-event__meta,
+.li-layout-event__body {
+  margin: 0;
+  text-align: center;
+  max-width: 100%;
+}
+
+.li-layout-event__meta {
+  color: var(--ca-tagline);
+}
+
+.li-layout-event__body {
+  max-width: 28em;
+}
+
+.li-layout-event__speakers {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 32px 44px;
+  width: 100%;
+  flex: 0 0 auto;
+  padding-top: 8px;
+}
+
+.li-layout-event__speaker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  min-width: 0;
+  width: 210px;
+  text-align: center;
+}
+
+.li-layout-event__avatar {
+  width: 168px;
+  height: 168px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  border: 3px solid rgba(242, 88, 53, 0.55);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.li-layout-event--room-lg .li-layout-event__avatar {
+  width: 204px;
+  height: 204px;
+}
+
+.li-layout-event--room-xl .li-layout-event__avatar {
+  width: 236px;
+  height: 236px;
+}
+
+.li-layout-event--room-lg .li-layout-event__speaker {
+  width: 230px;
+}
+
+.li-layout-event--room-xl .li-layout-event__speaker {
+  width: 250px;
+}
+
+.li-layout-event__avatar--empty {
+  display: block;
+  box-sizing: border-box;
+}
+
+.li-layout-event__speaker-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+  width: 100%;
+  text-align: center;
+}
+
+.li-layout-event__speaker-name {
+  margin: 0;
+  font-family: var(--font-headline);
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.2;
+  color: var(--ca-white);
+}
+
+.li-layout-event__speaker-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.3;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+/* Landscape — same center stack, tighter scale */
+.li-layout-event--landscape .li-layout-event__edge {
+  min-height: 8px;
+}
+
+.li-layout-event--landscape .li-layout-event__logo-wrap {
+  max-width: 480px;
+  padding: 4px 32px;
+}
+
+.li-layout-event--landscape .li-layout-event__logo {
+  max-height: 120px;
+}
+
+.li-layout-event--landscape .li-layout-event__text-zone {
+  padding: 6px 0;
+}
+
+.li-layout-event--landscape .li-layout-event__copy {
+  gap: 8px;
+}
+
+.li-layout-event--landscape .li-layout-event__body {
+  max-width: 36em;
+}
+
+.li-layout-event--landscape .li-layout-event__speakers {
+  flex-wrap: nowrap;
+  gap: 20px 32px;
+  padding-top: 4px;
+}
+
+.li-layout-event--landscape .li-layout-event__speaker {
+  width: 140px;
+  gap: 8px;
+}
+
+.li-layout-event--landscape .li-layout-event__avatar {
+  width: 100px;
+  height: 100px;
+  border-width: 2.5px;
+}
+
+.li-layout-event--landscape.li-layout-event--room-lg .li-layout-event__avatar {
+  width: 120px;
+  height: 120px;
+}
+
+.li-layout-event--landscape.li-layout-event--room-xl .li-layout-event__avatar {
+  width: 136px;
+  height: 136px;
+}
+
+.li-layout-event--landscape.li-layout-event--room-lg .li-layout-event__speaker,
+.li-layout-event--landscape.li-layout-event--room-xl .li-layout-event__speaker {
+  width: 150px;
+}
+
+.li-layout-event--landscape .li-layout-event__speaker-name {
+  font-size: 18px;
+}
+
+.li-layout-event--landscape .li-layout-event__speaker-title {
+  font-size: 14px;
+}
+
+.li-editor__checks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 8px;
 }

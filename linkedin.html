@@ -11,8 +11,8 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/backgrounds.css?v=21" />
-    <link rel="stylesheet" href="css/linkedin.css?v=40" />
-    <script src="js/auth-gate.js?v=5"></script>
+    <link rel="stylesheet" href="css/linkedin.css?v=44" />
+    <script src="js/auth-gate.js?v=6"></script>
   </head>
   <body>
     <div class="bg-gallery">
@@ -201,7 +201,7 @@
       import {
         LINKEDIN_LAYOUTS,
         renderLinkedInLayout,
-      } from "./js/layouts-linkedin.js?v=32";
+      } from "./js/layouts-linkedin.js?v=37";
       import { renderLinkedInDecor } from "./js/decor-linkedin.js?v=2";
       import { downloadPaintedThumbnail } from "./js/youtube-download.js?v=4";
 
@@ -223,12 +223,6 @@
           name: "Meganne Ohata",
           role: "CXO",
           avatar: "/visual%20assets/avatars/avatar-meganne-circle.png",
-        },
-        {
-          id: "kyle",
-          name: "Kyle Dunker",
-          role: "Security Analysts",
-          avatar: "/visual%20assets/avatars/avatar-kyle-circle.png",
         },
       ];
 
@@ -430,6 +424,55 @@
               "Estimated $24–$40M in direct hardware cost, $15M–$50M in operational disruption, $62M–$140M total.",
           },
         },
+        "LI-LY-19": {
+          bg: "LI-BG-02",
+          content: {
+            eventLogo: "",
+            eventName: "CyberArmor at RSA Conference",
+            date: "May 4–7, 2026",
+            location: "San Francisco, CA",
+            body: "Meet the team and see how we stop identity threats before the breach.",
+            speakers: [
+              {
+                avatar: "/visual%20assets/avatars/avatar-nguyen-circle.png",
+                name: "Nguyen Nguyen",
+                title: "CEO",
+              },
+              {
+                avatar: "/visual%20assets/avatars/avatar-ali-circle.png",
+                name: "Ali Alame",
+                title: "CTO",
+              },
+            ],
+          },
+        },
+        "LI-LY-20": {
+          bg: "LI-BG-05",
+          content: {
+            eventLogo: "",
+            eventName: "CyberArmor at Black Hat",
+            date: "Aug 3–6, 2026",
+            location: "Las Vegas, NV",
+            body: "Live demos of credential and session defense — stop by and talk identity threats.",
+            speakers: [
+              {
+                avatar: "/visual%20assets/avatars/avatar-meganne-circle.png",
+                name: "Meganne Ohata",
+                title: "CXO",
+              },
+              {
+                avatar: "/visual%20assets/avatars/avatar-nguyen-circle.png",
+                name: "Nguyen Nguyen",
+                title: "CEO",
+              },
+              {
+                avatar: "/visual%20assets/avatars/avatar-ali-circle.png",
+                name: "Ali Alame",
+                title: "CTO",
+              },
+            ],
+          },
+        },
       };
 
       const FIELD_LABELS = {
@@ -450,6 +493,9 @@
         result: "Result",
         method: "Method",
         financial: "Financial Impact",
+        eventName: "Event name",
+        date: "Date",
+        location: "Location",
       };
 
       const MULTILINE = new Set([
@@ -473,6 +519,7 @@
         "LI-LY-16",
         "LI-LY-17",
         "LI-LY-18",
+        "LI-LY-19",
       ]);
 
       /** Layout samples hidden from the examples gallery (still in Create). */
@@ -491,6 +538,47 @@
           },
         },
       ];
+
+      function isEventLayout(layoutId) {
+        return layoutId === "LI-LY-19" || layoutId === "LI-LY-20";
+      }
+
+      function eventSpeakerSlots(content = {}) {
+        const raw = Array.isArray(content.speakers) ? content.speakers : [];
+        return [0, 1, 2].map((i) => ({
+          avatar: raw[i]?.avatar ?? "",
+          name: raw[i]?.name ?? "",
+          title: raw[i]?.title ?? raw[i]?.role ?? "",
+        }));
+      }
+
+      function selectedEventSpeakerIds(content = {}) {
+        return eventSpeakerSlots(content)
+          .map((person) => activeSpeakerIdFromPerson(person))
+          .filter(Boolean);
+      }
+
+      function activeSpeakerIdFromPerson(person = {}) {
+        const hit = SPEAKERS.find(
+          (s) =>
+            s.avatar === person.avatar ||
+            s.name === person.name,
+        );
+        return hit?.id ?? "";
+      }
+
+      function applyEventSpeakerChecks(example, ids) {
+        const unique = [...new Set(ids.filter(Boolean))].slice(0, 3);
+        example.content.speakers = unique.map((id) => {
+          const speaker = SPEAKERS.find((s) => s.id === id);
+          if (!speaker) return null;
+          return {
+            avatar: speaker.avatar,
+            name: speaker.name,
+            title: speaker.role || "",
+          };
+        }).filter(Boolean);
+      }
 
       function isCreateLayout(layoutId) {
         const layout = LINKEDIN_LAYOUTS[layoutId];
@@ -697,7 +785,14 @@
         `);
 
         Object.keys(FIELD_LABELS).forEach((name) => {
-          if (c[name] === undefined || name === "avatar" || name === "image") return;
+          if (
+            c[name] === undefined ||
+            name === "avatar" ||
+            name === "image" ||
+            name === "eventLogo"
+          ) {
+            return;
+          }
           const id = `li-field-${name}`;
           const label = FIELD_LABELS[name];
           const value = c[name] ?? "";
@@ -749,6 +844,30 @@
           }
         }
 
+        if (isEventLayout(example.layout)) {
+          const selected = new Set(selectedEventSpeakerIds(c));
+          const atMax = selected.size >= 3;
+          rows.push(`<p class="li-editor__group-label">Speakers · up to 3</p>`);
+          rows.push(`<div class="li-editor__checks" role="group" aria-label="Speakers">`);
+          SPEAKERS.forEach((s) => {
+            const checked = selected.has(s.id);
+            const disabled = atMax && !checked;
+            rows.push(`
+              <label class="li-editor__check${disabled ? " li-editor__check--disabled" : ""}">
+                <input
+                  type="checkbox"
+                  name="spk-check"
+                  value="${escapeAttr(s.id)}"
+                  ${checked ? "checked" : ""}
+                  ${disabled ? "disabled" : ""}
+                />
+                <span>${escapeHtml(s.name)} · ${escapeHtml(s.role)}</span>
+              </label>
+            `);
+          });
+          rows.push(`</div>`);
+        }
+
         editorForm.innerHTML = rows.join("");
       }
 
@@ -771,6 +890,7 @@
         const colFields = {};
         [...editorForm.elements].forEach((el) => {
           if (!el.name || el.name === "bg" || el.name === "decor") return;
+          if (el.name === "spk-check") return;
           const colMatch = /^col-(\d)-(number|title|body)$/.exec(el.name);
           if (colMatch) {
             const idx = Number(colMatch[1]);
@@ -788,6 +908,13 @@
             title: colFields[i]?.title ?? c.columns?.[i]?.title ?? "",
             body: colFields[i]?.body ?? c.columns?.[i]?.body ?? "",
           }));
+        }
+
+        if (isEventLayout(example.layout)) {
+          const checked = [
+            ...editorForm.querySelectorAll('input[name="spk-check"]:checked'),
+          ].map((el) => el.value);
+          applyEventSpeakerChecks(example, checked);
         }
       }
 
@@ -860,6 +987,24 @@
           example.layout === "LI-LY-17" ||
           c.image !== undefined ||
           c.placeholder !== undefined;
+        const isEvent = isEventLayout(example.layout);
+
+        if (isEvent) {
+          parts.push(`<p class="li-editor__group-label">Event logo · optional</p>`);
+          if (c.eventLogo) {
+            parts.push(
+              `<p class="li-editor__hint">Logo set — upload to replace, or clear.</p>`,
+            );
+          }
+          parts.push(
+            `<button type="button" class="li-editor__slot-btn" data-slot="eventLogo">Upload event logo</button>`,
+          );
+          if (c.eventLogo) {
+            parts.push(
+              `<button type="button" class="li-editor__slot-btn li-editor__slot-btn--ghost" data-slot="clearEventLogo">Clear logo</button>`,
+            );
+          }
+        }
 
         if (hasAvatar) {
           const active = activeSpeakerId(c);
@@ -1296,8 +1441,24 @@
         paintEditorPreview();
         refreshExampleCard(editorState.example);
       });
-      editorForm.addEventListener("change", async () => {
+      editorForm.addEventListener("change", async (e) => {
         if (!editorState) return;
+        const target = e.target;
+        if (target?.name === "spk-check") {
+          const checked = [
+            ...editorForm.querySelectorAll('input[name="spk-check"]:checked'),
+          ].map((el) => el.value);
+          if (checked.length > 3) {
+            target.checked = false;
+            return;
+          }
+          applyEventSpeakerChecks(editorState.example, checked);
+          buildEditorForm(editorState.example);
+          buildEditorSlots(editorState.example);
+          paintEditorPreview();
+          refreshExampleCard(editorState.example);
+          return;
+        }
         readEditorForm(editorState.example);
         const c = editorState.example.content;
         if (c.imageFit === "contain" && c.image && !c.imageAspect) {
@@ -1356,7 +1517,15 @@
         if (!editorState) return;
         const btn = e.target.closest("[data-slot]");
         if (!btn) return;
-        replaceTarget = btn.dataset.slot;
+        const slot = btn.dataset.slot;
+        if (slot === "clearEventLogo") {
+          editorState.example.content.eventLogo = "";
+          buildEditorSlots(editorState.example);
+          paintEditorPreview();
+          refreshExampleCard(editorState.example);
+          return;
+        }
+        replaceTarget = slot;
         fileInput.click();
       });
 
@@ -1375,6 +1544,15 @@
             editorState.example.content.image = url;
             const aspect = await measureImageAspect(url);
             if (aspect) editorState.example.content.imageAspect = aspect;
+          } else if (slot === "eventLogo") {
+            editorState.example.content.eventLogo = url;
+          } else if (slot?.startsWith("eventAvatar-")) {
+            const idx = Number(slot.replace("eventAvatar-", ""));
+            if (!Number.isNaN(idx)) {
+              const slots = eventSpeakerSlots(editorState.example.content);
+              slots[idx] = { ...slots[idx], avatar: url };
+              editorState.example.content.speakers = slots;
+            }
           }
           buildEditorSlots(editorState.example);
           paintEditorPreview();

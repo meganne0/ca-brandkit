@@ -140,6 +140,20 @@ export const LINKEDIN_LAYOUTS = {
     footer: true,
     className: "li-layout-cards",
   },
+  "LI-LY-19": {
+    label: "Event",
+    description: "Event logo, name, date, location, message, and 1–3 speakers. Square. Footer.",
+    format: "square",
+    footer: true,
+    className: "li-layout-event",
+  },
+  "LI-LY-20": {
+    label: "Event · landscape",
+    description: "Event logo, name, date, location, message, and 1–3 speakers. Landscape. Footer.",
+    format: "landscape",
+    footer: true,
+    className: "li-layout-event li-layout-event--landscape",
+  },
 };
 
 function withBreaks(text) {
@@ -472,6 +486,88 @@ function renderFourCards(content) {
   return el;
 }
 
+function normalizeEventSpeakers(content) {
+  const raw = Array.isArray(content.speakers) ? content.speakers : [];
+  return raw
+    .slice(0, 3)
+    .map((s) => ({
+      avatar: s?.avatar ?? "",
+      name: (s?.name ?? "").trim(),
+      title: (s?.title ?? s?.role ?? "").trim(),
+    }))
+    .filter((s) => s.name || s.avatar);
+}
+
+function renderEvent(content, { landscape = false } = {}) {
+  const el = document.createElement("div");
+
+  const eventLogo = (content.eventLogo ?? "").trim();
+  const eventName = content.eventName ?? content.title ?? content.headline ?? "";
+  const date = (content.date ?? "").trim();
+  const location = (content.location ?? "").trim();
+  const body = (content.body ?? content.subtitle ?? "").trim();
+  const speakers = normalizeEventSpeakers(content);
+
+  const metaParts = [date, location].filter(Boolean);
+  const meta = metaParts.join(" · ");
+  const hasMeta = Boolean(meta);
+  const hasBody = Boolean(body);
+  const room = !hasMeta && !hasBody ? "xl" : !hasMeta || !hasBody ? "lg" : "base";
+
+  el.className = `li-content li-layout-event li-layout-event--room-${room}${
+    landscape ? " li-layout-event--landscape" : ""
+  }${speakers.length ? " li-layout-event--with-speakers" : ""}`;
+
+  const speakersHtml = speakers.length
+    ? `<div class="li-layout-event__speakers" data-count="${speakers.length}">
+        ${speakers
+          .map(
+            (s) => `
+              <div class="li-layout-event__speaker">
+                ${
+                  s.avatar
+                    ? `<img class="li-layout-event__avatar" src="${s.avatar}" alt="${s.name || "Speaker"}" />`
+                    : `<span class="li-layout-event__avatar li-layout-event__avatar--empty" aria-hidden="true"></span>`
+                }
+                <div class="li-layout-event__speaker-meta">
+                  ${s.name ? `<p class="li-layout-event__speaker-name">${withBreaks(s.name)}</p>` : ""}
+                  ${s.title ? `<p class="li-layout-event__speaker-title">${withBreaks(s.title)}</p>` : ""}
+                </div>
+              </div>
+            `,
+          )
+          .join("")}
+      </div>`
+    : "";
+
+  const hasCopy = Boolean(eventName || meta || body);
+
+  el.innerHTML = `
+    <div class="li-layout-event__edge" aria-hidden="true"></div>
+    ${
+      eventLogo
+        ? `<div class="li-layout-event__logo-wrap">
+            <img class="li-layout-event__logo" src="${eventLogo}" alt="" />
+          </div>`
+        : ""
+    }
+    ${
+      hasCopy
+        ? `<div class="li-layout-event__text-zone">
+            <div class="li-layout-event__copy">
+              ${eventName ? `<h2 class="type-h2 li-layout-event__name">${withBreaks(eventName)}</h2>` : ""}
+              ${meta ? `<p class="type-label li-layout-event__meta">${withBreaks(meta)}</p>` : ""}
+              ${body ? `<p class="type-body li-layout-event__body">${withBreaks(body)}</p>` : ""}
+            </div>
+          </div>`
+        : `<div class="li-layout-event__text-zone li-layout-event__text-zone--empty" aria-hidden="true"></div>`
+    }
+    ${speakersHtml}
+    <div class="li-layout-event__edge" aria-hidden="true"></div>
+  `;
+  return el;
+}
+
 const RENDERERS = {
   "LI-LY-01": renderHook,
   "LI-LY-02": renderQuote,
@@ -491,6 +587,8 @@ const RENDERERS = {
   "LI-LY-16": (content) => renderMedia(content, "bottom"),
   "LI-LY-17": (content) => renderMedia(content, "bottom"),
   "LI-LY-18": renderFourCards,
+  "LI-LY-19": (content) => renderEvent(content, { landscape: false }),
+  "LI-LY-20": (content) => renderEvent(content, { landscape: true }),
 };
 
 export function renderLinkedInLayout(canvas, layoutId, content = {}) {
