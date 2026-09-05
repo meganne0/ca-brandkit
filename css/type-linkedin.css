@@ -5,7 +5,8 @@
  */
 
 .canvas--li-square,
-.canvas--li-landscape {
+.canvas--li-landscape,
+.canvas--li-portrait {
   --space-xs: 12px;
   --space-sm: 20px;
   --space-md: 32px;
@@ -88,6 +89,21 @@
   --canvas-w: 1200;
   --canvas-h: 627;
   /* Slightly tighter on short landscape frames */
+  --type-h2-size: 48px;
+  --type-h3-size: 42px;
+  --type-h4-size: 32px;
+  --type-body-size: 28px;
+  --type-metric-size: 96px;
+  --type-metric-size-lg: 80px;
+  --type-label-size: 18px;
+  --space-content: 80px;
+  --space-xl: 44px;
+}
+
+.canvas--li-portrait {
+  --canvas-w: 1080;
+  --canvas-h: 1350;
+  /* Match landscape type scale for headline blocks */
   --type-h2-size: 48px;
   --type-h3-size: 42px;
   --type-h4-size: 32px;

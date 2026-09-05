@@ -12,7 +12,7 @@
     />
     <link rel="stylesheet" href="css/backgrounds.css?v=21" />
     <link rel="stylesheet" href="css/decor-youtube.css?v=1" />
-    <link rel="stylesheet" href="css/modals.css?v=5" />
+    <link rel="stylesheet" href="css/modals.css?v=23" />
     <script src="js/auth-gate.js?v=6"></script>
   </head>
   <body>
@@ -23,8 +23,8 @@
           <span class="modals-badge">In Progress</span>
         </div>
         <p>
-          Compose one or two overlapping glass modals for square LinkedIn-style
-          posts, or export with a transparent background as a PNG.
+          Compose overlapping glass modals or images for square, landscape, or
+          portrait posts — with optional CyberArmor footer and transparent PNG export.
           <a class="gallery-nav" href="index.html">← hub</a>
           ·
           <a class="gallery-nav" href="linkedin.html">LinkedIn</a>
@@ -37,17 +37,34 @@
         <section class="modals-panel" aria-labelledby="modals-editor-title">
           <h2 class="modals-panel__title" id="modals-editor-title">Editor</h2>
           <p class="modals-panel__lead">
-            Leave a field blank to hide it. New lines become new lines in the
-            modal. Wrap sensitive text in
-            <code>[[like this]]</code> to blur/redact it.
+            Settings are remembered in this browser. Leave fields blank to hide
+            them. Wrap sensitive modal text in <code>[[like this]]</code> to blur it.
           </p>
+
+          <fieldset class="modals-fieldset">
+            <legend class="modals-fieldset__legend">Canvas format</legend>
+            <div class="modals-radios" role="radiogroup" aria-label="Canvas format">
+              <label class="modals-radio">
+                <input type="radio" name="canvas-format" value="square" checked />
+                Square
+              </label>
+              <label class="modals-radio">
+                <input type="radio" name="canvas-format" value="landscape" />
+                Landscape
+              </label>
+              <label class="modals-radio">
+                <input type="radio" name="canvas-format" value="portrait" />
+                Portrait
+              </label>
+            </div>
+          </fieldset>
 
           <fieldset class="modals-fieldset">
             <legend class="modals-fieldset__legend">Export</legend>
             <div class="modals-radios" role="radiogroup" aria-label="Export mode">
               <label class="modals-radio">
-                <input type="radio" name="export-mode" value="square" checked />
-                Square background
+                <input type="radio" name="export-mode" value="background" checked />
+                With background
               </label>
               <label class="modals-radio">
                 <input type="radio" name="export-mode" value="transparent" />
@@ -64,100 +81,213 @@
           </div>
 
           <label class="modals-field">
-            <span class="modals-field__label">Decor (behind modals)</span>
+            <span class="modals-field__label">Decor (behind content)</span>
             <select class="modals-field__select" id="modals-decor"></select>
           </label>
 
+          <label class="modals-check" for="modals-footer">
+            <input type="checkbox" id="modals-footer" checked />
+            <span>CyberArmor footer</span>
+          </label>
+
           <fieldset class="modals-fieldset">
-            <legend class="modals-fieldset__legend">Composition</legend>
-            <div class="modals-radios" role="radiogroup" aria-label="Modal count">
+            <legend class="modals-fieldset__legend">Content</legend>
+            <div class="modals-radios" role="radiogroup" aria-label="Content mode">
               <label class="modals-radio">
-                <input type="radio" name="modal-count" value="1" />
-                One modal
+                <input type="radio" name="content-mode" value="modals" checked />
+                Modals
               </label>
               <label class="modals-radio">
-                <input type="radio" name="modal-count" value="2" checked />
-                Two overlapping
+                <input type="radio" name="content-mode" value="images" />
+                Images
               </label>
             </div>
           </fieldset>
 
-          <div class="modals-modal-block" data-modal-index="0">
-            <h3 class="modals-modal-block__title">Modal 1 · back</h3>
-            <label class="modals-field">
-              <span class="modals-field__label">Title</span>
-              <input class="modals-field__input" data-field="title" type="text" />
-            </label>
-            <label class="modals-field">
-              <span class="modals-field__label">Subtitle</span>
-              <input class="modals-field__input" data-field="subtitle" type="text" />
-            </label>
-            <label class="modals-field">
-              <span class="modals-field__label">Body</span>
-              <textarea class="modals-field__textarea" data-field="body" rows="3"></textarea>
-            </label>
-            <label class="modals-field">
-              <span class="modals-field__label">Window title</span>
-              <input class="modals-field__input" data-field="windowTitle" type="text" />
-            </label>
-            <label class="modals-field">
-              <span class="modals-field__label">Window content</span>
-              <textarea
-                class="modals-field__textarea"
-                data-field="windowBody"
-                rows="8"
-              ></textarea>
-            </label>
-            <label class="modals-field">
-              <span class="modals-field__label">Stroke / accent</span>
-              <select class="modals-field__select" data-field="accent">
-                <option value="violet">Violet</option>
-                <option value="blue">Blue</option>
-                <option value="brand">Brand gradient</option>
-                <option value="ember">Ember gradient</option>
-                <option value="aurora">Aurora gradient</option>
-                <option value="cool">Cool gradient</option>
-              </select>
-            </label>
+          <div id="modals-mode-modals">
+            <fieldset class="modals-fieldset">
+              <legend class="modals-fieldset__legend">Modal count</legend>
+              <div class="modals-radios" role="radiogroup" aria-label="Modal count">
+                <label class="modals-radio">
+                  <input type="radio" name="modal-count" value="1" />
+                  One modal
+                </label>
+                <label class="modals-radio">
+                  <input type="radio" name="modal-count" value="2" checked />
+                  Two overlapping
+                </label>
+              </div>
+            </fieldset>
+
+            <div class="modals-modal-block" data-modal-index="0">
+              <h3 class="modals-modal-block__title">Modal 1 · back</h3>
+              <label class="modals-field">
+                <span class="modals-field__label">Title</span>
+                <input class="modals-field__input" data-field="title" type="text" />
+              </label>
+              <label class="modals-field">
+                <span class="modals-field__label">Subtitle</span>
+                <input class="modals-field__input" data-field="subtitle" type="text" />
+              </label>
+              <label class="modals-field">
+                <span class="modals-field__label">Body</span>
+                <textarea class="modals-field__textarea" data-field="body" rows="3"></textarea>
+              </label>
+              <label class="modals-field">
+                <span class="modals-field__label">Window title</span>
+                <input class="modals-field__input" data-field="windowTitle" type="text" />
+              </label>
+              <label class="modals-field">
+                <span class="modals-field__label">Window content</span>
+                <textarea class="modals-field__textarea" data-field="windowBody" rows="8"></textarea>
+              </label>
+              <label class="modals-field">
+                <span class="modals-field__label">Stroke / accent</span>
+                <select class="modals-field__select" data-field="accent">
+                  <option value="violet">Violet</option>
+                  <option value="blue">Blue</option>
+                  <option value="brand">Brand gradient</option>
+                  <option value="ember">Ember gradient</option>
+                  <option value="aurora">Aurora gradient</option>
+                  <option value="cool">Cool gradient</option>
+                </select>
+              </label>
+            </div>
+
+            <div class="modals-modal-block" data-modal-index="1" id="modals-block-2">
+              <h3 class="modals-modal-block__title">Modal 2 · front</h3>
+              <label class="modals-field">
+                <span class="modals-field__label">Title</span>
+                <input class="modals-field__input" data-field="title" type="text" />
+              </label>
+              <label class="modals-field">
+                <span class="modals-field__label">Subtitle</span>
+                <input class="modals-field__input" data-field="subtitle" type="text" />
+              </label>
+              <label class="modals-field">
+                <span class="modals-field__label">Body</span>
+                <textarea class="modals-field__textarea" data-field="body" rows="3"></textarea>
+              </label>
+              <label class="modals-field">
+                <span class="modals-field__label">Window title</span>
+                <input class="modals-field__input" data-field="windowTitle" type="text" />
+              </label>
+              <label class="modals-field">
+                <span class="modals-field__label">Window content</span>
+                <textarea class="modals-field__textarea" data-field="windowBody" rows="8"></textarea>
+              </label>
+              <label class="modals-field">
+                <span class="modals-field__label">Stroke / accent</span>
+                <select class="modals-field__select" data-field="accent">
+                  <option value="violet">Violet</option>
+                  <option value="blue">Blue</option>
+                  <option value="brand">Brand gradient</option>
+                  <option value="ember">Ember gradient</option>
+                  <option value="aurora">Aurora gradient</option>
+                  <option value="cool">Cool gradient</option>
+                </select>
+              </label>
+            </div>
           </div>
 
-          <div class="modals-modal-block" data-modal-index="1" id="modals-block-2">
-            <h3 class="modals-modal-block__title">Modal 2 · front</h3>
+          <div id="modals-mode-images" hidden>
+            <fieldset class="modals-fieldset">
+              <legend class="modals-fieldset__legend">Image count</legend>
+              <div class="modals-radios" role="radiogroup" aria-label="Image count">
+                <label class="modals-radio">
+                  <input type="radio" name="image-count" value="1" />
+                  One image
+                </label>
+                <label class="modals-radio">
+                  <input type="radio" name="image-count" value="2" checked />
+                  Two overlapping
+                </label>
+              </div>
+            </fieldset>
+
+            <p class="modals-hint">
+              Images are centered and overlap like the modals. Check “keep original
+              ratio” to crop each image card to that file’s proportions.
+            </p>
+
+            <div class="modals-modal-block">
+              <h3 class="modals-modal-block__title">Image 1 · back</h3>
+              <div class="modals-file">
+                <button type="button" class="modals-btn" id="modals-img1-btn">Upload image 1</button>
+                <button type="button" class="modals-btn modals-btn--ghost" id="modals-img1-clear">
+                  Clear
+                </button>
+              </div>
+              <label class="modals-check" for="modals-img1-fit">
+                <input type="checkbox" id="modals-img1-fit" />
+                <span>Keep original image ratio</span>
+              </label>
+              <p class="modals-hint" id="modals-img1-status">No image</p>
+            </div>
+
+            <div class="modals-modal-block" id="modals-img2-block">
+              <h3 class="modals-modal-block__title">Image 2 · front</h3>
+              <div class="modals-file">
+                <button type="button" class="modals-btn" id="modals-img2-btn">Upload image 2</button>
+                <button type="button" class="modals-btn modals-btn--ghost" id="modals-img2-clear">
+                  Clear
+                </button>
+              </div>
+              <label class="modals-check" for="modals-img2-fit">
+                <input type="checkbox" id="modals-img2-fit" />
+                <span>Keep original image ratio</span>
+              </label>
+              <p class="modals-hint" id="modals-img2-status">No image</p>
+            </div>
+            <input id="modals-img1-file" type="file" accept="image/*" hidden />
+            <input id="modals-img2-file" type="file" accept="image/*" hidden />
+          </div>
+
+          <div id="modals-text-block" hidden>
+            <h3 class="modals-modal-block__title">Headline text</h3>
+            <p class="modals-hint">
+              Shown on landscape and portrait only (LinkedIn-style eyebrow, title, subheadline).
+            </p>
+            <label class="modals-field">
+              <span class="modals-field__label">Eyebrow</span>
+              <input class="modals-field__input" id="modals-eyebrow" type="text" />
+            </label>
             <label class="modals-field">
               <span class="modals-field__label">Title</span>
-              <input class="modals-field__input" data-field="title" type="text" />
+              <textarea class="modals-field__textarea" id="modals-title" rows="2"></textarea>
             </label>
             <label class="modals-field">
-              <span class="modals-field__label">Subtitle</span>
-              <input class="modals-field__input" data-field="subtitle" type="text" />
+              <span class="modals-field__label">Subheadline</span>
+              <textarea class="modals-field__textarea" id="modals-subtitle" rows="2"></textarea>
             </label>
-            <label class="modals-field">
-              <span class="modals-field__label">Body</span>
-              <textarea class="modals-field__textarea" data-field="body" rows="3"></textarea>
-            </label>
-            <label class="modals-field">
-              <span class="modals-field__label">Window title</span>
-              <input class="modals-field__input" data-field="windowTitle" type="text" />
-            </label>
-            <label class="modals-field">
-              <span class="modals-field__label">Window content</span>
-              <textarea
-                class="modals-field__textarea"
-                data-field="windowBody"
-                rows="8"
-              ></textarea>
-            </label>
-            <label class="modals-field">
-              <span class="modals-field__label">Stroke / accent</span>
-              <select class="modals-field__select" data-field="accent">
-                <option value="violet">Violet</option>
-                <option value="blue">Blue</option>
-                <option value="brand">Brand gradient</option>
-                <option value="ember">Ember gradient</option>
-                <option value="aurora">Aurora gradient</option>
-                <option value="cool">Cool gradient</option>
-              </select>
-            </label>
+
+            <fieldset class="modals-fieldset" id="modals-place-portrait">
+              <legend class="modals-fieldset__legend">Text placement · portrait</legend>
+              <div class="modals-radios" role="radiogroup" aria-label="Portrait text placement">
+                <label class="modals-radio">
+                  <input type="radio" name="text-placement" value="above" checked />
+                  Above
+                </label>
+                <label class="modals-radio">
+                  <input type="radio" name="text-placement" value="below" />
+                  Below
+                </label>
+              </div>
+            </fieldset>
+
+            <fieldset class="modals-fieldset" id="modals-place-landscape" hidden>
+              <legend class="modals-fieldset__legend">Text placement · landscape</legend>
+              <div class="modals-radios" role="radiogroup" aria-label="Landscape text placement">
+                <label class="modals-radio">
+                  <input type="radio" name="text-placement-land" value="left" checked />
+                  Left
+                </label>
+                <label class="modals-radio">
+                  <input type="radio" name="text-placement-land" value="right" />
+                  Right
+                </label>
+              </div>
+            </fieldset>
           </div>
 
           <div class="modals-actions">
@@ -192,28 +322,58 @@
       import {
         defaultModalState,
         paintModals,
-        MODAL_FORMAT,
-      } from "./js/modals.js?v=3";
+        formatForState,
+        normalizeState,
+        loadStoredState,
+        saveStoredState,
+        measureImageAspect,
+        ensureImageAspects,
+      } from "./js/modals.js?v=12";
       import { downloadPaintedThumbnail } from "./js/youtube-download.js?v=6";
 
-      const state = defaultModalState();
+      const stored = loadStoredState();
+      const state = stored ? normalizeState(stored) : defaultModalState();
+
       const stage = document.getElementById("modals-stage");
       const bgSelect = document.getElementById("modals-bg");
       const decorSelect = document.getElementById("modals-decor");
       const bgRow = document.getElementById("modals-bg-row");
       const block2 = document.getElementById("modals-block-2");
       const previewMeta = document.getElementById("modals-preview-meta");
+      const modeModals = document.getElementById("modals-mode-modals");
+      const modeImages = document.getElementById("modals-mode-images");
+      const textBlock = document.getElementById("modals-text-block");
+      const placePortrait = document.getElementById("modals-place-portrait");
+      const placeLandscape = document.getElementById("modals-place-landscape");
+      const img2Block = document.getElementById("modals-img2-block");
+      const footerCheck = document.getElementById("modals-footer");
+      const img1FitCheck = document.getElementById("modals-img1-fit");
+      const img2FitCheck = document.getElementById("modals-img2-fit");
 
-      const squareBgs = Object.entries(LINKEDIN_BACKGROUNDS).filter(
-        ([, bg]) => bg.format === "square" || bg.group === "square",
-      );
+      function bgFormatForCanvas(canvasFormat) {
+        return canvasFormat === "landscape" ? "landscape" : "square";
+      }
 
-      squareBgs.forEach(([id, bg]) => {
-        const opt = document.createElement("option");
-        opt.value = id;
-        opt.textContent = `${id} · ${bg.label}`;
-        bgSelect.appendChild(opt);
-      });
+      function fillBackgroundOptions() {
+        const want = bgFormatForCanvas(state.canvasFormat);
+        const entries = Object.entries(LINKEDIN_BACKGROUNDS).filter(
+          ([, bg]) => (bg.format ?? "square") === want,
+        );
+        const prev = state.bg;
+        bgSelect.replaceChildren();
+        entries.forEach(([id, bg]) => {
+          const opt = document.createElement("option");
+          opt.value = id;
+          opt.textContent = `${id} · ${bg.label}`;
+          bgSelect.appendChild(opt);
+        });
+        if (entries.some(([id]) => id === prev)) {
+          bgSelect.value = prev;
+        } else if (entries.length) {
+          bgSelect.value = entries[0][0];
+          state.bg = entries[0][0];
+        }
+      }
 
       const noneDecor = document.createElement("option");
       noneDecor.value = "";
@@ -226,37 +386,117 @@
         decorSelect.appendChild(opt);
       });
 
+      function imageStatus(el, src) {
+        el.textContent = src ? "Image set (re-upload to replace)" : "No image";
+      }
+
+      function updateVisibility() {
+        const isBg = state.exportMode === "background";
+        const isImages = state.contentMode === "images";
+        const isSquare = state.canvasFormat === "square";
+        bgRow.hidden = !isBg;
+        footerCheck.disabled = !isBg;
+        modeModals.hidden = isImages;
+        modeImages.hidden = !isImages;
+        block2.hidden = state.modalCount !== 2;
+        img2Block.hidden = state.imageCount !== 2;
+        textBlock.hidden = isSquare;
+        placePortrait.hidden = state.canvasFormat !== "portrait";
+        placeLandscape.hidden = state.canvasFormat !== "landscape";
+        stage.classList.toggle("modals-stage--landscape", state.canvasFormat === "landscape");
+        stage.classList.toggle("modals-stage--portrait", state.canvasFormat === "portrait");
+        stage.classList.toggle("modals-stage--checker", state.exportMode === "transparent");
+      }
+
       function syncFormFromState() {
+        document.querySelector(
+          `input[name="canvas-format"][value="${state.canvasFormat}"]`,
+        ).checked = true;
         document.querySelector(
           `input[name="export-mode"][value="${state.exportMode}"]`,
         ).checked = true;
         document.querySelector(
+          `input[name="content-mode"][value="${state.contentMode}"]`,
+        ).checked = true;
+        document.querySelector(
           `input[name="modal-count"][value="${state.modalCount}"]`,
         ).checked = true;
-        bgSelect.value = state.bg;
+        document.querySelector(
+          `input[name="image-count"][value="${state.imageCount}"]`,
+        ).checked = true;
+        footerCheck.checked = Boolean(state.showFooter);
+        img1FitCheck.checked = state.images[0]?.fit === "contain";
+        img2FitCheck.checked = state.images[1]?.fit === "contain";
+        fillBackgroundOptions();
         decorSelect.value = state.decor || "";
-        bgRow.hidden = state.exportMode !== "square";
-        block2.hidden = state.modalCount !== 2;
+
+        document.getElementById("modals-eyebrow").value = state.eyebrow ?? "";
+        document.getElementById("modals-title").value = state.title ?? "";
+        document.getElementById("modals-subtitle").value = state.subtitle ?? "";
+
+        if (state.canvasFormat === "portrait") {
+          const el = document.querySelector(
+            `input[name="text-placement"][value="${state.textPlacement}"]`,
+          );
+          if (el) el.checked = true;
+        }
+        if (state.canvasFormat === "landscape") {
+          const el = document.querySelector(
+            `input[name="text-placement-land"][value="${state.textPlacement}"]`,
+          );
+          if (el) el.checked = true;
+        }
 
         document.querySelectorAll("[data-modal-index]").forEach((block) => {
           const i = Number(block.dataset.modalIndex);
           const modal = state.modals[i];
           block.querySelectorAll("[data-field]").forEach((el) => {
-            const key = el.dataset.field;
-            el.value = modal[key] ?? "";
+            el.value = modal[el.dataset.field] ?? "";
           });
         });
+
+        imageStatus(document.getElementById("modals-img1-status"), state.images[0]?.src);
+        imageStatus(document.getElementById("modals-img2-status"), state.images[1]?.src);
+        updateVisibility();
       }
 
       function readFormIntoState() {
+        state.canvasFormat = document.querySelector(
+          'input[name="canvas-format"]:checked',
+        ).value;
         state.exportMode = document.querySelector(
           'input[name="export-mode"]:checked',
+        ).value;
+        state.contentMode = document.querySelector(
+          'input[name="content-mode"]:checked',
         ).value;
         state.modalCount = Number(
           document.querySelector('input[name="modal-count"]:checked').value,
         );
-        state.bg = bgSelect.value || "LI-BG-01";
+        state.imageCount = Number(
+          document.querySelector('input[name="image-count"]:checked').value,
+        );
+        state.showFooter = footerCheck.checked;
+        if (!state.images[0]) state.images[0] = { src: "", fit: "cover", aspect: null };
+        if (!state.images[1]) state.images[1] = { src: "", fit: "cover", aspect: null };
+        state.images[0].fit = img1FitCheck.checked ? "contain" : "cover";
+        state.images[1].fit = img2FitCheck.checked ? "contain" : "cover";
+        state.bg = bgSelect.value || state.bg;
         state.decor = decorSelect.value || "";
+        state.eyebrow = document.getElementById("modals-eyebrow").value;
+        state.title = document.getElementById("modals-title").value;
+        state.subtitle = document.getElementById("modals-subtitle").value;
+
+        if (state.canvasFormat === "portrait") {
+          state.textPlacement = document.querySelector(
+            'input[name="text-placement"]:checked',
+          ).value;
+        } else if (state.canvasFormat === "landscape") {
+          state.textPlacement = document.querySelector(
+            'input[name="text-placement-land"]:checked',
+          ).value;
+        }
+
         document.querySelectorAll("[data-modal-index]").forEach((block) => {
           const i = Number(block.dataset.modalIndex);
           const modal = state.modals[i];
@@ -264,16 +504,17 @@
             modal[el.dataset.field] = el.value;
           });
         });
-        bgRow.hidden = state.exportMode !== "square";
-        block2.hidden = state.modalCount !== 2;
+
+        updateVisibility();
       }
 
       function fitCanvas() {
         const canvas = stage.querySelector(".canvas");
         if (!canvas) return;
+        const format = formatForState(state);
         const scale = Math.min(
-          stage.clientWidth / MODAL_FORMAT.w,
-          stage.clientHeight / MODAL_FORMAT.h,
+          stage.clientWidth / format.w,
+          stage.clientHeight / format.h,
         );
         canvas.style.transform = `scale(${scale})`;
       }
@@ -291,44 +532,138 @@
           canvas = document.createElement("div");
           stage.appendChild(canvas);
         }
-        stage.classList.toggle(
-          "modals-stage--checker",
-          state.exportMode === "transparent",
-        );
         paintModals(canvas, state, paintDeps());
+        const format = formatForState(state);
         previewMeta.textContent =
           state.exportMode === "transparent"
-            ? "Transparent · crops to content on download"
-            : `1080 × 1080 · ${state.bg}`;
+            ? `${format.w} × ${format.h} · transparent · crops on download`
+            : `${format.w} × ${format.h} · ${state.bg}`;
         requestAnimationFrame(fitCanvas);
       }
 
-      function refresh() {
+      async function persistAndPaint() {
         readFormIntoState();
+        const aspectsChanged = await ensureImageAspects(state);
+        saveStoredState(state);
         paint();
+        if (aspectsChanged) {
+          saveStoredState(state);
+          paint();
+        }
+      }
+
+      function readFileAsDataUrl(file) {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      }
+
+      async function assignImage(index, file) {
+        if (!file) return;
+        const url = await readFileAsDataUrl(file);
+        if (typeof url !== "string") return;
+        if (!state.images[index]) {
+          state.images[index] = { src: "", fit: "cover", aspect: null };
+        }
+        state.images[index].src = url;
+        const aspect = await measureImageAspect(url);
+        state.images[index].aspect = aspect;
+        imageStatus(
+          document.getElementById(index === 0 ? "modals-img1-status" : "modals-img2-status"),
+          url,
+        );
+        saveStoredState(state);
+        await persistAndPaint();
       }
 
       document
         .querySelectorAll(
-          'input[name="export-mode"], input[name="modal-count"], #modals-bg, #modals-decor',
+          'input[name="canvas-format"], input[name="export-mode"], input[name="content-mode"], input[name="modal-count"], input[name="image-count"], input[name="text-placement"], input[name="text-placement-land"], #modals-bg, #modals-decor, #modals-footer, #modals-img1-fit, #modals-img2-fit',
         )
-        .forEach((el) => el.addEventListener("change", refresh));
+        .forEach((el) => el.addEventListener("change", () => {
+          if (el.name === "canvas-format") {
+            readFormIntoState();
+            fillBackgroundOptions();
+            // Sensible default placement when switching formats
+            if (state.canvasFormat === "portrait" && !["above", "below"].includes(state.textPlacement)) {
+              state.textPlacement = "above";
+            }
+            if (state.canvasFormat === "landscape" && !["left", "right"].includes(state.textPlacement)) {
+              state.textPlacement = "left";
+            }
+            syncFormFromState();
+            saveStoredState(state);
+            paint();
+            return;
+          }
+          persistAndPaint();
+        }));
 
       document.querySelectorAll("[data-field]").forEach((el) => {
-        el.addEventListener("input", refresh);
-        el.addEventListener("change", refresh);
+        el.addEventListener("input", persistAndPaint);
+        el.addEventListener("change", persistAndPaint);
+      });
+      ["modals-eyebrow", "modals-title", "modals-subtitle"].forEach((id) => {
+        document.getElementById(id).addEventListener("input", persistAndPaint);
+      });
+
+      document.getElementById("modals-img1-btn").addEventListener("click", () => {
+        document.getElementById("modals-img1-file").click();
+      });
+      document.getElementById("modals-img2-btn").addEventListener("click", () => {
+        document.getElementById("modals-img2-file").click();
+      });
+      document.getElementById("modals-img1-file").addEventListener("change", async (e) => {
+        const file = e.target.files?.[0];
+        e.target.value = "";
+        await assignImage(0, file);
+      });
+      document.getElementById("modals-img2-file").addEventListener("change", async (e) => {
+        const file = e.target.files?.[0];
+        e.target.value = "";
+        await assignImage(1, file);
+      });
+      document.getElementById("modals-img1-clear").addEventListener("click", () => {
+        state.images[0] = {
+          src: "",
+          fit: state.images[0]?.fit === "contain" ? "contain" : "cover",
+          aspect: null,
+        };
+        imageStatus(document.getElementById("modals-img1-status"), "");
+        saveStoredState(state);
+        paint();
+      });
+      document.getElementById("modals-img2-clear").addEventListener("click", () => {
+        state.images[1] = {
+          src: "",
+          fit: state.images[1]?.fit === "contain" ? "contain" : "cover",
+          aspect: null,
+        };
+        imageStatus(document.getElementById("modals-img2-status"), "");
+        saveStoredState(state);
+        paint();
       });
 
       document.getElementById("modals-reset").addEventListener("click", () => {
-        Object.assign(state, defaultModalState());
+        const next = defaultModalState();
+        Object.keys(state).forEach((k) => delete state[k]);
+        Object.assign(state, next);
+        saveStoredState(state);
         syncFormFromState();
         paint();
       });
 
       document.getElementById("modals-download").addEventListener("click", async () => {
         readFormIntoState();
+        const format = formatForState(state);
         const stamp = new Date().toISOString().slice(0, 10);
-        const suffix = state.exportMode === "transparent" ? "transparent" : "square";
+        const suffix =
+          state.exportMode === "transparent"
+            ? "transparent"
+            : state.canvasFormat;
         const btn = document.getElementById("modals-download");
         btn.disabled = true;
         try {
@@ -338,9 +673,9 @@
             },
             `ca-modal-${suffix}-${stamp}.png`,
             {
-              width: MODAL_FORMAT.w,
-              height: MODAL_FORMAT.h,
-              className: "canvas canvas--li-square ca-modals-canvas",
+              width: format.w,
+              height: format.h,
+              className: `canvas ${format.className} ca-modals-canvas`,
               ...(state.exportMode === "transparent"
                 ? { backgroundColor: null, cropToContent: true }
                 : {}),
@@ -356,7 +691,7 @@
 
       new ResizeObserver(() => fitCanvas()).observe(stage);
       syncFormFromState();
-      paint();
+      persistAndPaint();
     </script>
   </body>
 </html>

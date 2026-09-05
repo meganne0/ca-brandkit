@@ -1,5 +1,7 @@
 @import url("./tokens.css");
-@import url("./type-linkedin.css");
+@import url("./type.css");
+@import url("./type-linkedin.css?v=2");
+@import url("./components/footer.css");
 
 *,
 *::before,
@@ -278,6 +280,26 @@ body {
   color: rgba(255, 255, 255, 0.5);
 }
 
+.modals-check {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  user-select: none;
+}
+
+.modals-check input {
+  width: 16px;
+  height: 16px;
+  accent-color: var(--ca-orange);
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
 .modals-stage {
   position: relative;
   width: 100%;
@@ -287,6 +309,15 @@ body {
   border-radius: 18px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: #05030d;
+}
+
+.modals-stage--landscape {
+  aspect-ratio: 1200 / 627;
+}
+
+.modals-stage--portrait {
+  aspect-ratio: 1080 / 1350;
+  max-height: min(78vh, 820px);
 }
 
 .modals-stage--checker {
@@ -312,10 +343,62 @@ body {
   background: var(--ca-purple-deep);
 }
 
+.canvas.ca-modals-canvas.canvas--li-landscape {
+  --canvas-w: 1200;
+  --canvas-h: 627;
+  width: 1200px;
+  height: 627px;
+  --ca-modals-footer-height: 68px;
+}
+
+.canvas.ca-modals-canvas.canvas--li-portrait {
+  --canvas-w: 1080;
+  --canvas-h: 1350;
+  width: 1080px;
+  height: 1350px;
+  --ca-modals-footer-height: 80px;
+}
+
 .canvas.ca-modals-canvas--transparent {
   background: transparent !important;
-  /* Keep shadows/glow in the raster so transparent export can crop to them */
   overflow: visible;
+}
+
+.canvas.ca-modals-canvas.canvas--with-footer .ca-modals-compose {
+  padding-bottom: 120px;
+}
+
+.canvas.ca-modals-canvas.canvas--li-landscape.canvas--with-footer .ca-modals-compose--landscape {
+  padding-bottom: calc(var(--ca-modals-footer-height, 68px) + 30px);
+}
+
+.canvas.ca-modals-canvas.canvas--li-portrait.canvas--with-footer .ca-modals-compose--portrait {
+  padding-bottom: calc(var(--ca-modals-footer-height, 80px) + 30px);
+}
+
+/* Match LinkedIn footer scale on modal canvases */
+.canvas.ca-modals-canvas .ca-footer__inner {
+  gap: 24px;
+  padding: 20px 48px 20px 40px;
+}
+
+.canvas.ca-modals-canvas .ca-footer__logo {
+  width: 180px;
+}
+
+/* Match LinkedIn landscape footer scale */
+.canvas.ca-modals-canvas.canvas--li-landscape .ca-footer__inner {
+  gap: 20px;
+  padding: 14px 48px 14px 40px;
+}
+
+.canvas.ca-modals-canvas.canvas--li-landscape .ca-footer__logo {
+  width: 150px;
+}
+
+.canvas.ca-modals-canvas.canvas--li-landscape .ca-footer__tagline,
+.canvas.ca-modals-canvas.canvas--li-landscape .ca-footer__url {
+  font-size: 16px;
 }
 
 .modals-stage .canvas {
@@ -325,13 +408,230 @@ body {
   transform-origin: top left;
 }
 
-/* ---- Composition on canvas ---- */
+.modals-file {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 12px;
+}
 
-.ca-modals-stage {
+.modals-file input[type="file"] {
+  display: none;
+}
+
+.modals-hint {
+  margin: 0 0 12px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.45);
+  line-height: 1.4;
+}
+
+/* ---- Composition shell ---- */
+
+.ca-modals-compose {
   position: absolute;
   inset: 0;
   z-index: 2;
+  display: flex;
+  box-sizing: border-box;
+  padding: 56px 64px;
   pointer-events: none;
+}
+
+.ca-modals-compose--square {
+  align-items: center;
+  justify-content: center;
+}
+
+.ca-modals-compose--portrait.ca-modals-compose--above,
+.ca-modals-compose--portrait.ca-modals-compose--below {
+  display: grid;
+  gap: 30px;
+  padding: 30px;
+  box-sizing: border-box;
+  height: 100%;
+  align-content: center;
+  justify-items: center;
+  text-align: center;
+}
+
+.ca-modals-compose--portrait.ca-modals-compose--has-copy.ca-modals-compose--above {
+  grid-template-rows: auto minmax(50%, 1fr);
+}
+
+.ca-modals-compose--portrait.ca-modals-compose--has-copy.ca-modals-compose--below {
+  grid-template-rows: minmax(50%, 1fr) auto;
+}
+
+.ca-modals-compose--portrait:not(.ca-modals-compose--has-copy) {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  padding: 30px;
+  box-sizing: border-box;
+  height: 100%;
+}
+
+.ca-modals-compose--landscape.ca-modals-compose--left,
+.ca-modals-compose--landscape.ca-modals-compose--right {
+  display: grid;
+  align-items: center;
+  gap: 30px;
+  padding: 30px;
+  box-sizing: border-box;
+  height: 100%;
+}
+
+.ca-modals-compose--landscape.ca-modals-compose--has-copy.ca-modals-compose--left {
+  grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+}
+
+.ca-modals-compose--landscape.ca-modals-compose--has-copy.ca-modals-compose--right {
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+}
+
+.ca-modals-compose--landscape:not(.ca-modals-compose--has-copy) {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  padding: 30px;
+  box-sizing: border-box;
+}
+
+.ca-modals-compose__visual {
+  position: relative;
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ca-modals-compose--portrait .ca-modals-compose__visual {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 50%;
+  min-width: 0;
+  align-self: stretch;
+  display: block;
+}
+
+.ca-modals-compose--portrait:not(.ca-modals-compose--has-copy) .ca-modals-compose__visual {
+  flex: 1;
+}
+
+.ca-modals-compose--portrait .ca-modals-copy {
+  width: 100%;
+  max-width: 820px;
+  justify-self: center;
+}
+
+.ca-modals-compose--landscape .ca-modals-compose__visual {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  align-self: stretch;
+  display: block;
+}
+
+.ca-modals-compose--landscape:not(.ca-modals-compose--has-copy) .ca-modals-compose__visual {
+  flex: 1;
+}
+
+.ca-modals-compose--landscape .ca-modals-copy {
+  align-self: center;
+  max-width: none;
+  width: 100%;
+}
+
+.ca-modals-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 520px;
+  z-index: 3;
+}
+
+.ca-modals-compose--portrait .ca-modals-copy {
+  align-items: center;
+  text-align: center;
+  max-width: 820px;
+  gap: 14px;
+}
+
+.ca-modals-compose--landscape .ca-modals-copy {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.ca-modals-copy__eyebrow,
+.ca-modals-copy__title,
+.ca-modals-copy__subtitle {
+  margin: 0;
+}
+
+.ca-modals-copy__eyebrow {
+  text-transform: uppercase;
+}
+
+/* Headline copy — explicit LI landscape type scale (portrait + landscape) */
+.ca-modals-compose--portrait .ca-modals-copy .type-label,
+.ca-modals-compose--landscape .ca-modals-copy .type-label {
+  font-family: var(--font-body);
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: 0.08em;
+  color: var(--ca-tagline);
+  opacity: 0.8;
+}
+
+.ca-modals-compose--portrait .ca-modals-copy .type-h2,
+.ca-modals-compose--landscape .ca-modals-copy .type-h2 {
+  font-family: var(--font-headline);
+  font-size: 48px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--ca-orange);
+}
+
+.ca-modals-compose--portrait .ca-modals-copy .type-h4,
+.ca-modals-compose--landscape .ca-modals-copy .type-h4 {
+  font-family: var(--font-headline);
+  font-size: 32px;
+  font-weight: 400;
+  line-height: 1.28;
+  letter-spacing: -0.01em;
+  color: var(--ca-tagline);
+  max-width: none;
+}
+
+/* ---- Modal panels (relative to visual host) ---- */
+
+.ca-modals-stage {
+  position: relative;
+  width: min(720px, 100%);
+  height: min(720px, 100%);
+  max-width: 100%;
+  max-height: 100%;
+  aspect-ratio: 1;
+  pointer-events: none;
+}
+
+.ca-modals-compose--square .ca-modals-stage {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  aspect-ratio: auto;
 }
 
 .ca-modal {
@@ -457,28 +757,243 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 560px;
-  min-width: 500px;
-  min-height: 500px;
+  width: min(560px, 78%);
+  min-width: min(500px, 70%);
+  min-height: min(500px, 70%);
 }
 
 .ca-modals-stage--n2 .ca-modal {
-  min-width: 400px;
-  min-height: 400px;
+  min-width: min(400px, 55%);
+  min-height: min(400px, 55%);
 }
 
 .ca-modals-stage--n2 .ca-modal--back {
-  top: 118px;
-  left: 72px;
-  width: 440px;
+  top: 8%;
+  left: 6%;
+  width: min(440px, 62%);
   z-index: 1;
 }
 
 .ca-modals-stage--n2 .ca-modal--front {
-  top: 280px;
-  left: 340px;
-  width: 460px;
+  top: 28%;
+  left: 32%;
+  width: min(460px, 64%);
   z-index: 2;
+}
+
+/* Centered overlapping images */
+.ca-modals-images {
+  position: relative;
+  width: min(680px, 100%);
+  height: min(680px, 100%);
+  max-width: 100%;
+  max-height: 100%;
+  aspect-ratio: 1;
+}
+
+.ca-modals-compose--square .ca-modals-images {
+  width: min(760px, 86%);
+  height: min(760px, 86%);
+}
+
+/* ---- Landscape / portrait visual region ---- */
+
+.ca-modals-compose--landscape .ca-modals-stage,
+.ca-modals-compose--landscape .ca-modals-images,
+.ca-modals-compose--portrait .ca-modals-stage,
+.ca-modals-compose--portrait .ca-modals-images {
+  position: absolute;
+  inset: 0;
+  width: auto;
+  height: auto;
+  max-width: none;
+  max-height: none;
+  aspect-ratio: auto;
+}
+
+/* Single modal / image — up to 90% of region, centered */
+.ca-modals-compose--landscape .ca-modals-stage--n1 .ca-modal--back,
+.ca-modals-compose--landscape .ca-modals-images--n1 .ca-modals-images__img--back,
+.ca-modals-compose--portrait .ca-modals-stage--n1 .ca-modal--back,
+.ca-modals-compose--portrait .ca-modals-images--n1 .ca-modals-images__img--back {
+  top: 50%;
+  left: 50%;
+  right: auto;
+  bottom: auto;
+  width: 90%;
+  height: 90%;
+  max-width: 90%;
+  max-height: 90%;
+  transform: translate(-50%, -50%);
+}
+
+.ca-modals-compose--landscape .ca-modals-images--n1 .ca-modals-images__img--ratio,
+.ca-modals-compose--portrait .ca-modals-images--n1 .ca-modals-images__img--ratio {
+  width: auto;
+  height: auto;
+  max-width: 90%;
+  max-height: 90%;
+}
+
+/* Pair — top-left + bottom-right, each up to 90% of region */
+.ca-modals-compose--landscape .ca-modals-stage--n2 .ca-modal,
+.ca-modals-compose--landscape .ca-modals-images--n2 .ca-modals-images__img,
+.ca-modals-compose--portrait .ca-modals-stage--n2 .ca-modal,
+.ca-modals-compose--portrait .ca-modals-images--n2 .ca-modals-images__img {
+  width: 90%;
+  height: 90%;
+  max-width: 90%;
+  max-height: 90%;
+  transform: none;
+}
+
+.ca-modals-compose--landscape .ca-modals-stage--n2 .ca-modal--back,
+.ca-modals-compose--landscape .ca-modals-images--n2 .ca-modals-images__img--back,
+.ca-modals-compose--portrait .ca-modals-stage--n2 .ca-modal--back,
+.ca-modals-compose--portrait .ca-modals-images--n2 .ca-modals-images__img--back {
+  top: 0;
+  left: 0;
+  right: auto;
+  bottom: auto;
+  z-index: 1;
+}
+
+.ca-modals-compose--landscape .ca-modals-stage--n2 .ca-modal--front,
+.ca-modals-compose--landscape .ca-modals-images--n2 .ca-modals-images__img--front,
+.ca-modals-compose--portrait .ca-modals-stage--n2 .ca-modal--front,
+.ca-modals-compose--portrait .ca-modals-images--n2 .ca-modals-images__img--front {
+  top: auto;
+  left: auto;
+  right: 0;
+  bottom: 0;
+  z-index: 2;
+}
+
+.ca-modals-compose--landscape .ca-modals-images--n2 .ca-modals-images__img--ratio,
+.ca-modals-compose--portrait .ca-modals-images--n2 .ca-modals-images__img--ratio {
+  width: auto;
+  height: auto;
+  max-width: 90%;
+  max-height: 90%;
+}
+
+.ca-modals-compose--landscape .ca-modals-stage--n2 .ca-modal,
+.ca-modals-compose--portrait .ca-modals-stage--n2 .ca-modal {
+  min-width: 0;
+  min-height: 0;
+  padding: 22px 24px;
+  gap: 14px;
+  border-radius: 20px;
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+.ca-modals-compose--landscape .ca-modals-stage--n1 .ca-modal--back,
+.ca-modals-compose--portrait .ca-modals-stage--n1 .ca-modal--back {
+  width: 90%;
+  height: 90%;
+  max-width: 90%;
+  max-height: 90%;
+  min-width: 0;
+  min-height: 0;
+  padding: 24px 28px;
+  box-sizing: border-box;
+  overflow: auto;
+}
+
+.ca-modals-compose--landscape .ca-modal__title {
+  font-size: 28px;
+}
+
+.ca-modals-compose--landscape .ca-modal__subtitle {
+  font-size: 18px;
+}
+
+.ca-modals-compose--landscape .ca-modal__body,
+.ca-modals-compose--landscape .ca-modal__window-title,
+.ca-modals-compose--landscape .ca-modal__window-body {
+  font-size: 15px;
+}
+
+.ca-modals-compose--landscape .ca-modal__window {
+  padding: 14px 16px;
+  gap: 8px;
+  border-radius: 12px;
+}
+
+.ca-modals-images__stack {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Square pair — default overlap */
+.ca-modals-compose--square .ca-modals-images--n2 .ca-modals-images__stack .ca-modals-images__img--back {
+  top: 42%;
+  left: 42%;
+  transform: translate(-50%, -50%);
+}
+
+.ca-modals-compose--square .ca-modals-images--n2 .ca-modals-images__stack .ca-modals-images__img--front {
+  top: 58%;
+  left: 58%;
+  transform: translate(-50%, -50%);
+}
+
+.ca-modals-images__img {
+  position: absolute;
+  border-radius: 24px;
+  border: 1.5px solid rgba(160, 140, 220, 0.4);
+  box-shadow:
+    0 24px 60px rgba(0, 0, 0, 0.45),
+    0 0 40px rgba(77, 32, 140, 0.3);
+  background: rgba(12, 6, 28, 0.65);
+  object-fit: cover;
+}
+
+.ca-modals-images__img--cover {
+  object-fit: cover;
+}
+
+.ca-modals-images__img--contain {
+  object-fit: contain;
+  background: rgba(4, 2, 14, 0.55);
+}
+
+/* Original ratio — frame matches image aspect; image fills the frame */
+.ca-modals-images__img--contain.ca-modals-images__img--ratio {
+  height: auto !important;
+  aspect-ratio: var(--ca-modals-img-aspect, 1);
+  object-fit: cover;
+  object-position: center;
+  background: rgba(12, 6, 28, 0.65);
+}
+
+.ca-modals-images--n1 .ca-modals-images__img--back {
+  width: 84%;
+  height: 84%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.ca-modals-images--n2 .ca-modals-images__img--back {
+  width: 72%;
+  height: 72%;
+  left: 42%;
+  z-index: 1;
+}
+
+.ca-modals-images--n2 .ca-modals-images__img--front {
+  width: 72%;
+  height: 72%;
+  left: 58%;
+  z-index: 2;
+}
+
+.ca-modals-images__img--empty {
+  background:
+    linear-gradient(135deg, rgba(77, 32, 140, 0.35), rgba(22, 48, 95, 0.25));
 }
 
 .ca-modal__header {
