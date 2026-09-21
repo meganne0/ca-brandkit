@@ -17,6 +17,64 @@ function fitSlide(slide, stage) {
   slide.style.transform = `scale(${stage.clientWidth / 1920})`;
 }
 
+/** Layout pieces that should enter with a staggered reveal. */
+const REVEAL_SELECTORS = [
+  ".section-title--corner",
+  ".slide-header",
+  ".layout-cover > .logo",
+  ".layout-cover > .type-h1",
+  ".layout-cover > .type-body",
+  ".layout-section > .type-numeral",
+  ".layout-section > .type-metric",
+  ".layout-section > .type-body",
+  ".quote-panel",
+  ".layout-split__copy > *",
+  ".media-stack > *",
+  ".text-bullets-grid__copy",
+  ".bullet-list > li",
+  ".team-card",
+  ".toc-item",
+  ".step-card",
+  ".metric-card",
+  ".timeline-item",
+  ".layout-timeline__intro > *",
+  ".layout-timeline__closing",
+  ".layout-question__main > *",
+  ".layout-image-title__media",
+  ".layout-image-title__title",
+  ".layout-image-title__subtitle",
+  ".layout-image-title__bullets > li",
+].join(", ");
+
+function prepareSlideReveal(slide) {
+  if (!slide) return;
+  slide.querySelectorAll("[data-reveal]").forEach((el) => {
+    delete el.dataset.reveal;
+    el.style.removeProperty("--reveal-i");
+  });
+
+  const nodes = [...slide.querySelectorAll(REVEAL_SELECTORS)];
+  // Prefer finer units when a candidate wraps another candidate
+  const items = nodes.filter(
+    (node) => !nodes.some((other) => other !== node && node.contains(other)),
+  );
+
+  items.forEach((el, i) => {
+    el.dataset.reveal = "";
+    el.style.setProperty("--reveal-i", String(i));
+  });
+}
+
+/** Restart the staggered entrance on a painted slide (e.g. lightbox). */
+export function playSlideReveal(slide) {
+  if (!slide) return;
+  prepareSlideReveal(slide);
+  slide.classList.remove("slide--reveal");
+  // Force a reflow so removing/adding the class retriggers animations
+  void slide.offsetWidth;
+  slide.classList.add("slide--reveal");
+}
+
 function paintSlide(slide) {
   const layers = slide.querySelector(".slide-layers");
   if (layers && slide.dataset.bg) {
@@ -33,6 +91,7 @@ function paintSlide(slide) {
   if (slide.dataset.layout) {
     renderLayout(slide, slide.dataset.layout, content);
   }
+  prepareSlideReveal(slide);
   initImageLightbox(slide);
 }
 
@@ -561,5 +620,6 @@ export function initEditableSlideBoard({
     },
     fitSlide,
     paintSlide,
+    playSlideReveal,
   };
 }
