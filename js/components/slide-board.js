@@ -8,8 +8,8 @@ import {
   LAYOUTS,
   renderLayout,
   refreshImageTitleLayouts,
-} from "../layouts.js?v=39";
-import { LAYOUT_SAMPLES } from "../layout-samples.js?v=2";
+} from "../layouts.js?v=41";
+import { LAYOUT_SAMPLES } from "../layout-samples.js?v=3";
 import { initImageLightbox } from "./lightbox.js?v=28";
 
 function fitSlide(slide, stage) {
@@ -44,6 +44,8 @@ const REVEAL_SELECTORS = [
   ".layout-image-title__title",
   ".layout-image-title__subtitle",
   ".layout-image-title__bullets > li",
+  ".focus-chip",
+  ".demo-url-item",
 ].join(", ");
 
 function prepareSlideReveal(slide) {

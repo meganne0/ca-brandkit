@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Draft · Prebreach intro</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Mozilla+Headline:wght@300&family=Mozilla+Text:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/light/style.css"
+    />
+    <link rel="stylesheet" href="../css/slides.css?v=25" />
+    <script src="../js/auth-gate.js?v=6"></script>
+  </head>
+  <body>
+    <div class="deck">
+      <div class="deck-meta">
+        <div>
+          <strong>Draft</strong> · Prebreach intro ·
+          <span id="slide-label">—</span>
+          · <a href="../index.html">← hub</a>
+          · <span id="save-status" class="deck-save-status"></span>
+        </div>
+        <div class="deck-toolbar" role="toolbar" aria-label="Draft controls">
+          <button type="button" class="deck-toolbar__btn" id="btn-save">Save</button>
+          <button type="button" class="deck-toolbar__btn is-active" id="btn-preview" data-mode="preview">
+            Preview
+          </button>
+          <button type="button" class="deck-toolbar__btn" id="btn-edit" data-mode="edit">
+            Edit
+          </button>
+        </div>
+      </div>
+
+      <div class="deck-workspace" id="workspace" data-mode="preview">
+        <div class="slide-board" id="board"></div>
+        <aside class="deck-editor" id="editor" hidden>
+          <div class="deck-editor__preview">
+            <div class="deck-editor__stage" id="editor-stage"></div>
+            <p class="deck-editor__hint">
+              Edit fields in the panel · click text on the slide for quick tweaks · Save to keep
+            </p>
+          </div>
+          <div class="deck-editor__panel" id="editor-panel"></div>
+        </aside>
+      </div>
+
+      <div id="slide-source" hidden>
+        <!-- 1. Cover -->
+        <section
+          class="slide"
+          data-title="Cover"
+          data-layout="LY-01"
+          data-bg="BG-01"
+          data-content='{"headline":"Introduction","accent":"Introduction","subtitle":"CyberArmor — prebreach defense for credentials and identity."}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <!-- 2. Who We Are -->
+        <section
+          class="slide"
+          data-title="Who We Are"
+          data-layout="LY-02"
+          data-bg="BG-08"
+          data-content='{"sectionTitle":"Team","title":"Who We Are","subtitle":"The people behind CyberArmor.","people":[{"name":"Nguyen Nguyen","role":"CEO","avatar":"/visual%20assets/avatars/avatar-nguyen-circle.png"},{"name":"Ali Alame","role":"CTO","avatar":"/visual%20assets/avatars/avatar-ali-circle.png"},{"name":"Meganne Ohata","role":"CXO","avatar":"/visual%20assets/avatars/avatar-meganne-circle.png"}]}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <!-- 3. How it Started -->
+        <section
+          class="slide"
+          data-title="How it Started"
+          data-layout="LY-08"
+          data-bg="BG-09"
+          data-content='{"sectionTitle":"Origin","title":"How it Started","subtitle":"A question that wouldn’t go away.","text":"Nguyen was a malware researcher who questioned why action was only taken after a breach.","bullets":["Breach data was often old","Clean up is expensive","Earlier remediation could make greater impact"]}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <!-- 4. Prebreach workflow (placeholder) -->
+        <section
+          class="slide"
+          data-title="Prebreach workflow"
+          data-layout="LY-19"
+          data-bg="BG-05"
+          data-content='{"sectionTitle":"Workflow","title":"Prebreach workflow","subtitle":"Placeholder — interactive multi-path timeline. Hover each node to reveal more detail (coming soon).","steps":[{"title":"Path node","description":"Hover to expand this branch."},{"title":"Path node","description":"Alternate route — detail on hover."},{"title":"Path node","description":"Downstream decision — detail on hover."}]}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <!-- 5. Why Credential Theft? -->
+        <section
+          class="slide"
+          data-title="Why Credential Theft?"
+          data-layout="LY-13"
+          data-bg="BG-02"
+          data-content='{"question":"Why Credential Theft?"}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <!-- 6. Malware Infostealer + Phish Focus -->
+        <section
+          class="slide"
+          data-title="Infostealer + Phish"
+          data-layout="LY-13"
+          data-bg="BG-03"
+          data-content='{"question":"Malware Infostealer + Phish Focus"}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <!-- 7. Economic Context -->
+        <section
+          class="slide"
+          data-title="Economic Context"
+          data-layout="LY-12"
+          data-bg="BG-04"
+          data-content='{"title":"Economic Context","subtitle":"Filler figures — replace with final sources.","metrics":[{"value":"$4.5T","text":"Estimated annual cost of cybercrime globally","source":"Placeholder"},{"value":"80%","text":"Of breaches involve compromised or stolen credentials","source":"Placeholder"},{"value":"$4.5M","text":"Average cost of a data breach","source":"Placeholder"}]}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <!-- 8. What data is available? -->
+        <section
+          class="slide"
+          data-title="What data is available?"
+          data-layout="LY-21"
+          data-bg="BG-09"
+          data-content='{"title":"What data is available?","subtitle":"Click a type to bring it into focus.","items":["Tokens","Cookies","Passwords","Sessions","Autofill","Credit cards","Crypto wallets","System info"],"hint":"Click again to clear focus"}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <!-- 9. How does this differ? -->
+        <section
+          class="slide"
+          data-title="How does this differ?"
+          data-layout="LY-13"
+          data-bg="BG-06"
+          data-content='{"question":"How does this differ from other tools?"}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <!-- 10. Fraud / extortion -->
+        <section
+          class="slide"
+          data-title="Fraud / extortion"
+          data-layout="LY-13"
+          data-bg="BG-07"
+          data-content='{"question":"Does this prevent fraud / extortion?"}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <!-- 11. Demo -->
+        <section
+          class="slide"
+          data-title="Demo"
+          data-layout="LY-22"
+          data-bg="BG-05"
+          data-content='{"title":"Demo","subtitle":"Placeholder URLs — replace with live demo paths.","items":[{"url":"https://portal.acme.example/login","severity":"high"},{"url":"https://mail.acme.example/owa","severity":"high"},{"url":"https://vpn.acme.example","severity":"medium"},{"url":"https://hr.acme.example/sso","severity":"medium"},{"url":"https://dev.acme.example/admin","severity":"high"},{"url":"https://okta.acme.example","severity":"high"},{"url":"https://finance.acme.example/erp","severity":"medium"},{"url":"https://support.acme.example/zendesk","severity":"medium"},{"url":"https://ci.acme.example/jenkins","severity":"high"},{"url":"https://cloud.acme.example/console","severity":"high"},{"url":"https://wiki.acme.example","severity":"medium"},{"url":"https://crm.acme.example","severity":"medium"}],"hint":"Click a URL to focus · click again to clear"}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+      </div>
+    </div>
+
+    <div class="slide-lightbox" id="slide-lightbox" hidden>
+      <button type="button" class="slide-lightbox__backdrop" aria-label="Close"></button>
+      <div class="slide-lightbox__dialog" role="dialog" aria-modal="true">
+        <div class="slide-lightbox__stage" id="lightbox-stage"></div>
+        <div class="slide-lightbox__meta">
+          <strong id="lightbox-label">Slide</strong>
+          <div class="deck-nav">
+            <button type="button" id="prev">←</button>
+            <button type="button" id="next">→</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { initEditableSlideBoard } from "../js/components/slide-board.js?v=10";
+      import { refreshImageTitleLayouts } from "../js/layouts.js?v=41";
+      import { enableInlineEditing } from "../js/slide-inline-edit.js?v=1";
+      import { mountSlideContentForm } from "../js/slide-content-form.js?v=1";
+
+      const STORAGE_KEY = `ca-brandkit:draft:${location.pathname}`;
+
+      const board = document.getElementById("board");
+      const source = document.getElementById("slide-source");
+      const label = document.getElementById("slide-label");
+      const saveStatus = document.getElementById("save-status");
+      const workspace = document.getElementById("workspace");
+      const editor = document.getElementById("editor");
+      const editorStage = document.getElementById("editor-stage");
+      const editorPanel = document.getElementById("editor-panel");
+      const lightbox = document.getElementById("slide-lightbox");
+      const lightboxStage = document.getElementById("lightbox-stage");
+      const lightboxLabel = document.getElementById("lightbox-label");
+      const btnSave = document.getElementById("btn-save");
+      const btnPreview = document.getElementById("btn-preview");
+      const btnEdit = document.getElementById("btn-edit");
+
+      let mode = "preview";
+      let index = 0;
+      let disposeInline = null;
+      let disposeForm = null;
+      let editSlide = null;
+      let editorFitObserver = null;
+
+      function defsFromSource() {
+        return [...source.querySelectorAll(".slide")].map((slide) => {
+          let content = {};
+          try {
+            content = JSON.parse(slide.dataset.content || "{}");
+          } catch {
+            content = {};
+          }
+          return {
+            title: slide.dataset.title || "",
+            layout: slide.dataset.layout,
+            bg: slide.dataset.bg,
+            content,
+          };
+        });
+      }
+
+      function loadSaved() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return null;
+          const parsed = JSON.parse(raw);
+          return Array.isArray(parsed?.slides) ? parsed.slides : null;
+        } catch {
+          return null;
+        }
+      }
+
+      const saved = loadSaved();
+      const initialDefs = saved?.length ? saved : defsFromSource();
+      source.remove();
+
+      const slides = [];
+      const boardApi = initEditableSlideBoard({
+        board,
+        slides,
+        onOpen: handleOpen,
+        onChange: (count) => {
+          label.textContent = `${count} slide${count === 1 ? "" : "s"}`;
+          if (mode === "edit" && index >= count) {
+            selectEditSlide(Math.max(0, count - 1));
+          }
+        },
+      });
+
+      boardApi.load(initialDefs);
+      if (saved?.length) {
+        saveStatus.textContent = "Restored saved draft";
+      }
+
+      function flashStatus(text) {
+        saveStatus.textContent = text;
+        window.clearTimeout(flashStatus._t);
+        flashStatus._t = window.setTimeout(() => {
+          if (saveStatus.textContent === text) saveStatus.textContent = "";
+        }, 2200);
+      }
+
+      function saveDraft() {
+        const payload = {
+          savedAt: new Date().toISOString(),
+          slides: boardApi.serialize(),
+        };
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+        flashStatus("Saved");
+      }
+
+      function openLightbox(i) {
+        if (!slides.length) return;
+        index = Math.max(0, Math.min(slides.length - 1, i));
+        const slide = slides[index];
+        lightboxLabel.textContent = `${index + 1} / ${slides.length} · ${slide.dataset.title || ""}`;
+        const clone = slide.cloneNode(true);
+        lightboxStage.replaceChildren(clone);
+        lightbox.hidden = false;
+        document.body.classList.add("slide-lightbox-open");
+        requestAnimationFrame(() => {
+          boardApi.fitSlide(clone, lightboxStage);
+          refreshImageTitleLayouts(clone);
+          boardApi.playSlideReveal(clone);
+        });
+        document.getElementById("prev").disabled = index === 0;
+        document.getElementById("next").disabled = index === slides.length - 1;
+      }
+
+      function clearEditor() {
+        disposeInline?.();
+        disposeInline = null;
+        disposeForm?.();
+        disposeForm = null;
+        editorFitObserver?.disconnect();
+        editorFitObserver = null;
+        editSlide = null;
+        editorStage.replaceChildren();
+        editorPanel.replaceChildren();
+      }
+
+      function parseSlideContent(slide) {
+        try {
+          return JSON.parse(slide.dataset.content || "{}");
+        } catch {
+          return {};
+        }
+      }
+
+      function applyEditorContent(content) {
+        if (!editSlide) return;
+        boardApi.updateSlideContent(index, content);
+        editSlide.dataset.content = JSON.stringify(content);
+        boardApi.paintSlide(editSlide);
+        boardApi.fitSlide(editSlide, editorStage);
+        refreshImageTitleLayouts(editSlide);
+
+        // Rebind inline edit after paint replaces DOM nodes
+        disposeInline?.();
+        disposeInline = enableInlineEditing(editSlide, {
+          onCommit: (next) => {
+            boardApi.updateSlideContent(index, next);
+            editSlide.dataset.content = JSON.stringify(next);
+            disposeForm?.();
+            disposeForm = mountSlideContentForm(editorPanel, {
+              layout: editSlide.dataset.layout,
+              content: next,
+              onChange: applyEditorContent,
+            });
+          },
+        });
+      }
+
+      function selectEditSlide(i) {
+        if (!slides.length) {
+          clearEditor();
+          return;
+        }
+        index = Math.max(0, Math.min(slides.length - 1, i));
+        boardApi.setSelectedIndex(index);
+        const sourceSlide = slides[index];
+
+        disposeInline?.();
+        disposeForm?.();
+        editorFitObserver?.disconnect();
+
+        const live = document.createElement("section");
+        live.className = "slide";
+        live.dataset.title = sourceSlide.dataset.title;
+        live.dataset.layout = sourceSlide.dataset.layout;
+        live.dataset.bg = sourceSlide.dataset.bg;
+        live.dataset.content = sourceSlide.dataset.content;
+        const layers = document.createElement("div");
+        layers.className = "slide-layers";
+        layers.setAttribute("aria-hidden", "true");
+        live.appendChild(layers);
+
+        editorStage.replaceChildren(live);
+        editSlide = live;
+        boardApi.paintSlide(live);
+
+        const fit = () => boardApi.fitSlide(live, editorStage);
+        fit();
+        refreshImageTitleLayouts(live);
+        editorFitObserver = new ResizeObserver(fit);
+        editorFitObserver.observe(editorStage);
+
+        const content = parseSlideContent(live);
+        disposeForm = mountSlideContentForm(editorPanel, {
+          layout: live.dataset.layout,
+          content,
+          onChange: applyEditorContent,
+        });
+
+        disposeInline = enableInlineEditing(live, {
+          onCommit: (next) => {
+            boardApi.updateSlideContent(index, next);
+            live.dataset.content = JSON.stringify(next);
+            disposeForm?.();
+            disposeForm = mountSlideContentForm(editorPanel, {
+              layout: live.dataset.layout,
+              content: next,
+              onChange: applyEditorContent,
+            });
+          },
+        });
+      }
+
+      function handleOpen(i) {
+        if (mode === "edit") selectEditSlide(i);
+        else openLightbox(i);
+      }
+
+      function setMode(next) {
+        if (mode === next) return;
+        mode = next;
+        workspace.dataset.mode = mode;
+        btnPreview.classList.toggle("is-active", mode === "preview");
+        btnEdit.classList.toggle("is-active", mode === "edit");
+        editor.hidden = mode !== "edit";
+
+        lightbox.hidden = true;
+        document.body.classList.remove("slide-lightbox-open");
+
+        if (mode === "edit") {
+          boardApi.setSelectedIndex(index);
+          selectEditSlide(index);
+          requestAnimationFrame(() => boardApi.fitAll());
+        } else {
+          clearEditor();
+          boardApi.setSelectedIndex(-1);
+          requestAnimationFrame(() => boardApi.fitAll());
+        }
+      }
+
+      btnSave.addEventListener("click", saveDraft);
+      btnPreview.addEventListener("click", () => setMode("preview"));
+      btnEdit.addEventListener("click", () => setMode("edit"));
+
+      document.getElementById("prev").onclick = () => openLightbox(index - 1);
+      document.getElementById("next").onclick = () => openLightbox(index + 1);
+      lightbox.querySelector(".slide-lightbox__backdrop").onclick = () => {
+        lightbox.hidden = true;
+        document.body.classList.remove("slide-lightbox-open");
+      };
+
+      window.addEventListener("keydown", (e) => {
+        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "s") {
+          e.preventDefault();
+          saveDraft();
+        }
+        if (lightbox.hidden) return;
+        if (e.key === "Escape") {
+          lightbox.hidden = true;
+          document.body.classList.remove("slide-lightbox-open");
+        }
+        if (e.key === "ArrowRight" || e.key === " ") {
+          e.preventDefault();
+          if (index < slides.length - 1) openLightbox(index + 1);
+        }
+        if (e.key === "ArrowLeft") {
+          e.preventDefault();
+          if (index > 0) openLightbox(index - 1);
+        }
+      });
+    </script>
+  </body>
+</html>

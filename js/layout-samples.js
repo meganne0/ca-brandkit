@@ -362,4 +362,35 @@ export const LAYOUT_SAMPLES = {
             ],
           },
         },
+        "LY-21": {
+          bg: "BG-09",
+          content: {
+            title: "What data is available?",
+            subtitle: "Click an item to bring it into focus.",
+            items: [
+              "Tokens",
+              "Cookies",
+              "Passwords",
+              "Sessions",
+              "Autofill",
+              "Credit cards",
+              "Crypto wallets",
+              "System info",
+            ],
+          },
+        },
+        "LY-22": {
+          bg: "BG-05",
+          content: {
+            title: "Demo",
+            subtitle: "Live paths — click a URL to focus.",
+            items: [
+              { url: "https://portal.example.com/login", severity: "high" },
+              { url: "https://mail.example.com/owa", severity: "high" },
+              { url: "https://vpn.example.com", severity: "medium" },
+              { url: "https://hr.example.com/sso", severity: "medium" },
+              { url: "https://dev.example.com/admin", severity: "high" },
+            ],
+          },
+        },
       };

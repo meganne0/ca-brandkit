@@ -150,6 +150,20 @@ export const LAYOUTS = {
     footer: true,
     className: "layout-timeline layout-timeline--end",
   },
+
+  "LY-21": {
+    label: "Focus chips",
+    description: "Grid of items that come into focus on click. Footer.",
+    footer: true,
+    className: "layout-focus-grid",
+  },
+
+  "LY-22": {
+    label: "Demo URL list",
+    description: "URL list with severity labels; click to focus. Footer.",
+    footer: true,
+    className: "layout-demo-urls",
+  },
 };
 
 function accentize(text, accent) {
@@ -626,6 +640,90 @@ function renderTimelineEnd(content) {
   return renderTimeline(content, "end");
 }
 
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
+}
+
+function renderFocusGrid(content) {
+  const el = document.createElement("div");
+  el.className = "slide-content layout-focus-grid";
+  const items = (content.items ?? []).slice(0, 12);
+  const hint = content.hint ?? "Click an item to bring it into focus";
+  el.innerHTML = `
+    ${slideHeader(content)}
+    <div class="focus-grid" role="list">
+      ${items
+        .map(
+          (item, index) => `
+            <button
+              type="button"
+              class="focus-chip"
+              role="listitem"
+              data-focus-item
+              data-index="${index}"
+            >${escapeHtml(typeof item === "string" ? item : item.label ?? item.title ?? "")}</button>
+          `,
+        )
+        .join("")}
+    </div>
+    <p class="type-caption layout-focus-grid__hint">${escapeHtml(hint)}</p>
+  `;
+  return el;
+}
+
+function renderDemoUrls(content) {
+  const el = document.createElement("div");
+  el.className = "slide-content layout-demo-urls";
+  const items = (content.items ?? []).slice(0, 15);
+  const hint = content.hint ?? "Click a URL to bring it into focus";
+  el.innerHTML = `
+    ${slideHeader(content)}
+    <ul class="demo-url-list" role="list">
+      ${items
+        .map((item, index) => {
+          const url = typeof item === "string" ? item : item.url ?? item.label ?? "";
+          const severity = String(
+            typeof item === "string" ? "" : item.severity ?? item.label ?? "",
+          ).toLowerCase();
+          const severityClass =
+            severity === "high"
+              ? "demo-url-item__severity--high"
+              : severity === "medium"
+                ? "demo-url-item__severity--medium"
+                : "";
+          const severityLabel =
+            severity === "high" || severity === "medium"
+              ? severity
+              : "";
+          return `
+            <li>
+              <button
+                type="button"
+                class="demo-url-item"
+                data-focus-item
+                data-index="${index}"
+              >
+                ${
+                  severityLabel
+                    ? `<span class="demo-url-item__severity ${severityClass}">${escapeHtml(severityLabel)}</span>`
+                    : `<span class="demo-url-item__severity demo-url-item__severity--empty" aria-hidden="true"></span>`
+                }
+                <span class="demo-url-item__url">${escapeHtml(url)}</span>
+              </button>
+            </li>
+          `;
+        })
+        .join("")}
+    </ul>
+    <p class="type-caption layout-demo-urls__hint">${escapeHtml(hint)}</p>
+  `;
+  return el;
+}
+
 const RENDERERS = {
   "LY-01": renderCover,
   "LY-02": renderTeam,
@@ -647,6 +745,8 @@ const RENDERERS = {
   "LY-18": renderTimelineStart,
   "LY-19": renderTimelineFull,
   "LY-20": renderTimelineEnd,
+  "LY-21": renderFocusGrid,
+  "LY-22": renderDemoUrls,
 };
 
 export function renderLayout(slide, layoutId, content = {}) {
@@ -682,3 +782,30 @@ export function initSlideLayouts(root = document) {
   });
   initImageLightbox(root);
 }
+
+/** Click-to-focus for LY-21 / LY-22 (works on board tiles and lightbox clones). */
+let focusInteractionsBound = false;
+export function ensureFocusInteractions() {
+  if (focusInteractionsBound) return;
+  focusInteractionsBound = true;
+
+  document.addEventListener("click", (event) => {
+    const item = event.target.closest("[data-focus-item]");
+    if (!item) return;
+    const host = item.closest(".layout-focus-grid, .layout-demo-urls");
+    if (!host) return;
+
+    const items = [...host.querySelectorAll("[data-focus-item]")];
+    const already = item.classList.contains("is-focused") && host.classList.contains("has-focus");
+    if (already) {
+      host.classList.remove("has-focus");
+      items.forEach((el) => el.classList.remove("is-focused"));
+      return;
+    }
+
+    host.classList.add("has-focus");
+    items.forEach((el) => el.classList.toggle("is-focused", el === item));
+  });
+}
+
+ensureFocusInteractions();

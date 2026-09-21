@@ -1,5 +1,12 @@
 [
   {
+    "title": "Prebreach intro",
+    "description": "Draft deck — origin story, credential theft focus, data types, and demo URLs.",
+    "href": "drafts/prebreach-intro.html",
+    "status": "Draft",
+    "meta": "11 slides"
+  },
+  {
     "title": "Example draft",
     "description": "4 placeholder slides with lorem ipsum.",
     "href": "drafts/example-prebreach.html",
