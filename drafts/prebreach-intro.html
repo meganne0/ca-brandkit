@@ -14,7 +14,7 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/light/style.css"
     />
-    <link rel="stylesheet" href="../css/slides.css?v=38" />
+    <link rel="stylesheet" href="../css/slides.css?v=41" />
     <script src="../js/auth-gate.js?v=6"></script>
   </head>
   <body>
@@ -90,7 +90,7 @@
           data-title="Attack paths"
           data-layout="LY-24"
           data-bg="BG-02"
-          data-content='{"sources":[{"label":"Linkedin"},{"label":"Leads List"},{"label":"Google Dorking"},{"label":"Company Site"},{"label":"Breach"}],"stages":[{"label":"Buy domains, build lure, MaaS, PhaaS","color":"#887DFF"},{"label":"Phish, quish, smish, URL","color":"#9977FF"},{"label":"Victim engages with lure","color":"#BF66FF"},{"label":"Keylogger, RAT, infostealer, MFA bypass...","color":"#F17AFF"},{"label":"Data sent to attacker: Tokens, cookies, passwords...","color":"#FF8045"}],"outcomes":[{"label":"Business email compromise"},{"label":"Ransomware"},{"label":"Exfiltration"},{"label":"Fraud"},{"label":"Account takeover"},{"label":"Espionage"}],"impacts":[{"label":"Ransomware announcement"},{"label":"Notify or report incident"},{"label":"Posted on dark web forums, marketplaces"}],"sourceColor":"#1EADEC","outcomeColor":"#FF2828","impactColor":"#FF2828"}'
+          data-content='{"sources":[{"label":"Linkedin"},{"label":"Leads List"},{"label":"Google Dorking"},{"label":"Company Site"},{"label":"Breach"}],"stages":[{"label":"Buy domains, build lure, MaaS, PhaaS","color":"#887DFF"},{"label":"Phish, quish, smish, URL","color":"#9977FF"},{"label":"Victim engages with lure","color":"#BF66FF"},{"label":"Keylogger, RAT, infostealer, MFA bypass...","color":"#F17AFF"},{"label":"Data sent to attacker: Tokens, cookies, passwords...","color":"#FF8045"}],"outcomes":[{"label":"Business email compromise"},{"label":"Ransomware"},{"label":"Exfiltration"},{"label":"Fraud"},{"label":"Account takeover"},{"label":"Espionage"}],"impacts":[{"label":"Ransomware announcement"},{"label":"Notify or report incident"},{"label":"Posted on dark web forums, marketplaces"}],"phaseTitles":["Preparation","Collection","Breach","Post-Breach"],"stepLabels":["Recon","Weaponize","Deliver","Exploit","Install","Command and Control","Action-on-Objective","Publication"],"sourceColor":"#1EADEC","outcomeColor":"#FF2828","impactColor":"#FF2828"}'
         >
           <div class="slide-layers" aria-hidden="true"></div>
         </section>
@@ -189,15 +189,15 @@
     </div>
 
     <script type="module">
-      import { initEditableSlideBoard } from "../js/components/slide-board.js?v=17";
+      import { initEditableSlideBoard } from "../js/components/slide-board.js?v=19";
       import {
         refreshImageTitleLayouts,
         refreshFlowFunnels,
-      } from "../js/layouts.js?v=52";
+      } from "../js/layouts.js?v=54";
       import { enableInlineEditing } from "../js/slide-inline-edit.js?v=1";
       import { mountSlideContentForm } from "../js/slide-content-form.js?v=8";
 
-      const STORAGE_KEY = `ca-brandkit:draft:${location.pathname}:v12`;
+      const STORAGE_KEY = `ca-brandkit:draft:${location.pathname}:v14`;
 
       const board = document.getElementById("board");
       const source = document.getElementById("slide-source");

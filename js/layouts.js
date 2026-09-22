@@ -176,7 +176,7 @@ export const LAYOUTS = {
   "LY-24": {
     label: "Flow orbit",
     description:
-      "Circular nodes with adjacent labels; sources arc into mid then end. Footer.",
+      "Kill-chain orbit with phase blocks (Preparation → Post-Breach). Footer.",
     footer: true,
     className: "layout-flow-orbit",
   },
@@ -862,7 +862,7 @@ function fitFlowFunnel(root) {
   const dots = host.classList.contains("flow-orbit") || Boolean(host.querySelector(".flow-dot"));
 
   // Orbit: sources → stage chain. Funnel: sources → mid → end.
-  const stageDots = [...host.querySelectorAll(".flow-orbit__stages .flow-dot")];
+  const stageDots = [...host.querySelectorAll(".flow-node--stage")];
   const mid = host.querySelector(".flow-node--mid");
   const end = host.querySelector(".flow-node--end");
 
@@ -1041,6 +1041,18 @@ function normalizeFlowStages(content) {
   return stages;
 }
 
+function flowStepBadge(number, label, color) {
+  const colorStyle = color
+    ? ` style="color:${escapeHtml(color)}"`
+    : "";
+  return `
+    <div class="flow-step__badge"${colorStyle}>
+      <span class="flow-step__num">${escapeHtml(String(number))}</span>
+      <span class="flow-step__name">${escapeHtml(label)}</span>
+    </div>
+  `;
+}
+
 function normalizeFlowLabeledNodes(items, fallbackColor) {
   return (items ?? [])
     .slice(0, 8)
@@ -1065,6 +1077,31 @@ function renderFlowOrbit(content) {
   const outcomes = normalizeFlowLabeledNodes(content.outcomes, outcomeColor);
   const impacts = normalizeFlowLabeledNodes(content.impacts, impactColor);
 
+  const phaseTitles = Array.isArray(content.phaseTitles)
+    ? content.phaseTitles
+    : ["Preparation", "Collection", "Breach", "Post-Breach"];
+  const stepLabels = Array.isArray(content.stepLabels)
+    ? content.stepLabels
+    : [
+        "Recon",
+        "Weaponize",
+        "Deliver",
+        "Exploit",
+        "Install",
+        "Command and Control",
+        "Action-on-Objective",
+        "Publication",
+      ];
+
+  const weaponize = stages[0] ?? null;
+  const collectionStages = stages.slice(1);
+  const collectionStepMeta = [
+    { number: 3, label: stepLabels[2] ?? "Deliver" },
+    { number: 4, label: stepLabels[3] ?? "Exploit" },
+    { number: 5, label: stepLabels[4] ?? "Install" },
+    { number: 6, label: stepLabels[5] ?? "Command and Control" },
+  ];
+
   el.style.setProperty("--flow-source", sourceColor);
   el.style.setProperty("--flow-outcome", outcomeColor);
   el.style.setProperty("--flow-impact", impactColor);
@@ -1072,17 +1109,16 @@ function renderFlowOrbit(content) {
   if (stages[1]?.color) el.style.setProperty("--flow-end", stages[1].color);
 
   const orbitMods = [
+    "flow-orbit--phased",
     outcomes.length ? "flow-orbit--with-outcomes" : "",
     impacts.length ? "flow-orbit--with-impacts" : "",
   ]
     .filter(Boolean)
     .join(" ");
 
-  el.innerHTML = `
-    ${cornerSection(content)}
-    ${titleBlock(content)}
-    <div class="flow-orbit${orbitMods ? ` ${orbitMods}` : ""}" data-flow-funnel>
-      <svg class="flow-funnel__wires" aria-hidden="true"></svg>
+  const sourcesBlock = `
+    <div class="flow-step flow-step--sources">
+      ${flowStepBadge(1, stepLabels[0] ?? "Recon", sourceColor)}
       <div class="flow-orbit__sources">
         ${sources
           .map((source, index) => {
@@ -1092,49 +1128,114 @@ function renderFlowOrbit(content) {
           })
           .join("")}
       </div>
-      <div class="flow-orbit__stages" style="--flow-stage-count:${Math.max(stages.length, 1)}">
-        ${stages
-          .map((stage, index) =>
-            flowDotMarkup(stage.label, "stage", `stage-${index}`, stage.color),
-          )
-          .join("")}
+    </div>
+  `;
+
+  const weaponizeBlock = weaponize
+    ? `
+      <div class="flow-step flow-step--stage">
+        ${flowStepBadge(2, stepLabels[1] ?? "Weaponize", weaponize.color)}
+        ${flowDotMarkup(weaponize.label, "stage", "stage-0", weaponize.color)}
       </div>
+    `
+    : "";
+
+  const collectionBlocks = collectionStages
+    .map((stage, index) => {
+      const meta = collectionStepMeta[index] ?? {
+        number: index + 3,
+        label: stage.label,
+      };
+      return `
+        <div class="flow-step flow-step--stage">
+          ${flowStepBadge(meta.number, meta.label, stage.color)}
+          ${flowDotMarkup(stage.label, "stage", `stage-${index + 1}`, stage.color)}
+        </div>
+      `;
+    })
+    .join("");
+
+  el.innerHTML = `
+    ${cornerSection(content)}
+    ${titleBlock(content)}
+    <div class="flow-orbit ${orbitMods}" data-flow-funnel>
+      <svg class="flow-funnel__wires" aria-hidden="true"></svg>
+
+      <section class="flow-phase flow-phase--prep" data-flow-phase tabindex="0" role="button" aria-label="${escapeHtml(phaseTitles[0] ?? "Preparation")} phase">
+        <h3 class="flow-phase__title">${escapeHtml(phaseTitles[0] ?? "Preparation")}</h3>
+        <div class="flow-phase__body">
+          <div class="flow-phase__grid flow-phase__grid--prep">
+            ${sourcesBlock}
+            ${weaponizeBlock}
+          </div>
+        </div>
+      </section>
+
+      <section class="flow-phase flow-phase--collection" data-flow-phase tabindex="0" role="button" aria-label="${escapeHtml(phaseTitles[1] ?? "Collection")} phase">
+        <h3 class="flow-phase__title">${escapeHtml(phaseTitles[1] ?? "Collection")}</h3>
+        <div class="flow-phase__body">
+          <div class="flow-phase__grid flow-phase__grid--collection" style="--flow-collection-count:${Math.max(collectionStages.length, 1)}">
+            ${collectionBlocks}
+          </div>
+        </div>
+      </section>
+
       ${
         outcomes.length
-          ? `<div class="flow-orbit__outcomes">
-              ${outcomes
-                .map((outcome, index) =>
-                  flowDotMarkup(
-                    outcome.label,
-                    "outcome",
-                    `outcome-${index}`,
-                    outcome.color,
-                  ),
-                )
-                .join("")}
-            </div>`
+          ? `<section class="flow-phase flow-phase--breach" data-flow-phase tabindex="0" role="button" aria-label="${escapeHtml(phaseTitles[2] ?? "Breach")} phase">
+              <h3 class="flow-phase__title">${escapeHtml(phaseTitles[2] ?? "Breach")}</h3>
+              <div class="flow-phase__body">
+                <div class="flow-step flow-step--outcomes">
+                  ${flowStepBadge(7, stepLabels[6] ?? "Action-on-Objective", outcomeColor)}
+                  <div class="flow-orbit__outcomes">
+                    ${outcomes
+                      .map((outcome, index) =>
+                        flowDotMarkup(
+                          outcome.label,
+                          "outcome",
+                          `outcome-${index}`,
+                          outcome.color,
+                        ),
+                      )
+                      .join("")}
+                  </div>
+                </div>
+              </div>
+            </section>`
           : ""
       }
+
       ${
         impacts.length
-          ? `<div class="flow-orbit__impacts">
-              ${impacts
-                .map((impact, index) =>
-                  flowDotMarkup(
-                    impact.label,
-                    "impact",
-                    `impact-${index}`,
-                    impact.color,
-                  ),
-                )
-                .join("")}
-            </div>`
+          ? `<section class="flow-phase flow-phase--post-breach" data-flow-phase tabindex="0" role="button" aria-label="${escapeHtml(phaseTitles[3] ?? "Post-Breach")} phase">
+              <h3 class="flow-phase__title">${escapeHtml(phaseTitles[3] ?? "Post-Breach")}</h3>
+              <div class="flow-phase__body">
+                <div class="flow-step flow-step--impacts">
+                  ${flowStepBadge(8, stepLabels[7] ?? "Publication", impactColor)}
+                  <div class="flow-orbit__impacts">
+                    ${impacts
+                      .map((impact, index) =>
+                        flowDotMarkup(
+                          impact.label,
+                          "impact",
+                          `impact-${index}`,
+                          impact.color,
+                        ),
+                      )
+                      .join("")}
+                  </div>
+                </div>
+              </div>
+            </section>`
           : ""
       }
     </div>
   `;
 
-  queueMicrotask(() => fitFlowFunnel(el));
+  queueMicrotask(() => {
+    fitFlowFunnel(el);
+    ensureFlowPhaseInteractions();
+  });
   return el;
 }
 
@@ -1253,3 +1354,72 @@ export function ensureFocusInteractions() {
 }
 
 ensureFocusInteractions();
+
+/** Hover/zoom interactions for LY-24 phase blocks. */
+let flowPhaseInteractionsBound = false;
+
+function exitFlowPhaseZoom(orbit) {
+  if (!orbit) return;
+  orbit.classList.remove("is-phase-zoomed");
+  orbit.querySelectorAll(".flow-phase.is-zoomed").forEach((phase) => {
+    phase.classList.remove("is-zoomed");
+    phase.setAttribute("aria-pressed", "false");
+  });
+  window.setTimeout(() => {
+    const root = orbit.closest(".layout-flow-orbit") || orbit;
+    fitFlowFunnel(root);
+  }, 320);
+}
+
+function enterFlowPhaseZoom(orbit, phase) {
+  orbit.classList.add("is-phase-zoomed");
+  orbit.querySelectorAll(".flow-phase").forEach((el) => {
+    const active = el === phase;
+    el.classList.toggle("is-zoomed", active);
+    el.setAttribute("aria-pressed", active ? "true" : "false");
+  });
+  window.setTimeout(() => {
+    const root = orbit.closest(".layout-flow-orbit") || orbit;
+    fitFlowFunnel(root);
+  }, 320);
+}
+
+export function ensureFlowPhaseInteractions() {
+  if (flowPhaseInteractionsBound) return;
+  flowPhaseInteractionsBound = true;
+
+  document.addEventListener("click", (event) => {
+    const orbit = event.target.closest(".flow-orbit--phased");
+    if (!orbit) return;
+
+    const phase = event.target.closest("[data-flow-phase]");
+    if (orbit.classList.contains("is-phase-zoomed")) {
+      if (phase?.classList.contains("is-zoomed")) {
+        exitFlowPhaseZoom(orbit);
+      } else if (!phase) {
+        exitFlowPhaseZoom(orbit);
+      } else {
+        enterFlowPhaseZoom(orbit, phase);
+      }
+      return;
+    }
+
+    if (!phase || !orbit.contains(phase)) return;
+    enterFlowPhaseZoom(orbit, phase);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape") {
+      document
+        .querySelectorAll(".flow-orbit--phased.is-phase-zoomed")
+        .forEach((orbit) => exitFlowPhaseZoom(orbit));
+      return;
+    }
+
+    if (event.key !== "Enter" && event.key !== " ") return;
+    const phase = event.target.closest("[data-flow-phase]");
+    if (!phase) return;
+    event.preventDefault();
+    phase.click();
+  });
+}
