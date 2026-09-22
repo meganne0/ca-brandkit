@@ -8,8 +8,8 @@ import {
   LAYOUTS,
   renderLayout,
   refreshImageTitleLayouts,
-} from "../layouts.js?v=43";
-import { LAYOUT_SAMPLES } from "../layout-samples.js?v=4";
+} from "../layouts.js?v=45";
+import { LAYOUT_SAMPLES } from "../layout-samples.js?v=5";
 import { initImageLightbox } from "./lightbox.js?v=28";
 
 function fitSlide(slide, stage) {

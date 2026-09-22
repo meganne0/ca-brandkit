@@ -1827,20 +1827,50 @@ body.slide-lightbox-open {
 /* ---- LY-22 Demo URL list ---- */
 
 .layout-demo-urls {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr);
+  gap: 56px;
+  align-items: center;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.layout-demo-urls__copy {
   display: flex;
   flex-direction: column;
-  gap: var(--space-md);
+  justify-content: center;
+  min-width: 0;
+}
+
+.layout-demo-urls__copy .slide-header {
+  margin-bottom: 0;
+  gap: 18px;
+}
+
+.layout-demo-urls__copy .type-h3 {
+  max-width: none;
+}
+
+.layout-demo-urls__copy .type-h4 {
+  max-width: 520px;
+}
+
+.layout-demo-urls__urls {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .demo-url-list {
   list-style: none;
-  margin: 8px 0 0;
+  margin: 0;
   padding: 28px 0;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   gap: 12px;
-  max-height: 720px;
+  max-height: min(720px, 78vh);
   overflow: auto;
   -webkit-mask-image: linear-gradient(
     to bottom,
@@ -1869,11 +1899,11 @@ body.slide-lightbox-open {
   max-width: 100%;
   display: inline-flex;
   align-items: center;
-  gap: 16px;
-  padding: 14px 22px;
+  gap: 18px;
+  padding: 16px 26px;
   border-radius: 12px;
-  border: none;
-  background: #05030d;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(5, 3, 13, 0.22);
   color: var(--ca-white);
   text-align: left;
   cursor: pointer;
@@ -1881,11 +1911,18 @@ body.slide-lightbox-open {
     opacity 0.35s ease,
     transform 0.35s ease,
     box-shadow 0.35s ease,
-    background 0.35s ease;
+    background 0.35s ease,
+    border-color 0.35s ease;
 }
 
 .demo-url-item:hover {
-  background: #0a0714;
+  background: rgba(5, 3, 13, 0.72);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+.demo-url-item.is-copied {
+  border-color: rgba(242, 88, 53, 0.55);
+  box-shadow: 0 0 24px rgba(242, 88, 53, 0.22);
 }
 
 .demo-url-item__severity {
@@ -1893,11 +1930,11 @@ body.slide-lightbox-open {
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  min-height: 28px;
-  padding: 5px 12px;
+  min-height: 36px;
+  padding: 6px 16px;
   border-radius: 999px;
   font-family: var(--font-headline);
-  font-size: 14px;
+  font-size: 18px;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -1920,7 +1957,7 @@ body.slide-lightbox-open {
 
 .demo-url-item__url {
   font-family: var(--font-headline);
-  font-size: 28px;
+  font-size: 34px;
   font-weight: 500;
   line-height: 1.25;
   letter-spacing: -0.01em;
@@ -1935,6 +1972,7 @@ body.slide-lightbox-open {
 .layout-demo-urls.has-focus .demo-url-item.is-focused {
   opacity: 1;
   transform: translateX(10px);
+  background: rgba(5, 3, 13, 0.78);
   box-shadow:
     0 16px 40px rgba(0, 0, 0, 0.35),
     0 0 28px rgba(242, 88, 53, 0.22);

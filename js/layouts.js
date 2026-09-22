@@ -160,7 +160,7 @@ export const LAYOUTS = {
 
   "LY-22": {
     label: "Demo URL list",
-    description: "URL list with severity labels; click to focus. Footer.",
+    description: "Title left, severity-tagged URL list right. Footer.",
     footer: true,
     className: "layout-demo-urls",
   },
@@ -697,47 +697,50 @@ function renderDemoUrls(content) {
   const el = document.createElement("div");
   el.className = "slide-content layout-demo-urls";
   const items = (content.items ?? []).slice(0, 15);
-  const hint = content.hint ?? "Click a URL to bring it into focus";
+  const hint = content.hint ?? "";
   el.innerHTML = `
-    ${slideHeader(content)}
-    <ul class="demo-url-list" role="list">
-      ${items
-        .map((item, index) => {
-          const url = typeof item === "string" ? item : item.url ?? item.label ?? "";
-          const severity = String(
-            typeof item === "string" ? "" : item.severity ?? item.label ?? "",
-          ).toLowerCase();
-          const severityClass =
-            severity === "high"
-              ? "demo-url-item__severity--high"
-              : severity === "medium"
-                ? "demo-url-item__severity--medium"
-                : "";
-          const severityLabel =
-            severity === "high" || severity === "medium"
-              ? severity
-              : "";
-          return `
-            <li>
-              <button
-                type="button"
-                class="demo-url-item"
-                data-focus-item
-                data-index="${index}"
-              >
-                ${
-                  severityLabel
-                    ? `<span class="demo-url-item__severity ${severityClass}">${escapeHtml(severityLabel)}</span>`
-                    : `<span class="demo-url-item__severity demo-url-item__severity--empty" aria-hidden="true"></span>`
-                }
-                <span class="demo-url-item__url">${escapeHtml(url)}</span>
-              </button>
-            </li>
-          `;
-        })
-        .join("")}
-    </ul>
-    <p class="type-caption layout-demo-urls__hint">${escapeHtml(hint)}</p>
+    ${cornerSection(content)}
+    <div class="layout-demo-urls__copy">
+      ${titleBlock(content)}
+    </div>
+    <div class="layout-demo-urls__urls">
+      <ul class="demo-url-list" role="list">
+        ${items
+          .map((item, index) => {
+            const url = typeof item === "string" ? item : item.url ?? item.label ?? "";
+            const severity = String(
+              typeof item === "string" ? "" : item.severity ?? item.label ?? "",
+            ).toLowerCase();
+            const severityClass =
+              severity === "high"
+                ? "demo-url-item__severity--high"
+                : severity === "medium"
+                  ? "demo-url-item__severity--medium"
+                  : "";
+            const severityLabel =
+              severity === "high" || severity === "medium" ? severity : "";
+            return `
+              <li>
+                <button
+                  type="button"
+                  class="demo-url-item"
+                  data-focus-item
+                  data-index="${index}"
+                >
+                  ${
+                    severityLabel
+                      ? `<span class="demo-url-item__severity ${severityClass}">${escapeHtml(severityLabel)}</span>`
+                      : `<span class="demo-url-item__severity demo-url-item__severity--empty" aria-hidden="true"></span>`
+                  }
+                  <span class="demo-url-item__url">${escapeHtml(url)}</span>
+                </button>
+              </li>
+            `;
+          })
+          .join("")}
+      </ul>
+      ${hint ? `<p class="type-caption layout-demo-urls__hint">${escapeHtml(hint)}</p>` : ""}
+    </div>
   `;
   return el;
 }
@@ -819,6 +822,19 @@ export function ensureFocusInteractions() {
     if (!item) return;
     const host = item.closest(".layout-focus-grid, .layout-demo-urls");
     if (!host) return;
+
+    if (item.classList.contains("demo-url-item")) {
+      const url = item.querySelector(".demo-url-item__url")?.textContent?.trim();
+      if (url && navigator.clipboard?.writeText) {
+        navigator.clipboard.writeText(url).then(() => {
+          item.classList.add("is-copied");
+          window.clearTimeout(item._copiedTimer);
+          item._copiedTimer = window.setTimeout(() => {
+            item.classList.remove("is-copied");
+          }, 1200);
+        }).catch(() => {});
+      }
+    }
 
     const items = [...host.querySelectorAll("[data-focus-item]")];
     const already = item.classList.contains("is-focused") && host.classList.contains("has-focus");

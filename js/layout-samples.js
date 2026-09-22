@@ -414,7 +414,7 @@ export const LAYOUT_SAMPLES = {
           bg: "BG-05",
           content: {
             title: "Demo",
-            subtitle: "Live paths — click a URL to focus.",
+            subtitle: "Let’s check out some data we have on the DarkArmor platform",
             items: [
               { url: "https://portal.example.com/login", severity: "high" },
               { url: "https://mail.example.com/owa", severity: "high" },

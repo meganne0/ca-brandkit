@@ -14,7 +14,7 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/light/style.css"
     />
-    <link rel="stylesheet" href="../css/slides.css?v=29" />
+    <link rel="stylesheet" href="../css/slides.css?v=32" />
     <script src="../js/auth-gate.js?v=6"></script>
   </head>
   <body>
@@ -167,7 +167,7 @@
           data-title="Demo"
           data-layout="LY-22"
           data-bg="BG-05"
-          data-content='{"title":"Demo","subtitle":"Placeholder URLs — replace with live demo paths.","items":[{"url":"https://portal.acme.example/login","severity":"high"},{"url":"https://mail.acme.example/owa","severity":"high"},{"url":"https://vpn.acme.example","severity":"medium"},{"url":"https://hr.acme.example/sso","severity":"medium"},{"url":"https://dev.acme.example/admin","severity":"high"},{"url":"https://okta.acme.example","severity":"high"},{"url":"https://finance.acme.example/erp","severity":"medium"},{"url":"https://support.acme.example/zendesk","severity":"medium"},{"url":"https://ci.acme.example/jenkins","severity":"high"},{"url":"https://cloud.acme.example/console","severity":"high"},{"url":"https://wiki.acme.example","severity":"medium"},{"url":"https://crm.acme.example","severity":"medium"}],"hint":"Click a URL to focus · click again to clear"}'
+          data-content='{"title":"Demo","subtitle":"Let’s check out some data we have on the DarkArmor platform","items":[{"url":"https://portal.acme.example/login","severity":"high"},{"url":"https://mail.acme.example/owa","severity":"high"},{"url":"https://vpn.acme.example","severity":"medium"},{"url":"https://hr.acme.example/sso","severity":"medium"},{"url":"https://dev.acme.example/admin","severity":"high"},{"url":"https://okta.acme.example","severity":"high"},{"url":"https://finance.acme.example/erp","severity":"medium"},{"url":"https://support.acme.example/zendesk","severity":"medium"},{"url":"https://ci.acme.example/jenkins","severity":"high"},{"url":"https://cloud.acme.example/console","severity":"high"},{"url":"https://wiki.acme.example","severity":"medium"},{"url":"https://crm.acme.example","severity":"medium"}]}'
         >
           <div class="slide-layers" aria-hidden="true"></div>
         </section>
@@ -190,11 +190,11 @@
 
     <script type="module">
       import { initEditableSlideBoard } from "../js/components/slide-board.js?v=11";
-      import { refreshImageTitleLayouts } from "../js/layouts.js?v=43";
+      import { refreshImageTitleLayouts } from "../js/layouts.js?v=45";
       import { enableInlineEditing } from "../js/slide-inline-edit.js?v=1";
       import { mountSlideContentForm } from "../js/slide-content-form.js?v=2";
 
-      const STORAGE_KEY = `ca-brandkit:draft:${location.pathname}:v5`;
+      const STORAGE_KEY = `ca-brandkit:draft:${location.pathname}:v6`;
 
       const board = document.getElementById("board");
       const source = document.getElementById("slide-source");
