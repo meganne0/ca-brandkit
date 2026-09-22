@@ -126,7 +126,7 @@
       const grid = document.getElementById("drafts-grid");
 
       try {
-        const res = await fetch("./drafts/manifest.json?v=2");
+        const res = await fetch("./drafts/manifest.json?v=3");
         const drafts = await res.json();
         grid.replaceChildren();
 

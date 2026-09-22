@@ -14,7 +14,7 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/light/style.css"
     />
-    <link rel="stylesheet" href="css/slides.css?v=32" />
+    <link rel="stylesheet" href="css/slides.css?v=38" />
       <script src="js/auth-gate.js?v=6"></script>
 </head>
   <body>
@@ -302,8 +302,11 @@
     </div>
 
     <script type="module">
-      import { initEditableSlideBoard } from "./js/components/slide-board.js?v=11";
-      import { refreshImageTitleLayouts } from "./js/layouts.js?v=45";
+      import { initEditableSlideBoard } from "./js/components/slide-board.js?v=17";
+      import {
+        refreshImageTitleLayouts,
+        refreshFlowFunnels,
+      } from "./js/layouts.js?v=52";
 
       const board = document.getElementById("board");
       const source = document.getElementById("slide-source");
@@ -356,6 +359,7 @@
         requestAnimationFrame(() => {
           boardApi.fitSlide(clone, lightboxStage);
           refreshImageTitleLayouts(clone);
+          refreshFlowFunnels(clone);
           boardApi.playSlideReveal(clone);
         });
       }

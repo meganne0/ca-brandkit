@@ -1983,6 +1983,327 @@ body.slide-lightbox-open {
   opacity: 0.55;
 }
 
+/* ---- LY-23 Flow funnel ---- */
+
+.layout-flow-funnel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.layout-flow-funnel .slide-header {
+  margin-bottom: 12px;
+}
+
+.flow-funnel {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(220px, 0.85fr) minmax(280px, 1.1fr) minmax(240px, 0.95fr);
+  gap: 48px;
+  align-items: center;
+  padding: 12px 8px 24px;
+}
+
+.flow-funnel__wires {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: visible;
+}
+
+.flow-funnel__sources,
+.flow-funnel__mid,
+.flow-funnel__end {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+}
+
+.flow-funnel__sources {
+  gap: 22px;
+  align-items: stretch;
+}
+
+.flow-funnel__mid,
+.flow-funnel__end {
+  align-items: center;
+}
+
+.flow-node {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 100%;
+  padding: 22px 28px;
+  border-radius: 999px;
+  border: 2px solid currentColor;
+  background: color-mix(in srgb, currentColor 18%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, currentColor 25%, transparent),
+    0 10px 36px rgba(0, 0, 0, 0.28),
+    0 0 28px color-mix(in srgb, currentColor 28%, transparent);
+  color: inherit;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease,
+    background 0.3s ease;
+}
+
+.flow-node:hover {
+  transform: translateY(-1px);
+  background: color-mix(in srgb, currentColor 28%, transparent);
+  box-shadow:
+    0 0 0 1px color-mix(in srgb, currentColor 40%, transparent),
+    0 14px 40px rgba(0, 0, 0, 0.32),
+    0 0 36px color-mix(in srgb, currentColor 40%, transparent);
+}
+
+.flow-node__label {
+  font-family: var(--font-headline);
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: inherit;
+}
+
+.flow-node--source {
+  color: var(--flow-source, #1eadec);
+}
+
+.flow-node--mid {
+  color: var(--flow-mid, #887dff);
+  max-width: 420px;
+  border-radius: 28px;
+  padding: 28px 32px;
+}
+
+.flow-node--mid .flow-node__label {
+  font-size: 30px;
+}
+
+.flow-node--end {
+  color: var(--flow-end, #9977ff);
+  max-width: 380px;
+  border-radius: 28px;
+  padding: 28px 32px;
+}
+
+.flow-node--end .flow-node__label {
+  font-size: 30px;
+}
+
+/* ---- LY-24 Flow orbit (circular nodes + adjacent labels) ---- */
+
+.layout-flow-orbit {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+.layout-flow-orbit .slide-header {
+  margin-bottom: 12px;
+}
+
+.flow-orbit {
+  position: relative;
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(240px, 0.75fr) minmax(0, 1.6fr);
+  gap: 28px;
+  align-items: center;
+  padding: 12px 16px 24px;
+}
+
+.flow-orbit--with-outcomes {
+  grid-template-columns: minmax(200px, 0.65fr) minmax(0, 1.35fr) minmax(220px, 0.8fr);
+}
+
+.flow-orbit--with-outcomes.flow-orbit--with-impacts {
+  grid-template-columns:
+    minmax(160px, 0.55fr)
+    minmax(0, 1.2fr)
+    minmax(180px, 0.7fr)
+    minmax(200px, 0.75fr);
+}
+
+.flow-orbit .flow-funnel__wires {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  overflow: visible;
+}
+
+.flow-orbit__sources,
+.flow-orbit__stages,
+.flow-orbit__outcomes,
+.flow-orbit__impacts {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  min-width: 0;
+}
+
+.flow-orbit__sources {
+  flex-direction: column;
+  justify-content: center;
+  gap: 36px;
+  align-items: flex-end;
+  padding-right: 8px;
+}
+
+.flow-orbit__sources .flow-dot-row:nth-child(1) { transform: translateX(8px); }
+.flow-orbit__sources .flow-dot-row:nth-child(2) { transform: translateX(28px); }
+.flow-orbit__sources .flow-dot-row:nth-child(3) { transform: translateX(40px); }
+.flow-orbit__sources .flow-dot-row:nth-child(4) { transform: translateX(28px); }
+.flow-orbit__sources .flow-dot-row:nth-child(5) { transform: translateX(8px); }
+
+.flow-orbit__stages {
+  display: grid;
+  grid-template-columns: repeat(var(--flow-stage-count, 5), minmax(0, 1fr));
+  gap: 14px;
+  align-items: center;
+  justify-items: center;
+}
+
+.flow-orbit__outcomes {
+  flex-direction: column;
+  justify-content: center;
+  gap: 22px;
+  align-items: flex-start;
+  padding-left: 8px;
+}
+
+.flow-orbit__outcomes .flow-dot-row:nth-child(1) { transform: translateX(8px); }
+.flow-orbit__outcomes .flow-dot-row:nth-child(2) { transform: translateX(28px); }
+.flow-orbit__outcomes .flow-dot-row:nth-child(3) { transform: translateX(40px); }
+.flow-orbit__outcomes .flow-dot-row:nth-child(4) { transform: translateX(40px); }
+.flow-orbit__outcomes .flow-dot-row:nth-child(5) { transform: translateX(28px); }
+.flow-orbit__outcomes .flow-dot-row:nth-child(6) { transform: translateX(8px); }
+
+.flow-orbit__impacts {
+  flex-direction: column;
+  justify-content: center;
+  gap: 36px;
+  align-items: flex-start;
+  padding-left: 8px;
+}
+
+.flow-orbit__impacts .flow-dot-row:nth-child(1) { transform: translateX(8px); }
+.flow-orbit__impacts .flow-dot-row:nth-child(2) { transform: translateX(28px); }
+.flow-orbit__impacts .flow-dot-row:nth-child(3) { transform: translateX(8px); }
+
+.flow-dot-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.flow-dot-row--source {
+  flex-direction: row;
+  justify-content: flex-end;
+  width: 100%;
+  color: var(--flow-source, #1eadec);
+}
+
+.flow-dot-row--stage {
+  flex-direction: column;
+  gap: 14px;
+  text-align: center;
+  max-width: 220px;
+}
+
+.flow-dot {
+  appearance: none;
+  flex-shrink: 0;
+  width: 26px;
+  height: 26px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow:
+    0 0 0 6px color-mix(in srgb, currentColor 18%, transparent),
+    0 0 22px color-mix(in srgb, currentColor 55%, transparent);
+  cursor: pointer;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+}
+
+.flow-dot:hover {
+  transform: scale(1.12);
+  box-shadow:
+    0 0 0 8px color-mix(in srgb, currentColor 24%, transparent),
+    0 0 30px color-mix(in srgb, currentColor 70%, transparent);
+}
+
+.flow-dot-row--stage .flow-dot {
+  width: 30px;
+  height: 30px;
+}
+
+.flow-dot__label {
+  font-family: var(--font-headline);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: currentColor;
+  white-space: pre-line;
+}
+
+.flow-dot-row--stage .flow-dot__label {
+  max-width: 200px;
+}
+
+.flow-dot-row--outcome,
+.flow-dot-row--impact {
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 14px;
+  color: var(--flow-outcome, #ff2828);
+}
+
+.flow-dot-row--impact {
+  color: var(--flow-impact, var(--flow-outcome, #ff2828));
+}
+
+.flow-dot-row--outcome .flow-dot__label,
+.flow-dot-row--impact .flow-dot__label {
+  text-align: left;
+  max-width: 240px;
+}
+
+.flow-dot-row--impact .flow-dot__label {
+  max-width: 260px;
+}
+
+.flow-node--source.flow-dot,
+.flow-node--stage.flow-dot,
+.flow-node--outcome.flow-dot,
+.flow-node--impact.flow-dot {
+  color: inherit;
+}
+
 /* Timeline placeholder note */
 .layout-timeline__placeholder-note {
   margin-top: 18px;

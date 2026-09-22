@@ -39,9 +39,9 @@
 
     <script type="module">
       import { renderBackground } from "./js/backgrounds.js?v=37";
-      import { LAYOUTS, renderLayout, refreshImageTitleLayouts } from "./js/layouts.js?v=44";
+      import { LAYOUTS, renderLayout, refreshImageTitleLayouts, refreshFlowFunnels } from "./js/layouts.js?v=52";
       import { initImageLightbox } from "./js/components/lightbox.js?v=28";
-      import { LAYOUT_SAMPLES as SAMPLES } from "./js/layout-samples.js?v=5";
+      import { LAYOUT_SAMPLES as SAMPLES } from "./js/layout-samples.js?v=10";
 
       const gallery = document.getElementById("gallery");
       let dragCard = null;
@@ -149,6 +149,7 @@
 
       refreshOrderNames();
       refreshImageTitleLayouts();
+      refreshFlowFunnels();
       initImageLightbox(document);
     </script>
   </body>

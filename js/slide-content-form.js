@@ -226,7 +226,88 @@ function buildFormHtml(layout, content) {
       `);
     });
     bits.push(`</div>`);
-    bits.push(`<p class="deck-form__note">Up to 15 URLs. High = orange, Medium = deep yellow.</p>`);
+    bits.push(`<p class="deck-form__note">Up to 40 URLs. High = orange, Medium = deep yellow.</p>`);
+    return bits.join("");
+  }
+
+  if (layout === "LY-23") {
+    const sources = Array.isArray(c.sources) ? c.sources : [];
+    const middle = typeof c.middle === "string" ? c.middle : c.middle?.label ?? "";
+    const end = typeof c.end === "string" ? c.end : c.end?.label ?? "";
+    bits.push(listHeader("Source nodes", "Add source", "add-source"));
+    bits.push(`<div class="deck-form__list" data-list="sources">`);
+    sources.forEach((source, i) => {
+      const label = typeof source === "string" ? source : source.label ?? "";
+      bits.push(`
+        <div class="deck-form__row" data-index="${i}">
+          <input class="deck-form__input" name="source-${i}" value="${esc(label)}" placeholder="Source label" />
+          <button type="button" class="deck-form__btn deck-form__btn--ghost" data-action="remove-source" data-index="${i}" aria-label="Remove">✕</button>
+        </div>
+      `);
+    });
+    bits.push(`</div>`);
+    bits.push(field("middle-label", "Middle node", middle, { type: "textarea", rows: 2 }));
+    bits.push(field("end-label", "End node", end, { type: "textarea", rows: 2 }));
+    return bits.join("");
+  }
+
+  if (layout === "LY-24") {
+    const sources = Array.isArray(c.sources) ? c.sources : [];
+    const stages = Array.isArray(c.stages) ? c.stages : [];
+    bits.push(listHeader("Source nodes", "Add source", "add-source"));
+    bits.push(`<div class="deck-form__list" data-list="sources">`);
+    sources.forEach((source, i) => {
+      const label = typeof source === "string" ? source : source.label ?? "";
+      bits.push(`
+        <div class="deck-form__row" data-index="${i}">
+          <input class="deck-form__input" name="source-${i}" value="${esc(label)}" placeholder="Source label" />
+          <button type="button" class="deck-form__btn deck-form__btn--ghost" data-action="remove-source" data-index="${i}" aria-label="Remove">✕</button>
+        </div>
+      `);
+    });
+    bits.push(`</div>`);
+    bits.push(listHeader("Stage nodes", "Add stage", "add-stage"));
+    bits.push(`<div class="deck-form__list" data-list="stages">`);
+    stages.forEach((stage, i) => {
+      const label = typeof stage === "string" ? stage : stage.label ?? "";
+      const color = typeof stage === "string" ? "#887DFF" : stage.color ?? "#887DFF";
+      bits.push(`
+        <div class="deck-form__card" data-index="${i}">
+          <div class="deck-form__row">
+            <input class="deck-form__input" name="stage-label-${i}" value="${esc(label)}" placeholder="Stage label" />
+            <button type="button" class="deck-form__btn deck-form__btn--ghost" data-action="remove-stage" data-index="${i}" aria-label="Remove">✕</button>
+          </div>
+          <input class="deck-form__input" name="stage-color-${i}" type="text" value="${esc(color)}" placeholder="#887DFF" />
+        </div>
+      `);
+    });
+    bits.push(`</div>`);
+    bits.push(listHeader("Outcome nodes", "Add outcome", "add-outcome"));
+    bits.push(`<div class="deck-form__list" data-list="outcomes">`);
+    const outcomes = Array.isArray(c.outcomes) ? c.outcomes : [];
+    outcomes.forEach((outcome, i) => {
+      const label = typeof outcome === "string" ? outcome : outcome.label ?? "";
+      bits.push(`
+        <div class="deck-form__row" data-index="${i}">
+          <input class="deck-form__input" name="outcome-${i}" value="${esc(label)}" placeholder="Outcome label" />
+          <button type="button" class="deck-form__btn deck-form__btn--ghost" data-action="remove-outcome" data-index="${i}" aria-label="Remove">✕</button>
+        </div>
+      `);
+    });
+    bits.push(`</div>`);
+    bits.push(listHeader("Impact nodes", "Add impact", "add-impact"));
+    bits.push(`<div class="deck-form__list" data-list="impacts">`);
+    const impacts = Array.isArray(c.impacts) ? c.impacts : [];
+    impacts.forEach((impact, i) => {
+      const label = typeof impact === "string" ? impact : impact.label ?? "";
+      bits.push(`
+        <div class="deck-form__row" data-index="${i}">
+          <input class="deck-form__input" name="impact-${i}" value="${esc(label)}" placeholder="Impact label" />
+          <button type="button" class="deck-form__btn deck-form__btn--ghost" data-action="remove-impact" data-index="${i}" aria-label="Remove">✕</button>
+        </div>
+      `);
+    });
+    bits.push(`</div>`);
     return bits.join("");
   }
 
@@ -397,7 +478,64 @@ function readContentFromForm(form, layout, base = {}) {
       }
       i += 1;
     }
-    next.items = items.slice(0, 15);
+    next.items = items.slice(0, 40);
+    return next;
+  }
+
+  if (layout === "LY-23") {
+    const sources = [];
+    let i = 0;
+    while (form.elements.namedItem(`source-${i}`)) {
+      const label = val(form, `source-${i}`);
+      if (label) sources.push({ label });
+      i += 1;
+    }
+    next.sources = sources.slice(0, 8);
+    next.middle = { label: val(form, "middle-label") };
+    next.end = { label: val(form, "end-label") };
+    next.sourceColor = base.sourceColor ?? "#1EADEC";
+    next.midColor = base.midColor ?? "#887DFF";
+    next.endColor = base.endColor ?? "#9977FF";
+    return next;
+  }
+
+  if (layout === "LY-24") {
+    const sources = [];
+    let i = 0;
+    while (form.elements.namedItem(`source-${i}`)) {
+      const label = val(form, `source-${i}`);
+      if (label) sources.push({ label });
+      i += 1;
+    }
+    const stages = [];
+    i = 0;
+    while (form.elements.namedItem(`stage-label-${i}`)) {
+      const label = val(form, `stage-label-${i}`);
+      const color = val(form, `stage-color-${i}`) || "#887DFF";
+      if (label) stages.push({ label, color });
+      i += 1;
+    }
+    next.sources = sources.slice(0, 8);
+    next.stages = stages.slice(0, 6);
+    const outcomes = [];
+    i = 0;
+    while (form.elements.namedItem(`outcome-${i}`)) {
+      const label = val(form, `outcome-${i}`);
+      if (label) outcomes.push({ label });
+      i += 1;
+    }
+    next.outcomes = outcomes.slice(0, 8);
+    const impacts = [];
+    i = 0;
+    while (form.elements.namedItem(`impact-${i}`)) {
+      const label = val(form, `impact-${i}`);
+      if (label) impacts.push({ label });
+      i += 1;
+    }
+    next.impacts = impacts.slice(0, 8);
+    next.sourceColor = base.sourceColor ?? "#1EADEC";
+    next.outcomeColor = base.outcomeColor ?? "#FF2828";
+    next.impactColor = base.impactColor ?? next.outcomeColor;
     return next;
   }
 
@@ -429,8 +567,24 @@ function mutateList(layout, content, action) {
     /* handled with index */
   } else if (action === "add-url") {
     const items = [...(next.items ?? [])];
-    if (items.length < 15) items.push({ url: "https://", severity: "medium" });
+    if (items.length < 40) items.push({ url: "https://", severity: "medium" });
     next.items = items;
+  } else if (action === "add-source") {
+    const sources = [...(next.sources ?? [])];
+    if (sources.length < 8) sources.push({ label: "New source" });
+    next.sources = sources;
+  } else if (action === "add-stage") {
+    const stages = [...(next.stages ?? [])];
+    if (stages.length < 6) stages.push({ label: "New stage", color: "#887DFF" });
+    next.stages = stages;
+  } else if (action === "add-outcome") {
+    const outcomes = [...(next.outcomes ?? [])];
+    if (outcomes.length < 8) outcomes.push({ label: "New outcome" });
+    next.outcomes = outcomes;
+  } else if (action === "add-impact") {
+    const impacts = [...(next.impacts ?? [])];
+    if (impacts.length < 8) impacts.push({ label: "New impact" });
+    next.impacts = impacts;
   } else if (action === "add-chip") {
     const items = [...(next.items ?? [])];
     if (items.length < 12) {
@@ -495,6 +649,10 @@ export function mountSlideContentForm(container, { layout, content, onChange }) 
 
       if (action === "remove-bullet") current.bullets = removeAt(current.bullets, index);
       else if (action === "remove-url") current.items = removeAt(current.items, index);
+      else if (action === "remove-source") current.sources = removeAt(current.sources, index);
+      else if (action === "remove-stage") current.stages = removeAt(current.stages, index);
+      else if (action === "remove-outcome") current.outcomes = removeAt(current.outcomes, index);
+      else if (action === "remove-impact") current.impacts = removeAt(current.impacts, index);
       else if (action === "remove-chip") current.items = removeAt(current.items, index);
       else if (action === "remove-person") current.people = removeAt(current.people, index);
       else if (action === "remove-step") current.steps = removeAt(current.steps, index);

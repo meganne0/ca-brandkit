@@ -424,4 +424,62 @@ export const LAYOUT_SAMPLES = {
             ],
           },
         },
+        "LY-23": {
+          bg: "BG-05",
+          content: {
+            sources: [
+              { label: "Linkedin" },
+              { label: "Leads List" },
+              { label: "Google Dorking" },
+              { label: "Company Site" },
+              { label: "Breach" },
+            ],
+            middle: { label: "Buy domains, build lure, Maas, PhaaS" },
+            end: { label: "Phish, quish, smish, URL" },
+            sourceColor: "#1EADEC",
+            midColor: "#887DFF",
+            endColor: "#9977FF",
+          },
+        },
+        "LY-24": {
+          bg: "BG-02",
+          content: {
+            sources: [
+              { label: "Linkedin" },
+              { label: "Leads List" },
+              { label: "Google Dorking" },
+              { label: "Company Site" },
+              { label: "Breach" },
+            ],
+            stages: [
+              { label: "Buy domains, build lure, MaaS, PhaaS", color: "#887DFF" },
+              { label: "Phish, quish, smish, URL", color: "#9977FF" },
+              { label: "Victim engages with lure", color: "#BF66FF" },
+              {
+                label: "Keylogger, RAT, infostealer, MFA bypass...",
+                color: "#F17AFF",
+              },
+              {
+                label: "Data sent to attacker: Tokens, cookies, passwords...",
+                color: "#FF8045",
+              },
+            ],
+            outcomes: [
+              { label: "Business email compromise" },
+              { label: "Ransomware" },
+              { label: "Exfiltration" },
+              { label: "Fraud" },
+              { label: "Account takeover" },
+              { label: "Espionage" },
+            ],
+            impacts: [
+              { label: "Ransomware announcement" },
+              { label: "Notify or report incident" },
+              { label: "Posted on dark web forums, marketplaces" },
+            ],
+            sourceColor: "#1EADEC",
+            outcomeColor: "#FF2828",
+            impactColor: "#FF2828",
+          },
+        },
       };

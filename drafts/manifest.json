@@ -1,7 +1,7 @@
 [
   {
     "title": "Prebreach intro",
-    "description": "Draft deck — origin story, credential theft focus, data types, and demo URLs.",
+    "description": "Draft deck — origin story, attack-path flow, credential theft focus, data types, and demo URLs.",
     "href": "drafts/prebreach-intro.html",
     "status": "Draft",
     "meta": "11 slides"

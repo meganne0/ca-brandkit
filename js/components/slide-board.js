@@ -8,9 +8,15 @@ import {
   LAYOUTS,
   renderLayout,
   refreshImageTitleLayouts,
-} from "../layouts.js?v=45";
-import { LAYOUT_SAMPLES } from "../layout-samples.js?v=5";
+  refreshFlowFunnels,
+} from "../layouts.js?v=52";
+import { LAYOUT_SAMPLES } from "../layout-samples.js?v=10";
 import { initImageLightbox } from "./lightbox.js?v=28";
+
+function refreshSlideExtras(root) {
+  refreshImageTitleLayouts(root);
+  refreshFlowFunnels(root);
+}
 
 function fitSlide(slide, stage) {
   if (!stage) return;
@@ -46,6 +52,8 @@ const REVEAL_SELECTORS = [
   ".layout-image-title__bullets > li",
   ".focus-chip",
   ".demo-url-item",
+  ".flow-node",
+  ".flow-dot",
 ].join(", ");
 
 function prepareSlideReveal(slide) {
@@ -286,7 +294,7 @@ export function initEditableSlideBoard({
     buildPickerCards();
     picker.hidden = false;
     document.body.classList.add("slide-layout-picker-open");
-    refreshImageTitleLayouts(picker);
+    refreshSlideExtras(picker);
   }
 
   function placeAddTile() {
@@ -425,7 +433,7 @@ export function initEditableSlideBoard({
       placeAddTile();
       syncFromDom();
       refreshLabels();
-      refreshImageTitleLayouts(board);
+      refreshSlideExtras(board);
     });
 
     tile.addEventListener("dragover", (e) => {
@@ -463,7 +471,7 @@ export function initEditableSlideBoard({
     mountSlide(slide);
     syncFromDom();
     refreshLabels();
-    refreshImageTitleLayouts(board);
+    refreshSlideExtras(board);
   }
 
   function duplicateTile(tile) {
@@ -480,7 +488,7 @@ export function initEditableSlideBoard({
     mountSlide(clone, tile.nextSibling);
     syncFromDom();
     refreshLabels();
-    refreshImageTitleLayouts(board);
+    refreshSlideExtras(board);
   }
 
   function deleteTile(tile) {
@@ -528,7 +536,7 @@ export function initEditableSlideBoard({
   placeAddTile();
   syncFromDom();
   refreshLabels();
-  refreshImageTitleLayouts(board);
+  refreshSlideExtras(board);
 
   function setSelectedIndex(i) {
     selectedIndex = i;
@@ -567,7 +575,7 @@ export function initEditableSlideBoard({
     placeAddTile();
     syncFromDom();
     refreshLabels();
-    refreshImageTitleLayouts(board);
+    refreshSlideExtras(board);
     setSelectedIndex(-1);
   }
 
@@ -581,7 +589,7 @@ export function initEditableSlideBoard({
     if (layers) layers.replaceChildren();
     paintSlide(entry.slide);
     fitSlide(entry.slide, entry.stage);
-    refreshImageTitleLayouts(entry.slide);
+    refreshSlideExtras(entry.slide);
     refreshLabels();
   }
 
@@ -594,7 +602,7 @@ export function initEditableSlideBoard({
     if (layers) layers.replaceChildren();
     paintSlide(entry.slide);
     fitSlide(entry.slide, entry.stage);
-    refreshImageTitleLayouts(entry.slide);
+    refreshSlideExtras(entry.slide);
   }
 
   return {
@@ -618,7 +626,7 @@ export function initEditableSlideBoard({
     },
     fitAll() {
       entries.forEach(({ slide, stage }) => fitSlide(slide, stage));
-      refreshImageTitleLayouts(board);
+      refreshSlideExtras(board);
     },
     fitSlide,
     paintSlide,

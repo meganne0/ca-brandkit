@@ -164,6 +164,22 @@ export const LAYOUTS = {
     footer: true,
     className: "layout-demo-urls",
   },
+
+  "LY-23": {
+    label: "Flow funnel",
+    description:
+      "Source nodes feed a middle node, then an end node. Interactive-ready. Footer.",
+    footer: true,
+    className: "layout-flow-funnel",
+  },
+
+  "LY-24": {
+    label: "Flow orbit",
+    description:
+      "Circular nodes with adjacent labels; sources arc into mid then end. Footer.",
+    footer: true,
+    className: "layout-flow-orbit",
+  },
 };
 
 function accentize(text, accent) {
@@ -696,7 +712,7 @@ function renderFocusGrid(content) {
 function renderDemoUrls(content) {
   const el = document.createElement("div");
   el.className = "slide-content layout-demo-urls";
-  const items = (content.items ?? []).slice(0, 15);
+  const items = (content.items ?? []).slice(0, 40);
   const hint = content.hint ?? "";
   el.innerHTML = `
     ${cornerSection(content)}
@@ -745,6 +761,383 @@ function renderDemoUrls(content) {
   return el;
 }
 
+function flowNodeMarkup(label, tone, role) {
+  return `
+    <button
+      type="button"
+      class="flow-node flow-node--${escapeHtml(tone)}"
+      data-flow-node="${escapeHtml(role)}"
+    >
+      <span class="flow-node__label">${escapeHtml(label)}</span>
+    </button>
+  `;
+}
+
+function renderFlowFunnel(content) {
+  const el = document.createElement("div");
+  el.className = "slide-content layout-flow-funnel";
+  const sourceColor = content.sourceColor ?? "#1EADEC";
+  const midColor = content.midColor ?? "#887DFF";
+  const endColor = content.endColor ?? "#9977FF";
+  const sources = (content.sources ?? []).slice(0, 8);
+  const middle = content.middle ?? { label: "" };
+  const end = content.end ?? { label: "" };
+
+  el.style.setProperty("--flow-source", sourceColor);
+  el.style.setProperty("--flow-mid", midColor);
+  el.style.setProperty("--flow-end", endColor);
+
+  el.innerHTML = `
+    ${cornerSection(content)}
+    ${titleBlock(content)}
+    <div class="flow-funnel" data-flow-funnel>
+      <svg class="flow-funnel__wires" aria-hidden="true"></svg>
+      <div class="flow-funnel__sources">
+        ${sources
+          .map((source, index) => {
+            const label =
+              typeof source === "string" ? source : source.label ?? source.title ?? "";
+            return flowNodeMarkup(label, "source", `source-${index}`);
+          })
+          .join("")}
+      </div>
+      <div class="flow-funnel__mid">
+        ${flowNodeMarkup(
+          typeof middle === "string" ? middle : middle.label ?? "",
+          "mid",
+          "mid",
+        )}
+      </div>
+      <div class="flow-funnel__end">
+        ${flowNodeMarkup(
+          typeof end === "string" ? end : end.label ?? "",
+          "end",
+          "end",
+        )}
+      </div>
+    </div>
+  `;
+
+  queueMicrotask(() => fitFlowFunnel(el));
+  return el;
+}
+
+function fitFlowFunnel(root) {
+  const host =
+    root.matches?.("[data-flow-funnel]")
+      ? root
+      : root.querySelector?.("[data-flow-funnel]");
+  if (!host) return;
+
+  const svg = host.querySelector(".flow-funnel__wires");
+  const sources = [...host.querySelectorAll(".flow-node--source")];
+  if (!svg) return;
+
+  const hostBox = host.getBoundingClientRect();
+  if (hostBox.width < 8 || hostBox.height < 8) return;
+  const scaleX = host.offsetWidth / hostBox.width || 1;
+  const scaleY = host.offsetHeight / hostBox.height || 1;
+  const layoutW = host.offsetWidth;
+  const layoutH = host.offsetHeight;
+
+  const styleRoot = host.closest(".layout-flow-funnel, .layout-flow-orbit") || host;
+  const sourceColor =
+    getComputedStyle(styleRoot).getPropertyValue("--flow-source").trim() || "#1EADEC";
+
+  const toLocal = (el) => {
+    const box = el.getBoundingClientRect();
+    return {
+      cx: (box.left - hostBox.left + box.width / 2) * scaleX,
+      cy: (box.top - hostBox.top + box.height / 2) * scaleY,
+      left: (box.left - hostBox.left) * scaleX,
+      right: (box.right - hostBox.left) * scaleX,
+      top: (box.top - hostBox.top) * scaleY,
+      bottom: (box.bottom - hostBox.top) * scaleY,
+    };
+  };
+
+  const uid = `flow-${Math.random().toString(36).slice(2, 9)}`;
+  const grads = [];
+  const pathEls = [];
+  const dots = host.classList.contains("flow-orbit") || Boolean(host.querySelector(".flow-dot"));
+
+  // Orbit: sources → stage chain. Funnel: sources → mid → end.
+  const stageDots = [...host.querySelectorAll(".flow-orbit__stages .flow-dot")];
+  const mid = host.querySelector(".flow-node--mid");
+  const end = host.querySelector(".flow-node--end");
+
+  const chain = stageDots.length
+    ? stageDots
+    : [mid, end].filter(Boolean);
+
+  if (!chain.length) return;
+
+  const first = chain[0];
+  const firstPt = toLocal(first);
+  const firstColor =
+    getComputedStyle(first).color ||
+    getComputedStyle(styleRoot).getPropertyValue("--flow-mid").trim() ||
+    "#887DFF";
+
+  sources.forEach((source, index) => {
+    const pt = toLocal(source);
+    const startX = dots ? pt.cx : pt.right;
+    const startY = pt.cy;
+    const endX = dots ? firstPt.cx : firstPt.left;
+    const endY = firstPt.cy;
+    const dx = Math.max(dots ? 80 : 60, (endX - startX) * (dots ? 0.35 : 0.5));
+    const d = dots
+      ? `M ${startX} ${startY} L ${endX} ${endY}`
+      : `M ${startX} ${startY} C ${startX + dx} ${startY}, ${endX - dx} ${endY}, ${endX} ${endY}`;
+    const gid = `${uid}-s${index}`;
+    grads.push(`
+      <linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="${startX}" y1="${startY}" x2="${endX}" y2="${endY}">
+        <stop offset="0%" stop-color="${sourceColor}" />
+        <stop offset="100%" stop-color="${firstColor}" />
+      </linearGradient>
+    `);
+    pathEls.push(
+      `<path d="${d}" stroke="url(#${gid})" fill="none" stroke-width="${dots ? 2.5 : 3}" stroke-linecap="round" />`,
+    );
+  });
+
+  for (let i = 0; i < chain.length - 1; i += 1) {
+    const a = toLocal(chain[i]);
+    const b = toLocal(chain[i + 1]);
+    const colorA = getComputedStyle(chain[i]).color || "#887DFF";
+    const colorB = getComputedStyle(chain[i + 1]).color || "#9977FF";
+    const startX = dots ? a.cx : a.right;
+    const startY = a.cy;
+    const endX = dots ? b.cx : b.left;
+    const endY = b.cy;
+    const dx = Math.max(48, (endX - startX) * 0.45);
+    const d = dots
+      ? `M ${startX} ${startY} L ${endX} ${endY}`
+      : `M ${startX} ${startY} C ${startX + dx} ${startY}, ${endX - dx} ${endY}, ${endX} ${endY}`;
+    const gid = `${uid}-c${i}`;
+    grads.push(`
+      <linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="${startX}" y1="${startY}" x2="${endX}" y2="${endY}">
+        <stop offset="0%" stop-color="${colorA}" />
+        <stop offset="100%" stop-color="${colorB}" />
+      </linearGradient>
+    `);
+    pathEls.push(
+      `<path d="${d}" stroke="url(#${gid})" fill="none" stroke-width="${dots ? 2.5 : 3.5}" stroke-linecap="round" />`,
+    );
+  }
+
+  // Fan out from last stage into outcome nodes
+  const outcomes = [...host.querySelectorAll(".flow-orbit__outcomes .flow-dot")];
+  if (outcomes.length && chain.length) {
+    const last = chain[chain.length - 1];
+    const lastPt = toLocal(last);
+    const lastColor = getComputedStyle(last).color || "#FF8045";
+    outcomes.forEach((outcome, index) => {
+      const pt = toLocal(outcome);
+      const startX = lastPt.cx;
+      const startY = lastPt.cy;
+      const endX = pt.cx;
+      const endY = pt.cy;
+      const colorB = getComputedStyle(outcome).color || "#FF2828";
+      const gid = `${uid}-o${index}`;
+      grads.push(`
+        <linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="${startX}" y1="${startY}" x2="${endX}" y2="${endY}">
+          <stop offset="0%" stop-color="${lastColor}" />
+          <stop offset="100%" stop-color="${colorB}" />
+        </linearGradient>
+      `);
+      pathEls.push(
+        `<path d="M ${startX} ${startY} L ${endX} ${endY}" stroke="url(#${gid})" fill="none" stroke-width="2.5" stroke-linecap="round" />`,
+      );
+    });
+  }
+
+  // Dashed fan from outcomes into impact nodes
+  const impacts = [...host.querySelectorAll(".flow-orbit__impacts .flow-dot")];
+  if (impacts.length && outcomes.length) {
+    outcomes.forEach((outcome, oi) => {
+      const from = toLocal(outcome);
+      const colorA = getComputedStyle(outcome).color || "#FF2828";
+      impacts.forEach((impact, ii) => {
+        const to = toLocal(impact);
+        const colorB = getComputedStyle(impact).color || colorA;
+        const gid = `${uid}-i${oi}-${ii}`;
+        grads.push(`
+          <linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="${from.cx}" y1="${from.cy}" x2="${to.cx}" y2="${to.cy}">
+            <stop offset="0%" stop-color="${colorA}" stop-opacity="0.3" />
+            <stop offset="100%" stop-color="${colorB}" stop-opacity="1" />
+          </linearGradient>
+        `);
+        pathEls.push(
+          `<path d="M ${from.cx} ${from.cy} L ${to.cx} ${to.cy}" stroke="url(#${gid})" fill="none" stroke-width="2" stroke-linecap="round" stroke-dasharray="5 5" />`,
+        );
+      });
+    });
+  }
+
+  svg.setAttribute("viewBox", `0 0 ${layoutW} ${layoutH}`);
+  svg.setAttribute("width", String(layoutW));
+  svg.setAttribute("height", String(layoutH));
+  svg.innerHTML = `
+    <defs>${grads.join("")}</defs>
+    ${pathEls.join("")}
+  `;
+}
+
+export function refreshFlowFunnels(root = document) {
+  root.querySelectorAll(".layout-flow-funnel, .layout-flow-orbit").forEach((el) => {
+    fitFlowFunnel(el);
+  });
+}
+
+function flowDotMarkup(label, tone, role, color) {
+  const display = String(label ?? "")
+    .replace(/:\s*/g, ":\n")
+    .replace(/,\s*/g, "\n");
+  const colorStyle = color
+    ? ` style="color:${escapeHtml(color)};--flow-dot:${escapeHtml(color)}"`
+    : "";
+  const labelEl = `<span class="flow-dot__label">${escapeHtml(display)}</span>`;
+  const buttonEl = `
+      <button
+        type="button"
+        class="flow-dot flow-node--${escapeHtml(tone)}"
+        data-flow-node="${escapeHtml(role)}"
+        aria-label="${escapeHtml(label)}"
+      ></button>`;
+  const body =
+    tone === "outcome" || tone === "impact"
+      ? `${buttonEl}${labelEl}`
+      : `${labelEl}${buttonEl}`;
+  return `
+    <div class="flow-dot-row flow-dot-row--${escapeHtml(tone)}"${colorStyle}>
+      ${body}
+    </div>
+  `;
+}
+
+function normalizeFlowStages(content) {
+  if (Array.isArray(content.stages) && content.stages.length) {
+    return content.stages
+      .map((stage) => {
+        if (typeof stage === "string") return { label: stage, color: "#887DFF" };
+        return {
+          label: stage.label ?? stage.title ?? "",
+          color: stage.color ?? "#887DFF",
+        };
+      })
+      .filter((stage) => stage.label);
+  }
+
+  const midColor = content.midColor ?? "#887DFF";
+  const endColor = content.endColor ?? "#9977FF";
+  const middle = content.middle ?? { label: "" };
+  const end = content.end ?? { label: "" };
+  const midLabel = typeof middle === "string" ? middle : middle.label ?? "";
+  const endLabel = typeof end === "string" ? end : end.label ?? "";
+  const stages = [];
+  if (midLabel) stages.push({ label: midLabel, color: midColor });
+  if (endLabel) stages.push({ label: endLabel, color: endColor });
+  return stages;
+}
+
+function normalizeFlowLabeledNodes(items, fallbackColor) {
+  return (items ?? [])
+    .slice(0, 8)
+    .map((item) => {
+      if (typeof item === "string") return { label: item, color: fallbackColor };
+      return {
+        label: item.label ?? item.title ?? "",
+        color: item.color ?? fallbackColor,
+      };
+    })
+    .filter((item) => item.label);
+}
+
+function renderFlowOrbit(content) {
+  const el = document.createElement("div");
+  el.className = "slide-content layout-flow-orbit";
+  const sourceColor = content.sourceColor ?? "#1EADEC";
+  const outcomeColor = content.outcomeColor ?? "#FF2828";
+  const impactColor = content.impactColor ?? outcomeColor;
+  const sources = (content.sources ?? []).slice(0, 8);
+  const stages = normalizeFlowStages(content).slice(0, 6);
+  const outcomes = normalizeFlowLabeledNodes(content.outcomes, outcomeColor);
+  const impacts = normalizeFlowLabeledNodes(content.impacts, impactColor);
+
+  el.style.setProperty("--flow-source", sourceColor);
+  el.style.setProperty("--flow-outcome", outcomeColor);
+  el.style.setProperty("--flow-impact", impactColor);
+  if (stages[0]?.color) el.style.setProperty("--flow-mid", stages[0].color);
+  if (stages[1]?.color) el.style.setProperty("--flow-end", stages[1].color);
+
+  const orbitMods = [
+    outcomes.length ? "flow-orbit--with-outcomes" : "",
+    impacts.length ? "flow-orbit--with-impacts" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  el.innerHTML = `
+    ${cornerSection(content)}
+    ${titleBlock(content)}
+    <div class="flow-orbit${orbitMods ? ` ${orbitMods}` : ""}" data-flow-funnel>
+      <svg class="flow-funnel__wires" aria-hidden="true"></svg>
+      <div class="flow-orbit__sources">
+        ${sources
+          .map((source, index) => {
+            const label =
+              typeof source === "string" ? source : source.label ?? source.title ?? "";
+            return flowDotMarkup(label, "source", `source-${index}`, sourceColor);
+          })
+          .join("")}
+      </div>
+      <div class="flow-orbit__stages" style="--flow-stage-count:${Math.max(stages.length, 1)}">
+        ${stages
+          .map((stage, index) =>
+            flowDotMarkup(stage.label, "stage", `stage-${index}`, stage.color),
+          )
+          .join("")}
+      </div>
+      ${
+        outcomes.length
+          ? `<div class="flow-orbit__outcomes">
+              ${outcomes
+                .map((outcome, index) =>
+                  flowDotMarkup(
+                    outcome.label,
+                    "outcome",
+                    `outcome-${index}`,
+                    outcome.color,
+                  ),
+                )
+                .join("")}
+            </div>`
+          : ""
+      }
+      ${
+        impacts.length
+          ? `<div class="flow-orbit__impacts">
+              ${impacts
+                .map((impact, index) =>
+                  flowDotMarkup(
+                    impact.label,
+                    "impact",
+                    `impact-${index}`,
+                    impact.color,
+                  ),
+                )
+                .join("")}
+            </div>`
+          : ""
+      }
+    </div>
+  `;
+
+  queueMicrotask(() => fitFlowFunnel(el));
+  return el;
+}
+
 const RENDERERS = {
   "LY-01": renderCover,
   "LY-02": renderTeam,
@@ -768,6 +1161,8 @@ const RENDERERS = {
   "LY-20": renderTimelineEnd,
   "LY-21": renderFocusGrid,
   "LY-22": renderDemoUrls,
+  "LY-23": renderFlowFunnel,
+  "LY-24": renderFlowOrbit,
 };
 
 export function renderLayout(slide, layoutId, content = {}) {
