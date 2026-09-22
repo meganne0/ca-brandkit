@@ -9,8 +9,8 @@ import {
   renderLayout,
   refreshImageTitleLayouts,
   refreshFlowFunnels,
-} from "../layouts.js?v=54";
-import { LAYOUT_SAMPLES } from "../layout-samples.js?v=12";
+} from "../layouts.js?v=69";
+import { LAYOUT_SAMPLES } from "../layout-samples.js?v=13";
 import { initImageLightbox } from "./lightbox.js?v=28";
 
 function refreshSlideExtras(root) {
@@ -52,8 +52,6 @@ const REVEAL_SELECTORS = [
   ".layout-image-title__bullets > li",
   ".focus-chip",
   ".demo-url-item",
-  ".flow-node",
-  ".flow-dot",
 ].join(", ");
 
 function prepareSlideReveal(slide) {

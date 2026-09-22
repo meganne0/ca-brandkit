@@ -176,7 +176,7 @@ export const LAYOUTS = {
   "LY-24": {
     label: "Flow orbit",
     description:
-      "Kill-chain orbit with phase blocks (Preparation → Post-Breach). Footer.",
+      "Kill-chain orbit with phase blocks; optional focusPhase for detail slides. Footer.",
     footer: true,
     className: "layout-flow-orbit",
   },
@@ -870,108 +870,191 @@ function fitFlowFunnel(root) {
     ? stageDots
     : [mid, end].filter(Boolean);
 
-  if (!chain.length) return;
-
-  const first = chain[0];
-  const firstPt = toLocal(first);
-  const firstColor =
-    getComputedStyle(first).color ||
-    getComputedStyle(styleRoot).getPropertyValue("--flow-mid").trim() ||
-    "#887DFF";
-
-  sources.forEach((source, index) => {
-    const pt = toLocal(source);
-    const startX = dots ? pt.cx : pt.right;
-    const startY = pt.cy;
-    const endX = dots ? firstPt.cx : firstPt.left;
-    const endY = firstPt.cy;
-    const dx = Math.max(dots ? 80 : 60, (endX - startX) * (dots ? 0.35 : 0.5));
-    const d = dots
-      ? `M ${startX} ${startY} L ${endX} ${endY}`
-      : `M ${startX} ${startY} C ${startX + dx} ${startY}, ${endX - dx} ${endY}, ${endX} ${endY}`;
-    const gid = `${uid}-s${index}`;
-    grads.push(`
-      <linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="${startX}" y1="${startY}" x2="${endX}" y2="${endY}">
-        <stop offset="0%" stop-color="${sourceColor}" />
-        <stop offset="100%" stop-color="${firstColor}" />
-      </linearGradient>
-    `);
-    pathEls.push(
-      `<path d="${d}" stroke="url(#${gid})" fill="none" stroke-width="${dots ? 2.5 : 3}" stroke-linecap="round" />`,
-    );
-  });
-
-  for (let i = 0; i < chain.length - 1; i += 1) {
-    const a = toLocal(chain[i]);
-    const b = toLocal(chain[i + 1]);
-    const colorA = getComputedStyle(chain[i]).color || "#887DFF";
-    const colorB = getComputedStyle(chain[i + 1]).color || "#9977FF";
-    const startX = dots ? a.cx : a.right;
-    const startY = a.cy;
-    const endX = dots ? b.cx : b.left;
-    const endY = b.cy;
-    const dx = Math.max(48, (endX - startX) * 0.45);
-    const d = dots
-      ? `M ${startX} ${startY} L ${endX} ${endY}`
-      : `M ${startX} ${startY} C ${startX + dx} ${startY}, ${endX - dx} ${endY}, ${endX} ${endY}`;
-    const gid = `${uid}-c${i}`;
-    grads.push(`
-      <linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="${startX}" y1="${startY}" x2="${endX}" y2="${endY}">
-        <stop offset="0%" stop-color="${colorA}" />
-        <stop offset="100%" stop-color="${colorB}" />
-      </linearGradient>
-    `);
-    pathEls.push(
-      `<path d="${d}" stroke="url(#${gid})" fill="none" stroke-width="${dots ? 2.5 : 3.5}" stroke-linecap="round" />`,
-    );
-  }
-
-  // Fan out from last stage into outcome nodes
   const outcomes = [...host.querySelectorAll(".flow-orbit__outcomes .flow-dot")];
-  if (outcomes.length && chain.length) {
-    const last = chain[chain.length - 1];
-    const lastPt = toLocal(last);
-    const lastColor = getComputedStyle(last).color || "#FF8045";
-    outcomes.forEach((outcome, index) => {
-      const pt = toLocal(outcome);
-      const startX = lastPt.cx;
-      const startY = lastPt.cy;
-      const endX = pt.cx;
-      const endY = pt.cy;
-      const colorB = getComputedStyle(outcome).color || "#FF2828";
-      const gid = `${uid}-o${index}`;
+  const impacts = [...host.querySelectorAll(".flow-orbit__impacts .flow-dot")];
+
+  if (!chain.length && !outcomes.length && !impacts.length) return;
+
+  if (chain.length) {
+    const first = chain[0];
+    const firstPt = toLocal(first);
+    const firstColor =
+      getComputedStyle(first).color ||
+      getComputedStyle(styleRoot).getPropertyValue("--flow-mid").trim() ||
+      "#887DFF";
+
+    if (sources.length) {
+      sources.forEach((source, index) => {
+        const pt = toLocal(source);
+        const startX = dots ? pt.cx : pt.right;
+        const startY = pt.cy;
+        const endX = dots ? firstPt.cx : firstPt.left;
+        const endY = firstPt.cy;
+        const dx = Math.max(dots ? 80 : 60, (endX - startX) * (dots ? 0.35 : 0.5));
+        const d = dots
+          ? `M ${startX} ${startY} L ${endX} ${endY}`
+          : `M ${startX} ${startY} C ${startX + dx} ${startY}, ${endX - dx} ${endY}, ${endX} ${endY}`;
+        const gid = `${uid}-s${index}`;
+        grads.push(`
+          <linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="${startX}" y1="${startY}" x2="${endX}" y2="${endY}">
+            <stop offset="0%" stop-color="${sourceColor}" />
+            <stop offset="100%" stop-color="${firstColor}" />
+          </linearGradient>
+        `);
+        pathEls.push(
+          `<path d="${d}" stroke="url(#${gid})" fill="none" stroke-width="${dots ? 2.5 : 3}" stroke-linecap="round" />`,
+        );
+      });
+    } else {
+      // Focus slides without prior sources: draw in from the left edge
+      const leadColor =
+        host.dataset.flowLeadInColor?.trim() ||
+        getComputedStyle(styleRoot).getPropertyValue("--flow-mid").trim() ||
+        firstColor;
+      const startX = -8;
+      const startY = firstPt.cy;
+      const endX = firstPt.cx;
+      const endY = firstPt.cy;
+      const gid = `${uid}-in`;
       grads.push(`
         <linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="${startX}" y1="${startY}" x2="${endX}" y2="${endY}">
-          <stop offset="0%" stop-color="${lastColor}" />
-          <stop offset="100%" stop-color="${colorB}" />
+          <stop offset="0%" stop-color="${leadColor}" stop-opacity="0.4" />
+          <stop offset="100%" stop-color="${firstColor}" />
         </linearGradient>
       `);
       pathEls.push(
         `<path d="M ${startX} ${startY} L ${endX} ${endY}" stroke="url(#${gid})" fill="none" stroke-width="2.5" stroke-linecap="round" />`,
       );
+    }
+
+    for (let i = 0; i < chain.length - 1; i += 1) {
+      const a = toLocal(chain[i]);
+      const b = toLocal(chain[i + 1]);
+      const colorA = getComputedStyle(chain[i]).color || "#887DFF";
+      const colorB = getComputedStyle(chain[i + 1]).color || "#9977FF";
+      const startX = dots ? a.cx : a.right;
+      const startY = a.cy;
+      const endX = dots ? b.cx : b.left;
+      const endY = b.cy;
+      const dx = Math.max(48, (endX - startX) * 0.45);
+      const d = dots
+        ? `M ${startX} ${startY} L ${endX} ${endY}`
+        : `M ${startX} ${startY} C ${startX + dx} ${startY}, ${endX - dx} ${endY}, ${endX} ${endY}`;
+      const gid = `${uid}-c${i}`;
+      grads.push(`
+        <linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="${startX}" y1="${startY}" x2="${endX}" y2="${endY}">
+          <stop offset="0%" stop-color="${colorA}" />
+          <stop offset="100%" stop-color="${colorB}" />
+        </linearGradient>
+      `);
+      pathEls.push(
+        `<path d="${d}" stroke="url(#${gid})" fill="none" stroke-width="${dots ? 2.5 : 3.5}" stroke-linecap="round" />`,
+      );
+    }
+  }
+
+  const leftOriginFor = (nodes, fallbackColor) => {
+    const pts = nodes.map(toLocal);
+    const midY = pts.reduce((sum, pt) => sum + pt.cy, 0) / pts.length;
+    const minX = Math.min(...pts.map((pt) => pt.cx));
+    return {
+      cx: Math.max(12, minX - 96),
+      cy: midY,
+      color: fallbackColor,
+    };
+  };
+
+  // Fan into outcome nodes (from last stage, or from a left lead-in on focus slides)
+  if (outcomes.length) {
+    const origin = chain.length
+      ? {
+          ...toLocal(chain[chain.length - 1]),
+          color: getComputedStyle(chain[chain.length - 1]).color || "#FF8045",
+        }
+      : leftOriginFor(outcomes, "#FF8045");
+    outcomes.forEach((outcome, index) => {
+      const pt = toLocal(outcome);
+      const colorB = getComputedStyle(outcome).color || "#FF2828";
+      const gid = `${uid}-o${index}`;
+      grads.push(`
+        <linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="${origin.cx}" y1="${origin.cy}" x2="${pt.cx}" y2="${pt.cy}">
+          <stop offset="0%" stop-color="${origin.color}" />
+          <stop offset="100%" stop-color="${colorB}" />
+        </linearGradient>
+      `);
+      pathEls.push(
+        `<path d="M ${origin.cx} ${origin.cy} L ${pt.cx} ${pt.cy}" stroke="url(#${gid})" fill="none" stroke-width="2.5" stroke-linecap="round" />`,
+      );
     });
   }
 
-  // Dashed fan from outcomes into impact nodes
-  const impacts = [...host.querySelectorAll(".flow-orbit__impacts .flow-dot")];
-  if (impacts.length && outcomes.length) {
-    outcomes.forEach((outcome, oi) => {
-      const from = toLocal(outcome);
-      const colorA = getComputedStyle(outcome).color || "#FF2828";
-      impacts.forEach((impact, ii) => {
+  // Dashed fan into impact nodes (from outcomes, or from a left lead-in)
+  if (impacts.length) {
+    if (outcomes.length) {
+      outcomes.forEach((outcome, oi) => {
+        const from = toLocal(outcome);
+        const colorA = getComputedStyle(outcome).color || "#FF2828";
+        impacts.forEach((impact, ii) => {
+          const to = toLocal(impact);
+          const colorB = getComputedStyle(impact).color || colorA;
+          const gid = `${uid}-i${oi}-${ii}`;
+          grads.push(`
+            <linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="${from.cx}" y1="${from.cy}" x2="${to.cx}" y2="${to.cy}">
+              <stop offset="0%" stop-color="${colorA}" stop-opacity="0.3" />
+              <stop offset="100%" stop-color="${colorB}" stop-opacity="1" />
+            </linearGradient>
+          `);
+          pathEls.push(
+            `<path d="M ${from.cx} ${from.cy} L ${to.cx} ${to.cy}" stroke="url(#${gid})" fill="none" stroke-width="2" stroke-linecap="round" stroke-dasharray="5 5" />`,
+          );
+        });
+      });
+    } else {
+      const origin = leftOriginFor(impacts, "#FF2828");
+      impacts.forEach((impact, index) => {
         const to = toLocal(impact);
-        const colorB = getComputedStyle(impact).color || colorA;
-        const gid = `${uid}-i${oi}-${ii}`;
+        const colorB = getComputedStyle(impact).color || "#FF2828";
+        const gid = `${uid}-i${index}`;
         grads.push(`
-          <linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="${from.cx}" y1="${from.cy}" x2="${to.cx}" y2="${to.cy}">
-            <stop offset="0%" stop-color="${colorA}" stop-opacity="0.3" />
+          <linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="${origin.cx}" y1="${origin.cy}" x2="${to.cx}" y2="${to.cy}">
+            <stop offset="0%" stop-color="${origin.color}" stop-opacity="0.3" />
             <stop offset="100%" stop-color="${colorB}" stop-opacity="1" />
           </linearGradient>
         `);
         pathEls.push(
-          `<path d="M ${from.cx} ${from.cy} L ${to.cx} ${to.cy}" stroke="url(#${gid})" fill="none" stroke-width="2" stroke-linecap="round" stroke-dasharray="5 5" />`,
+          `<path d="M ${origin.cx} ${origin.cy} L ${to.cx} ${to.cy}" stroke="url(#${gid})" fill="none" stroke-width="2" stroke-linecap="round" stroke-dasharray="5 5" />`,
         );
       });
+    }
+  }
+
+  // Lead-out to the right edge when this view continues into a later phase
+  const continueColor = host.dataset.flowContinueColor?.trim();
+  if (continueColor) {
+    const dashed = host.dataset.flowContinueDashed === "true";
+    const fromMode = host.dataset.flowContinueFrom || "last-stage";
+    let exitNodes = [];
+    if (fromMode === "outcomes") exitNodes = outcomes;
+    else if (fromMode === "impacts") exitNodes = impacts;
+    else if (chain.length) exitNodes = [chain[chain.length - 1]];
+
+    exitNodes.forEach((node, index) => {
+      const pt = toLocal(node);
+      const colorA = getComputedStyle(node).color || continueColor;
+      const startX = pt.cx;
+      const startY = pt.cy;
+      const endX = layoutW + 8;
+      const endY = startY;
+      const gid = `${uid}-out${index}`;
+      grads.push(`
+        <linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="${startX}" y1="${startY}" x2="${endX}" y2="${endY}">
+          <stop offset="0%" stop-color="${colorA}" />
+          <stop offset="100%" stop-color="${continueColor}" stop-opacity="${dashed ? "0.35" : "0.55"}" />
+        </linearGradient>
+      `);
+      pathEls.push(
+        `<path d="M ${startX} ${startY} L ${endX} ${endY}" stroke="url(#${gid})" fill="none" stroke-width="${dashed ? 2 : 2.5}" stroke-linecap="round"${dashed ? ' stroke-dasharray="5 5"' : ""} />`,
+      );
     });
   }
 
@@ -1077,6 +1160,21 @@ function renderFlowOrbit(content) {
   const outcomes = normalizeFlowLabeledNodes(content.outcomes, outcomeColor);
   const impacts = normalizeFlowLabeledNodes(content.impacts, impactColor);
 
+  const focusRaw = content.focusPhase;
+  const focusPhase =
+    focusRaw === 0 || focusRaw === "0" || focusRaw === "prep" || focusRaw === "preparation"
+      ? 0
+      : focusRaw === 1 || focusRaw === "1" || focusRaw === "collection"
+        ? 1
+        : focusRaw === 2 || focusRaw === "2" || focusRaw === "breach"
+          ? 2
+          : focusRaw === 3 ||
+              focusRaw === "3" ||
+              focusRaw === "post-breach" ||
+              focusRaw === "publication"
+            ? 3
+            : null;
+
   const phaseTitles = Array.isArray(content.phaseTitles)
     ? content.phaseTitles
     : ["Preparation", "Collection", "Breach", "Post-Breach"];
@@ -1108,13 +1206,35 @@ function renderFlowOrbit(content) {
   if (stages[0]?.color) el.style.setProperty("--flow-mid", stages[0].color);
   if (stages[1]?.color) el.style.setProperty("--flow-end", stages[1].color);
 
+  const showPrep = focusPhase == null || focusPhase === 0;
+  const showCollection = focusPhase == null || focusPhase === 1;
+  const showBreach = (focusPhase == null || focusPhase === 2) && outcomes.length > 0;
+  const showPostBreach = (focusPhase == null || focusPhase === 3) && impacts.length > 0;
+
+  const focusKeys = ["prep", "collection", "breach", "post-breach"];
   const orbitMods = [
     "flow-orbit--phased",
-    outcomes.length ? "flow-orbit--with-outcomes" : "",
-    impacts.length ? "flow-orbit--with-impacts" : "",
+    focusPhase == null && outcomes.length ? "flow-orbit--with-outcomes" : "",
+    focusPhase == null && impacts.length ? "flow-orbit--with-impacts" : "",
+    focusPhase != null ? `flow-orbit--focus flow-orbit--focus-${focusKeys[focusPhase]}` : "",
   ]
     .filter(Boolean)
     .join(" ");
+
+  const continueAttrs = (() => {
+    if (focusPhase === 0 && stages[1]?.color) {
+      // Prep → Phish (3rd kill-chain stage)
+      return ` data-flow-continue-color="${escapeHtml(stages[1].color)}"`;
+    }
+    if (focusPhase === 1) {
+      const lead = stages[0]?.color ? ` data-flow-lead-in-color="${escapeHtml(stages[0].color)}"` : "";
+      return `${lead} data-flow-continue-color="${escapeHtml(outcomeColor)}"`;
+    }
+    if (focusPhase === 2 && impacts.length) {
+      return ` data-flow-continue-color="${escapeHtml(impactColor)}" data-flow-continue-dashed="true" data-flow-continue-from="outcomes"`;
+    }
+    return "";
+  })();
 
   const sourcesBlock = `
     <div class="flow-step flow-step--sources">
@@ -1155,13 +1275,13 @@ function renderFlowOrbit(content) {
     })
     .join("");
 
-  el.innerHTML = `
-    ${cornerSection(content)}
-    ${titleBlock(content)}
-    <div class="flow-orbit ${orbitMods}" data-flow-funnel>
-      <svg class="flow-funnel__wires" aria-hidden="true"></svg>
+  const overviewPhaseAttrs = (label) =>
+    focusPhase == null
+      ? ` role="button" tabindex="0" aria-pressed="false" aria-label="Toggle ${escapeHtml(label)} highlight"`
+      : "";
 
-      <section class="flow-phase flow-phase--prep" data-flow-phase tabindex="0" role="button" aria-label="${escapeHtml(phaseTitles[0] ?? "Preparation")} phase">
+  const prepPhase = showPrep
+    ? `<section class="flow-phase flow-phase--prep"${overviewPhaseAttrs(phaseTitles[0] ?? "Preparation")}>
         <h3 class="flow-phase__title">${escapeHtml(phaseTitles[0] ?? "Preparation")}</h3>
         <div class="flow-phase__body">
           <div class="flow-phase__grid flow-phase__grid--prep">
@@ -1169,75 +1289,82 @@ function renderFlowOrbit(content) {
             ${weaponizeBlock}
           </div>
         </div>
-      </section>
+      </section>`
+    : "";
 
-      <section class="flow-phase flow-phase--collection" data-flow-phase tabindex="0" role="button" aria-label="${escapeHtml(phaseTitles[1] ?? "Collection")} phase">
+  const collectionPhase = showCollection
+    ? `<section class="flow-phase flow-phase--collection"${overviewPhaseAttrs(phaseTitles[1] ?? "Collection")}>
         <h3 class="flow-phase__title">${escapeHtml(phaseTitles[1] ?? "Collection")}</h3>
         <div class="flow-phase__body">
           <div class="flow-phase__grid flow-phase__grid--collection" style="--flow-collection-count:${Math.max(collectionStages.length, 1)}">
             ${collectionBlocks}
           </div>
         </div>
-      </section>
+      </section>`
+    : "";
 
-      ${
-        outcomes.length
-          ? `<section class="flow-phase flow-phase--breach" data-flow-phase tabindex="0" role="button" aria-label="${escapeHtml(phaseTitles[2] ?? "Breach")} phase">
-              <h3 class="flow-phase__title">${escapeHtml(phaseTitles[2] ?? "Breach")}</h3>
-              <div class="flow-phase__body">
-                <div class="flow-step flow-step--outcomes">
-                  ${flowStepBadge(7, stepLabels[6] ?? "Action-on-Objective", outcomeColor)}
-                  <div class="flow-orbit__outcomes">
-                    ${outcomes
-                      .map((outcome, index) =>
-                        flowDotMarkup(
-                          outcome.label,
-                          "outcome",
-                          `outcome-${index}`,
-                          outcome.color,
-                        ),
-                      )
-                      .join("")}
-                  </div>
-                </div>
-              </div>
-            </section>`
-          : ""
-      }
+  const breachPhase = showBreach
+    ? `<section class="flow-phase flow-phase--breach"${overviewPhaseAttrs(phaseTitles[2] ?? "Breach")}>
+        <h3 class="flow-phase__title">${escapeHtml(phaseTitles[2] ?? "Breach")}</h3>
+        <div class="flow-phase__body">
+          <div class="flow-step flow-step--outcomes">
+            ${flowStepBadge(7, stepLabels[6] ?? "Action-on-Objective", outcomeColor)}
+            <div class="flow-orbit__outcomes">
+              ${outcomes
+                .map((outcome, index) =>
+                  flowDotMarkup(
+                    outcome.label,
+                    "outcome",
+                    `outcome-${index}`,
+                    outcome.color,
+                  ),
+                )
+                .join("")}
+            </div>
+          </div>
+        </div>
+      </section>`
+    : "";
 
-      ${
-        impacts.length
-          ? `<section class="flow-phase flow-phase--post-breach" data-flow-phase tabindex="0" role="button" aria-label="${escapeHtml(phaseTitles[3] ?? "Post-Breach")} phase">
-              <h3 class="flow-phase__title">${escapeHtml(phaseTitles[3] ?? "Post-Breach")}</h3>
-              <div class="flow-phase__body">
-                <div class="flow-step flow-step--impacts">
-                  ${flowStepBadge(8, stepLabels[7] ?? "Publication", impactColor)}
-                  <div class="flow-orbit__impacts">
-                    ${impacts
-                      .map((impact, index) =>
-                        flowDotMarkup(
-                          impact.label,
-                          "impact",
-                          `impact-${index}`,
-                          impact.color,
-                        ),
-                      )
-                      .join("")}
-                  </div>
-                </div>
-              </div>
-            </section>`
-          : ""
-      }
+  const postBreachPhase = showPostBreach
+    ? `<section class="flow-phase flow-phase--post-breach"${overviewPhaseAttrs(phaseTitles[3] ?? "Post-Breach")}>
+        <h3 class="flow-phase__title">${escapeHtml(phaseTitles[3] ?? "Post-Breach")}</h3>
+        <div class="flow-phase__body">
+          <div class="flow-step flow-step--impacts">
+            ${flowStepBadge(8, stepLabels[7] ?? "Publication", impactColor)}
+            <div class="flow-orbit__impacts">
+              ${impacts
+                .map((impact, index) =>
+                  flowDotMarkup(
+                    impact.label,
+                    "impact",
+                    `impact-${index}`,
+                    impact.color,
+                  ),
+                )
+                .join("")}
+            </div>
+          </div>
+        </div>
+      </section>`
+    : "";
+
+  el.innerHTML = `
+    ${focusPhase == null ? cornerSection(content) : ""}
+    ${focusPhase == null ? titleBlock(content) : ""}
+    <div class="flow-orbit ${orbitMods}" data-flow-funnel${continueAttrs}>
+      <svg class="flow-funnel__wires" aria-hidden="true"></svg>
+      ${prepPhase}
+      ${collectionPhase}
+      ${breachPhase}
+      ${postBreachPhase}
     </div>
   `;
 
-  queueMicrotask(() => {
-    fitFlowFunnel(el);
-    ensureFlowPhaseInteractions();
-  });
+  queueMicrotask(() => fitFlowFunnel(el));
   return el;
 }
+
 
 const RENDERERS = {
   "LY-01": renderCover,
@@ -1355,71 +1482,46 @@ export function ensureFocusInteractions() {
 
 ensureFocusInteractions();
 
-/** Hover/zoom interactions for LY-24 phase blocks. */
-let flowPhaseInteractionsBound = false;
+/** Overview LY-24: exclusive phase stroke toggle (one phase at a time). */
+let flowOrbitInteractionsBound = false;
+export function ensureFlowOrbitInteractions() {
+  if (flowOrbitInteractionsBound) return;
+  flowOrbitInteractionsBound = true;
 
-function exitFlowPhaseZoom(orbit) {
-  if (!orbit) return;
-  orbit.classList.remove("is-phase-zoomed");
-  orbit.querySelectorAll(".flow-phase.is-zoomed").forEach((phase) => {
-    phase.classList.remove("is-zoomed");
-    phase.setAttribute("aria-pressed", "false");
-  });
-  window.setTimeout(() => {
-    const root = orbit.closest(".layout-flow-orbit") || orbit;
-    fitFlowFunnel(root);
-  }, 320);
-}
+  const PHASE_SEL =
+    ".flow-orbit:not(.flow-orbit--focus) .flow-phase--prep, .flow-orbit:not(.flow-orbit--focus) .flow-phase--collection, .flow-orbit:not(.flow-orbit--focus) .flow-phase--breach, .flow-orbit:not(.flow-orbit--focus) .flow-phase--post-breach";
 
-function enterFlowPhaseZoom(orbit, phase) {
-  orbit.classList.add("is-phase-zoomed");
-  orbit.querySelectorAll(".flow-phase").forEach((el) => {
-    const active = el === phase;
-    el.classList.toggle("is-zoomed", active);
-    el.setAttribute("aria-pressed", active ? "true" : "false");
-  });
-  window.setTimeout(() => {
-    const root = orbit.closest(".layout-flow-orbit") || orbit;
-    fitFlowFunnel(root);
-  }, 320);
-}
-
-export function ensureFlowPhaseInteractions() {
-  if (flowPhaseInteractionsBound) return;
-  flowPhaseInteractionsBound = true;
+  const selectPhaseStroke = (phase) => {
+    if (!phase || phase.closest(".flow-orbit--focus")) return;
+    const orbit = phase.closest(".flow-orbit");
+    if (!orbit) return;
+    const alreadyOn = phase.classList.contains("is-stroke-on");
+    orbit.querySelectorAll(".flow-phase.is-stroke-on").forEach((el) => {
+      el.classList.remove("is-stroke-on");
+      el.setAttribute("aria-pressed", "false");
+    });
+    if (!alreadyOn) {
+      phase.classList.add("is-stroke-on");
+      phase.setAttribute("aria-pressed", "true");
+    }
+  };
 
   document.addEventListener("click", (event) => {
-    const orbit = event.target.closest(".flow-orbit--phased");
-    if (!orbit) return;
-
-    const phase = event.target.closest("[data-flow-phase]");
-    if (orbit.classList.contains("is-phase-zoomed")) {
-      if (phase?.classList.contains("is-zoomed")) {
-        exitFlowPhaseZoom(orbit);
-      } else if (!phase) {
-        exitFlowPhaseZoom(orbit);
-      } else {
-        enterFlowPhaseZoom(orbit, phase);
-      }
+    if (event.target.closest(".deck-form, .slide-tile-menu, .deck-toolbar, a, input, textarea, select")) {
       return;
     }
-
-    if (!phase || !orbit.contains(phase)) return;
-    enterFlowPhaseZoom(orbit, phase);
+    const phase = event.target.closest(PHASE_SEL);
+    if (!phase) return;
+    selectPhaseStroke(phase);
   });
 
   document.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") {
-      document
-        .querySelectorAll(".flow-orbit--phased.is-phase-zoomed")
-        .forEach((orbit) => exitFlowPhaseZoom(orbit));
-      return;
-    }
-
     if (event.key !== "Enter" && event.key !== " ") return;
-    const phase = event.target.closest("[data-flow-phase]");
-    if (!phase) return;
+    const phase = event.target.closest(PHASE_SEL);
+    if (!phase || event.target !== phase) return;
     event.preventDefault();
-    phase.click();
+    selectPhaseStroke(phase);
   });
 }
+
+ensureFlowOrbitInteractions();

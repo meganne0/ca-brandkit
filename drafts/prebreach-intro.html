@@ -14,7 +14,7 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/light/style.css"
     />
-    <link rel="stylesheet" href="../css/slides.css?v=41" />
+    <link rel="stylesheet" href="../css/slides.css?v=57" />
     <script src="../js/auth-gate.js?v=6"></script>
   </head>
   <body>
@@ -33,6 +33,9 @@
           </button>
           <button type="button" class="deck-toolbar__btn" id="btn-edit" data-mode="edit">
             Edit
+          </button>
+          <button type="button" class="deck-toolbar__btn deck-toolbar__btn--present" id="btn-present">
+            Present
           </button>
         </div>
       </div>
@@ -189,15 +192,20 @@
     </div>
 
     <script type="module">
-      import { initEditableSlideBoard } from "../js/components/slide-board.js?v=19";
+      import { initEditableSlideBoard } from "../js/components/slide-board.js?v=30";
       import {
         refreshImageTitleLayouts,
         refreshFlowFunnels,
-      } from "../js/layouts.js?v=54";
+      } from "../js/layouts.js?v=69";
       import { enableInlineEditing } from "../js/slide-inline-edit.js?v=1";
       import { mountSlideContentForm } from "../js/slide-content-form.js?v=8";
+      import {
+        isPresentMode,
+        openPresentTab,
+        startPresentMode,
+      } from "../js/present-mode.js?v=1";
 
-      const STORAGE_KEY = `ca-brandkit:draft:${location.pathname}:v14`;
+      const STORAGE_KEY = `ca-brandkit:draft:${location.pathname}:v20`;
 
       const board = document.getElementById("board");
       const source = document.getElementById("slide-source");
@@ -213,6 +221,7 @@
       const btnSave = document.getElementById("btn-save");
       const btnPreview = document.getElementById("btn-preview");
       const btnEdit = document.getElementById("btn-edit");
+      const btnPresent = document.getElementById("btn-present");
 
       let mode = "preview";
       let index = 0;
@@ -269,6 +278,15 @@
       boardApi.load(initialDefs);
       if (saved?.length) {
         saveStatus.textContent = "Restored saved draft";
+      }
+
+      if (isPresentMode()) {
+        startPresentMode({
+          slides,
+          paintSlide: boardApi.paintSlide,
+          fitSlide: boardApi.fitSlide,
+          playSlideReveal: boardApi.playSlideReveal,
+        });
       }
 
       function flashStatus(text) {
@@ -441,6 +459,12 @@
       btnSave.addEventListener("click", saveDraft);
       btnPreview.addEventListener("click", () => setMode("preview"));
       btnEdit.addEventListener("click", () => setMode("edit"));
+      btnPresent.addEventListener("click", () => {
+        openPresentTab({
+          save: saveDraft,
+          onBlocked: () => flashStatus("Allow pop-ups to present"),
+        });
+      });
 
       document.getElementById("prev").onclick = () => openLightbox(index - 1);
       document.getElementById("next").onclick = () => openLightbox(index + 1);
@@ -450,6 +474,7 @@
       };
 
       window.addEventListener("keydown", (e) => {
+        if (document.body.classList.contains("is-presenting")) return;
         if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "s") {
           e.preventDefault();
           saveDraft();

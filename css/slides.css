@@ -86,6 +86,87 @@ body {
   color: #fff;
 }
 
+.deck-toolbar__btn--present {
+  border-color: rgba(255, 106, 0, 0.45);
+  background: rgba(255, 106, 0, 0.14);
+  color: #fff;
+  font-weight: 600;
+}
+
+.deck-toolbar__btn--present:hover {
+  background: rgba(255, 106, 0, 0.28);
+}
+
+/* ---- Present mode (full-tab / fullscreen) ---- */
+
+body.is-presenting {
+  overflow: hidden;
+  background: #05030d;
+}
+
+body.is-presenting .deck,
+body.is-presenting .slide-lightbox {
+  display: none !important;
+}
+
+.present-deck {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  background: #05030d;
+}
+
+.present-deck__stage {
+  position: relative;
+  width: min(100vw - 48px, calc((100vh - 72px) * 16 / 9));
+  aspect-ratio: 16 / 9;
+  max-height: calc(100vh - 72px);
+  margin: auto;
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--ca-purple-deep, #12081f);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.55);
+  cursor: none;
+}
+
+.present-deck__stage:hover {
+  cursor: default;
+}
+
+.present-deck__chrome {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 10px 20px 14px;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.55);
+  font-family: var(--font-body);
+  user-select: none;
+}
+
+.present-deck__label {
+  color: rgba(255, 255, 255, 0.88);
+  font-weight: 600;
+}
+
+.present-deck__hint {
+  opacity: 0.7;
+}
+
+body.is-presenting:fullscreen .present-deck__chrome,
+body.is-presenting:-webkit-full-screen .present-deck__chrome {
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+body.is-presenting:fullscreen .present-deck:hover .present-deck__chrome,
+body.is-presenting:-webkit-full-screen .present-deck:hover .present-deck__chrome {
+  opacity: 1;
+}
+
 .deck-workspace {
   width: min(100%, 1600px);
   margin: 0 auto;
@@ -2113,6 +2194,11 @@ body.slide-lightbox-open {
   flex-direction: column;
   height: 100%;
   min-height: 0;
+  overflow: hidden;
+}
+
+.layout-flow-orbit:has(.flow-orbit--focus) {
+  overflow: visible;
 }
 
 .layout-flow-orbit .slide-header {
@@ -2167,7 +2253,7 @@ body.slide-lightbox-open {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  z-index: 0;
+  z-index: 6;
   overflow: visible;
 }
 
@@ -2178,13 +2264,6 @@ body.slide-lightbox-open {
   flex-direction: column;
   min-width: 0;
   min-height: 0;
-  cursor: pointer;
-  outline: none;
-  transition: transform 0.35s ease, opacity 0.35s ease, filter 0.35s ease;
-}
-
-.flow-phase:focus-visible .flow-phase__body {
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--ca-tagline) 55%, transparent);
 }
 
 .flow-phase__title {
@@ -2196,7 +2275,7 @@ body.slide-lightbox-open {
   font-weight: 600;
   letter-spacing: -0.01em;
   color: color-mix(in srgb, var(--ca-tagline) 78%, #d8a0c8);
-  transition: color 0.3s ease, transform 0.3s ease;
+  transition: color 0.5s ease, transform 0.5s ease;
 }
 
 .flow-phase__body {
@@ -2209,157 +2288,165 @@ body.slide-lightbox-open {
   background: rgba(0, 0, 0, 0.42);
   border: 1px solid rgba(255, 255, 255, 0.04);
   transition:
-    background 0.35s ease,
-    border-color 0.35s ease,
-    box-shadow 0.35s ease,
-    transform 0.35s ease;
+    background 0.5s ease,
+    border-color 0.5s ease,
+    box-shadow 0.5s ease;
 }
 
-/* Hover: denser glass + larger nodes with soft water drift */
-.flow-orbit--phased:not(.is-phase-zoomed) .flow-phase:hover .flow-phase__title,
-.flow-orbit--phased:not(.is-phase-zoomed) .flow-phase:focus-visible .flow-phase__title {
-  color: #ffd0cc;
-  transform: translateY(-2px);
+
+/* Single-phase showcase (zoomed detail slides) */
+.flow-orbit--focus {
+  grid-template-columns: 1fr !important;
+  justify-items: stretch;
+  align-items: stretch;
+  padding: 4px 0 16px;
+  overflow: visible;
 }
 
-.flow-orbit--phased:not(.is-phase-zoomed) .flow-phase:hover .flow-phase__body,
-.flow-orbit--phased:not(.is-phase-zoomed) .flow-phase:focus-visible .flow-phase__body {
-  background: rgba(0, 0, 0, 0.72);
-  border-color: rgba(255, 255, 255, 0.1);
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.35);
+.flow-orbit--focus .flow-phase {
+  width: 100%;
+  height: 100%;
+  max-height: none;
 }
 
-.flow-orbit--phased:not(.is-phase-zoomed) .flow-phase:hover .flow-dot,
-.flow-orbit--phased:not(.is-phase-zoomed) .flow-phase:focus-visible .flow-dot {
-  width: 34px;
-  height: 34px;
-  animation: flow-phase-drift 2.8s ease-in-out infinite;
-}
-
-.flow-orbit--phased:not(.is-phase-zoomed) .flow-phase:hover .flow-dot-row:nth-child(2) .flow-dot,
-.flow-orbit--phased:not(.is-phase-zoomed) .flow-phase:focus-visible .flow-dot-row:nth-child(2) .flow-dot {
-  animation-delay: 0.2s;
-}
-
-.flow-orbit--phased:not(.is-phase-zoomed) .flow-phase:hover .flow-dot-row:nth-child(3) .flow-dot,
-.flow-orbit--phased:not(.is-phase-zoomed) .flow-phase:focus-visible .flow-dot-row:nth-child(3) .flow-dot {
-  animation-delay: 0.4s;
-}
-
-.flow-orbit--phased:not(.is-phase-zoomed) .flow-phase:hover .flow-dot-row:nth-child(4) .flow-dot,
-.flow-orbit--phased:not(.is-phase-zoomed) .flow-phase:focus-visible .flow-dot-row:nth-child(4) .flow-dot {
-  animation-delay: 0.15s;
-}
-
-.flow-orbit--phased:not(.is-phase-zoomed) .flow-phase:hover .flow-dot-row:nth-child(5) .flow-dot,
-.flow-orbit--phased:not(.is-phase-zoomed) .flow-phase:focus-visible .flow-dot-row:nth-child(5) .flow-dot {
-  animation-delay: 0.35s;
-}
-
-.flow-orbit--phased:not(.is-phase-zoomed) .flow-phase:hover .flow-dot-row:nth-child(6) .flow-dot,
-.flow-orbit--phased:not(.is-phase-zoomed) .flow-phase:focus-visible .flow-dot-row:nth-child(6) .flow-dot {
-  animation-delay: 0.55s;
-}
-
-.flow-orbit--phased:not(.is-phase-zoomed) .flow-phase:hover .flow-dot__label,
-.flow-orbit--phased:not(.is-phase-zoomed) .flow-phase:focus-visible .flow-dot__label {
-  font-size: 22px;
-}
-
-.flow-orbit--phased:not(.is-phase-zoomed) .flow-phase:hover .flow-step__num,
-.flow-orbit--phased:not(.is-phase-zoomed) .flow-phase:focus-visible .flow-step__num {
-  font-size: 48px;
-}
-
-.flow-orbit--phased:not(.is-phase-zoomed) .flow-phase:hover .flow-step__name,
-.flow-orbit--phased:not(.is-phase-zoomed) .flow-phase:focus-visible .flow-step__name {
-  font-size: 16px;
-}
-
-@keyframes flow-phase-drift {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0);
-  }
-  25% {
-    transform: translate3d(2px, -5px, 0);
-  }
-  50% {
-    transform: translate3d(-2px, -2px, 0);
-  }
-  75% {
-    transform: translate3d(3px, -6px, 0);
-  }
-}
-
-/* Click-to-zoom: selected phase fills the orbit */
-.flow-orbit--phased.is-phase-zoomed {
-  grid-template-columns: 1fr;
-}
-
-.flow-orbit--phased.is-phase-zoomed .flow-funnel__wires {
-  opacity: 0;
-  transition: opacity 0.25s ease;
-}
-
-.flow-orbit--phased.is-phase-zoomed .flow-phase:not(.is-zoomed) {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-  pointer-events: none;
-  overflow: hidden;
-  clip: rect(0 0 0 0);
-}
-
-.flow-orbit--phased.is-phase-zoomed .flow-phase.is-zoomed {
-  grid-column: 1 / -1;
-  z-index: 3;
-  cursor: zoom-out;
-}
-
-.flow-orbit--phased.is-phase-zoomed .flow-phase.is-zoomed .flow-phase__title {
-  font-size: 40px;
-  min-height: 48px;
-  color: #ffd0cc;
-}
-
-.flow-orbit--phased.is-phase-zoomed .flow-phase.is-zoomed .flow-phase__body {
-  background: rgba(0, 0, 0, 0.78);
-  border-color: rgba(255, 255, 255, 0.12);
-  padding: 28px 32px 32px;
-}
-
-.flow-orbit--phased.is-phase-zoomed .flow-phase.is-zoomed .flow-dot {
-  width: 42px;
-  height: 42px;
-  animation: flow-phase-drift 3.2s ease-in-out infinite;
-}
-
-.flow-orbit--phased.is-phase-zoomed .flow-phase.is-zoomed .flow-dot__label {
+.flow-orbit--focus .flow-phase__title {
   font-size: 28px;
-  max-width: 280px;
+  min-height: 34px;
+  margin-bottom: 10px;
+  color: color-mix(in srgb, var(--ca-tagline) 78%, #d8a0c8);
 }
 
-.flow-orbit--phased.is-phase-zoomed .flow-phase.is-zoomed .flow-step__num {
-  font-size: 56px;
+.flow-orbit--focus .flow-phase__body {
+  flex: 1;
+  min-height: 0;
+  height: auto;
+  padding: 18px 14px 20px;
+  background: rgba(0, 0, 0, 0.42);
+  border-color: rgba(255, 255, 255, 0.04);
+  box-shadow: none;
 }
 
-.flow-orbit--phased.is-phase-zoomed .flow-phase.is-zoomed .flow-step__name {
-  font-size: 18px;
-  max-width: 180px;
+.flow-orbit--focus .flow-step__num {
+  font-size: 42px;
 }
 
-.flow-orbit--phased.is-phase-zoomed .flow-phase.is-zoomed .flow-orbit__sources {
-  gap: 36px;
+.flow-orbit--focus .flow-step__name {
+  font-size: 15px;
+  max-width: 140px;
 }
 
-.flow-orbit--phased.is-phase-zoomed .flow-phase.is-zoomed .flow-orbit__outcomes {
-  gap: 28px;
+.flow-orbit--focus .flow-dot {
+  width: 30px;
+  height: 30px;
 }
 
-.flow-orbit--phased.is-phase-zoomed .flow-phase.is-zoomed .flow-orbit__impacts {
+.flow-orbit--focus .flow-dot-row--stage .flow-dot {
+  width: 30px;
+  height: 30px;
+}
+
+.flow-orbit--focus .flow-dot__label {
+  font-size: 22px;
+  max-width: 260px;
+}
+
+.flow-orbit--focus .flow-dot-row--stage .flow-dot__label {
+  font-size: 20px;
+  max-width: 200px;
+}
+
+.flow-orbit--focus .flow-orbit__sources {
   gap: 40px;
+}
+
+.flow-orbit--focus .flow-orbit__outcomes {
+  gap: 32px;
+}
+
+.flow-orbit--focus .flow-orbit__impacts {
+  gap: 48px;
+}
+
+.flow-orbit--focus-prep .flow-phase__grid--prep {
+  gap: 48px;
+  height: 100%;
+  align-items: stretch;
+  justify-items: center;
+}
+
+.flow-orbit--focus-collection .flow-phase__grid--collection {
+  gap: 20px;
+  height: 100%;
+  align-items: stretch;
+}
+
+.flow-orbit--focus .flow-funnel__wires {
+  z-index: 6;
+  overflow: visible;
+}
+
+.flow-orbit--focus .flow-step--outcomes,
+.flow-orbit--focus .flow-step--impacts,
+.flow-orbit--focus .flow-step--sources,
+.flow-orbit--focus .flow-step--stage {
+  height: 100%;
+  align-items: center;
+}
+
+/* Keep recon / weaponize / stage dots under their badges */
+.flow-orbit--focus .flow-step__badge {
+  align-self: center;
+}
+
+.flow-orbit--focus .flow-orbit__sources {
+  align-items: center;
+  padding-right: 0;
+}
+
+.flow-orbit--focus .flow-orbit__sources .flow-dot-row {
+  transform: none;
+  justify-content: center;
+}
+
+.flow-orbit--focus .flow-orbit__sources .flow-dot-row--source {
+  width: auto;
+}
+
+.flow-orbit--focus .flow-dot-row--source .flow-dot__label {
+  text-align: right;
+  max-width: 200px;
+}
+
+/* Stage: badge → dot → label (dot sits under the stage name) */
+.flow-orbit--focus .flow-dot-row--stage {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  height: auto;
+  max-width: 220px;
+}
+
+.flow-orbit--focus.flow-orbit--phased .flow-dot-row--stage {
+  display: flex;
+  grid-template-rows: none;
+}
+
+.flow-orbit--focus.flow-orbit--phased .flow-dot-row--stage .flow-dot {
+  order: 1;
+}
+
+.flow-orbit--focus.flow-orbit--phased .flow-dot-row--stage .flow-dot__label {
+  order: 2;
+  align-self: center;
+  grid-row: auto;
+}
+
+.flow-orbit--focus .flow-step > :not(.flow-step__badge) {
+  flex: 1;
+  justify-content: center;
+  align-items: center;
 }
 
 .flow-phase__grid {
@@ -2372,6 +2459,17 @@ body.slide-lightbox-open {
 
 .flow-phase__grid--prep {
   grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
+  justify-items: center;
+}
+
+.flow-phase__grid--prep .flow-step {
+  align-items: center;
+  width: 100%;
+}
+
+.flow-phase__grid--prep .flow-orbit__sources {
+  align-items: center;
+  padding-right: 0;
 }
 
 .flow-phase__grid--collection {
@@ -2454,7 +2552,7 @@ body.slide-lightbox-open {
 .flow-orbit__sources {
   flex-direction: column;
   justify-content: center;
-  gap: 22px;
+  gap: 36px;
   align-items: flex-end;
   padding-right: 4px;
 }
@@ -2476,7 +2574,7 @@ body.slide-lightbox-open {
 .flow-orbit__outcomes {
   flex-direction: column;
   justify-content: center;
-  gap: 14px;
+  gap: 28px;
   align-items: flex-start;
   padding-left: 4px;
 }
@@ -2491,7 +2589,7 @@ body.slide-lightbox-open {
 .flow-orbit__impacts {
   flex-direction: column;
   justify-content: center;
-  gap: 22px;
+  gap: 40px;
   align-items: flex-start;
   padding-left: 4px;
 }
@@ -2551,17 +2649,12 @@ body.slide-lightbox-open {
   box-shadow:
     0 0 0 6px color-mix(in srgb, currentColor 18%, transparent),
     0 0 22px color-mix(in srgb, currentColor 55%, transparent);
-  cursor: pointer;
+  cursor: default;
+  pointer-events: none;
+  transform-origin: center center;
   transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
-}
-
-.flow-dot:hover {
-  transform: scale(1.12);
-  box-shadow:
-    0 0 0 8px color-mix(in srgb, currentColor 24%, transparent),
-    0 0 30px color-mix(in srgb, currentColor 70%, transparent);
+    transform 0.28s ease,
+    box-shadow 0.28s ease;
 }
 
 .flow-dot-row--stage .flow-dot {
@@ -2577,6 +2670,110 @@ body.slide-lightbox-open {
   letter-spacing: -0.01em;
   color: currentColor;
   white-space: pre-line;
+  display: inline-block;
+  transition:
+    transform 0.28s ease,
+    font-size 0.5s ease;
+}
+
+.flow-dot-row--source .flow-dot__label {
+  transform-origin: right center;
+}
+
+.flow-dot-row--stage .flow-dot__label {
+  transform-origin: center bottom;
+}
+
+.flow-dot-row--outcome .flow-dot__label,
+.flow-dot-row--impact .flow-dot__label {
+  transform-origin: left center;
+}
+
+/* Overview (slide 4): hover enlarges node + label from center; layout/wires stay put */
+.flow-orbit:not(.flow-orbit--focus) .flow-dot-row {
+  position: relative;
+  pointer-events: auto;
+}
+
+.flow-orbit:not(.flow-orbit--focus) .flow-dot {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.flow-orbit:not(.flow-orbit--focus) .flow-dot-row:hover {
+  z-index: 8;
+}
+
+.flow-orbit:not(.flow-orbit--focus) .flow-dot-row:hover .flow-dot {
+  transform: scale(1.55);
+  box-shadow:
+    0 0 0 8px color-mix(in srgb, currentColor 22%, transparent),
+    0 0 28px color-mix(in srgb, currentColor 65%, transparent);
+}
+
+.flow-orbit:not(.flow-orbit--focus) .flow-dot-row:hover .flow-dot__label {
+  transform: scale(1.18);
+}
+
+/* Overview: exclusive phase stroke (prep blue→purple, collection orange→pink, breach/post red) */
+.flow-orbit:not(.flow-orbit--focus) .flow-phase {
+  cursor: pointer;
+}
+
+.flow-orbit:not(.flow-orbit--focus) .flow-phase .flow-phase__body {
+  position: relative;
+  border-color: rgba(255, 255, 255, 0.04);
+  transition:
+    background 0.5s ease,
+    border-color 0.45s ease,
+    box-shadow 0.5s ease;
+}
+
+.flow-orbit:not(.flow-orbit--focus) .flow-phase .flow-phase__body::before,
+.flow-orbit:not(.flow-orbit--focus) .flow-phase .flow-phase__body::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  background: var(--flow-phase-stroke, linear-gradient(135deg, #1eadec 0%, #887dff 100%));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.45s ease;
+  z-index: 4;
+}
+
+.flow-orbit:not(.flow-orbit--focus) .flow-phase .flow-phase__body::after {
+  filter: blur(10px);
+}
+
+.flow-orbit:not(.flow-orbit--focus) .flow-phase--prep {
+  --flow-phase-stroke: linear-gradient(135deg, #1eadec 0%, #887dff 100%);
+}
+
+.flow-orbit:not(.flow-orbit--focus) .flow-phase--collection {
+  --flow-phase-stroke: linear-gradient(135deg, #ec6b15 0%, #f72ebe 100%);
+}
+
+.flow-orbit:not(.flow-orbit--focus) .flow-phase--breach,
+.flow-orbit:not(.flow-orbit--focus) .flow-phase--post-breach {
+  --flow-phase-stroke: linear-gradient(135deg, #ff5a5a 0%, #ff2828 55%, #c41010 100%);
+}
+
+.flow-orbit:not(.flow-orbit--focus) .flow-phase.is-stroke-on .flow-phase__body {
+  border-color: transparent;
+}
+
+.flow-orbit:not(.flow-orbit--focus) .flow-phase.is-stroke-on .flow-phase__body::before {
+  opacity: 1;
+}
+
+.flow-orbit:not(.flow-orbit--focus) .flow-phase.is-stroke-on .flow-phase__body::after {
+  opacity: 0.7;
 }
 
 .flow-dot-row--stage .flow-dot__label {
