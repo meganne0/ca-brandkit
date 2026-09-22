@@ -366,16 +366,47 @@ export const LAYOUT_SAMPLES = {
           bg: "BG-09",
           content: {
             title: "What data is available?",
-            subtitle: "Click an item to bring it into focus.",
             items: [
-              "Tokens",
-              "Cookies",
-              "Passwords",
-              "Sessions",
-              "Autofill",
-              "Credit cards",
-              "Crypto wallets",
-              "System info",
+              {
+                label: "Credentials",
+                description:
+                  "Email/password pairs, usernames, malware source. Passwords masked by default, audit-logged reveal.",
+              },
+              {
+                label: "Cookies",
+                description:
+                  "Browser cookies, session cookies, authentication tokens from compromised systems.",
+              },
+              {
+                label: "Access Tokens",
+                description:
+                  "Authentication tokens, session tokens, OAuth tokens from compromised systems.",
+              },
+              {
+                label: "Credit Cards",
+                description:
+                  "Payment card numbers (PAN), card brand, expiry. Last 4 digits only, CVV never exposed.",
+              },
+              {
+                label: "User PII",
+                description:
+                  "SSNs, phone numbers, addresses, full names. Masked by default (***-**-1234), audit logged.",
+              },
+              {
+                label: "Bank Accounts",
+                description:
+                  "Account credentials, financial account totals. Account numbers masked, financial exposure calculated.",
+              },
+              {
+                label: "Malware",
+                description:
+                  "Infected system data, screenshots, IOCs, stealer logs. Forensic evidence with secure viewing.",
+              },
+              {
+                label: "Fraudulent Checks",
+                description:
+                  "Stolen check images with OCR extraction. Visual review with PII warnings.",
+              },
             ],
           },
         },

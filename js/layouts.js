@@ -327,6 +327,7 @@ function renderTextBullets(content) {
   const el = document.createElement("div");
   el.className = "slide-content layout-text-bullets";
   const bullets = content.bullets ?? [];
+  const blurBullets = Boolean(content.blurBullets);
   el.innerHTML = `
     ${cornerSection(content)}
     ${titleBlock(content)}
@@ -334,8 +335,14 @@ function renderTextBullets(content) {
       <div class="text-bullets-grid__copy">
         <p class="type-body">${content.text ?? ""}</p>
       </div>
-      <ul class="bullet-list">
-        ${bullets.map((bullet) => `<li class="type-body">${bullet}</li>`).join("")}
+      <ul class="bullet-list${blurBullets ? " bullet-list--blur-reveal" : ""}">
+        ${bullets
+          .map((bullet) => {
+            const text = escapeHtml(bullet);
+            if (!blurBullets) return `<li class="type-body">${text}</li>`;
+            return `<li class="type-body bullet-list__item is-blurred" data-blur-toggle tabindex="0" role="button" aria-pressed="false">${text}</li>`;
+          })
+          .join("")}
       </ul>
     </div>
   `;
@@ -652,25 +659,36 @@ function renderFocusGrid(content) {
   const el = document.createElement("div");
   el.className = "slide-content layout-focus-grid";
   const items = (content.items ?? []).slice(0, 12);
-  const hint = content.hint ?? "Click an item to bring it into focus";
+  const hint = content.hint ?? "";
   el.innerHTML = `
     ${slideHeader(content)}
     <div class="focus-grid" role="list">
       ${items
-        .map(
-          (item, index) => `
+        .map((item, index) => {
+          const label =
+            typeof item === "string" ? item : item.label ?? item.title ?? "";
+          const description =
+            typeof item === "string" ? "" : item.description ?? item.text ?? "";
+          return `
             <button
               type="button"
-              class="focus-chip"
+              class="focus-chip${description ? " focus-chip--expandable" : ""}"
               role="listitem"
               data-focus-item
               data-index="${index}"
-            >${escapeHtml(typeof item === "string" ? item : item.label ?? item.title ?? "")}</button>
-          `,
-        )
+            >
+              <span class="focus-chip__title">${escapeHtml(label)}</span>
+              ${
+                description
+                  ? `<span class="focus-chip__desc">${escapeHtml(description)}</span>`
+                  : ""
+              }
+            </button>
+          `;
+        })
         .join("")}
     </div>
-    <p class="type-caption layout-focus-grid__hint">${escapeHtml(hint)}</p>
+    ${hint ? `<p class="type-caption layout-focus-grid__hint">${escapeHtml(hint)}</p>` : ""}
   `;
   return el;
 }
@@ -790,6 +808,13 @@ export function ensureFocusInteractions() {
   focusInteractionsBound = true;
 
   document.addEventListener("click", (event) => {
+    const blurItem = event.target.closest("[data-blur-toggle]");
+    if (blurItem) {
+      const blurred = blurItem.classList.toggle("is-blurred");
+      blurItem.setAttribute("aria-pressed", blurred ? "false" : "true");
+      return;
+    }
+
     const item = event.target.closest("[data-focus-item]");
     if (!item) return;
     const host = item.closest(".layout-focus-grid, .layout-demo-urls");
@@ -805,6 +830,14 @@ export function ensureFocusInteractions() {
 
     host.classList.add("has-focus");
     items.forEach((el) => el.classList.toggle("is-focused", el === item));
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key !== "Enter" && event.key !== " ") return;
+    const blurItem = event.target.closest("[data-blur-toggle]");
+    if (!blurItem) return;
+    event.preventDefault();
+    blurItem.click();
   });
 }
 

@@ -14,7 +14,7 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/light/style.css"
     />
-    <link rel="stylesheet" href="../css/slides.css?v=25" />
+    <link rel="stylesheet" href="../css/slides.css?v=29" />
     <script src="../js/auth-gate.js?v=6"></script>
   </head>
   <body>
@@ -79,7 +79,7 @@
           data-title="How it Started"
           data-layout="LY-08"
           data-bg="BG-09"
-          data-content='{"sectionTitle":"Origin","title":"How it Started","subtitle":"A question that wouldn’t go away.","text":"Nguyen was a malware researcher who questioned why action was only taken after a breach.","bullets":["Breach data was often old","Clean up is expensive","Earlier remediation could make greater impact"]}'
+          data-content='{"sectionTitle":"Origin","title":"How it Started","blurBullets":true,"text":"Nguyen was a malware researcher who questioned why action was only taken after a breach.","bullets":["Breach data was often old","Clean up is expensive","Earlier remediation could make greater impact"]}'
         >
           <div class="slide-layers" aria-hidden="true"></div>
         </section>
@@ -134,7 +134,7 @@
           data-title="What data is available?"
           data-layout="LY-21"
           data-bg="BG-09"
-          data-content='{"title":"What data is available?","subtitle":"Click a type to bring it into focus.","items":["Tokens","Cookies","Passwords","Sessions","Autofill","Credit cards","Crypto wallets","System info"],"hint":"Click again to clear focus"}'
+          data-content='{"title":"What data is available?","items":[{"label":"Credentials","description":"Email/password pairs, usernames, malware source. Passwords masked by default, audit-logged reveal."},{"label":"Cookies","description":"Browser cookies, session cookies, authentication tokens from compromised systems."},{"label":"Access Tokens","description":"Authentication tokens, session tokens, OAuth tokens from compromised systems."},{"label":"Credit Cards","description":"Payment card numbers (PAN), card brand, expiry. Last 4 digits only, CVV never exposed."},{"label":"User PII","description":"SSNs, phone numbers, addresses, full names. Masked by default (***-**-1234), audit logged."},{"label":"Bank Accounts","description":"Account credentials, financial account totals. Account numbers masked, financial exposure calculated."},{"label":"Malware","description":"Infected system data, screenshots, IOCs, stealer logs. Forensic evidence with secure viewing."},{"label":"Fraudulent Checks","description":"Stolen check images with OCR extraction. Visual review with PII warnings."}]}'
         >
           <div class="slide-layers" aria-hidden="true"></div>
         </section>
@@ -189,12 +189,12 @@
     </div>
 
     <script type="module">
-      import { initEditableSlideBoard } from "../js/components/slide-board.js?v=10";
-      import { refreshImageTitleLayouts } from "../js/layouts.js?v=41";
+      import { initEditableSlideBoard } from "../js/components/slide-board.js?v=11";
+      import { refreshImageTitleLayouts } from "../js/layouts.js?v=43";
       import { enableInlineEditing } from "../js/slide-inline-edit.js?v=1";
-      import { mountSlideContentForm } from "../js/slide-content-form.js?v=1";
+      import { mountSlideContentForm } from "../js/slide-content-form.js?v=2";
 
-      const STORAGE_KEY = `ca-brandkit:draft:${location.pathname}`;
+      const STORAGE_KEY = `ca-brandkit:draft:${location.pathname}:v5`;
 
       const board = document.getElementById("board");
       const source = document.getElementById("slide-source");

@@ -184,15 +184,19 @@ function buildFormHtml(layout, content) {
 
   if (layout === "LY-21") {
     const items = Array.isArray(c.items) ? c.items : [];
-    bits.push(field("hint", "Hint", c.hint ?? ""));
     bits.push(listHeader("Data types", "Add item", "add-chip"));
     bits.push(`<div class="deck-form__list" data-list="chips">`);
     items.forEach((item, i) => {
       const label = typeof item === "string" ? item : item.label ?? item.title ?? "";
+      const description =
+        typeof item === "string" ? "" : item.description ?? item.text ?? "";
       bits.push(`
-        <div class="deck-form__row" data-index="${i}">
-          <input class="deck-form__input" name="chip-${i}" value="${esc(label)}" placeholder="Label" />
-          <button type="button" class="deck-form__btn deck-form__btn--ghost" data-action="remove-chip" data-index="${i}" aria-label="Remove">✕</button>
+        <div class="deck-form__card" data-index="${i}">
+          <div class="deck-form__row">
+            <input class="deck-form__input" name="chip-label-${i}" value="${esc(label)}" placeholder="Type label" />
+            <button type="button" class="deck-form__btn deck-form__btn--ghost" data-action="remove-chip" data-index="${i}" aria-label="Remove">✕</button>
+          </div>
+          <textarea class="deck-form__input" name="chip-desc-${i}" rows="2" placeholder="Description (shown on click)">${esc(description)}</textarea>
         </div>
       `);
     });
@@ -364,13 +368,18 @@ function readContentFromForm(form, layout, base = {}) {
 
   if (layout === "LY-21") {
     const items = [];
-    for (const el of form.elements) {
-      if (el.name?.startsWith("chip-")) {
-        const label = el.value.trim();
-        if (label) items.push(label);
+    let i = 0;
+    while (form.elements.namedItem(`chip-label-${i}`) || form.elements.namedItem(`chip-${i}`)) {
+      const label = val(form, `chip-label-${i}`) || val(form, `chip-${i}`);
+      const description = val(form, `chip-desc-${i}`);
+      if (label) {
+        items.push(description ? { label, description } : label);
       }
+      i += 1;
     }
     next.items = items.slice(0, 12);
+    delete next.hint;
+    delete next.subtitle;
     return next;
   }
 
@@ -424,7 +433,9 @@ function mutateList(layout, content, action) {
     next.items = items;
   } else if (action === "add-chip") {
     const items = [...(next.items ?? [])];
-    if (items.length < 12) items.push("New item");
+    if (items.length < 12) {
+      items.push({ label: "New type", description: "" });
+    }
     next.items = items;
   } else if (action === "add-person") {
     next.people = [...(next.people ?? []), { name: "Name", role: "Role", avatar: "" }];
