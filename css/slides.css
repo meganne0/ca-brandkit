@@ -2336,13 +2336,13 @@ body.slide-lightbox-open {
 }
 
 .flow-orbit--focus .flow-dot {
-  width: 30px;
-  height: 30px;
+  width: 20px;
+  height: 20px;
 }
 
 .flow-orbit--focus .flow-dot-row--stage .flow-dot {
-  width: 30px;
-  height: 30px;
+  width: 20px;
+  height: 20px;
 }
 
 .flow-orbit--focus .flow-dot__label {
@@ -2356,15 +2356,15 @@ body.slide-lightbox-open {
 }
 
 .flow-orbit--focus .flow-orbit__sources {
-  gap: 40px;
+  gap: 56px;
 }
 
 .flow-orbit--focus .flow-orbit__outcomes {
-  gap: 32px;
+  gap: 60px;
 }
 
 .flow-orbit--focus .flow-orbit__impacts {
-  gap: 48px;
+  gap: 64px;
 }
 
 .flow-orbit--focus-prep .flow-phase__grid--prep {
@@ -2551,8 +2551,8 @@ body.slide-lightbox-open {
 
 .flow-orbit__sources {
   flex-direction: column;
-  justify-content: center;
-  gap: 36px;
+  justify-content: space-evenly;
+  gap: 48px;
   align-items: flex-end;
   padding-right: 4px;
 }
@@ -2573,8 +2573,8 @@ body.slide-lightbox-open {
 
 .flow-orbit__outcomes {
   flex-direction: column;
-  justify-content: center;
-  gap: 28px;
+  justify-content: space-evenly;
+  gap: 56px;
   align-items: flex-start;
   padding-left: 4px;
 }
@@ -2588,8 +2588,8 @@ body.slide-lightbox-open {
 
 .flow-orbit__impacts {
   flex-direction: column;
-  justify-content: center;
-  gap: 40px;
+  justify-content: space-evenly;
+  gap: 56px;
   align-items: flex-start;
   padding-left: 4px;
 }
@@ -2640,26 +2640,24 @@ body.slide-lightbox-open {
 .flow-dot {
   appearance: none;
   flex-shrink: 0;
-  width: 26px;
-  height: 26px;
+  width: 16px;
+  height: 16px;
   padding: 0;
   border: none;
   border-radius: 50%;
   background: currentColor;
   box-shadow:
-    0 0 0 6px color-mix(in srgb, currentColor 18%, transparent),
-    0 0 22px color-mix(in srgb, currentColor 55%, transparent);
+    0 0 0 4px color-mix(in srgb, currentColor 16%, transparent),
+    0 0 14px color-mix(in srgb, currentColor 40%, transparent);
   cursor: default;
   pointer-events: none;
   transform-origin: center center;
-  transition:
-    transform 0.28s ease,
-    box-shadow 0.28s ease;
+  transition: transform 0.22s ease-out;
 }
 
 .flow-dot-row--stage .flow-dot {
-  width: 26px;
-  height: 26px;
+  width: 16px;
+  height: 16px;
 }
 
 .flow-dot__label {
@@ -2698,6 +2696,11 @@ body.slide-lightbox-open {
 .flow-orbit:not(.flow-orbit--focus) .flow-dot {
   pointer-events: auto;
   cursor: pointer;
+  /* Soft glow layers in via opacity — no delayed ring morph */
+  filter: drop-shadow(0 0 0 transparent);
+  transition:
+    transform 0.22s ease-out,
+    filter 0.14s ease-out;
 }
 
 .flow-orbit:not(.flow-orbit--focus) .flow-dot-row:hover {
@@ -2705,14 +2708,14 @@ body.slide-lightbox-open {
 }
 
 .flow-orbit:not(.flow-orbit--focus) .flow-dot-row:hover .flow-dot {
-  transform: scale(1.55);
-  box-shadow:
-    0 0 0 8px color-mix(in srgb, currentColor 22%, transparent),
-    0 0 28px color-mix(in srgb, currentColor 65%, transparent);
+  transform: scale(1.9);
+  filter:
+    drop-shadow(0 0 4px color-mix(in srgb, currentColor 45%, transparent))
+    drop-shadow(0 0 10px color-mix(in srgb, currentColor 22%, transparent));
 }
 
 .flow-orbit:not(.flow-orbit--focus) .flow-dot-row:hover .flow-dot__label {
-  transform: scale(1.18);
+  transform: scale(1.4);
 }
 
 /* Overview: exclusive phase stroke (prep blue→purple, collection orange→pink, breach/post red) */

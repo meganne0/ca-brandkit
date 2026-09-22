@@ -902,7 +902,7 @@ function fitFlowFunnel(root) {
           </linearGradient>
         `);
         pathEls.push(
-          `<path d="${d}" stroke="url(#${gid})" fill="none" stroke-width="${dots ? 2.5 : 3}" stroke-linecap="round" />`,
+          `<path d="${d}" stroke="url(#${gid})" fill="none" stroke-width="${dots ? 3.75 : 3}" stroke-linecap="round" />`,
         );
       });
     } else {
@@ -923,7 +923,7 @@ function fitFlowFunnel(root) {
         </linearGradient>
       `);
       pathEls.push(
-        `<path d="M ${startX} ${startY} L ${endX} ${endY}" stroke="url(#${gid})" fill="none" stroke-width="2.5" stroke-linecap="round" />`,
+        `<path d="M ${startX} ${startY} L ${endX} ${endY}" stroke="url(#${gid})" fill="none" stroke-width="3.75" stroke-linecap="round" />`,
       );
     }
 
@@ -948,7 +948,7 @@ function fitFlowFunnel(root) {
         </linearGradient>
       `);
       pathEls.push(
-        `<path d="${d}" stroke="url(#${gid})" fill="none" stroke-width="${dots ? 2.5 : 3.5}" stroke-linecap="round" />`,
+        `<path d="${d}" stroke="url(#${gid})" fill="none" stroke-width="${dots ? 3.75 : 3.5}" stroke-linecap="round" />`,
       );
     }
   }
@@ -983,7 +983,7 @@ function fitFlowFunnel(root) {
         </linearGradient>
       `);
       pathEls.push(
-        `<path d="M ${origin.cx} ${origin.cy} L ${pt.cx} ${pt.cy}" stroke="url(#${gid})" fill="none" stroke-width="2.5" stroke-linecap="round" />`,
+        `<path d="M ${origin.cx} ${origin.cy} L ${pt.cx} ${pt.cy}" stroke="url(#${gid})" fill="none" stroke-width="3.75" stroke-linecap="round" />`,
       );
     });
   }
@@ -1005,7 +1005,7 @@ function fitFlowFunnel(root) {
             </linearGradient>
           `);
           pathEls.push(
-            `<path d="M ${from.cx} ${from.cy} L ${to.cx} ${to.cy}" stroke="url(#${gid})" fill="none" stroke-width="2" stroke-linecap="round" stroke-dasharray="5 5" />`,
+            `<path d="M ${from.cx} ${from.cy} L ${to.cx} ${to.cy}" stroke="url(#${gid})" fill="none" stroke-width="3" stroke-linecap="round" stroke-dasharray="2.5 10" />`,
           );
         });
       });
@@ -1022,7 +1022,7 @@ function fitFlowFunnel(root) {
           </linearGradient>
         `);
         pathEls.push(
-          `<path d="M ${origin.cx} ${origin.cy} L ${to.cx} ${to.cy}" stroke="url(#${gid})" fill="none" stroke-width="2" stroke-linecap="round" stroke-dasharray="5 5" />`,
+          `<path d="M ${origin.cx} ${origin.cy} L ${to.cx} ${to.cy}" stroke="url(#${gid})" fill="none" stroke-width="3" stroke-linecap="round" stroke-dasharray="2.5 10" />`,
         );
       });
     }
@@ -1053,7 +1053,7 @@ function fitFlowFunnel(root) {
         </linearGradient>
       `);
       pathEls.push(
-        `<path d="M ${startX} ${startY} L ${endX} ${endY}" stroke="url(#${gid})" fill="none" stroke-width="${dashed ? 2 : 2.5}" stroke-linecap="round"${dashed ? ' stroke-dasharray="5 5"' : ""} />`,
+        `<path d="M ${startX} ${startY} L ${endX} ${endY}" stroke="url(#${gid})" fill="none" stroke-width="${dashed ? 3 : 3.75}" stroke-linecap="round"${dashed ? ' stroke-dasharray="2.5 10"' : ""} />`,
       );
     });
   }

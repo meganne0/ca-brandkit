@@ -3,7 +3,7 @@
  * Open with ?present=1 after saving slides to localStorage.
  */
 
-import { refreshImageTitleLayouts, refreshFlowFunnels } from "./layouts.js?v=69";
+import { refreshImageTitleLayouts, refreshFlowFunnels } from "./layouts.js?v=71";
 
 const AUTH_KEY = "ca-brandkit-auth-v3";
 
