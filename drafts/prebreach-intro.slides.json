@@ -1,5 +1,5 @@
 {
-  "savedAt": "2026-09-23T21:05:00.000Z",
+  "savedAt": "2026-09-23T22:21:13.127Z",
   "slides": [
     {
       "title": "Cover",
@@ -240,39 +240,13 @@
       }
     },
     {
-      "title": "Economic Context",
-      "layout": "LY-12",
-      "bg": "BG-04",
-      "content": {
-        "title": "Why it Matters",
-        "subtitle": "",
-        "metrics": [
-          {
-            "value": "$4.5T",
-            "text": "Estimated annual cost of cybercrime globally",
-            "source": "Placeholder"
-          },
-          {
-            "value": "80%",
-            "text": "Of breaches involve compromised or stolen credentials",
-            "source": "Placeholder"
-          },
-          {
-            "value": "$4.5M",
-            "text": "Average cost of a data breach",
-            "source": "Placeholder"
-          }
-        ],
-        "number": "",
-        "sectionTitle": ""
-      }
-    },
-    {
       "title": "Infostealer + Phish",
       "layout": "LY-13",
       "bg": "BG-03",
       "content": {
-        "question": "Malware Infostealer + Phish Focus"
+        "question": "How do you get this data?",
+        "number": "",
+        "sectionTitle": ""
       }
     },
     {
@@ -292,45 +266,54 @@
       }
     },
     {
-      "title": "What data is available?",
-      "layout": "LY-21",
-      "bg": "BG-09",
+      "title": "Economic Context",
+      "layout": "LY-12",
+      "bg": "BG-04",
       "content": {
-        "title": "What data is available?",
-        "items": [
+        "title": "",
+        "subtitle": "",
+        "metrics": [
           {
-            "label": "Credentials",
-            "description": "Email/password pairs, usernames, malware source. Passwords masked by default, audit-logged reveal."
+            "value": "30%",
+            "text": "of attacks involved abuse of user identities as the initial entry point",
+            "source": "IBM",
+            "sourceUrl": "https://www.ibm.com/think/x-force/x-force-threat-intelligence-index-2025-attackers-steal-sell-user-identities"
           },
           {
-            "label": "Cookies",
-            "description": "Browser cookies, session cookies, authentication tokens from compromised systems."
+            "value": "37%",
+            "text": "of organizations victim to ransomware had a\ncredential or infostealer event occur\n>95 days  prior",
+            "source": "Verizon",
+            "sourceUrl": "https://www.verizon.com/business/resources/T343/reports/2026-dbir-data-breach-investigations-report.pdf"
           },
           {
-            "label": "Access Tokens",
-            "description": "Authentication tokens, session tokens, OAuth tokens from compromised systems."
-          },
-          {
-            "label": "Credit Cards",
-            "description": "Payment card numbers (PAN), card brand, expiry. Last 4 digits only, CVV never exposed."
-          },
-          {
-            "label": "User PII",
-            "description": "SSNs, phone numbers, addresses, full names. Masked by default (***-**-1234), audit logged."
-          },
-          {
-            "label": "Bank Accounts",
-            "description": "Account credentials, financial account totals. Account numbers masked, financial exposure calculated."
-          },
-          {
-            "label": "Malware",
-            "description": "Infected system data, screenshots, IOCs, stealer logs. Forensic evidence with secure viewing."
-          },
-          {
-            "label": "Fraudulent Checks",
-            "description": "Stolen check images with OCR extraction. Visual review with PII warnings."
+            "value": "46%",
+            "text": "of compromised systems containing corporate logins were non-managed devices",
+            "source": "Lansweeper",
+            "sourceUrl": "https://www.lansweeper.com/blog/cybersecurity/the-vulnerability-you-dont-know-you-have-unmanaged-assets-in-2026/"
           }
-        ]
+        ],
+        "number": "",
+        "sectionTitle": ""
+      }
+    },
+    {
+      "title": "Infostealer + Phish",
+      "layout": "LY-13",
+      "bg": "BG-03",
+      "content": {
+        "question": "What data is available?",
+        "number": "",
+        "sectionTitle": ""
+      }
+    },
+    {
+      "title": "Single Line",
+      "layout": "LY-13",
+      "bg": "BG-02",
+      "content": {
+        "number": "",
+        "sectionTitle": "",
+        "question": "How is pricing structured?"
       }
     },
     {
@@ -486,6 +469,5 @@
         ]
       }
     }
-  ],
-  "recoveredFrom": "localStorage:v20"
+  ]
 }
