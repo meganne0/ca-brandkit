@@ -14,7 +14,7 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/light/style.css"
     />
-    <link rel="stylesheet" href="../css/slides.css?v=62" />
+    <link rel="stylesheet" href="../css/slides.css?v=68" />
     <script src="../js/auth-gate.js?v=6"></script>
   </head>
   <body>
@@ -27,7 +27,7 @@
           · <span id="save-status" class="deck-save-status"></span>
         </div>
         <div class="deck-toolbar" role="toolbar" aria-label="Draft controls">
-          <button type="button" class="deck-toolbar__btn" id="btn-save">Save</button>
+          <button type="button" class="deck-toolbar__btn" id="btn-save" title="Save to this browser (survives refresh) + optional project files">Save</button>
           <button type="button" class="deck-toolbar__btn is-active" id="btn-preview" data-mode="preview">
             Preview
           </button>
@@ -60,7 +60,7 @@
           data-title="Cover"
           data-layout="LY-01"
           data-bg="BG-01"
-          data-content='{"headline":"Introduction","accent":"Introduction","subtitle":"CyberArmor — prebreach defense for credentials and identity."}'
+          data-content='{&quot;headline&quot;: &quot;Introduction&quot;, &quot;accent&quot;: &quot;Introduction&quot;, &quot;subtitle&quot;: &quot;Sept 2026&quot;}'
         >
           <div class="slide-layers" aria-hidden="true"></div>
         </section>
@@ -71,106 +71,172 @@
           data-title="Who We Are"
           data-layout="LY-02"
           data-bg="BG-08"
-          data-content='{"sectionTitle":"Team","title":"Who We Are","subtitle":"The people behind CyberArmor.","people":[{"name":"Nguyen Nguyen","role":"CEO","avatar":"/visual%20assets/avatars/avatar-nguyen-circle.png"},{"name":"Ali Alame","role":"CTO","avatar":"/visual%20assets/avatars/avatar-ali-circle.png"},{"name":"Meganne Ohata","role":"CXO","avatar":"/visual%20assets/avatars/avatar-meganne-circle.png"}]}'
+          data-content='{&quot;sectionTitle&quot;: &quot;Team&quot;, &quot;title&quot;: &quot;Who We Are&quot;, &quot;subtitle&quot;: &quot;The people behind CyberArmor.&quot;, &quot;people&quot;: [{&quot;name&quot;: &quot;Nguyen Nguyen&quot;, &quot;role&quot;: &quot;CEO&quot;, &quot;avatar&quot;: &quot;/visual%20assets/avatars/avatar-nguyen-circle.png&quot;}, {&quot;name&quot;: &quot;Ali Alame&quot;, &quot;role&quot;: &quot;CTO&quot;, &quot;avatar&quot;: &quot;/visual%20assets/avatars/avatar-ali-circle.png&quot;}, {&quot;name&quot;: &quot;Meganne Ohata&quot;, &quot;role&quot;: &quot;CXO&quot;, &quot;avatar&quot;: &quot;/visual%20assets/avatars/avatar-meganne-circle.png&quot;}]}'
         >
           <div class="slide-layers" aria-hidden="true"></div>
         </section>
 
-        <!-- 3. How it Started -->
+        <!-- 3. Table of contents -->
+        <section
+          class="slide"
+          data-title="Table of contents"
+          data-layout="LY-03"
+          data-bg="BG-02"
+          data-content='{&quot;sectionTitle&quot;: &quot;&quot;, &quot;title&quot;: &quot;What we’ll cover&quot;, &quot;subtitle&quot;: &quot;&quot;, &quot;items&quot;: [{&quot;number&quot;: &quot;01&quot;, &quot;title&quot;: &quot;PreBreach Intelligence&quot;, &quot;description&quot;: &quot;What it is and how it works&quot;}, {&quot;number&quot;: &quot;02&quot;, &quot;title&quot;: &quot;Common Questions&quot;, &quot;description&quot;: &quot;Comparisons, credential impact, malware, pricing&quot;}, {&quot;number&quot;: &quot;03&quot;, &quot;title&quot;: &quot;Demo&quot;, &quot;description&quot;: &quot;A look at some real life data on our platform&quot;}], &quot;number&quot;: &quot;&quot;}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <!-- 4. Section -->
+        <section
+          class="slide"
+          data-title="Section"
+          data-layout="LY-04"
+          data-bg="BG-03"
+          data-content='{&quot;number&quot;: &quot;01&quot;, &quot;sectionTitle&quot;: &quot;PreBreach Intelligence&quot;, &quot;subtitle&quot;: &quot;What it is and how it works&quot;}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <!-- 5. How it Started -->
         <section
           class="slide"
           data-title="How it Started"
           data-layout="LY-08"
           data-bg="BG-09"
-          data-content='{"sectionTitle":"Origin","title":"How it Started","blurBullets":true,"text":"Nguyen was a malware researcher who questioned why action was only taken after a breach.","bullets":["Breach data was often old","Clean up is expensive","Earlier remediation could make greater impact"]}'
+          data-content='{&quot;sectionTitle&quot;: &quot;&quot;, &quot;title&quot;: &quot;In the beginning...&quot;, &quot;blurBullets&quot;: true, &quot;text&quot;: &quot;Nguyen was a malware researcher who questioned why action was only taken after a breach.&quot;, &quot;bullets&quot;: [&quot;Breach data was often old&quot;, &quot;Clean up is expensive&quot;, &quot;Earlier remediation could make greater impact&quot;], &quot;subtitle&quot;: &quot;&quot;, &quot;number&quot;: &quot;&quot;}'
         >
           <div class="slide-layers" aria-hidden="true"></div>
         </section>
 
-        <!-- 4. Attack paths -->
+        <!-- 6. How it Started -->
+        <section
+          class="slide"
+          data-title="How it Started"
+          data-layout="LY-08"
+          data-bg="BG-09"
+          data-content='{&quot;sectionTitle&quot;: &quot;&quot;, &quot;title&quot;: &quot;What We Do&quot;, &quot;blurBullets&quot;: true, &quot;text&quot;: &quot;We focus on alerting on compromised credentials before it is monetized or published on the dark web.&quot;, &quot;bullets&quot;: [&quot;Traditional tools focus on dark web scraping&quot;, &quot;Many compromises never reach the dark web before they&#39;re taken advantage of&quot;], &quot;subtitle&quot;: &quot;&quot;, &quot;number&quot;: &quot;&quot;}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <!-- 7. How it Started -->
+        <section
+          class="slide"
+          data-title="How it Started"
+          data-layout="LY-08"
+          data-bg="BG-09"
+          data-content='{&quot;sectionTitle&quot;: &quot;&quot;, &quot;title&quot;: &quot;Attack Breakdown&quot;, &quot;blurBullets&quot;: true, &quot;text&quot;: &quot;Let&#39;s look at what a typical attack looks like in order to illustrate where our data comes into play&quot;, &quot;bullets&quot;: [], &quot;subtitle&quot;: &quot;&quot;, &quot;number&quot;: &quot;&quot;}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <!-- 8. Attack paths -->
         <section
           class="slide"
           data-title="Attack paths"
           data-layout="LY-24"
           data-bg="BG-02"
-          data-content='{"sources":[{"label":"Linkedin"},{"label":"Leads List"},{"label":"Google Dorking"},{"label":"Company Site"},{"label":"Breach"}],"stages":[{"label":"Buy domains, build lure, MaaS, PhaaS","color":"#887DFF"},{"label":"Phish, quish, smish, URL","color":"#9977FF"},{"label":"Victim engages with lure","color":"#BF66FF"},{"label":"Keylogger, RAT, infostealer, MFA bypass...","color":"#F17AFF"},{"label":"Data sent to attacker: Tokens, cookies, passwords...","color":"#FF8045"}],"outcomes":[{"label":"Business email compromise"},{"label":"Ransomware"},{"label":"Exfiltration"},{"label":"Fraud"},{"label":"Account takeover"},{"label":"Espionage"}],"impacts":[{"label":"Ransomware announcement"},{"label":"Notify or report incident"},{"label":"Posted on dark web forums, marketplaces"}],"phaseTitles":["Preparation","Collection","Breach","Post-Breach"],"stepLabels":["Recon","Weaponize","Deliver","Exploit","Install","Command and Control","Action-on-Objective","Publication"],"sourceColor":"#1EADEC","outcomeColor":"#FF2828","impactColor":"#FF2828"}'
+          data-content='{&quot;sources&quot;: [{&quot;label&quot;: &quot;Linkedin&quot;}, {&quot;label&quot;: &quot;Leads List&quot;}, {&quot;label&quot;: &quot;Google Dorking&quot;}, {&quot;label&quot;: &quot;Company Site&quot;}, {&quot;label&quot;: &quot;Breach&quot;}], &quot;stages&quot;: [{&quot;label&quot;: &quot;Buy domains, build lure, MaaS, PhaaS&quot;, &quot;color&quot;: &quot;#887DFF&quot;}, {&quot;label&quot;: &quot;Phish, quish, smish, URL&quot;, &quot;color&quot;: &quot;#9977FF&quot;}, {&quot;label&quot;: &quot;Victim engages with lure&quot;, &quot;color&quot;: &quot;#BF66FF&quot;}, {&quot;label&quot;: &quot;Keylogger, RAT, infostealer, MFA bypass...&quot;, &quot;color&quot;: &quot;#F17AFF&quot;}, {&quot;label&quot;: &quot;Data sent to attacker: Tokens, cookies, passwords...&quot;, &quot;color&quot;: &quot;#FF8045&quot;}], &quot;outcomes&quot;: [{&quot;label&quot;: &quot;Business email compromise&quot;}, {&quot;label&quot;: &quot;Ransomware&quot;}, {&quot;label&quot;: &quot;Exfiltration&quot;}, {&quot;label&quot;: &quot;Fraud&quot;}, {&quot;label&quot;: &quot;Account takeover&quot;}, {&quot;label&quot;: &quot;Espionage&quot;}], &quot;impacts&quot;: [{&quot;label&quot;: &quot;Ransomware announcement&quot;}, {&quot;label&quot;: &quot;Notify or report incident&quot;}, {&quot;label&quot;: &quot;Posted on dark web forums, marketplaces&quot;}], &quot;phaseTitles&quot;: [&quot;Preparation&quot;, &quot;Collection&quot;, &quot;Breach&quot;, &quot;Post-Breach&quot;], &quot;stepLabels&quot;: [&quot;Recon&quot;, &quot;Weaponize&quot;, &quot;Deliver&quot;, &quot;Exploit&quot;, &quot;Install&quot;, &quot;Command and Control&quot;, &quot;Action-on-Objective&quot;, &quot;Publication&quot;], &quot;sourceColor&quot;: &quot;#1EADEC&quot;, &quot;outcomeColor&quot;: &quot;#FF2828&quot;, &quot;impactColor&quot;: &quot;#FF2828&quot;}'
         >
           <div class="slide-layers" aria-hidden="true"></div>
         </section>
 
-        <!-- 5. Why Credential Theft? -->
+        <!-- 9. Section -->
+        <section
+          class="slide"
+          data-title="Section"
+          data-layout="LY-04"
+          data-bg="BG-03"
+          data-content='{&quot;number&quot;: &quot;02&quot;, &quot;sectionTitle&quot;: &quot;Common Questions&quot;, &quot;subtitle&quot;: &quot;Comparisons, credential impact, malware, pricing structure&quot;}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <!-- 10. Why Credential Theft? -->
         <section
           class="slide"
           data-title="Why Credential Theft?"
           data-layout="LY-13"
           data-bg="BG-02"
-          data-content='{"question":"Why Credential Theft?"}'
+          data-content='{&quot;question&quot;: &quot;Why Credential Theft?&quot;}'
         >
           <div class="slide-layers" aria-hidden="true"></div>
         </section>
 
-        <!-- 6. Malware Infostealer + Phish Focus -->
-        <section
-          class="slide"
-          data-title="Infostealer + Phish"
-          data-layout="LY-13"
-          data-bg="BG-03"
-          data-content='{"question":"Malware Infostealer + Phish Focus"}'
-        >
-          <div class="slide-layers" aria-hidden="true"></div>
-        </section>
-
-        <!-- 7. Economic Context -->
+        <!-- 11. Economic Context -->
         <section
           class="slide"
           data-title="Economic Context"
           data-layout="LY-12"
           data-bg="BG-04"
-          data-content='{"title":"Economic Context","subtitle":"Filler figures — replace with final sources.","metrics":[{"value":"$4.5T","text":"Estimated annual cost of cybercrime globally","source":"Placeholder"},{"value":"80%","text":"Of breaches involve compromised or stolen credentials","source":"Placeholder"},{"value":"$4.5M","text":"Average cost of a data breach","source":"Placeholder"}]}'
+          data-content='{&quot;title&quot;: &quot;Why it Matters&quot;, &quot;subtitle&quot;: &quot;&quot;, &quot;metrics&quot;: [{&quot;value&quot;: &quot;$4.5T&quot;, &quot;text&quot;: &quot;Estimated annual cost of cybercrime globally&quot;, &quot;source&quot;: &quot;Placeholder&quot;}, {&quot;value&quot;: &quot;80%&quot;, &quot;text&quot;: &quot;Of breaches involve compromised or stolen credentials&quot;, &quot;source&quot;: &quot;Placeholder&quot;}, {&quot;value&quot;: &quot;$4.5M&quot;, &quot;text&quot;: &quot;Average cost of a data breach&quot;, &quot;source&quot;: &quot;Placeholder&quot;}], &quot;number&quot;: &quot;&quot;, &quot;sectionTitle&quot;: &quot;&quot;}'
         >
           <div class="slide-layers" aria-hidden="true"></div>
         </section>
 
-        <!-- 8. What data is available? -->
+        <!-- 12. Infostealer + Phish -->
         <section
           class="slide"
-          data-title="What data is available?"
-          data-layout="LY-21"
-          data-bg="BG-09"
-          data-content='{"title":"What data is available?","items":[{"label":"Credentials","description":"Email/password pairs, usernames, malware source. Passwords masked by default, audit-logged reveal."},{"label":"Cookies","description":"Browser cookies, session cookies, authentication tokens from compromised systems."},{"label":"Access Tokens","description":"Authentication tokens, session tokens, OAuth tokens from compromised systems."},{"label":"Credit Cards","description":"Payment card numbers (PAN), card brand, expiry. Last 4 digits only, CVV never exposed."},{"label":"User PII","description":"SSNs, phone numbers, addresses, full names. Masked by default (***-**-1234), audit logged."},{"label":"Bank Accounts","description":"Account credentials, financial account totals. Account numbers masked, financial exposure calculated."},{"label":"Malware","description":"Infected system data, screenshots, IOCs, stealer logs. Forensic evidence with secure viewing."},{"label":"Fraudulent Checks","description":"Stolen check images with OCR extraction. Visual review with PII warnings."}]}'
+          data-title="Infostealer + Phish"
+          data-layout="LY-13"
+          data-bg="BG-03"
+          data-content='{&quot;question&quot;: &quot;Malware Infostealer + Phish Focus&quot;}'
         >
           <div class="slide-layers" aria-hidden="true"></div>
         </section>
 
-        <!-- 9. How does this differ? -->
+        <!-- 13. How does this differ? -->
         <section
           class="slide"
           data-title="How does this differ?"
           data-layout="LY-13"
           data-bg="BG-06"
-          data-content='{"question":"How does this differ from other tools?"}'
+          data-content='{&quot;question&quot;: &quot;How does this differ from other tools?&quot;}'
         >
           <div class="slide-layers" aria-hidden="true"></div>
         </section>
 
-        <!-- 10. Fraud / extortion -->
+        <!-- 14. Fraud / extortion -->
         <section
           class="slide"
           data-title="Fraud / extortion"
           data-layout="LY-13"
           data-bg="BG-07"
-          data-content='{"question":"Does this prevent fraud / extortion?"}'
+          data-content='{&quot;question&quot;: &quot;Does this prevent fraud / extortion?&quot;}'
         >
           <div class="slide-layers" aria-hidden="true"></div>
         </section>
 
-        <!-- 11. Demo -->
+        <!-- 15. What data is available? -->
+        <section
+          class="slide"
+          data-title="What data is available?"
+          data-layout="LY-21"
+          data-bg="BG-09"
+          data-content='{&quot;title&quot;: &quot;What data is available?&quot;, &quot;items&quot;: [{&quot;label&quot;: &quot;Credentials&quot;, &quot;description&quot;: &quot;Email/password pairs, usernames, malware source. Passwords masked by default, audit-logged reveal.&quot;}, {&quot;label&quot;: &quot;Cookies&quot;, &quot;description&quot;: &quot;Browser cookies, session cookies, authentication tokens from compromised systems.&quot;}, {&quot;label&quot;: &quot;Access Tokens&quot;, &quot;description&quot;: &quot;Authentication tokens, session tokens, OAuth tokens from compromised systems.&quot;}, {&quot;label&quot;: &quot;Credit Cards&quot;, &quot;description&quot;: &quot;Payment card numbers (PAN), card brand, expiry. Last 4 digits only, CVV never exposed.&quot;}, {&quot;label&quot;: &quot;User PII&quot;, &quot;description&quot;: &quot;SSNs, phone numbers, addresses, full names. Masked by default (***-**-1234), audit logged.&quot;}, {&quot;label&quot;: &quot;Bank Accounts&quot;, &quot;description&quot;: &quot;Account credentials, financial account totals. Account numbers masked, financial exposure calculated.&quot;}, {&quot;label&quot;: &quot;Malware&quot;, &quot;description&quot;: &quot;Infected system data, screenshots, IOCs, stealer logs. Forensic evidence with secure viewing.&quot;}, {&quot;label&quot;: &quot;Fraudulent Checks&quot;, &quot;description&quot;: &quot;Stolen check images with OCR extraction. Visual review with PII warnings.&quot;}]}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <!-- 16. Section -->
+        <section
+          class="slide"
+          data-title="Section"
+          data-layout="LY-04"
+          data-bg="BG-03"
+          data-content='{&quot;number&quot;: &quot;03&quot;, &quot;sectionTitle&quot;: &quot;Demo&quot;, &quot;subtitle&quot;: &quot;A look at some real life data on our platform&quot;}'
+        >
+          <div class="slide-layers" aria-hidden="true"></div>
+        </section>
+
+        <!-- 17. Demo -->
         <section
           class="slide"
           data-title="Demo"
           data-layout="LY-22"
           data-bg="BG-05"
-          data-content='{"title":"Demo","subtitle":"Let’s check out some data we have on the DarkArmor platform","items":[{"url":"askaribank.com.pk","severity":"medium"},{"url":"abl.com","severity":"medium"},{"url":"bankalfalah.com","severity":"medium"},{"url":"bankalhabib.com","severity":"medium"},{"url":"bop.com.pk","severity":"high"},{"url":"bok.com.pk","severity":"medium"},{"url":"faysalbank.com","severity":"medium"},{"url":"mcb.com.pk","severity":"medium"},{"url":"meezanbank.com","severity":"high"},{"url":"easypaisa.com.pk","severity":"medium"},{"url":"jazzcash.com.pk","severity":"medium"},{"url":"mashreq.com","severity":"medium"},{"url":"alahli.com","severity":"medium"},{"url":"emiratesnbd.com","severity":"medium"},{"url":"adcb.com","severity":"medium"},{"url":"alrajhibank.com.sa","severity":"high"},{"url":"alinma.com","severity":"high"},{"url":"riyadbank.com","severity":"high"},{"url":"bankalbilad.com","severity":"high"},{"url":"anb.com.sa","severity":"medium"},{"url":"alfransi.com.sa","severity":"high"},{"url":"saib.com.sa","severity":"medium"},{"url":"qnb.com","severity":"high"},{"url":"qib.com.qa","severity":"medium"},{"url":"nbk.com","severity":"medium"},{"url":"nbbonline.com","severity":"medium"},{"url":"sngpl.com.pk","severity":"medium"},{"url":"zong.com.pk","severity":"medium"},{"url":"nayatel.com","severity":"medium"},{"url":"ke.com.pk","severity":"high"},{"url":"ufone.com","severity":"high"},{"url":"stormfiber.com","severity":"high"},{"url":"ptcl.com.pk","severity":"high"}]}'
+          data-content='{&quot;title&quot;: &quot;Demo&quot;, &quot;subtitle&quot;: &quot;Let’s check out some data we have on the DarkArmor platform&quot;, &quot;items&quot;: [{&quot;url&quot;: &quot;askaribank.com.pk&quot;, &quot;severity&quot;: &quot;medium&quot;}, {&quot;url&quot;: &quot;abl.com&quot;, &quot;severity&quot;: &quot;medium&quot;}, {&quot;url&quot;: &quot;bankalfalah.com&quot;, &quot;severity&quot;: &quot;medium&quot;}, {&quot;url&quot;: &quot;bankalhabib.com&quot;, &quot;severity&quot;: &quot;medium&quot;}, {&quot;url&quot;: &quot;bop.com.pk&quot;, &quot;severity&quot;: &quot;high&quot;}, {&quot;url&quot;: &quot;bok.com.pk&quot;, &quot;severity&quot;: &quot;medium&quot;}, {&quot;url&quot;: &quot;faysalbank.com&quot;, &quot;severity&quot;: &quot;medium&quot;}, {&quot;url&quot;: &quot;mcb.com.pk&quot;, &quot;severity&quot;: &quot;medium&quot;}, {&quot;url&quot;: &quot;meezanbank.com&quot;, &quot;severity&quot;: &quot;high&quot;}, {&quot;url&quot;: &quot;easypaisa.com.pk&quot;, &quot;severity&quot;: &quot;medium&quot;}, {&quot;url&quot;: &quot;jazzcash.com.pk&quot;, &quot;severity&quot;: &quot;medium&quot;}, {&quot;url&quot;: &quot;mashreq.com&quot;, &quot;severity&quot;: &quot;medium&quot;}, {&quot;url&quot;: &quot;alahli.com&quot;, &quot;severity&quot;: &quot;medium&quot;}, {&quot;url&quot;: &quot;emiratesnbd.com&quot;, &quot;severity&quot;: &quot;medium&quot;}, {&quot;url&quot;: &quot;adcb.com&quot;, &quot;severity&quot;: &quot;medium&quot;}, {&quot;url&quot;: &quot;alrajhibank.com.sa&quot;, &quot;severity&quot;: &quot;high&quot;}, {&quot;url&quot;: &quot;alinma.com&quot;, &quot;severity&quot;: &quot;high&quot;}, {&quot;url&quot;: &quot;riyadbank.com&quot;, &quot;severity&quot;: &quot;high&quot;}, {&quot;url&quot;: &quot;bankalbilad.com&quot;, &quot;severity&quot;: &quot;high&quot;}, {&quot;url&quot;: &quot;anb.com.sa&quot;, &quot;severity&quot;: &quot;medium&quot;}, {&quot;url&quot;: &quot;alfransi.com.sa&quot;, &quot;severity&quot;: &quot;high&quot;}, {&quot;url&quot;: &quot;saib.com.sa&quot;, &quot;severity&quot;: &quot;medium&quot;}, {&quot;url&quot;: &quot;qnb.com&quot;, &quot;severity&quot;: &quot;high&quot;}, {&quot;url&quot;: &quot;qib.com.qa&quot;, &quot;severity&quot;: &quot;medium&quot;}, {&quot;url&quot;: &quot;nbk.com&quot;, &quot;severity&quot;: &quot;medium&quot;}, {&quot;url&quot;: &quot;nbbonline.com&quot;, &quot;severity&quot;: &quot;medium&quot;}, {&quot;url&quot;: &quot;sngpl.com.pk&quot;, &quot;severity&quot;: &quot;medium&quot;}, {&quot;url&quot;: &quot;zong.com.pk&quot;, &quot;severity&quot;: &quot;medium&quot;}, {&quot;url&quot;: &quot;nayatel.com&quot;, &quot;severity&quot;: &quot;medium&quot;}, {&quot;url&quot;: &quot;ke.com.pk&quot;, &quot;severity&quot;: &quot;high&quot;}, {&quot;url&quot;: &quot;ufone.com&quot;, &quot;severity&quot;: &quot;high&quot;}, {&quot;url&quot;: &quot;stormfiber.com&quot;, &quot;severity&quot;: &quot;high&quot;}, {&quot;url&quot;: &quot;ptcl.com.pk&quot;, &quot;severity&quot;: &quot;high&quot;}]}'
         >
           <div class="slide-layers" aria-hidden="true"></div>
         </section>
@@ -192,20 +258,30 @@
     </div>
 
     <script type="module">
-      import { initEditableSlideBoard } from "../js/components/slide-board.js?v=30";
+      import { initEditableSlideBoard } from "../js/components/slide-board.js?v=31";
       import {
         refreshImageTitleLayouts,
         refreshFlowFunnels,
-      } from "../js/layouts.js?v=71";
-      import { enableInlineEditing } from "../js/slide-inline-edit.js?v=1";
-      import { mountSlideContentForm } from "../js/slide-content-form.js?v=8";
+      } from "../js/layouts.js?v=74";
+      import { enableInlineEditing } from "../js/slide-inline-edit.js?v=2";
+      import { mountSlideContentForm } from "../js/slide-content-form.js?v=10";
       import {
         isPresentMode,
         openPresentTab,
         startPresentMode,
-      } from "../js/present-mode.js?v=1";
+      } from "../js/present-mode.js?v=4";
+      import {
+        fetchDraftJson,
+        persistDraftHtml,
+        persistDraftJson,
+      } from "../js/draft-sync.js?v=1";
 
-      const STORAGE_KEY = `ca-brandkit:draft:${location.pathname}:v20`;
+      const DRAFT_FILE_KEY = "prebreach-intro";
+      const STORAGE_KEY = `ca-brandkit:draft:${DRAFT_FILE_KEY}`;
+      const SLIDES_JSON_URL = new URL(
+        "./prebreach-intro.slides.json",
+        location.href,
+      ).href;
 
       const board = document.getElementById("board");
       const source = document.getElementById("slide-source");
@@ -229,6 +305,7 @@
       let disposeForm = null;
       let editSlide = null;
       let editorFitObserver = null;
+      let saving = false;
 
       function defsFromSource() {
         return [...source.querySelectorAll(".slide")].map((slide) => {
@@ -247,20 +324,99 @@
         });
       }
 
-      function loadSaved() {
+      function parseDraftPayload(raw) {
         try {
-          const raw = localStorage.getItem(STORAGE_KEY);
-          if (!raw) return null;
           const parsed = JSON.parse(raw);
-          return Array.isArray(parsed?.slides) ? parsed.slides : null;
+          if (!Array.isArray(parsed?.slides) || !parsed.slides.length) return null;
+          return parsed;
         } catch {
           return null;
         }
       }
 
-      const saved = loadSaved();
-      const initialDefs = saved?.length ? saved : defsFromSource();
-      source.remove();
+      /** Load browser draft; migrate legacy pathname / :vN keys once. */
+      function loadSaved() {
+        const primary = parseDraftPayload(localStorage.getItem(STORAGE_KEY));
+        if (primary?.slides?.length) return primary;
+
+        const path = location.pathname;
+        const candidates = [];
+        const seen = new Set();
+        const consider = (key) => {
+          if (!key || seen.has(key) || key === STORAGE_KEY) return;
+          seen.add(key);
+          const payload = parseDraftPayload(localStorage.getItem(key));
+          if (payload) candidates.push({ key, payload });
+        };
+
+        for (let i = 0; i < localStorage.length; i += 1) {
+          const key = localStorage.key(i);
+          if (!key || !key.startsWith("ca-brandkit:draft:")) continue;
+          if (
+            key === `ca-brandkit:draft:${path}` ||
+            key.startsWith(`ca-brandkit:draft:${path}:`) ||
+            key.includes("prebreach-intro")
+          ) {
+            consider(key);
+          }
+        }
+
+        if (!candidates.length) return null;
+
+        candidates.sort((a, b) => {
+          const lenDiff = b.payload.slides.length - a.payload.slides.length;
+          if (lenDiff) return lenDiff;
+          const aAt = Date.parse(a.payload.savedAt || 0) || 0;
+          const bAt = Date.parse(b.payload.savedAt || 0) || 0;
+          return bAt - aAt;
+        });
+
+        const best = candidates[0].payload;
+        try {
+          localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify({
+              ...best,
+              savedAt: best.savedAt || new Date().toISOString(),
+            }),
+          );
+        } catch {
+          /* ignore quota */
+        }
+        return best;
+      }
+
+      function flashStatus(text, ms = 3200) {
+        saveStatus.textContent = text;
+        window.clearTimeout(flashStatus._t);
+        flashStatus._t = window.setTimeout(() => {
+          if (saveStatus.textContent === text) saveStatus.textContent = "";
+        }, ms);
+      }
+
+      function persistLocal(slides = boardApi.serialize()) {
+        const payload = {
+          savedAt: new Date().toISOString(),
+          slides,
+        };
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+        } catch (err) {
+          console.warn("localStorage save failed", err);
+        }
+        return payload;
+      }
+
+      async function resolveInitialDefs() {
+        const embedded = defsFromSource();
+        const remote = await fetchDraftJson(SLIDES_JSON_URL);
+        const local = loadSaved();
+
+        // After Save, browser draft must win on refresh — don't let disk JSON replace it.
+        if (local?.slides?.length) return local.slides;
+        if (remote?.slides?.length) return remote.slides;
+        return embedded;
+      }
 
       const slides = [];
       const boardApi = initEditableSlideBoard({
@@ -275,9 +431,12 @@
         },
       });
 
+      const initialDefs = await resolveInitialDefs();
+      source.remove();
       boardApi.load(initialDefs);
-      if (saved?.length) {
-        saveStatus.textContent = "Restored saved draft";
+
+      if (loadSaved()?.slides?.length) {
+        flashStatus("Restored local draft", 2200);
       }
 
       if (isPresentMode()) {
@@ -289,21 +448,45 @@
         });
       }
 
-      function flashStatus(text) {
-        saveStatus.textContent = text;
-        window.clearTimeout(flashStatus._t);
-        flashStatus._t = window.setTimeout(() => {
-          if (saveStatus.textContent === text) saveStatus.textContent = "";
-        }, 2200);
-      }
+      async function saveDraft() {
+        if (saving) return;
+        saving = true;
+        const payload = persistLocal();
+        flashStatus("Saved — restores on refresh");
 
-      function saveDraft() {
-        const payload = {
-          savedAt: new Date().toISOString(),
-          slides: boardApi.serialize(),
-        };
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-        flashStatus("Saved");
+        try {
+          const htmlResult = await persistDraftHtml({
+            draftKey: DRAFT_FILE_KEY,
+            htmlFileName: "prebreach-intro.html",
+            slides: payload.slides,
+            fetchHtml: async () => {
+              const res = await fetch(location.pathname, { cache: "no-cache" });
+              if (!res.ok) throw new Error("Could not read draft HTML");
+              return res.text();
+            },
+          });
+          const jsonResult = await persistDraftJson({
+            draftKey: DRAFT_FILE_KEY,
+            jsonFileName: "prebreach-intro.slides.json",
+            payload,
+          });
+
+          if (htmlResult === "written" && jsonResult === "written") {
+            flashStatus("Saved — restores on refresh · project files updated");
+          } else if (htmlResult === "download" || jsonResult === "download") {
+            flashStatus(
+              "Saved — restores on refresh · downloaded files for drafts/",
+              6000,
+            );
+          } else {
+            flashStatus("Saved — restores on refresh");
+          }
+        } catch (err) {
+          console.warn(err);
+          flashStatus("Saved — restores on refresh");
+        } finally {
+          saving = false;
+        }
       }
 
       function openLightbox(i) {
@@ -354,12 +537,18 @@
         refreshImageTitleLayouts(editSlide);
         refreshFlowFunnels(editSlide);
 
+        window.clearTimeout(applyEditorContent._saveT);
+        applyEditorContent._saveT = window.setTimeout(() => {
+          persistLocal();
+        }, 400);
+
         // Rebind inline edit after paint replaces DOM nodes
         disposeInline?.();
         disposeInline = enableInlineEditing(editSlide, {
           onCommit: (next) => {
             boardApi.updateSlideContent(index, next);
             editSlide.dataset.content = JSON.stringify(next);
+            persistLocal();
             disposeForm?.();
             disposeForm = mountSlideContentForm(editorPanel, {
               layout: editSlide.dataset.layout,
@@ -472,6 +661,14 @@
         lightbox.hidden = true;
         document.body.classList.remove("slide-lightbox-open");
       };
+
+      window.addEventListener("beforeunload", () => {
+        try {
+          persistLocal();
+        } catch {
+          /* ignore */
+        }
+      });
 
       window.addEventListener("keydown", (e) => {
         if (document.body.classList.contains("is-presenting")) return;

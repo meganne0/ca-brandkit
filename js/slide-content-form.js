@@ -159,6 +159,7 @@ function buildFormHtml(layout, content) {
     bits.push(field("metric-value", "Metric value", metric.value ?? ""));
     bits.push(field("metric-text", "Metric text", metric.text ?? "", { type: "textarea", rows: 2 }));
     bits.push(field("metric-source", "Source", metric.source ?? ""));
+    bits.push(field("metric-source-url", "Source link", metric.sourceUrl ?? ""));
     return bits.join("");
   }
 
@@ -171,10 +172,13 @@ function buildFormHtml(layout, content) {
         <div class="deck-form__card" data-index="${i}">
           <div class="deck-form__row">
             <input class="deck-form__input" name="metric-value-${i}" value="${esc(metric.value ?? "")}" placeholder="Value" />
+            <button type="button" class="deck-form__btn deck-form__btn--ghost" data-action="move-metric-up" data-index="${i}" aria-label="Move up" ${i === 0 ? "disabled" : ""}>↑</button>
+            <button type="button" class="deck-form__btn deck-form__btn--ghost" data-action="move-metric-down" data-index="${i}" aria-label="Move down" ${i === metrics.length - 1 ? "disabled" : ""}>↓</button>
             <button type="button" class="deck-form__btn deck-form__btn--ghost" data-action="remove-metric" data-index="${i}" aria-label="Remove">✕</button>
           </div>
           <textarea class="deck-form__input" name="metric-text-${i}" rows="2" placeholder="Text">${esc(metric.text ?? "")}</textarea>
           <input class="deck-form__input" name="metric-source-${i}" value="${esc(metric.source ?? "")}" placeholder="Source" />
+          <input class="deck-form__input" name="metric-source-url-${i}" value="${esc(metric.sourceUrl ?? "")}" placeholder="Source link (https://…)" />
         </div>
       `);
     });
@@ -427,6 +431,7 @@ function readContentFromForm(form, layout, base = {}) {
       value: val(form, "metric-value"),
       text: val(form, "metric-text"),
       source: val(form, "metric-source"),
+      sourceUrl: val(form, "metric-source-url"),
     };
     return next;
   }
@@ -440,6 +445,7 @@ function readContentFromForm(form, layout, base = {}) {
         value: val(form, `metric-value-${i}`),
         text: val(form, `metric-text-${i}`),
         source: val(form, `metric-source-${i}`),
+        sourceUrl: val(form, `metric-source-url-${i}`),
       });
       i += 1;
     }
@@ -600,7 +606,7 @@ function mutateList(layout, content, action) {
     next.steps = steps;
   } else if (action === "add-metric") {
     const metrics = [...(next.metrics ?? [])];
-    if (metrics.length < 3) metrics.push({ value: "0", text: "", source: "" });
+    if (metrics.length < 3) metrics.push({ value: "0", text: "", source: "", sourceUrl: "" });
     next.metrics = metrics;
   } else if (action === "add-toc") {
     next.items = [...(next.items ?? []), { number: "0", title: "New item", description: "" }];
@@ -611,6 +617,15 @@ function mutateList(layout, content, action) {
 
 function removeAt(list, index) {
   return (list ?? []).filter((_, i) => i !== index);
+}
+
+function moveAt(list, index, delta) {
+  const next = [...(list ?? [])];
+  const j = index + delta;
+  if (index < 0 || index >= next.length || j < 0 || j >= next.length) return next;
+  const [item] = next.splice(index, 1);
+  next.splice(j, 0, item);
+  return next;
 }
 
 /**
@@ -657,6 +672,8 @@ export function mountSlideContentForm(container, { layout, content, onChange }) 
       else if (action === "remove-person") current.people = removeAt(current.people, index);
       else if (action === "remove-step") current.steps = removeAt(current.steps, index);
       else if (action === "remove-metric") current.metrics = removeAt(current.metrics, index);
+      else if (action === "move-metric-up") current.metrics = moveAt(current.metrics, index, -1);
+      else if (action === "move-metric-down") current.metrics = moveAt(current.metrics, index, 1);
       else if (action === "remove-toc") current.items = removeAt(current.items, index);
       else current = mutateList(layout, current, action);
 

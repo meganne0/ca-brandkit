@@ -9,7 +9,7 @@ import {
   renderLayout,
   refreshImageTitleLayouts,
   refreshFlowFunnels,
-} from "../layouts.js?v=71";
+} from "../layouts.js?v=73";
 import { LAYOUT_SAMPLES } from "../layout-samples.js?v=13";
 import { initImageLightbox } from "./lightbox.js?v=28";
 
@@ -388,7 +388,8 @@ export function initEditableSlideBoard({
     new ResizeObserver(() => fitSlide(slide, stage)).observe(stage);
     requestAnimationFrame(() => fitSlide(slide, stage));
 
-    tile.addEventListener("click", () => {
+    tile.addEventListener("click", (e) => {
+      if (e.target.closest("a[href]")) return;
       if (suppressClick) {
         suppressClick = false;
         return;

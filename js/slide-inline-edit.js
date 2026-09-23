@@ -145,7 +145,10 @@ export function harvestSlideContent(slide) {
 
   if (root.classList.contains("layout-metric--1")) {
     const card = root.querySelector(".metric-card");
-    const source = card?.querySelector(".metric-card__source")?.textContent.trim();
+    const sourceEl = card?.querySelector(".metric-card__source");
+    const source = sourceEl?.textContent.trim();
+    const sourceUrl =
+      sourceEl?.getAttribute("href")?.trim() || base.metric?.sourceUrl || "";
     const textEl = card?.querySelector(".metric-card__text");
     let text = textEl?.textContent.trim() ?? "";
     if (source && text.endsWith(source)) text = text.slice(0, -source.length).trim();
@@ -158,13 +161,17 @@ export function harvestSlideContent(slide) {
         value: card?.querySelector(".metric-card__value")?.textContent.trim() ?? "",
         text,
         source: source ?? base.metric?.source,
+        sourceUrl,
       },
     };
   }
 
   if (root.classList.contains("layout-metric--row")) {
     const metrics = [...root.querySelectorAll(".metric-card")].map((card, i) => {
-      const source = card.querySelector(".metric-card__source")?.textContent.trim();
+      const sourceEl = card.querySelector(".metric-card__source");
+      const source = sourceEl?.textContent.trim();
+      const sourceUrl =
+        sourceEl?.getAttribute("href")?.trim() || base.metrics?.[i]?.sourceUrl || "";
       const textEl = card.querySelector(".metric-card__text");
       let text = textEl?.textContent.trim() ?? "";
       if (source && text.endsWith(source)) text = text.slice(0, -source.length).trim();
@@ -173,6 +180,7 @@ export function harvestSlideContent(slide) {
         value: card.querySelector(".metric-card__value")?.textContent.trim() ?? "",
         text,
         source: source ?? base.metrics?.[i]?.source,
+        sourceUrl,
       };
     });
     return { ...base, ...corner, ...titles, metrics };

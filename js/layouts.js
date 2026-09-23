@@ -409,15 +409,35 @@ function renderFourSteps(content) {
   return renderSteps(content, 4);
 }
 
+function safeExternalHref(url) {
+  const raw = String(url ?? "").trim();
+  if (!raw) return "";
+  if (/^https?:\/\//i.test(raw)) return raw;
+  if (/^\/\//.test(raw)) return `https:${raw}`;
+  // Block javascript:/data:/etc — treat bare hosts as https
+  if (/^[a-z][a-z0-9+.-]*:/i.test(raw)) return "";
+  return `https://${raw}`;
+}
+
+function renderMetricSource(metric) {
+  const source = String(metric.source ?? "").trim();
+  if (!source) return "";
+  const href = safeExternalHref(metric.sourceUrl ?? metric.url ?? "");
+  const label = escapeHtml(source);
+  if (href) {
+    return ` <a class="metric-card__source" href="${escapeHtml(href)}" target="_blank" rel="noopener noreferrer">${label}</a>`;
+  }
+  return ` <span class="metric-card__source">${label}</span>`;
+}
+
 function renderMetricCard(metric, metricClass = "type-metric") {
   const value = metric.value ?? "";
   const text = metric.text ?? "";
-  const source = metric.source ?? "";
   return `
     <article class="metric-card">
       <p class="${metricClass} metric-card__value">${value}</p>
       <p class="type-body metric-card__text">
-        ${text}${source ? ` <span class="metric-card__source">${source}</span>` : ""}
+        ${text}${renderMetricSource(metric)}
       </p>
     </article>
   `;
@@ -873,6 +893,13 @@ function fitFlowFunnel(root) {
   const outcomes = [...host.querySelectorAll(".flow-orbit__outcomes .flow-dot")];
   const impacts = [...host.querySelectorAll(".flow-orbit__impacts .flow-dot")];
 
+  const phaseOf = (el) => el?.dataset?.flowPhase?.trim() || "";
+  const wirePhaseAttrs = (fromEl, toEl) => {
+    const from = typeof fromEl === "string" ? fromEl : phaseOf(fromEl);
+    const to = typeof toEl === "string" ? toEl : phaseOf(toEl);
+    return ` data-from-phase="${from}" data-to-phase="${to}"`;
+  };
+
   if (!chain.length && !outcomes.length && !impacts.length) return;
 
   if (chain.length) {
@@ -902,7 +929,7 @@ function fitFlowFunnel(root) {
           </linearGradient>
         `);
         pathEls.push(
-          `<path d="${d}" stroke="url(#${gid})" fill="none" stroke-width="${dots ? 3.75 : 3}" stroke-linecap="round" />`,
+          `<path d="${d}" stroke="url(#${gid})" fill="none" stroke-width="${dots ? 3.75 : 3}" stroke-linecap="round"${wirePhaseAttrs(source, first)} />`,
         );
       });
     } else {
@@ -923,7 +950,7 @@ function fitFlowFunnel(root) {
         </linearGradient>
       `);
       pathEls.push(
-        `<path d="M ${startX} ${startY} L ${endX} ${endY}" stroke="url(#${gid})" fill="none" stroke-width="3.75" stroke-linecap="round" />`,
+        `<path d="M ${startX} ${startY} L ${endX} ${endY}" stroke="url(#${gid})" fill="none" stroke-width="3.75" stroke-linecap="round"${wirePhaseAttrs("", first)} />`,
       );
     }
 
@@ -948,7 +975,7 @@ function fitFlowFunnel(root) {
         </linearGradient>
       `);
       pathEls.push(
-        `<path d="${d}" stroke="url(#${gid})" fill="none" stroke-width="${dots ? 3.75 : 3.5}" stroke-linecap="round" />`,
+        `<path d="${d}" stroke="url(#${gid})" fill="none" stroke-width="${dots ? 3.75 : 3.5}" stroke-linecap="round"${wirePhaseAttrs(chain[i], chain[i + 1])} />`,
       );
     }
   }
@@ -966,10 +993,11 @@ function fitFlowFunnel(root) {
 
   // Fan into outcome nodes (from last stage, or from a left lead-in on focus slides)
   if (outcomes.length) {
-    const origin = chain.length
+    const originNode = chain.length ? chain[chain.length - 1] : null;
+    const origin = originNode
       ? {
-          ...toLocal(chain[chain.length - 1]),
-          color: getComputedStyle(chain[chain.length - 1]).color || "#FF8045",
+          ...toLocal(originNode),
+          color: getComputedStyle(originNode).color || "#FF8045",
         }
       : leftOriginFor(outcomes, "#FF8045");
     outcomes.forEach((outcome, index) => {
@@ -983,7 +1011,7 @@ function fitFlowFunnel(root) {
         </linearGradient>
       `);
       pathEls.push(
-        `<path d="M ${origin.cx} ${origin.cy} L ${pt.cx} ${pt.cy}" stroke="url(#${gid})" fill="none" stroke-width="3.75" stroke-linecap="round" />`,
+        `<path d="M ${origin.cx} ${origin.cy} L ${pt.cx} ${pt.cy}" stroke="url(#${gid})" fill="none" stroke-width="3.75" stroke-linecap="round"${wirePhaseAttrs(originNode || "", outcome)} />`,
       );
     });
   }
@@ -1005,7 +1033,7 @@ function fitFlowFunnel(root) {
             </linearGradient>
           `);
           pathEls.push(
-            `<path d="M ${from.cx} ${from.cy} L ${to.cx} ${to.cy}" stroke="url(#${gid})" fill="none" stroke-width="3" stroke-linecap="round" stroke-dasharray="2.5 10" />`,
+            `<path d="M ${from.cx} ${from.cy} L ${to.cx} ${to.cy}" stroke="url(#${gid})" fill="none" stroke-width="3" stroke-linecap="round" stroke-dasharray="2.5 10"${wirePhaseAttrs(outcome, impact)} />`,
           );
         });
       });
@@ -1022,7 +1050,7 @@ function fitFlowFunnel(root) {
           </linearGradient>
         `);
         pathEls.push(
-          `<path d="M ${origin.cx} ${origin.cy} L ${to.cx} ${to.cy}" stroke="url(#${gid})" fill="none" stroke-width="3" stroke-linecap="round" stroke-dasharray="2.5 10" />`,
+          `<path d="M ${origin.cx} ${origin.cy} L ${to.cx} ${to.cy}" stroke="url(#${gid})" fill="none" stroke-width="3" stroke-linecap="round" stroke-dasharray="2.5 10"${wirePhaseAttrs("", impact)} />`,
         );
       });
     }
@@ -1053,7 +1081,7 @@ function fitFlowFunnel(root) {
         </linearGradient>
       `);
       pathEls.push(
-        `<path d="M ${startX} ${startY} L ${endX} ${endY}" stroke="url(#${gid})" fill="none" stroke-width="${dashed ? 3 : 3.75}" stroke-linecap="round"${dashed ? ' stroke-dasharray="2.5 10"' : ""} />`,
+        `<path d="M ${startX} ${startY} L ${endX} ${endY}" stroke="url(#${gid})" fill="none" stroke-width="${dashed ? 3 : 3.75}" stroke-linecap="round"${dashed ? ' stroke-dasharray="2.5 10"' : ""}${wirePhaseAttrs(node, "")} />`,
       );
     });
   }
@@ -1073,19 +1101,20 @@ export function refreshFlowFunnels(root = document) {
   });
 }
 
-function flowDotMarkup(label, tone, role, color) {
+function flowDotMarkup(label, tone, role, color, phase = "") {
   const display = String(label ?? "")
     .replace(/:\s*/g, ":\n")
     .replace(/,\s*/g, "\n");
   const colorStyle = color
     ? ` style="color:${escapeHtml(color)};--flow-dot:${escapeHtml(color)}"`
     : "";
+  const phaseAttr = phase ? ` data-flow-phase="${escapeHtml(phase)}"` : "";
   const labelEl = `<span class="flow-dot__label">${escapeHtml(display)}</span>`;
   const buttonEl = `
       <button
         type="button"
         class="flow-dot flow-node--${escapeHtml(tone)}"
-        data-flow-node="${escapeHtml(role)}"
+        data-flow-node="${escapeHtml(role)}"${phaseAttr}
         aria-label="${escapeHtml(label)}"
       ></button>`;
   const body =
@@ -1244,7 +1273,7 @@ function renderFlowOrbit(content) {
           .map((source, index) => {
             const label =
               typeof source === "string" ? source : source.label ?? source.title ?? "";
-            return flowDotMarkup(label, "source", `source-${index}`, sourceColor);
+            return flowDotMarkup(label, "source", `source-${index}`, sourceColor, "prep");
           })
           .join("")}
       </div>
@@ -1255,7 +1284,7 @@ function renderFlowOrbit(content) {
     ? `
       <div class="flow-step flow-step--stage">
         ${flowStepBadge(2, stepLabels[1] ?? "Weaponize", weaponize.color)}
-        ${flowDotMarkup(weaponize.label, "stage", "stage-0", weaponize.color)}
+        ${flowDotMarkup(weaponize.label, "stage", "stage-0", weaponize.color, "prep")}
       </div>
     `
     : "";
@@ -1269,19 +1298,21 @@ function renderFlowOrbit(content) {
       return `
         <div class="flow-step flow-step--stage">
           ${flowStepBadge(meta.number, meta.label, stage.color)}
-          ${flowDotMarkup(stage.label, "stage", `stage-${index + 1}`, stage.color)}
+          ${flowDotMarkup(stage.label, "stage", `stage-${index + 1}`, stage.color, "collection")}
         </div>
       `;
     })
     .join("");
 
-  const overviewPhaseAttrs = (label) =>
+  const overviewPhaseAttrs = (label, { selected = false } = {}) =>
     focusPhase == null
-      ? ` role="button" tabindex="0" aria-pressed="false" aria-label="Toggle ${escapeHtml(label)} highlight"`
+      ? ` role="button" tabindex="0" aria-pressed="${selected ? "true" : "false"}" aria-label="Select ${escapeHtml(label)} phase"`
       : "";
 
   const prepPhase = showPrep
-    ? `<section class="flow-phase flow-phase--prep"${overviewPhaseAttrs(phaseTitles[0] ?? "Preparation")}>
+    ? `<section class="flow-phase flow-phase--prep${
+        focusPhase == null ? " is-stroke-on" : ""
+      }"${overviewPhaseAttrs(phaseTitles[0] ?? "Preparation", { selected: focusPhase == null })}>
         <h3 class="flow-phase__title">${escapeHtml(phaseTitles[0] ?? "Preparation")}</h3>
         <div class="flow-phase__body">
           <div class="flow-phase__grid flow-phase__grid--prep">
@@ -1293,7 +1324,9 @@ function renderFlowOrbit(content) {
     : "";
 
   const collectionPhase = showCollection
-    ? `<section class="flow-phase flow-phase--collection"${overviewPhaseAttrs(phaseTitles[1] ?? "Collection")}>
+    ? `<section class="flow-phase flow-phase--collection${
+        focusPhase == null ? " is-phase-blurred" : ""
+      }"${overviewPhaseAttrs(phaseTitles[1] ?? "Collection")}>
         <h3 class="flow-phase__title">${escapeHtml(phaseTitles[1] ?? "Collection")}</h3>
         <div class="flow-phase__body">
           <div class="flow-phase__grid flow-phase__grid--collection" style="--flow-collection-count:${Math.max(collectionStages.length, 1)}">
@@ -1304,7 +1337,9 @@ function renderFlowOrbit(content) {
     : "";
 
   const breachPhase = showBreach
-    ? `<section class="flow-phase flow-phase--breach"${overviewPhaseAttrs(phaseTitles[2] ?? "Breach")}>
+    ? `<section class="flow-phase flow-phase--breach${
+        focusPhase == null ? " is-phase-blurred" : ""
+      }"${overviewPhaseAttrs(phaseTitles[2] ?? "Breach")}>
         <h3 class="flow-phase__title">${escapeHtml(phaseTitles[2] ?? "Breach")}</h3>
         <div class="flow-phase__body">
           <div class="flow-step flow-step--outcomes">
@@ -1317,6 +1352,7 @@ function renderFlowOrbit(content) {
                     "outcome",
                     `outcome-${index}`,
                     outcome.color,
+                    "breach",
                   ),
                 )
                 .join("")}
@@ -1327,7 +1363,9 @@ function renderFlowOrbit(content) {
     : "";
 
   const postBreachPhase = showPostBreach
-    ? `<section class="flow-phase flow-phase--post-breach"${overviewPhaseAttrs(phaseTitles[3] ?? "Post-Breach")}>
+    ? `<section class="flow-phase flow-phase--post-breach${
+        focusPhase == null ? " is-phase-blurred" : ""
+      }"${overviewPhaseAttrs(phaseTitles[3] ?? "Post-Breach")}>
         <h3 class="flow-phase__title">${escapeHtml(phaseTitles[3] ?? "Post-Breach")}</h3>
         <div class="flow-phase__body">
           <div class="flow-step flow-step--impacts">
@@ -1340,6 +1378,7 @@ function renderFlowOrbit(content) {
                     "impact",
                     `impact-${index}`,
                     impact.color,
+                    "post-breach",
                   ),
                 )
                 .join("")}
@@ -1495,6 +1534,12 @@ export function ensureFlowOrbitInteractions() {
     if (!phase || phase.closest(".flow-orbit--focus")) return;
     const orbit = phase.closest(".flow-orbit");
     if (!orbit) return;
+
+    // First press on a later phase: permanently reveal its content
+    if (phase.classList.contains("is-phase-blurred")) {
+      phase.classList.remove("is-phase-blurred");
+    }
+
     const alreadyOn = phase.classList.contains("is-stroke-on");
     orbit.querySelectorAll(".flow-phase.is-stroke-on").forEach((el) => {
       el.classList.remove("is-stroke-on");

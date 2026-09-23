@@ -362,6 +362,12 @@ body.is-presenting:-webkit-full-screen .present-deck:hover .present-deck__chrome
   color: #fff;
 }
 
+.deck-form__btn--ghost:disabled {
+  opacity: 0.28;
+  cursor: default;
+  pointer-events: none;
+}
+
 .deck-form__note {
   margin: 0;
   font-size: 12px;
@@ -1394,11 +1400,30 @@ body.slide-lightbox-open {
 }
 
 .metric-card__source {
-  display: inline;
-  font-weight: 600;
-  color: var(--ca-tagline);
-  opacity: 0.9;
-  white-space: nowrap;
+  display: block;
+  margin-top: 0.45em;
+  font-family: var(--font-body);
+  font-size: var(--type-label-size);
+  font-weight: var(--type-label-weight);
+  line-height: var(--type-label-line);
+  letter-spacing: var(--type-label-tracking);
+  text-transform: uppercase;
+  color: var(--type-label-color);
+  opacity: 0.8;
+  white-space: normal;
+  overflow-wrap: anywhere;
+}
+
+a.metric-card__source {
+  text-decoration: none;
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+a.metric-card__source:hover {
+  opacity: 1;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
 }
 
 .metric-card__source::before {
@@ -2727,6 +2752,8 @@ body.slide-lightbox-open {
   position: relative;
   border-color: rgba(255, 255, 255, 0.04);
   transition:
+    filter 0.5s ease,
+    opacity 0.5s ease,
     background 0.5s ease,
     border-color 0.45s ease,
     box-shadow 0.5s ease;
@@ -2777,6 +2804,45 @@ body.slide-lightbox-open {
 
 .flow-orbit:not(.flow-orbit--focus) .flow-phase.is-stroke-on .flow-phase__body::after {
   opacity: 0.7;
+}
+
+/* Progressive reveal: later phases start blurred until first click */
+.flow-orbit:not(.flow-orbit--focus) .flow-phase.is-phase-blurred .flow-phase__body {
+  filter: blur(7px);
+  opacity: 0.42;
+}
+
+.flow-orbit:not(.flow-orbit--focus) .flow-phase:not(.is-phase-blurred) .flow-phase__body {
+  filter: blur(0);
+  opacity: 1;
+}
+
+.flow-orbit:not(.flow-orbit--focus) .flow-funnel__wires path {
+  transition:
+    filter 0.5s ease,
+    opacity 0.5s ease;
+}
+
+.flow-orbit:not(.flow-orbit--focus):has(.flow-phase--collection.is-phase-blurred)
+  .flow-funnel__wires
+  path[data-from-phase="collection"],
+.flow-orbit:not(.flow-orbit--focus):has(.flow-phase--collection.is-phase-blurred)
+  .flow-funnel__wires
+  path[data-to-phase="collection"],
+.flow-orbit:not(.flow-orbit--focus):has(.flow-phase--breach.is-phase-blurred)
+  .flow-funnel__wires
+  path[data-from-phase="breach"],
+.flow-orbit:not(.flow-orbit--focus):has(.flow-phase--breach.is-phase-blurred)
+  .flow-funnel__wires
+  path[data-to-phase="breach"],
+.flow-orbit:not(.flow-orbit--focus):has(.flow-phase--post-breach.is-phase-blurred)
+  .flow-funnel__wires
+  path[data-from-phase="post-breach"],
+.flow-orbit:not(.flow-orbit--focus):has(.flow-phase--post-breach.is-phase-blurred)
+  .flow-funnel__wires
+  path[data-to-phase="post-breach"] {
+  filter: blur(6px);
+  opacity: 0.38;
 }
 
 .flow-dot-row--stage .flow-dot__label {

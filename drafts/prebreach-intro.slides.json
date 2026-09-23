@@ -1,0 +1,491 @@
+{
+  "savedAt": "2026-09-23T21:05:00.000Z",
+  "slides": [
+    {
+      "title": "Cover",
+      "layout": "LY-01",
+      "bg": "BG-01",
+      "content": {
+        "headline": "Introduction",
+        "accent": "Introduction",
+        "subtitle": "Sept 2026"
+      }
+    },
+    {
+      "title": "Who We Are",
+      "layout": "LY-02",
+      "bg": "BG-08",
+      "content": {
+        "sectionTitle": "Team",
+        "title": "Who We Are",
+        "subtitle": "The people behind CyberArmor.",
+        "people": [
+          {
+            "name": "Nguyen Nguyen",
+            "role": "CEO",
+            "avatar": "/visual%20assets/avatars/avatar-nguyen-circle.png"
+          },
+          {
+            "name": "Ali Alame",
+            "role": "CTO",
+            "avatar": "/visual%20assets/avatars/avatar-ali-circle.png"
+          },
+          {
+            "name": "Meganne Ohata",
+            "role": "CXO",
+            "avatar": "/visual%20assets/avatars/avatar-meganne-circle.png"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Table of contents",
+      "layout": "LY-03",
+      "bg": "BG-02",
+      "content": {
+        "sectionTitle": "",
+        "title": "What we’ll cover",
+        "subtitle": "",
+        "items": [
+          {
+            "number": "01",
+            "title": "PreBreach Intelligence",
+            "description": "What it is and how it works"
+          },
+          {
+            "number": "02",
+            "title": "Common Questions",
+            "description": "Comparisons, credential impact, malware, pricing"
+          },
+          {
+            "number": "03",
+            "title": "Demo",
+            "description": "A look at some real life data on our platform"
+          }
+        ],
+        "number": ""
+      }
+    },
+    {
+      "title": "Section",
+      "layout": "LY-04",
+      "bg": "BG-03",
+      "content": {
+        "number": "01",
+        "sectionTitle": "PreBreach Intelligence",
+        "subtitle": "What it is and how it works"
+      }
+    },
+    {
+      "title": "How it Started",
+      "layout": "LY-08",
+      "bg": "BG-09",
+      "content": {
+        "sectionTitle": "",
+        "title": "In the beginning...",
+        "blurBullets": true,
+        "text": "Nguyen was a malware researcher who questioned why action was only taken after a breach.",
+        "bullets": [
+          "Breach data was often old",
+          "Clean up is expensive",
+          "Earlier remediation could make greater impact"
+        ],
+        "subtitle": "",
+        "number": ""
+      }
+    },
+    {
+      "title": "How it Started",
+      "layout": "LY-08",
+      "bg": "BG-09",
+      "content": {
+        "sectionTitle": "",
+        "title": "What We Do",
+        "blurBullets": true,
+        "text": "We focus on alerting on compromised credentials before it is monetized or published on the dark web.",
+        "bullets": [
+          "Traditional tools focus on dark web scraping",
+          "Many compromises never reach the dark web before they're taken advantage of"
+        ],
+        "subtitle": "",
+        "number": ""
+      }
+    },
+    {
+      "title": "How it Started",
+      "layout": "LY-08",
+      "bg": "BG-09",
+      "content": {
+        "sectionTitle": "",
+        "title": "Attack Breakdown",
+        "blurBullets": true,
+        "text": "Let's look at what a typical attack looks like in order to illustrate where our data comes into play",
+        "bullets": [],
+        "subtitle": "",
+        "number": ""
+      }
+    },
+    {
+      "title": "Attack paths",
+      "layout": "LY-24",
+      "bg": "BG-02",
+      "content": {
+        "sources": [
+          {
+            "label": "Linkedin"
+          },
+          {
+            "label": "Leads List"
+          },
+          {
+            "label": "Google Dorking"
+          },
+          {
+            "label": "Company Site"
+          },
+          {
+            "label": "Breach"
+          }
+        ],
+        "stages": [
+          {
+            "label": "Buy domains, build lure, MaaS, PhaaS",
+            "color": "#887DFF"
+          },
+          {
+            "label": "Phish, quish, smish, URL",
+            "color": "#9977FF"
+          },
+          {
+            "label": "Victim engages with lure",
+            "color": "#BF66FF"
+          },
+          {
+            "label": "Keylogger, RAT, infostealer, MFA bypass...",
+            "color": "#F17AFF"
+          },
+          {
+            "label": "Data sent to attacker: Tokens, cookies, passwords...",
+            "color": "#FF8045"
+          }
+        ],
+        "outcomes": [
+          {
+            "label": "Business email compromise"
+          },
+          {
+            "label": "Ransomware"
+          },
+          {
+            "label": "Exfiltration"
+          },
+          {
+            "label": "Fraud"
+          },
+          {
+            "label": "Account takeover"
+          },
+          {
+            "label": "Espionage"
+          }
+        ],
+        "impacts": [
+          {
+            "label": "Ransomware announcement"
+          },
+          {
+            "label": "Notify or report incident"
+          },
+          {
+            "label": "Posted on dark web forums, marketplaces"
+          }
+        ],
+        "phaseTitles": [
+          "Preparation",
+          "Collection",
+          "Breach",
+          "Post-Breach"
+        ],
+        "stepLabels": [
+          "Recon",
+          "Weaponize",
+          "Deliver",
+          "Exploit",
+          "Install",
+          "Command and Control",
+          "Action-on-Objective",
+          "Publication"
+        ],
+        "sourceColor": "#1EADEC",
+        "outcomeColor": "#FF2828",
+        "impactColor": "#FF2828"
+      }
+    },
+    {
+      "title": "Section",
+      "layout": "LY-04",
+      "bg": "BG-03",
+      "content": {
+        "number": "02",
+        "sectionTitle": "Common Questions",
+        "subtitle": "Comparisons, credential impact, malware, pricing structure"
+      }
+    },
+    {
+      "title": "Why Credential Theft?",
+      "layout": "LY-13",
+      "bg": "BG-02",
+      "content": {
+        "question": "Why Credential Theft?"
+      }
+    },
+    {
+      "title": "Economic Context",
+      "layout": "LY-12",
+      "bg": "BG-04",
+      "content": {
+        "title": "Why it Matters",
+        "subtitle": "",
+        "metrics": [
+          {
+            "value": "$4.5T",
+            "text": "Estimated annual cost of cybercrime globally",
+            "source": "Placeholder"
+          },
+          {
+            "value": "80%",
+            "text": "Of breaches involve compromised or stolen credentials",
+            "source": "Placeholder"
+          },
+          {
+            "value": "$4.5M",
+            "text": "Average cost of a data breach",
+            "source": "Placeholder"
+          }
+        ],
+        "number": "",
+        "sectionTitle": ""
+      }
+    },
+    {
+      "title": "Infostealer + Phish",
+      "layout": "LY-13",
+      "bg": "BG-03",
+      "content": {
+        "question": "Malware Infostealer + Phish Focus"
+      }
+    },
+    {
+      "title": "How does this differ?",
+      "layout": "LY-13",
+      "bg": "BG-06",
+      "content": {
+        "question": "How does this differ from other tools?"
+      }
+    },
+    {
+      "title": "Fraud / extortion",
+      "layout": "LY-13",
+      "bg": "BG-07",
+      "content": {
+        "question": "Does this prevent fraud / extortion?"
+      }
+    },
+    {
+      "title": "What data is available?",
+      "layout": "LY-21",
+      "bg": "BG-09",
+      "content": {
+        "title": "What data is available?",
+        "items": [
+          {
+            "label": "Credentials",
+            "description": "Email/password pairs, usernames, malware source. Passwords masked by default, audit-logged reveal."
+          },
+          {
+            "label": "Cookies",
+            "description": "Browser cookies, session cookies, authentication tokens from compromised systems."
+          },
+          {
+            "label": "Access Tokens",
+            "description": "Authentication tokens, session tokens, OAuth tokens from compromised systems."
+          },
+          {
+            "label": "Credit Cards",
+            "description": "Payment card numbers (PAN), card brand, expiry. Last 4 digits only, CVV never exposed."
+          },
+          {
+            "label": "User PII",
+            "description": "SSNs, phone numbers, addresses, full names. Masked by default (***-**-1234), audit logged."
+          },
+          {
+            "label": "Bank Accounts",
+            "description": "Account credentials, financial account totals. Account numbers masked, financial exposure calculated."
+          },
+          {
+            "label": "Malware",
+            "description": "Infected system data, screenshots, IOCs, stealer logs. Forensic evidence with secure viewing."
+          },
+          {
+            "label": "Fraudulent Checks",
+            "description": "Stolen check images with OCR extraction. Visual review with PII warnings."
+          }
+        ]
+      }
+    },
+    {
+      "title": "Section",
+      "layout": "LY-04",
+      "bg": "BG-03",
+      "content": {
+        "number": "03",
+        "sectionTitle": "Demo",
+        "subtitle": "A look at some real life data on our platform"
+      }
+    },
+    {
+      "title": "Demo",
+      "layout": "LY-22",
+      "bg": "BG-05",
+      "content": {
+        "title": "Demo",
+        "subtitle": "Let’s check out some data we have on the DarkArmor platform",
+        "items": [
+          {
+            "url": "askaribank.com.pk",
+            "severity": "medium"
+          },
+          {
+            "url": "abl.com",
+            "severity": "medium"
+          },
+          {
+            "url": "bankalfalah.com",
+            "severity": "medium"
+          },
+          {
+            "url": "bankalhabib.com",
+            "severity": "medium"
+          },
+          {
+            "url": "bop.com.pk",
+            "severity": "high"
+          },
+          {
+            "url": "bok.com.pk",
+            "severity": "medium"
+          },
+          {
+            "url": "faysalbank.com",
+            "severity": "medium"
+          },
+          {
+            "url": "mcb.com.pk",
+            "severity": "medium"
+          },
+          {
+            "url": "meezanbank.com",
+            "severity": "high"
+          },
+          {
+            "url": "easypaisa.com.pk",
+            "severity": "medium"
+          },
+          {
+            "url": "jazzcash.com.pk",
+            "severity": "medium"
+          },
+          {
+            "url": "mashreq.com",
+            "severity": "medium"
+          },
+          {
+            "url": "alahli.com",
+            "severity": "medium"
+          },
+          {
+            "url": "emiratesnbd.com",
+            "severity": "medium"
+          },
+          {
+            "url": "adcb.com",
+            "severity": "medium"
+          },
+          {
+            "url": "alrajhibank.com.sa",
+            "severity": "high"
+          },
+          {
+            "url": "alinma.com",
+            "severity": "high"
+          },
+          {
+            "url": "riyadbank.com",
+            "severity": "high"
+          },
+          {
+            "url": "bankalbilad.com",
+            "severity": "high"
+          },
+          {
+            "url": "anb.com.sa",
+            "severity": "medium"
+          },
+          {
+            "url": "alfransi.com.sa",
+            "severity": "high"
+          },
+          {
+            "url": "saib.com.sa",
+            "severity": "medium"
+          },
+          {
+            "url": "qnb.com",
+            "severity": "high"
+          },
+          {
+            "url": "qib.com.qa",
+            "severity": "medium"
+          },
+          {
+            "url": "nbk.com",
+            "severity": "medium"
+          },
+          {
+            "url": "nbbonline.com",
+            "severity": "medium"
+          },
+          {
+            "url": "sngpl.com.pk",
+            "severity": "medium"
+          },
+          {
+            "url": "zong.com.pk",
+            "severity": "medium"
+          },
+          {
+            "url": "nayatel.com",
+            "severity": "medium"
+          },
+          {
+            "url": "ke.com.pk",
+            "severity": "high"
+          },
+          {
+            "url": "ufone.com",
+            "severity": "high"
+          },
+          {
+            "url": "stormfiber.com",
+            "severity": "high"
+          },
+          {
+            "url": "ptcl.com.pk",
+            "severity": "high"
+          }
+        ]
+      }
+    }
+  ],
+  "recoveredFrom": "localStorage:v20"
+}

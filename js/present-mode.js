@@ -3,7 +3,7 @@
  * Open with ?present=1 after saving slides to localStorage.
  */
 
-import { refreshImageTitleLayouts, refreshFlowFunnels } from "./layouts.js?v=71";
+import { refreshImageTitleLayouts, refreshFlowFunnels } from "./layouts.js?v=74";
 
 const AUTH_KEY = "ca-brandkit-auth-v3";
 
@@ -13,10 +13,10 @@ export function isPresentMode() {
 
 /**
  * Save auth into a new tab, then navigate to present URL.
- * @param {{ save?: () => void, onBlocked?: () => void }} [opts]
+ * @param {{ save?: () => void | Promise<void>, onBlocked?: () => void }} [opts]
  */
-export function openPresentTab(opts = {}) {
-  opts.save?.();
+export async function openPresentTab(opts = {}) {
+  await opts.save?.();
 
   const url = new URL(location.href);
   url.search = "";
@@ -151,6 +151,14 @@ export function startPresentMode({
   root.addEventListener("click", (event) => {
     ensureFullscreen();
     if (event.target.closest(".present-deck__chrome")) return;
+    // Let in-slide controls work (focus chips, blur reveal, links, etc.)
+    if (
+      event.target.closest(
+        "[data-focus-item], [data-blur-toggle], .focus-chip, .demo-url-item, a, input, textarea, select, label",
+      )
+    ) {
+      return;
+    }
     const mid = stage.getBoundingClientRect().left + stage.getBoundingClientRect().width / 2;
     if (event.clientX >= mid) {
       if (index < slides.length - 1) show(index + 1);
@@ -170,6 +178,13 @@ export function startPresentMode({
       event.preventDefault();
       triedFs = true;
       toggleFullscreen();
+      return;
+    }
+    // Don't steal Space/Enter from focus chips or blur toggles
+    const interactive = event.target.closest?.(
+      "[data-focus-item], [data-blur-toggle], button, a, input, textarea, select",
+    );
+    if (interactive && (event.key === " " || event.key === "Enter")) {
       return;
     }
     if (event.key === "ArrowRight" || event.key === " " || event.key === "PageDown") {
