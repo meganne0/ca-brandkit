@@ -72,14 +72,39 @@ export function slidesToSourceHtml(slides) {
 
 export function injectSlideSource(html, slides) {
   const inner = slidesToSourceHtml(slides);
-  const replaced = html.replace(
-    /(<div\s+id="slide-source"[^>]*>)([\s\S]*?)(<\/div>)/i,
-    `$1\n${inner}\n      $3`,
-  );
-  if (replaced === html) {
+  const marker = 'id="slide-source"';
+  const idx = html.search(/id=["']slide-source["']/i);
+  if (idx < 0) {
     throw new Error("Could not find #slide-source in draft HTML");
   }
-  return replaced;
+  const openTagStart = html.lastIndexOf("<div", idx);
+  const openTagEnd = html.indexOf(">", idx) + 1;
+  if (openTagStart < 0 || openTagEnd <= 0) {
+    throw new Error("Could not parse #slide-source opening tag");
+  }
+  let i = openTagEnd;
+  let depth = 1;
+  let closeStart = -1;
+  while (i < html.length && depth > 0) {
+    const nextOpen = html.indexOf("<div", i);
+    const nextClose = html.indexOf("</div>", i);
+    if (nextClose < 0) break;
+    if (nextOpen !== -1 && nextOpen < nextClose) {
+      depth += 1;
+      i = nextOpen + 4;
+    } else {
+      depth -= 1;
+      if (depth === 0) {
+        closeStart = nextClose;
+        break;
+      }
+      i = nextClose + 6;
+    }
+  }
+  if (closeStart < 0) {
+    throw new Error("Could not find #slide-source closing tag");
+  }
+  return `${html.slice(0, openTagEnd)}\n${inner}\n      ${html.slice(closeStart)}`;
 }
 
 function downloadText(filename, text, type = "application/json") {
