@@ -1,5 +1,5 @@
 {
-  "savedAt": "2026-09-23T22:21:13.127Z",
+  "savedAt": "2026-09-23T22:38:03.085Z",
   "slides": [
     {
       "title": "Cover",
@@ -16,7 +16,7 @@
       "layout": "LY-02",
       "bg": "BG-08",
       "content": {
-        "sectionTitle": "Team",
+        "sectionTitle": "",
         "title": "Who We Are",
         "subtitle": "The people behind CyberArmor.",
         "people": [
@@ -35,7 +35,8 @@
             "role": "CXO",
             "avatar": "/visual%20assets/avatars/avatar-meganne-circle.png"
           }
-        ]
+        ],
+        "number": ""
       }
     },
     {
@@ -55,7 +56,7 @@
           {
             "number": "02",
             "title": "Common Questions",
-            "description": "Comparisons, credential impact, malware, pricing"
+            "description": "How it works, differentiators, pricing structure"
           },
           {
             "number": "03",
@@ -228,15 +229,7 @@
       "content": {
         "number": "02",
         "sectionTitle": "Common Questions",
-        "subtitle": "Comparisons, credential impact, malware, pricing structure"
-      }
-    },
-    {
-      "title": "Why Credential Theft?",
-      "layout": "LY-13",
-      "bg": "BG-02",
-      "content": {
-        "question": "Why Credential Theft?"
+        "subtitle": "How it works, differentiators, pricing structure"
       }
     },
     {
@@ -255,6 +248,14 @@
       "bg": "BG-06",
       "content": {
         "question": "How does this differ from other tools?"
+      }
+    },
+    {
+      "title": "Why Credential Theft?",
+      "layout": "LY-13",
+      "bg": "BG-02",
+      "content": {
+        "question": "Why Credential Theft?"
       }
     },
     {
