@@ -1,5 +1,5 @@
 {
-  "savedAt": "2026-09-23T22:38:03.085Z",
+  "savedAt": "2026-09-23T22:45:56.309Z",
   "slides": [
     {
       "title": "Cover",
@@ -315,6 +315,34 @@
         "number": "",
         "sectionTitle": "",
         "question": "How is pricing structured?"
+      }
+    },
+    {
+      "title": "Three steps",
+      "layout": "LY-09",
+      "bg": "BG-09",
+      "content": {
+        "number": "",
+        "sectionTitle": "",
+        "title": "",
+        "subtitle": "",
+        "steps": [
+          {
+            "title": "Domains",
+            "icon": "ph-eye",
+            "description": "The number of domains involved"
+          },
+          {
+            "title": "Identities",
+            "icon": "ph-graph",
+            "description": "Emails, usernames, etc"
+          },
+          {
+            "title": "Features",
+            "icon": "ph-shield-check",
+            "description": "Monitoring vs full hunt and investigation"
+          }
+        ]
       }
     },
     {
