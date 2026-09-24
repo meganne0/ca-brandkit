@@ -316,6 +316,19 @@
         }
       }
 
+      // ?reset=1 clears every prebreach draft key so published JSON can load.
+      if (new URLSearchParams(location.search).has("reset")) {
+        purgeLegacyDraftKeys();
+        try {
+          localStorage.removeItem(STORAGE_KEY);
+        } catch {
+          /* ignore */
+        }
+        const clean = new URL(location.href);
+        clean.searchParams.delete("reset");
+        history.replaceState(null, "", clean.pathname + clean.search + clean.hash);
+      }
+
       const board = document.getElementById("board");
       const source = document.getElementById("slide-source");
       const label = document.getElementById("slide-label");
