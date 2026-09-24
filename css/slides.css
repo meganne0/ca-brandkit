@@ -120,9 +120,9 @@ body.is-presenting .slide-lightbox {
 
 .present-deck__stage {
   position: relative;
-  width: min(100vw - 48px, calc((100vh - 72px) * 16 / 9));
+  width: min(100vw - 32px, calc((100vh - 56px) * 16 / 9));
   aspect-ratio: 16 / 9;
-  max-height: calc(100vh - 72px);
+  max-height: calc(100vh - 56px);
   margin: auto;
   overflow: hidden;
   border-radius: 4px;
@@ -133,6 +133,38 @@ body.is-presenting .slide-lightbox {
 
 .present-deck__stage:hover {
   cursor: default;
+}
+
+/* Ensure slide controls stay clickable in present (blur, phases, chips, links) */
+.present-deck__stage .slide,
+.present-deck__stage .slide-content {
+  pointer-events: auto;
+}
+
+.present-deck__stage :is(
+  [data-blur-toggle],
+  [data-focus-item],
+  [role="button"],
+  .flow-phase,
+  .focus-chip,
+  .demo-url-item,
+  .bullet-list__item,
+  a.metric-card__source,
+  button,
+  a
+) {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.present-deck:fullscreen .present-deck__stage,
+.present-deck:-webkit-full-screen .present-deck__stage,
+body.is-presenting:fullscreen .present-deck__stage,
+body.is-presenting:-webkit-full-screen .present-deck__stage {
+  width: min(100vw - 16px, calc((100vh - 40px) * 16 / 9));
+  max-height: calc(100vh - 40px);
+  border-radius: 0;
+  box-shadow: none;
 }
 
 .present-deck__chrome {
@@ -157,13 +189,17 @@ body.is-presenting .slide-lightbox {
 }
 
 body.is-presenting:fullscreen .present-deck__chrome,
-body.is-presenting:-webkit-full-screen .present-deck__chrome {
+body.is-presenting:-webkit-full-screen .present-deck__chrome,
+.present-deck:fullscreen .present-deck__chrome,
+.present-deck:-webkit-full-screen .present-deck__chrome {
   opacity: 0;
   transition: opacity 0.35s ease;
 }
 
 body.is-presenting:fullscreen .present-deck:hover .present-deck__chrome,
-body.is-presenting:-webkit-full-screen .present-deck:hover .present-deck__chrome {
+body.is-presenting:-webkit-full-screen .present-deck:hover .present-deck__chrome,
+.present-deck:fullscreen:hover .present-deck__chrome,
+.present-deck:-webkit-full-screen:hover .present-deck__chrome {
   opacity: 1;
 }
 

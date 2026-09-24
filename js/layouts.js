@@ -1469,8 +1469,10 @@ export function initSlideLayouts(root = document) {
 /** Click-to-focus for LY-21 / LY-22 (works on board tiles and lightbox clones). */
 let focusInteractionsBound = false;
 export function ensureFocusInteractions() {
-  if (focusInteractionsBound) return;
+  // Guard across duplicate module instances (different ?v= query strings).
+  if (focusInteractionsBound || globalThis.__caFocusInteractionsBound) return;
   focusInteractionsBound = true;
+  globalThis.__caFocusInteractionsBound = true;
 
   document.addEventListener("click", (event) => {
     const blurItem = event.target.closest("[data-blur-toggle]");
@@ -1524,8 +1526,9 @@ ensureFocusInteractions();
 /** Overview LY-24: exclusive phase stroke toggle (one phase at a time). */
 let flowOrbitInteractionsBound = false;
 export function ensureFlowOrbitInteractions() {
-  if (flowOrbitInteractionsBound) return;
+  if (flowOrbitInteractionsBound || globalThis.__caFlowOrbitInteractionsBound) return;
   flowOrbitInteractionsBound = true;
+  globalThis.__caFlowOrbitInteractionsBound = true;
 
   const PHASE_SEL =
     ".flow-orbit:not(.flow-orbit--focus) .flow-phase--prep, .flow-orbit:not(.flow-orbit--focus) .flow-phase--collection, .flow-orbit:not(.flow-orbit--focus) .flow-phase--breach, .flow-orbit:not(.flow-orbit--focus) .flow-phase--post-breach";

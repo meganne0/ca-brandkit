@@ -1,9 +1,10 @@
 /**
- * Full-tab presentation mode for draft decks.
- * Open with ?present=1 after saving slides to localStorage.
+ * Fullscreen presentation mode for draft decks.
+ * Same-page overlay with ← → / Space navigation (like preview, larger).
+ * Also supports ?present=1 for a dedicated present URL.
  */
 
-import { refreshImageTitleLayouts, refreshFlowFunnels } from "./layouts.js?v=74";
+import { refreshImageTitleLayouts, refreshFlowFunnels } from "./layouts.js?v=75";
 
 const AUTH_KEY = "ca-brandkit-auth-v3";
 
@@ -12,17 +13,16 @@ export function isPresentMode() {
 }
 
 /**
- * Save auth into a new tab, then navigate to present URL.
- * @param {{ save?: () => void | Promise<void>, onBlocked?: () => void }} [opts]
+ * Open present URL in a new tab (no disk save / download).
+ * Prefer startPresentMode() in-page for Present button.
+ * @param {{ onBlocked?: () => void }} [opts]
  */
-export async function openPresentTab(opts = {}) {
-  await opts.save?.();
-
+export function openPresentTab(opts = {}) {
   const url = new URL(location.href);
   url.search = "";
   url.searchParams.set("present", "1");
 
-  const win = window.open("about:blank", "_blank");
+  const win = window.open(url.toString(), "_blank");
   if (!win) {
     opts.onBlocked?.();
     return null;
@@ -35,7 +35,6 @@ export async function openPresentTab(opts = {}) {
     /* ignore */
   }
 
-  win.location.href = url.toString();
   return win;
 }
 
@@ -46,6 +45,9 @@ export async function openPresentTab(opts = {}) {
  * @param {(slide: HTMLElement, stage: HTMLElement) => void} opts.fitSlide
  * @param {(slide: HTMLElement) => void} [opts.playSlideReveal]
  * @param {number} [opts.startIndex]
+ * @param {boolean} [opts.enterFullscreen]
+ * @param {() => void} [opts.onExit]
+ * @returns {() => void} dispose / exit
  */
 export function startPresentMode({
   slides,
@@ -53,6 +55,8 @@ export function startPresentMode({
   fitSlide,
   playSlideReveal,
   startIndex = 0,
+  enterFullscreen = false,
+  onExit,
 }) {
   document.body.classList.add("is-presenting");
 
@@ -71,6 +75,7 @@ export function startPresentMode({
   const labelEl = root.querySelector("#present-label");
   let index = Math.max(0, Math.min(slides.length - 1, startIndex));
   let live = null;
+  let disposed = false;
 
   function refreshExtras(slide) {
     refreshImageTitleLayouts(slide);
@@ -109,66 +114,101 @@ export function startPresentMode({
     }
   }
 
-  function exitPresent() {
-    if (document.fullscreenElement) {
-      document.exitFullscreen?.().catch(() => {});
-    }
-    if (window.opener && !window.opener.closed) {
-      window.close();
-      return;
-    }
-    const url = new URL(location.href);
-    url.searchParams.delete("present");
-    location.href = url.toString();
-  }
-
   async function toggleFullscreen() {
     try {
       if (document.fullscreenElement) {
         await document.exitFullscreen();
       } else {
-        await document.documentElement.requestFullscreen();
+        await (root.requestFullscreen?.() || document.documentElement.requestFullscreen());
       }
     } catch {
-      /* browser may require gesture / block FS */
+      /* browser may block FS */
     }
+  }
+
+  function exitPresent() {
+    if (disposed) return;
+    disposed = true;
+
+    window.removeEventListener("resize", onResize);
+    window.removeEventListener("keydown", onKeydown);
+    root.removeEventListener("click", onClick);
+    fitObserver?.disconnect();
+
+    if (document.fullscreenElement) {
+      document.exitFullscreen?.().catch(() => {});
+    }
+
+    root.remove();
+    document.body.classList.remove("is-presenting");
+
+    if (isPresentMode()) {
+      if (window.opener && !window.opener.closed) {
+        window.close();
+        return;
+      }
+      const url = new URL(location.href);
+      url.searchParams.delete("present");
+      location.href = url.toString();
+      return;
+    }
+
+    onExit?.();
   }
 
   show(index);
   requestAnimationFrame(() => fitCurrent());
 
-  let triedFs = false;
-  const ensureFullscreen = () => {
-    if (triedFs || document.fullscreenElement) return;
-    triedFs = true;
+  if (enterFullscreen) {
     toggleFullscreen();
-  };
+  }
 
   const onResize = () => fitCurrent();
   window.addEventListener("resize", onResize);
-  new ResizeObserver(onResize).observe(stage);
+  const fitObserver = new ResizeObserver(onResize);
+  fitObserver.observe(stage);
 
-  root.addEventListener("click", (event) => {
-    ensureFullscreen();
+  const INTERACTIVE_SEL = [
+    "a",
+    "button",
+    "input",
+    "textarea",
+    "select",
+    "label",
+    "[role='button']",
+    "[data-focus-item]",
+    "[data-blur-toggle]",
+    "[data-flow-phase]",
+    ".focus-chip",
+    ".demo-url-item",
+    ".flow-phase",
+    ".flow-dot",
+    ".flow-node",
+    ".flow-step",
+    ".bullet-list__item",
+    ".metric-card__source",
+    ".layout-image-title__chip",
+  ].join(", ");
+
+  function isInteractiveTarget(target) {
+    return Boolean(target?.closest?.(INTERACTIVE_SEL));
+  }
+
+  const onClick = (event) => {
     if (event.target.closest(".present-deck__chrome")) return;
-    // Let in-slide controls work (focus chips, blur reveal, links, etc.)
-    if (
-      event.target.closest(
-        "[data-focus-item], [data-blur-toggle], .focus-chip, .demo-url-item, a, input, textarea, select, label",
-      )
-    ) {
-      return;
-    }
+    // Keep slide interactions (blur reveal, phases, focus chips, links, etc.)
+    if (isInteractiveTarget(event.target)) return;
+
     const mid = stage.getBoundingClientRect().left + stage.getBoundingClientRect().width / 2;
     if (event.clientX >= mid) {
       if (index < slides.length - 1) show(index + 1);
     } else if (index > 0) {
       show(index - 1);
     }
-  });
+  };
+  root.addEventListener("click", onClick);
 
-  window.addEventListener("keydown", (event) => {
-    ensureFullscreen();
+  const onKeydown = (event) => {
     if (event.key === "Escape") {
       event.preventDefault();
       exitPresent();
@@ -176,15 +216,14 @@ export function startPresentMode({
     }
     if (event.key === "f" || event.key === "F") {
       event.preventDefault();
-      triedFs = true;
       toggleFullscreen();
       return;
     }
-    // Don't steal Space/Enter from focus chips or blur toggles
-    const interactive = event.target.closest?.(
-      "[data-focus-item], [data-blur-toggle], button, a, input, textarea, select",
-    );
-    if (interactive && (event.key === " " || event.key === "Enter")) {
+    // Don't steal Space/Enter from in-slide controls
+    if (
+      isInteractiveTarget(event.target) &&
+      (event.key === " " || event.key === "Enter")
+    ) {
       return;
     }
     if (event.key === "ArrowRight" || event.key === " " || event.key === "PageDown") {
@@ -196,5 +235,8 @@ export function startPresentMode({
       event.preventDefault();
       if (index > 0) show(index - 1);
     }
-  });
+  };
+  window.addEventListener("keydown", onKeydown);
+
+  return exitPresent;
 }

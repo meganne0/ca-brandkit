@@ -14,7 +14,7 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/light/style.css"
     />
-    <link rel="stylesheet" href="../css/slides.css?v=68" />
+    <link rel="stylesheet" href="../css/slides.css?v=70" />
     <script src="../js/auth-gate.js?v=6"></script>
   </head>
   <body>
@@ -34,7 +34,7 @@
           <button type="button" class="deck-toolbar__btn" id="btn-edit" data-mode="edit">
             Edit
           </button>
-          <button type="button" class="deck-toolbar__btn deck-toolbar__btn--present" id="btn-present">
+          <button type="button" class="deck-toolbar__btn deck-toolbar__btn--present" id="btn-present" title="Fullscreen presentation · ← → to navigate · Esc to exit">
             Present
           </button>
         </div>
@@ -280,18 +280,17 @@
     </div>
 
     <script type="module">
-      import { initEditableSlideBoard } from "../js/components/slide-board.js?v=31";
+      import { initEditableSlideBoard } from "../js/components/slide-board.js?v=32";
       import {
         refreshImageTitleLayouts,
         refreshFlowFunnels,
-      } from "../js/layouts.js?v=74";
+      } from "../js/layouts.js?v=75";
       import { enableInlineEditing } from "../js/slide-inline-edit.js?v=2";
       import { mountSlideContentForm } from "../js/slide-content-form.js?v=10";
       import {
         isPresentMode,
-        openPresentTab,
         startPresentMode,
-      } from "../js/present-mode.js?v=4";
+      } from "../js/present-mode.js?v=7";
       import {
         fetchDraftJson,
         persistDraftHtml,
@@ -467,6 +466,7 @@
           paintSlide: boardApi.paintSlide,
           fitSlide: boardApi.fitSlide,
           playSlideReveal: boardApi.playSlideReveal,
+          enterFullscreen: true,
         });
       }
 
@@ -667,13 +667,27 @@
         }
       }
 
+      let exitPresentMode = null;
+
       btnSave.addEventListener("click", saveDraft);
       btnPreview.addEventListener("click", () => setMode("preview"));
       btnEdit.addEventListener("click", () => setMode("edit"));
       btnPresent.addEventListener("click", () => {
-        openPresentTab({
-          save: saveDraft,
-          onBlocked: () => flashStatus("Allow pop-ups to present"),
+        // Same-page fullscreen deck — do not run Save/disk sync (avoids HTML downloads).
+        persistLocal();
+        lightbox.hidden = true;
+        document.body.classList.remove("slide-lightbox-open");
+        exitPresentMode?.();
+        exitPresentMode = startPresentMode({
+          slides,
+          paintSlide: boardApi.paintSlide,
+          fitSlide: boardApi.fitSlide,
+          playSlideReveal: boardApi.playSlideReveal,
+          startIndex: index,
+          enterFullscreen: true,
+          onExit: () => {
+            exitPresentMode = null;
+          },
         });
       });
 
