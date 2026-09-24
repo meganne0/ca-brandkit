@@ -1,6 +1,6 @@
 {
-  "savedAt": "2026-09-24T18:12:00.000Z",
-  "publishId": "prebreach-18-20260924c",
+  "savedAt": "2026-09-24T18:28:25.410Z",
+  "publishId": "prebreach-1790274505410",
   "slides": [
     {
       "title": "Cover",
@@ -86,7 +86,7 @@
         "sectionTitle": "",
         "title": "In the beginning...",
         "blurBullets": true,
-        "text": "Nguyen was a malware researcher who questioned why action was only taken after a breach.",
+        "text": "Nguyen is a malware researcher who questioned why action was only taken after a breach.",
         "bullets": [
           "Breach data was often old",
           "Clean up is expensive",
