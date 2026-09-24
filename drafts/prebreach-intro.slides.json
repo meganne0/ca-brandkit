@@ -1,5 +1,5 @@
 {
-  "savedAt": "2026-09-24T17:01:09.335Z",
+  "savedAt": "2026-09-24T18:02:53.501Z",
   "slides": [
     {
       "title": "Cover",
@@ -251,63 +251,6 @@
       }
     },
     {
-      "title": "Why Credential Theft?",
-      "layout": "LY-13",
-      "bg": "BG-02",
-      "content": {
-        "question": "Why Credential Theft?"
-      }
-    },
-    {
-      "title": "Fraud / extortion",
-      "layout": "LY-13",
-      "bg": "BG-07",
-      "content": {
-        "question": "Does this prevent fraud / extortion?"
-      }
-    },
-    {
-      "title": "Economic Context",
-      "layout": "LY-12",
-      "bg": "BG-04",
-      "content": {
-        "title": "",
-        "subtitle": "",
-        "metrics": [
-          {
-            "value": "30%",
-            "text": "of attacks involved abuse of user identities as the initial entry point",
-            "source": "IBM",
-            "sourceUrl": "https://www.ibm.com/think/x-force/x-force-threat-intelligence-index-2025-attackers-steal-sell-user-identities"
-          },
-          {
-            "value": "37%",
-            "text": "of organizations victim to ransomware had a\ncredential or infostealer event occur\n>95 days  prior",
-            "source": "Verizon",
-            "sourceUrl": "https://www.verizon.com/business/resources/T343/reports/2026-dbir-data-breach-investigations-report.pdf"
-          },
-          {
-            "value": "46%",
-            "text": "of compromised systems containing corporate logins were non-managed devices",
-            "source": "Lansweeper",
-            "sourceUrl": "https://www.lansweeper.com/blog/cybersecurity/the-vulnerability-you-dont-know-you-have-unmanaged-assets-in-2026/"
-          }
-        ],
-        "number": "",
-        "sectionTitle": ""
-      }
-    },
-    {
-      "title": "Infostealer + Phish",
-      "layout": "LY-13",
-      "bg": "BG-03",
-      "content": {
-        "question": "What data is available?",
-        "number": "",
-        "sectionTitle": ""
-      }
-    },
-    {
       "title": "Single Line",
       "layout": "LY-13",
       "bg": "BG-02",
@@ -343,6 +286,16 @@
             "description": "Monitoring vs full hunt and investigation"
           }
         ]
+      }
+    },
+    {
+      "title": "Single Line",
+      "layout": "LY-13",
+      "bg": "BG-02",
+      "content": {
+        "number": "",
+        "sectionTitle": "",
+        "question": "Other questions?"
       }
     },
     {
@@ -496,6 +449,65 @@
             "severity": "high"
           }
         ]
+      }
+    },
+    {
+      "title": "Who We Are",
+      "layout": "LY-02",
+      "bg": "BG-08",
+      "content": {
+        "sectionTitle": "",
+        "title": "Thank you!",
+        "subtitle": "",
+        "people": [
+          {
+            "name": "Nguyen Nguyen",
+            "role": "CEO",
+            "avatar": "/visual%20assets/avatars/avatar-nguyen-circle.png"
+          },
+          {
+            "name": "Ali Alame",
+            "role": "CTO",
+            "avatar": "/visual%20assets/avatars/avatar-ali-circle.png"
+          },
+          {
+            "name": "Meganne Ohata",
+            "role": "CXO",
+            "avatar": "/visual%20assets/avatars/avatar-meganne-circle.png"
+          }
+        ],
+        "number": ""
+      }
+    },
+    {
+      "title": "Economic Context",
+      "layout": "LY-12",
+      "bg": "BG-04",
+      "content": {
+        "title": "",
+        "subtitle": "",
+        "metrics": [
+          {
+            "value": "30%",
+            "text": "of attacks involved abuse of user identities as the initial entry point",
+            "source": "IBM",
+            "sourceUrl": "https://www.ibm.com/think/x-force/x-force-threat-intelligence-index-2025-attackers-steal-sell-user-identities"
+          },
+          {
+            "value": "37%",
+            "text": "of organizations victim to ransomware had a\ncredential or infostealer event occur\n>95 days  prior",
+            "source": "Verizon",
+            "sourceUrl": "https://www.verizon.com/business/resources/T343/reports/2026-dbir-data-breach-investigations-report.pdf"
+          },
+          {
+            "value": "46%",
+            "text": "of compromised systems containing corporate logins were non-managed devices",
+            "source": "Lansweeper",
+            "sourceUrl": "https://www.lansweeper.com/blog/cybersecurity/the-vulnerability-you-dont-know-you-have-unmanaged-assets-in-2026/"
+          }
+        ],
+        "number": "",
+        "sectionTitle": ""
       }
     }
   ]
