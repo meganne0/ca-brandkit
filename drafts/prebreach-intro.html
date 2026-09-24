@@ -98,10 +98,10 @@
           <div class="slide-layers" aria-hidden="true"></div>
         </section>
 
-        <!-- 5. How it Started -->
+        <!-- 5. How It Started -->
         <section
           class="slide"
-          data-title="How it Started"
+          data-title="How It Started"
           data-layout="LY-08"
           data-bg="BG-09"
           data-content='{&quot;sectionTitle&quot;:&quot;&quot;,&quot;title&quot;:&quot;How It Started&quot;,&quot;blurBullets&quot;:true,&quot;text&quot;:&quot;Nguyen is a malware researcher with +15 years of experience in thousands of investigations.&quot;,&quot;bullets&quot;:[&quot;Why wait for a breach?&quot;,&quot;Breach data is often \&quot;too late\&quot;&quot;,&quot;Earlier remediation could make greater impact&quot;],&quot;subtitle&quot;:&quot;&quot;,&quot;number&quot;:&quot;&quot;}'
@@ -288,7 +288,7 @@
 
       const DRAFT_FILE_KEY = "prebreach-intro";
       // Bump when published deck must displace stale browser drafts.
-      const STORAGE_KEY = `ca-brandkit:draft:${DRAFT_FILE_KEY}:v18`;
+      const STORAGE_KEY = `ca-brandkit:draft:${DRAFT_FILE_KEY}:v19`;
       const SLIDES_JSON_URL = new URL(
         "./prebreach-intro.slides.json",
         location.href,
@@ -350,6 +350,7 @@
         const primary = parseDraftPayload(localStorage.getItem(STORAGE_KEY));
         const legacyKeys = [
           `ca-brandkit:draft:${DRAFT_FILE_KEY}`,
+          `ca-brandkit:draft:${DRAFT_FILE_KEY}:v18`,
           `ca-brandkit:draft:/drafts/${DRAFT_FILE_KEY}.html`,
         ];
         const candidates = [];
