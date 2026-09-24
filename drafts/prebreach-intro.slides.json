@@ -1,6 +1,5 @@
 {
-  "savedAt": "2026-09-24T18:28:25.410Z",
-  "publishId": "prebreach-1790274505410",
+  "savedAt": "2026-09-24T18:35:00.000Z",
   "slides": [
     {
       "title": "Cover",
@@ -84,12 +83,12 @@
       "bg": "BG-09",
       "content": {
         "sectionTitle": "",
-        "title": "In the beginning...",
+        "title": "How It Started",
         "blurBullets": true,
-        "text": "Nguyen is a malware researcher who questioned why action was only taken after a breach.",
+        "text": "Nguyen is a malware researcher with +15 years of experience in thousands of investigations.",
         "bullets": [
-          "Breach data was often old",
-          "Clean up is expensive",
+          "Why wait for a breach?",
+          "Breach data is often \"too late\"",
           "Earlier remediation could make greater impact"
         ],
         "subtitle": "",
@@ -511,5 +510,6 @@
         "sectionTitle": ""
       }
     }
-  ]
+  ],
+  "publishId": "prebreach-18-20260924d"
 }

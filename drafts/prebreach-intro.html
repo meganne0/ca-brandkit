@@ -104,7 +104,7 @@
           data-title="How it Started"
           data-layout="LY-08"
           data-bg="BG-09"
-          data-content='{&quot;sectionTitle&quot;:&quot;&quot;,&quot;title&quot;:&quot;In the beginning...&quot;,&quot;blurBullets&quot;:true,&quot;text&quot;:&quot;Nguyen is a malware researcher who questioned why action was only taken after a breach.&quot;,&quot;bullets&quot;:[&quot;Breach data was often old&quot;,&quot;Clean up is expensive&quot;,&quot;Earlier remediation could make greater impact&quot;],&quot;subtitle&quot;:&quot;&quot;,&quot;number&quot;:&quot;&quot;}'
+          data-content='{&quot;sectionTitle&quot;:&quot;&quot;,&quot;title&quot;:&quot;How It Started&quot;,&quot;blurBullets&quot;:true,&quot;text&quot;:&quot;Nguyen is a malware researcher with +15 years of experience in thousands of investigations.&quot;,&quot;bullets&quot;:[&quot;Why wait for a breach?&quot;,&quot;Breach data is often \&quot;too late\&quot;&quot;,&quot;Earlier remediation could make greater impact&quot;],&quot;subtitle&quot;:&quot;&quot;,&quot;number&quot;:&quot;&quot;}'
         >
           <div class="slide-layers" aria-hidden="true"></div>
         </section>
@@ -345,9 +345,41 @@
         }
       }
 
-      /** Load browser draft for this publish generation only (no legacy revive). */
+      /** Load browser draft; migrate unversioned / prior keys once if richer or newer. */
       function loadSaved() {
-        return parseDraftPayload(localStorage.getItem(STORAGE_KEY));
+        const primary = parseDraftPayload(localStorage.getItem(STORAGE_KEY));
+        const legacyKeys = [
+          `ca-brandkit:draft:${DRAFT_FILE_KEY}`,
+          `ca-brandkit:draft:/drafts/${DRAFT_FILE_KEY}.html`,
+        ];
+        const candidates = [];
+        if (primary?.slides?.length) candidates.push(primary);
+        for (const key of legacyKeys) {
+          const payload = parseDraftPayload(localStorage.getItem(key));
+          if (payload?.slides?.length) candidates.push(payload);
+        }
+        if (!candidates.length) return null;
+
+        candidates.sort((a, b) => {
+          const aAt = Date.parse(a.savedAt || 0) || 0;
+          const bAt = Date.parse(b.savedAt || 0) || 0;
+          if (bAt !== aAt) return bAt - aAt;
+          return (b.slides?.length || 0) - (a.slides?.length || 0);
+        });
+        const best = candidates[0];
+        try {
+          localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify({
+              savedAt: best.savedAt || new Date().toISOString(),
+              publishId: best.publishId || null,
+              slides: best.slides,
+            }),
+          );
+        } catch {
+          /* ignore */
+        }
+        return best;
       }
 
       function flashStatus(text, ms = 3200) {
@@ -403,9 +435,14 @@
         const remotePublish = remote?.publishId || null;
         const localPublish = local?.publishId || null;
 
-        // Published deck wins when its publishId is newer/different, or when
-        // remote is strictly newer — so a Vercel push isn't hidden by stale
-        // localStorage from an earlier visit.
+        // Prefer an actively newer local draft (in-progress edits). Otherwise
+        // published deck wins on publishId change or newer remote savedAt so
+        // Vercel viewers aren't stuck on stale browser drafts.
+        if (remoteCount && localCount && localAt > remoteAt) {
+          resolveInitialDefs._from = "local";
+          return local.slides;
+        }
+
         if (remoteCount) {
           const publishMismatch =
             Boolean(remotePublish) && remotePublish !== localPublish;
