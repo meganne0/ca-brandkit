@@ -225,7 +225,7 @@ export async function persistDraftJson({
 /** Load committed slides JSON (live site / fresh browsers). */
 export async function fetchDraftJson(url) {
   try {
-    const res = await fetch(url, { cache: "no-cache" });
+    const res = await fetch(url, { cache: "no-store" });
     if (!res.ok) return null;
     const data = await res.json();
     if (Array.isArray(data?.slides)) return data;

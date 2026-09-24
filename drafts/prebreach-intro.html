@@ -288,11 +288,33 @@
 
       const DRAFT_FILE_KEY = "prebreach-intro";
       // Bump when published deck must displace stale browser drafts.
-      const STORAGE_KEY = `ca-brandkit:draft:${DRAFT_FILE_KEY}:v19`;
+      const STORAGE_KEY = `ca-brandkit:draft:${DRAFT_FILE_KEY}:v20`;
       const SLIDES_JSON_URL = new URL(
         "./prebreach-intro.slides.json",
         location.href,
       ).href;
+
+      function purgeLegacyDraftKeys() {
+        const remove = [];
+        for (let i = 0; i < localStorage.length; i += 1) {
+          const key = localStorage.key(i);
+          if (!key || !key.startsWith("ca-brandkit:draft:")) continue;
+          if (key === STORAGE_KEY) continue;
+          if (
+            key.includes("prebreach-intro") ||
+            key.includes(`/drafts/${DRAFT_FILE_KEY}`)
+          ) {
+            remove.push(key);
+          }
+        }
+        for (const key of remove) {
+          try {
+            localStorage.removeItem(key);
+          } catch {
+            /* ignore */
+          }
+        }
+      }
 
       const board = document.getElementById("board");
       const source = document.getElementById("slide-source");
@@ -345,42 +367,9 @@
         }
       }
 
-      /** Load browser draft; migrate unversioned / prior keys once if richer or newer. */
+      /** Load browser draft for current storage key only. */
       function loadSaved() {
-        const primary = parseDraftPayload(localStorage.getItem(STORAGE_KEY));
-        const legacyKeys = [
-          `ca-brandkit:draft:${DRAFT_FILE_KEY}`,
-          `ca-brandkit:draft:${DRAFT_FILE_KEY}:v18`,
-          `ca-brandkit:draft:/drafts/${DRAFT_FILE_KEY}.html`,
-        ];
-        const candidates = [];
-        if (primary?.slides?.length) candidates.push(primary);
-        for (const key of legacyKeys) {
-          const payload = parseDraftPayload(localStorage.getItem(key));
-          if (payload?.slides?.length) candidates.push(payload);
-        }
-        if (!candidates.length) return null;
-
-        candidates.sort((a, b) => {
-          const aAt = Date.parse(a.savedAt || 0) || 0;
-          const bAt = Date.parse(b.savedAt || 0) || 0;
-          if (bAt !== aAt) return bAt - aAt;
-          return (b.slides?.length || 0) - (a.slides?.length || 0);
-        });
-        const best = candidates[0];
-        try {
-          localStorage.setItem(
-            STORAGE_KEY,
-            JSON.stringify({
-              savedAt: best.savedAt || new Date().toISOString(),
-              publishId: best.publishId || null,
-              slides: best.slides,
-            }),
-          );
-        } catch {
-          /* ignore */
-        }
-        return best;
+        return parseDraftPayload(localStorage.getItem(STORAGE_KEY));
       }
 
       function flashStatus(text, ms = 3200) {
@@ -410,6 +399,7 @@
       }
 
       function writeRemoteToLocal(remote) {
+        purgeLegacyDraftKeys();
         try {
           localStorage.setItem(
             STORAGE_KEY,
@@ -436,23 +426,25 @@
         const remotePublish = remote?.publishId || null;
         const localPublish = local?.publishId || null;
 
-        // Prefer an actively newer local draft (in-progress edits). Otherwise
-        // published deck wins on publishId change or newer remote savedAt so
-        // Vercel viewers aren't stuck on stale browser drafts.
+        // A new publishId always wins — even if localStorage was touched later
+        // with older slide copy (the previous localAt>remoteAt short-circuit
+        // kept "In the beginning..." stuck on Vercel).
+        if (remoteCount && remotePublish && remotePublish !== localPublish) {
+          writeRemoteToLocal(remote);
+          resolveInitialDefs._from = "published";
+          return remote.slides;
+        }
+
+        // Same publish generation: keep newer in-progress local edits.
         if (remoteCount && localCount && localAt > remoteAt) {
           resolveInitialDefs._from = "local";
           return local.slides;
         }
 
-        if (remoteCount) {
-          const publishMismatch =
-            Boolean(remotePublish) && remotePublish !== localPublish;
-          const remoteNewer = remoteAt > localAt;
-          if (!localCount || publishMismatch || remoteNewer) {
-            writeRemoteToLocal(remote);
-            resolveInitialDefs._from = "published";
-            return remote.slides;
-          }
+        if (remoteCount && (!localCount || remoteAt >= localAt)) {
+          writeRemoteToLocal(remote);
+          resolveInitialDefs._from = "published";
+          return remote.slides;
         }
 
         if (localCount) {
