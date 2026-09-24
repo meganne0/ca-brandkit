@@ -287,7 +287,8 @@
       } from "../js/draft-sync.js?v=2";
 
       const DRAFT_FILE_KEY = "prebreach-intro";
-      const STORAGE_KEY = `ca-brandkit:draft:${DRAFT_FILE_KEY}`;
+      // Bump when published deck must displace stale browser drafts.
+      const STORAGE_KEY = `ca-brandkit:draft:${DRAFT_FILE_KEY}:v18`;
       const SLIDES_JSON_URL = new URL(
         "./prebreach-intro.slides.json",
         location.href,
@@ -344,56 +345,9 @@
         }
       }
 
-      /** Load browser draft; migrate legacy pathname / :vN keys once. */
+      /** Load browser draft for this publish generation only (no legacy revive). */
       function loadSaved() {
-        const primary = parseDraftPayload(localStorage.getItem(STORAGE_KEY));
-        if (primary?.slides?.length) return primary;
-
-        const path = location.pathname;
-        const candidates = [];
-        const seen = new Set();
-        const consider = (key) => {
-          if (!key || seen.has(key) || key === STORAGE_KEY) return;
-          seen.add(key);
-          const payload = parseDraftPayload(localStorage.getItem(key));
-          if (payload) candidates.push({ key, payload });
-        };
-
-        for (let i = 0; i < localStorage.length; i += 1) {
-          const key = localStorage.key(i);
-          if (!key || !key.startsWith("ca-brandkit:draft:")) continue;
-          if (
-            key === `ca-brandkit:draft:${path}` ||
-            key.startsWith(`ca-brandkit:draft:${path}:`) ||
-            key.includes("prebreach-intro")
-          ) {
-            consider(key);
-          }
-        }
-
-        if (!candidates.length) return null;
-
-        candidates.sort((a, b) => {
-          const lenDiff = b.payload.slides.length - a.payload.slides.length;
-          if (lenDiff) return lenDiff;
-          const aAt = Date.parse(a.payload.savedAt || 0) || 0;
-          const bAt = Date.parse(b.payload.savedAt || 0) || 0;
-          return bAt - aAt;
-        });
-
-        const best = candidates[0].payload;
-        try {
-          localStorage.setItem(
-            STORAGE_KEY,
-            JSON.stringify({
-              ...best,
-              savedAt: best.savedAt || new Date().toISOString(),
-            }),
-          );
-        } catch {
-          /* ignore quota */
-        }
-        return best;
+        return parseDraftPayload(localStorage.getItem(STORAGE_KEY));
       }
 
       function flashStatus(text, ms = 3200) {
@@ -404,9 +358,14 @@
         }, ms);
       }
 
-      function persistLocal(slides = boardApi.serialize()) {
+      function persistLocal(slides = boardApi.serialize(), meta = {}) {
+        const prev = loadSaved();
         const payload = {
           savedAt: new Date().toISOString(),
+          publishId:
+            meta.publishId ||
+            prev?.publishId ||
+            `local-${Date.now()}`,
           slides,
         };
         try {
@@ -417,14 +376,53 @@
         return payload;
       }
 
+      function writeRemoteToLocal(remote) {
+        try {
+          localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify({
+              savedAt: remote.savedAt || new Date().toISOString(),
+              publishId: remote.publishId || null,
+              slides: remote.slides,
+            }),
+          );
+        } catch {
+          /* ignore */
+        }
+      }
+
       async function resolveInitialDefs() {
         const embedded = defsFromSource();
         const remote = await fetchDraftJson(SLIDES_JSON_URL);
         const local = loadSaved();
 
-        // After Save, browser draft must win on refresh — don't let disk JSON replace it.
-        if (local?.slides?.length) return local.slides;
-        if (remote?.slides?.length) return remote.slides;
+        const localCount = local?.slides?.length ?? 0;
+        const remoteCount = remote?.slides?.length ?? 0;
+        const localAt = Date.parse(local?.savedAt || 0) || 0;
+        const remoteAt = Date.parse(remote?.savedAt || 0) || 0;
+        const remotePublish = remote?.publishId || null;
+        const localPublish = local?.publishId || null;
+
+        // Published deck wins when its publishId is newer/different, or when
+        // remote is strictly newer — so a Vercel push isn't hidden by stale
+        // localStorage from an earlier visit.
+        if (remoteCount) {
+          const publishMismatch =
+            Boolean(remotePublish) && remotePublish !== localPublish;
+          const remoteNewer = remoteAt > localAt;
+          if (!localCount || publishMismatch || remoteNewer) {
+            writeRemoteToLocal(remote);
+            resolveInitialDefs._from = "published";
+            return remote.slides;
+          }
+        }
+
+        if (localCount) {
+          resolveInitialDefs._from = "local";
+          return local.slides;
+        }
+
+        resolveInitialDefs._from = "embedded";
         return embedded;
       }
 
@@ -445,8 +443,10 @@
       source.remove();
       boardApi.load(initialDefs);
 
-      if (loadSaved()?.slides?.length) {
+      if (resolveInitialDefs._from === "local") {
         flashStatus("Restored local draft", 2200);
+      } else if (resolveInitialDefs._from === "published") {
+        flashStatus("Loaded published draft", 2200);
       }
 
       if (isPresentMode()) {
@@ -462,7 +462,9 @@
       async function saveDraft() {
         if (saving) return;
         saving = true;
-        const payload = persistLocal();
+        const payload = persistLocal(boardApi.serialize(), {
+          publishId: `prebreach-${Date.now()}`,
+        });
         flashStatus("Saved — restores on refresh");
 
         try {
