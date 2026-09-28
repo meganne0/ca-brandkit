@@ -180,6 +180,14 @@ export const LAYOUTS = {
     footer: true,
     className: "layout-flow-orbit",
   },
+
+  "LY-25": {
+    label: "Campaign symbols",
+    description:
+      "Campaign symbols (dots in outlined circles) around center text, or wired into a hub. Footer.",
+    footer: true,
+    className: "layout-campaign",
+  },
 };
 
 function accentize(text, accent) {
@@ -1404,6 +1412,187 @@ function renderFlowOrbit(content) {
   return el;
 }
 
+/* ---- LY-25 Campaign symbols ---- */
+
+const CAMPAIGN_COLOR = "#A182FF";
+/** Matches the LY-24 Collection phase stroke (135deg orange → pink). */
+const CAMPAIGN_GRADIENT = ["#EC6B15", "#F72EBE"];
+/** LY-24 Deliver, Exploit, Install label colors. */
+const CAMPAIGN_DOT_COLORS = ["#9977FF", "#BF66FF", "#F17AFF"];
+let campaignGradientSeq = 0;
+// Content area above the footer (1080 - 128px footer padding).
+const CAMPAIGN_STAGE_W = 1920;
+const CAMPAIGN_STAGE_H = 952;
+const CAMPAIGN_DOT = 16;
+const CAMPAIGN_SPACING = 24;
+const CAMPAIGN_PAD = 12;
+const CAMPAIGN_BORDER = 4;
+const CAMPAIGN_HUB_SIZE = 300;
+const CAMPAIGN_MAX_DOTS = 40;
+
+/** Default symbols: count + center position in % of the stage. */
+const CAMPAIGN_SYMBOL_DEFAULTS = [
+  { count: 6, x: 13, y: 24 },
+  { count: 30, x: 34, y: 16 },
+  { count: 14, x: 74, y: 20 },
+  { count: 5, x: 90, y: 52 },
+  { count: 22, x: 18, y: 72 },
+  { count: 9, x: 63, y: 83 },
+];
+
+function campaignRingCapacity(ring) {
+  return Math.floor(Math.PI / Math.asin(1 / (2 * ring)));
+}
+
+/** Concentric-ring dot positions (relative to symbol center). */
+function campaignDotLayout(count) {
+  const n = Math.max(1, Math.min(CAMPAIGN_MAX_DOTS, Math.round(Number(count) || 1)));
+  if (n === 1) return { dots: [{ x: 0, y: 0 }], ringRadius: 0 };
+
+  const caps = [1];
+  const sum = (list) => list.reduce((a, b) => a + b, 0);
+  while (sum(caps) < n) caps.push(campaignRingCapacity(caps.length));
+
+  // Outer rings take their share first; at most one dot is left for the center.
+  const counts = new Array(caps.length).fill(0);
+  let remaining = n;
+  for (let ring = caps.length - 1; ring >= 1; ring -= 1) {
+    const capLeft = sum(caps.slice(0, ring + 1));
+    counts[ring] = Math.min(caps[ring], Math.ceil((remaining * caps[ring]) / capLeft));
+    remaining -= counts[ring];
+  }
+  counts[0] = remaining;
+
+  const dots = counts[0] ? [{ x: 0, y: 0 }] : [];
+  let prevRadius = counts[0] ? 0 : -Infinity;
+  let ringRadius = 0;
+  for (let ring = 1; ring < counts.length; ring += 1) {
+    const c = counts[ring];
+    if (!c) continue;
+    const chordRadius = c === 1 ? 0 : CAMPAIGN_SPACING / (2 * Math.sin(Math.PI / c));
+    const radius = Math.max(chordRadius, prevRadius + CAMPAIGN_SPACING);
+    const offset = ring * 0.7 - Math.PI / 2;
+    for (let j = 0; j < c; j += 1) {
+      const angle = offset + (j * 2 * Math.PI) / c;
+      dots.push({ x: radius * Math.cos(angle), y: radius * Math.sin(angle) });
+    }
+    prevRadius = radius;
+    ringRadius = radius;
+  }
+  return { dots, ringRadius };
+}
+
+/** Stable pseudo-random 0–1 so dot colors don't change between renders. */
+function campaignNoise(a, b) {
+  const s = Math.sin(a * 12.9898 + b * 78.233) * 43758.5453;
+  return s - Math.floor(s);
+}
+
+function campaignPercent(value, fallback) {
+  if (value === null || value === undefined || value === "") return fallback;
+  const num = Number(value);
+  return Number.isFinite(num) ? num : fallback;
+}
+
+function normalizeCampaignSymbols(content) {
+  const list =
+    Array.isArray(content.symbols) && content.symbols.length
+      ? content.symbols
+      : CAMPAIGN_SYMBOL_DEFAULTS;
+  return list.slice(0, CAMPAIGN_SYMBOL_DEFAULTS.length).map((symbol, index) => {
+    const fallback = CAMPAIGN_SYMBOL_DEFAULTS[index];
+    const raw = typeof symbol === "number" ? { count: symbol } : symbol ?? {};
+    const x = campaignPercent(raw.x, fallback.x);
+    const y = campaignPercent(raw.y, fallback.y);
+    const { dots, ringRadius } = campaignDotLayout(raw.count ?? fallback.count);
+    return {
+      cx: (x / 100) * CAMPAIGN_STAGE_W,
+      cy: (y / 100) * CAMPAIGN_STAGE_H,
+      radius: ringRadius + CAMPAIGN_DOT / 2 + CAMPAIGN_PAD + CAMPAIGN_BORDER,
+      dots,
+    };
+  });
+}
+
+function renderCampaign(content) {
+  const el = document.createElement("div");
+  el.className = "slide-content layout-campaign";
+  const color = content.color || CAMPAIGN_COLOR;
+  const hub = content.hub === true || content.hub === "true";
+  const text = content.text ?? "";
+  const hubLabel = content.hubLabel ?? "PreBreach Intelligence";
+  const symbols = normalizeCampaignSymbols(content);
+  const round = (n) => Math.round(n * 10) / 10;
+  const [gradFrom, gradTo] =
+    Array.isArray(content.gradient) && content.gradient.length === 2
+      ? content.gradient
+      : CAMPAIGN_GRADIENT;
+  const dotColors =
+    Array.isArray(content.dotColors) && content.dotColors.length
+      ? content.dotColors
+      : CAMPAIGN_DOT_COLORS;
+  // Unique per render: several copies of a slide (tiles, lightbox) share the page.
+  const gradientId = `campaign-grad-${(campaignGradientSeq += 1)}`;
+
+  const symbolsSvg = symbols
+    .map(
+      (symbol, symbolIndex) => `
+        <g class="campaign-symbol" transform="translate(${round(symbol.cx)} ${round(symbol.cy)})">
+          <circle class="campaign-symbol__ring" r="${round(symbol.radius - CAMPAIGN_BORDER / 2)}" stroke="url(#${gradientId})" stroke-width="${CAMPAIGN_BORDER}" />
+          ${symbol.dots
+            .map(
+              (dot, dotIndex) =>
+                `<circle class="campaign-symbol__dot" cx="${round(dot.x)}" cy="${round(dot.y)}" r="${CAMPAIGN_DOT / 2}" fill="${escapeHtml(dotColors[Math.floor(campaignNoise(symbolIndex + 1, dotIndex + 1) * dotColors.length)])}" />`,
+            )
+            .join("")}
+        </g>`,
+    )
+    .join("");
+
+  const hubX = CAMPAIGN_STAGE_W / 2;
+  const hubY = CAMPAIGN_STAGE_H / 2;
+  const hubR = CAMPAIGN_HUB_SIZE / 2;
+  const wiresSvg = hub
+    ? symbols
+        .map((symbol, index) => {
+          const dx = hubX - symbol.cx;
+          const dy = hubY - symbol.cy;
+          const dist = Math.hypot(dx, dy);
+          if (dist <= symbol.radius + hubR) return "";
+          const ux = dx / dist;
+          const uy = dy / dist;
+          const x1 = symbol.cx + ux * symbol.radius;
+          const y1 = symbol.cy + uy * symbol.radius;
+          const x2 = hubX - ux * hubR;
+          const y2 = hubY - uy * hubR;
+          return `<path class="campaign-wire" d="M ${round(x1)} ${round(y1)} L ${round(x2)} ${round(y2)}" pathLength="1" style="--wire-i:${index}" />`;
+        })
+        .join("")
+    : "";
+
+  el.innerHTML = `
+    <div class="campaign-stage${hub ? " campaign-stage--hub" : ""}" style="--campaign-color:${escapeHtml(color)}">
+      <svg class="campaign-stage__svg" viewBox="0 0 ${CAMPAIGN_STAGE_W} ${CAMPAIGN_STAGE_H}" width="${CAMPAIGN_STAGE_W}" height="${CAMPAIGN_STAGE_H}" aria-hidden="true">
+        <defs>
+          <linearGradient id="${gradientId}" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="${escapeHtml(gradFrom)}" />
+            <stop offset="1" stop-color="${escapeHtml(gradTo)}" />
+          </linearGradient>
+        </defs>
+        ${hub ? `<g class="campaign-wires">${wiresSvg}</g>` : ""}
+        <g class="campaign-symbols">${symbolsSvg}</g>
+      </svg>
+      ${
+        hub
+          ? `<div class="campaign-hub"><span class="campaign-hub__label">${escapeHtml(hubLabel)}</span></div>`
+          : text
+            ? `<div class="layout-campaign__center"><p class="type-h3 layout-campaign__text">${escapeHtml(text)}</p></div>`
+            : ""
+      }
+    </div>
+  `;
+  return el;
+}
 
 const RENDERERS = {
   "LY-01": renderCover,
@@ -1430,6 +1619,7 @@ const RENDERERS = {
   "LY-22": renderDemoUrls,
   "LY-23": renderFlowFunnel,
   "LY-24": renderFlowOrbit,
+  "LY-25": renderCampaign,
 };
 
 export function renderLayout(slide, layoutId, content = {}) {

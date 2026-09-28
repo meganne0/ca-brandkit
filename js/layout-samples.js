@@ -493,4 +493,20 @@ export const LAYOUT_SAMPLES = {
             impactColor: "#FF2828",
           },
         },
+        "LY-25": {
+          bg: "BG-02",
+          content: {
+            text: "Data is collected from active malware and phish campaigns.",
+            hub: false,
+            hubLabel: "PreBreach Intelligence",
+            symbols: [
+              { count: 6, x: 13, y: 24 },
+              { count: 30, x: 34, y: 16 },
+              { count: 14, x: 74, y: 20 },
+              { count: 5, x: 90, y: 52 },
+              { count: 22, x: 18, y: 72 },
+              { count: 9, x: 63, y: 83 },
+            ],
+          },
+        },
       };

@@ -1,5 +1,6 @@
 {
-  "savedAt": "2026-09-24T19:04:20.533Z",
+  "savedAt": "2026-09-28T02:01:22.226Z",
+  "publishId": "prebreach-23-20260927a",
   "slides": [
     {
       "title": "Cover",
@@ -223,6 +224,132 @@
       }
     },
     {
+      "title": "Campaign symbols",
+      "layout": "LY-25",
+      "bg": "BG-02",
+      "content": {
+        "text": "Data is collected from active malware and phish campaigns.",
+        "hub": false,
+        "hubLabel": "PreBreach Intelligence",
+        "symbols": [
+          {
+            "count": 6,
+            "x": 13,
+            "y": 24
+          },
+          {
+            "count": 30,
+            "x": 34,
+            "y": 16
+          },
+          {
+            "count": 14,
+            "x": 74,
+            "y": 20
+          },
+          {
+            "count": 5,
+            "x": 90,
+            "y": 52
+          },
+          {
+            "count": 22,
+            "x": 18,
+            "y": 72
+          },
+          {
+            "count": 9,
+            "x": 63,
+            "y": 83
+          }
+        ]
+      }
+    },
+    {
+      "title": "Campaign symbols",
+      "layout": "LY-25",
+      "bg": "BG-02",
+      "content": {
+        "text": "This data makes up our PreBreach Intelligence database.",
+        "hub": false,
+        "hubLabel": "PreBreach Intelligence",
+        "symbols": [
+          {
+            "count": 6,
+            "x": 13,
+            "y": 24
+          },
+          {
+            "count": 30,
+            "x": 34,
+            "y": 16
+          },
+          {
+            "count": 14,
+            "x": 74,
+            "y": 20
+          },
+          {
+            "count": 5,
+            "x": 90,
+            "y": 52
+          },
+          {
+            "count": 22,
+            "x": 18,
+            "y": 72
+          },
+          {
+            "count": 9,
+            "x": 63,
+            "y": 83
+          }
+        ]
+      }
+    },
+    {
+      "title": "PreBreach Intelligence",
+      "layout": "LY-25",
+      "bg": "BG-02",
+      "content": {
+        "text": "",
+        "hub": true,
+        "hubLabel": "PreBreach Intelligence",
+        "symbols": [
+          {
+            "count": 6,
+            "x": 13,
+            "y": 24
+          },
+          {
+            "count": 30,
+            "x": 34,
+            "y": 16
+          },
+          {
+            "count": 14,
+            "x": 74,
+            "y": 20
+          },
+          {
+            "count": 5,
+            "x": 90,
+            "y": 52
+          },
+          {
+            "count": 22,
+            "x": 18,
+            "y": 72
+          },
+          {
+            "count": 9,
+            "x": 63,
+            "y": 83
+          }
+        ]
+      }
+    },
+    {
       "title": "Section",
       "layout": "LY-04",
       "bg": "BG-03",
@@ -237,9 +364,34 @@
       "layout": "LY-13",
       "bg": "BG-03",
       "content": {
-        "question": "How do you get this data?",
+        "question": "What does your software do?",
         "number": "",
         "sectionTitle": ""
+      }
+    },
+    {
+      "title": "Metrics row",
+      "layout": "LY-12",
+      "bg": "BG-04",
+      "content": {
+        "number": "",
+        "sectionTitle": "",
+        "title": "",
+        "subtitle": "",
+        "metrics": [
+          {
+            "value": "Monitor",
+            "text": "Alert if your data is part of what's been collected",
+            "source": "",
+            "sourceUrl": ""
+          },
+          {
+            "value": "Investigate",
+            "text": "Of breaches involve compromised or stolen credentials",
+            "source": "",
+            "sourceUrl": ""
+          }
+        ]
       }
     },
     {
@@ -452,6 +604,15 @@
       }
     },
     {
+      "title": "Quote panel",
+      "layout": "LY-05",
+      "bg": "BG-02",
+      "content": {
+        "text": "While traditional tools focus on Dark Web monitoring, we focus on the Collection Phase, before data is sold on the dark web.",
+        "accent": "we focus on the Collection Phase, before data is sold on the dark web"
+      }
+    },
+    {
       "title": "Who We Are",
       "layout": "LY-02",
       "bg": "BG-08",
@@ -510,6 +671,5 @@
         "sectionTitle": ""
       }
     }
-  ],
-  "publishId": "prebreach-18-20260924f"
+  ]
 }

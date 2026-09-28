@@ -2920,3 +2920,111 @@ a.metric-card__source:hover {
   max-width: 720px;
   opacity: 0.7;
 }
+
+/* ---- LY-25 Campaign symbols ---- */
+
+/* Stage matches the 1920×952 SVG coordinate space used by the renderer. */
+.campaign-stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1920px;
+  height: 952px;
+}
+
+.campaign-stage__svg {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+}
+
+.campaign-symbol__ring {
+  fill: none;
+}
+
+.layout-campaign__center {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.layout-campaign__text {
+  max-width: 880px;
+  margin: 0;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.campaign-wire {
+  fill: none;
+  stroke: var(--campaign-color, #a182ff);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  opacity: 0.85;
+  animation: campaign-wire-draw 0.9s cubic-bezier(0.65, 0, 0.35, 1) forwards;
+  animation-delay: calc(0.35s + var(--wire-i, 0) * 0.12s);
+}
+
+.campaign-hub {
+  position: absolute;
+  left: calc(50% - 150px);
+  top: calc(50% - 150px);
+  width: 300px;
+  height: 300px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  border: 4px solid var(--campaign-color, #a182ff);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--campaign-color, #a182ff) 30%, transparent) 0%,
+    color-mix(in srgb, var(--campaign-color, #a182ff) 10%, transparent) 70%
+  );
+  box-shadow: 0 0 80px color-mix(in srgb, var(--campaign-color, #a182ff) 35%, transparent);
+  text-align: center;
+  animation: campaign-hub-in 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.campaign-hub__label {
+  font-family: var(--font-headline);
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--ca-white);
+  text-wrap: balance;
+}
+
+@keyframes campaign-wire-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes campaign-hub-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .campaign-wire {
+    animation: none;
+    stroke-dashoffset: 0;
+  }
+
+  .campaign-hub {
+    animation: none;
+  }
+}

@@ -85,6 +85,27 @@ function buildFormHtml(layout, content) {
     return bits.join("");
   }
 
+  if (layout === "LY-25") {
+    const hub = c.hub === true || c.hub === "true";
+    const counts = (Array.isArray(c.symbols) ? c.symbols : [])
+      .map((symbol) => (typeof symbol === "number" ? symbol : symbol?.count))
+      .filter((count) => count != null);
+    bits.push(field("text", "Center text", c.text ?? "", { type: "textarea", rows: 3 }));
+    bits.push(`
+      <label class="deck-form__field">
+        <span class="deck-form__label">Hub with lines</span>
+        <select class="deck-form__input" name="hub">
+          <option value="no" ${hub ? "" : "selected"}>No — show center text</option>
+          <option value="yes" ${hub ? "selected" : ""}>Yes — draw lines to hub</option>
+        </select>
+      </label>
+    `);
+    bits.push(field("hubLabel", "Hub label", c.hubLabel ?? "PreBreach Intelligence"));
+    bits.push(field("symbolCounts", "Circles per symbol (comma-separated)", counts.join(", ")));
+    bits.push(`<p class="deck-form__note">Up to 6 symbols, 1–40 circles each. Leave blank for the default set.</p>`);
+    return bits.join("");
+  }
+
   // Shared header fields for most layouts
   const needsCorner = ![
     "LY-01",
@@ -374,6 +395,24 @@ function readContentFromForm(form, layout, base = {}) {
     next.sectionTitle = val(form, "sectionTitle");
     next.question = val(form, "question");
     if (layout === "LY-14") next.subtitle = val(form, "subtitle");
+    return next;
+  }
+
+  if (layout === "LY-25") {
+    next.text = val(form, "text");
+    next.hub = val(form, "hub") === "yes";
+    next.hubLabel = val(form, "hubLabel");
+    const counts = val(form, "symbolCounts")
+      .split(",")
+      .map((part) => Math.round(Number(part.trim())))
+      .filter((count) => Number.isFinite(count) && count > 0)
+      .slice(0, 6);
+    const baseSymbols = Array.isArray(base.symbols) ? base.symbols : [];
+    next.symbols = counts.map((count, i) => {
+      const prev = baseSymbols[i];
+      const kept = prev && typeof prev === "object" ? prev : {};
+      return { ...kept, count: Math.min(count, 40) };
+    });
     return next;
   }
 

@@ -9,8 +9,8 @@ import {
   renderLayout,
   refreshImageTitleLayouts,
   refreshFlowFunnels,
-} from "../layouts.js?v=75";
-import { LAYOUT_SAMPLES } from "../layout-samples.js?v=13";
+} from "../layouts.js?v=79";
+import { LAYOUT_SAMPLES } from "../layout-samples.js?v=14";
 import { initImageLightbox } from "./lightbox.js?v=28";
 
 function refreshSlideExtras(root) {
@@ -46,6 +46,7 @@ const REVEAL_SELECTORS = [
   ".layout-timeline__intro > *",
   ".layout-timeline__closing",
   ".layout-question__main > *",
+  ".layout-campaign__text",
   ".layout-image-title__media",
   ".layout-image-title__title",
   ".layout-image-title__subtitle",
