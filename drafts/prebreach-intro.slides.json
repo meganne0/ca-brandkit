@@ -1,6 +1,6 @@
 {
-  "savedAt": "2026-09-28T02:01:22.226Z",
-  "publishId": "prebreach-23-20260927a",
+  "savedAt": "2026-09-28T02:06:53.398Z",
+  "publishId": "prebreach-23-20260927b",
   "slides": [
     {
       "title": "Cover",
@@ -221,6 +221,15 @@
         "sourceColor": "#1EADEC",
         "outcomeColor": "#FF2828",
         "impactColor": "#FF2828"
+      }
+    },
+    {
+      "title": "Quote panel",
+      "layout": "LY-05",
+      "bg": "BG-02",
+      "content": {
+        "text": "While traditional tools focus on Dark Web monitoring, we focus on the Collection Phase, before data is sold on the dark web.",
+        "accent": "we focus on the Collection Phase, before data is sold on the dark web"
       }
     },
     {
@@ -601,15 +610,6 @@
             "severity": "high"
           }
         ]
-      }
-    },
-    {
-      "title": "Quote panel",
-      "layout": "LY-05",
-      "bg": "BG-02",
-      "content": {
-        "text": "While traditional tools focus on Dark Web monitoring, we focus on the Collection Phase, before data is sold on the dark web.",
-        "accent": "we focus on the Collection Phase, before data is sold on the dark web"
       }
     },
     {
