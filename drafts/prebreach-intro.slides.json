@@ -1,6 +1,6 @@
 {
-  "savedAt": "2026-09-28T02:06:53.398Z",
-  "publishId": "prebreach-23-20260927b",
+  "savedAt": "2026-09-28T04:47:28.121Z",
+  "publishId": "prebreach-23-20260927c",
   "slides": [
     {
       "title": "Cover",
@@ -228,8 +228,8 @@
       "layout": "LY-05",
       "bg": "BG-02",
       "content": {
-        "text": "While traditional tools focus on Dark Web monitoring, we focus on the Collection Phase, before data is sold on the dark web.",
-        "accent": "we focus on the Collection Phase, before data is sold on the dark web"
+        "text": "While traditional tools focus on Dark Web monitoring, we focus on compromised credentials in the Collection Phase, before data is sold on the dark web.",
+        "accent": "compromised credentials in the Collection Phase, before data is sold on the dark web."
       }
     },
     {
@@ -237,7 +237,7 @@
       "layout": "LY-25",
       "bg": "BG-02",
       "content": {
-        "text": "Data is collected from active malware and phish campaigns.",
+        "text": "Data is captured from active malware and phish campaigns through reverse engineering.",
         "hub": false,
         "hubLabel": "PreBreach Intelligence",
         "symbols": [
@@ -252,7 +252,7 @@
             "y": 16
           },
           {
-            "count": 14,
+            "count": 7,
             "x": 74,
             "y": 20
           },
@@ -262,14 +262,12 @@
             "y": 52
           },
           {
-            "count": 22,
+            "count": 15,
             "x": 18,
             "y": 72
           },
           {
-            "count": 9,
-            "x": 63,
-            "y": 83
+            "count": 11
           }
         ]
       }
@@ -294,7 +292,7 @@
             "y": 16
           },
           {
-            "count": 14,
+            "count": 7,
             "x": 74,
             "y": 20
           },
@@ -304,14 +302,12 @@
             "y": 52
           },
           {
-            "count": 22,
+            "count": 15,
             "x": 18,
             "y": 72
           },
           {
-            "count": 9,
-            "x": 63,
-            "y": 83
+            "count": 11
           }
         ]
       }
@@ -323,7 +319,7 @@
       "content": {
         "text": "",
         "hub": true,
-        "hubLabel": "PreBreach Intelligence",
+        "hubLabel": "PreBreach Intelligence Database",
         "symbols": [
           {
             "count": 6,
@@ -336,7 +332,7 @@
             "y": 16
           },
           {
-            "count": 14,
+            "count": 7,
             "x": 74,
             "y": 20
           },
@@ -346,12 +342,12 @@
             "y": 52
           },
           {
-            "count": 22,
+            "count": 15,
             "x": 18,
             "y": 72
           },
           {
-            "count": 9,
+            "count": 11,
             "x": 63,
             "y": 83
           }
@@ -369,6 +365,14 @@
       }
     },
     {
+      "title": "How does this differ?",
+      "layout": "LY-13",
+      "bg": "BG-06",
+      "content": {
+        "question": "How does this differ from other tools?"
+      }
+    },
+    {
       "title": "Infostealer + Phish",
       "layout": "LY-13",
       "bg": "BG-03",
@@ -379,36 +383,25 @@
       }
     },
     {
-      "title": "Metrics row",
-      "layout": "LY-12",
-      "bg": "BG-04",
+      "title": "Three steps",
+      "layout": "LY-09",
+      "bg": "BG-09",
       "content": {
         "number": "",
         "sectionTitle": "",
         "title": "",
         "subtitle": "",
-        "metrics": [
+        "steps": [
           {
-            "value": "Monitor",
-            "text": "Alert if your data is part of what's been collected",
-            "source": "",
-            "sourceUrl": ""
+            "title": "Monitor",
+            "icon": "ph-shield-check",
+            "description": "Get alerted when your data is found in an active campaign."
           },
           {
-            "value": "Investigate",
-            "text": "Of breaches involve compromised or stolen credentials",
-            "source": "",
-            "sourceUrl": ""
+            "title": "Hunt",
+            "description": "Full data platform access for hunting and investigating."
           }
         ]
-      }
-    },
-    {
-      "title": "How does this differ?",
-      "layout": "LY-13",
-      "bg": "BG-06",
-      "content": {
-        "question": "How does this differ from other tools?"
       }
     },
     {
