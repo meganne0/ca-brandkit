@@ -201,6 +201,181 @@ export async function cropPngToOpaqueBounds(dataUrl, opts = {}) {
 }
 
 /**
+ * One-page PDF with a JPEG filling the page. Page size is in points.
+ * @param {Uint8Array} jpeg
+ * @param {number} pageW
+ * @param {number} pageH
+ * @param {number} imgW
+ * @param {number} imgH
+ */
+function jpegBytesToPdf(jpeg, pageW, pageH, imgW, imgH) {
+  const encoder = new TextEncoder();
+  const chunks = [];
+  const offsets = [0];
+  let length = 0;
+
+  function push(bytes) {
+    chunks.push(bytes);
+    length += bytes.length;
+  }
+
+  function pushText(text) {
+    push(encoder.encode(text));
+  }
+
+  push(encoder.encode("%PDF-1.4\n%\xFF\xFF\xFF\xFF\n"));
+
+  function startObj(n) {
+    offsets[n] = length;
+  }
+
+  startObj(1);
+  pushText("1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n");
+
+  startObj(2);
+  pushText("2 0 obj\n<< /Type /Pages /Count 1 /Kids [3 0 R] >>\nendobj\n");
+
+  startObj(3);
+  pushText(
+    `3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${pageW} ${pageH}] /Resources << /XObject << /Im1 4 0 R >> >> /Contents 5 0 R >>\nendobj\n`,
+  );
+
+  startObj(4);
+  pushText(
+    `4 0 obj\n<< /Type /XObject /Subtype /Image /Width ${imgW} /Height ${imgH} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${jpeg.length} >>\nstream\n`,
+  );
+  push(jpeg);
+  pushText("\nendstream\nendobj\n");
+
+  const content = `q\n${pageW} 0 0 ${pageH} 0 0 cm\n/Im1 Do\nQ\n`;
+  const contentBytes = encoder.encode(content);
+  startObj(5);
+  pushText(`5 0 obj\n<< /Length ${contentBytes.length} >>\nstream\n`);
+  push(contentBytes);
+  pushText("endstream\nendobj\n");
+
+  const xrefAt = length;
+  pushText("xref\n0 6\n");
+  pushText("0000000000 65535 f \n");
+  for (let n = 1; n <= 5; n += 1) {
+    pushText(`${String(offsets[n]).padStart(10, "0")} 00000 n \n`);
+  }
+  pushText(`trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${xrefAt}\n%%EOF\n`);
+
+  const out = new Uint8Array(length);
+  let cursor = 0;
+  chunks.forEach((chunk) => {
+    out.set(chunk, cursor);
+    cursor += chunk.length;
+  });
+  return out;
+}
+
+function downloadBlob(bytes, filename, type) {
+  const blob = new Blob([bytes], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+/**
+ * Paint a design-size canvas and download it as a one-page PDF.
+ * @param {(canvas: HTMLElement) => void} paint
+ * @param {string} filename
+ * @param {{ className?: string, width?: number, height?: number }} [opts]
+ */
+export async function downloadPaintedPdf(paint, filename, opts = {}) {
+  const width = opts.width ?? DESIGN_W;
+  const height = opts.height ?? DESIGN_H;
+  const mount = document.createElement("div");
+  mount.setAttribute("aria-hidden", "true");
+  mount.style.cssText = [
+    "position:fixed",
+    "left:-100vw",
+    "top:0",
+    `width:${width}px`,
+    `height:${height}px`,
+    "overflow:hidden",
+    "pointer-events:none",
+    "z-index:0",
+    "opacity:1",
+  ].join(";");
+
+  const canvas = document.createElement("div");
+  canvas.className = opts.className ?? "canvas canvas--yt";
+  canvas.style.cssText = [
+    `width:${width}px`,
+    `height:${height}px`,
+    "transform:none",
+    "transform-origin:top left",
+    "margin:0",
+    "position:relative",
+    "opacity:1",
+  ].join(";");
+  mount.appendChild(canvas);
+  document.body.appendChild(mount);
+
+  try {
+    paint(canvas);
+    await inlineBlobImages(canvas);
+    await waitForImages(canvas);
+    await waitForFonts();
+    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+    const dataUrl = await toPng(canvas, {
+      width,
+      height,
+      pixelRatio: EXPORT_SCALE,
+      cacheBust: true,
+      skipAutoScale: true,
+      style: {
+        transform: "none",
+        transformOrigin: "top left",
+        margin: "0",
+        left: "0",
+        top: "0",
+        right: "auto",
+        bottom: "auto",
+        width: `${width}px`,
+        height: `${height}px`,
+        opacity: "1",
+        position: "relative",
+      },
+      onclone(clonedDoc) {
+        hardenHostForExport(clonedDoc);
+      },
+    });
+
+    const img = await new Promise((resolve, reject) => {
+      const el = new Image();
+      el.onload = () => resolve(el);
+      el.onerror = reject;
+      el.src = dataUrl;
+    });
+    const raster = document.createElement("canvas");
+    raster.width = img.naturalWidth || img.width;
+    raster.height = img.naturalHeight || img.height;
+    const ctx = raster.getContext("2d");
+    if (!ctx) throw new Error("Could not build the PDF image.");
+    ctx.fillStyle = "#05030d";
+    ctx.fillRect(0, 0, raster.width, raster.height);
+    ctx.drawImage(img, 0, 0);
+    const jpegUrl = raster.toDataURL("image/jpeg", 0.92);
+    const jpeg = Uint8Array.from(atob(jpegUrl.split(",")[1]), (c) => c.charCodeAt(0));
+    const pdf = jpegBytesToPdf(jpeg, width, height, raster.width, raster.height);
+    const name = filename.toLowerCase().endsWith(".pdf") ? filename : `${filename}.pdf`;
+    downloadBlob(pdf, name, "application/pdf");
+  } finally {
+    mount.remove();
+  }
+}
+
+/**
  * Build an offscreen 1280×720 canvas, paint it, download, then remove.
  * @param {(canvas: HTMLElement) => void} paint
  * @param {string} filename

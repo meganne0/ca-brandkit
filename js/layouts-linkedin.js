@@ -154,6 +154,13 @@ export const LINKEDIN_LAYOUTS = {
     footer: true,
     className: "li-layout-event li-layout-event--landscape",
   },
+  "LI-LY-21": {
+    label: "Portrait statement",
+    description: "Optional eyebrow, orange title, and subtext. Left aligned, vertically centered. Optional outline arrow. Portrait. Footer.",
+    format: "portrait",
+    footer: true,
+    className: "li-layout-statement",
+  },
 };
 
 function withBreaks(text) {
@@ -568,6 +575,37 @@ function renderEvent(content, { landscape = false } = {}) {
   return el;
 }
 
+function statementSize(value) {
+  return ["sm", "md", "lg", "xl"].includes(value) ? value : "lg";
+}
+
+function statementArrow() {
+  return `
+    <svg class="li-layout-statement__arrow" viewBox="0 0 120 80" fill="none" aria-hidden="true">
+      <path d="M8 40H92" stroke="#F25835" stroke-width="6" stroke-linecap="round"/>
+      <path d="M68 12L100 40L68 68" stroke="#F25835" stroke-width="6" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  `;
+}
+
+function renderStatement(content) {
+  const el = document.createElement("div");
+  el.className = "li-content li-layout-statement";
+  const eyebrow = content.eyebrow ?? content.label ?? "";
+  const title = content.title ?? content.headline ?? "";
+  const subtext = content.subtext ?? content.subtitle ?? content.body ?? "";
+  const titleSize = statementSize(content.titleSize);
+  const subtextSize = statementSize(content.subtextSize);
+  const arrow = content.showArrow ? statementArrow() : "";
+  el.innerHTML = `
+    ${arrow}
+    ${eyebrow ? `<p class="type-label li-layout-statement__eyebrow">${withBreaks(eyebrow)}</p>` : ""}
+    ${title ? `<h2 class="type-h2 li-layout-statement__title li-layout-statement__title--${titleSize}">${withBreaks(title)}</h2>` : ""}
+    ${subtext ? `<p class="type-body li-layout-statement__sub li-layout-statement__sub--${subtextSize}">${withBreaks(subtext)}</p>` : ""}
+  `;
+  return el;
+}
+
 const RENDERERS = {
   "LI-LY-01": renderHook,
   "LI-LY-02": renderQuote,
@@ -589,6 +627,7 @@ const RENDERERS = {
   "LI-LY-18": renderFourCards,
   "LI-LY-19": (content) => renderEvent(content, { landscape: false }),
   "LI-LY-20": (content) => renderEvent(content, { landscape: true }),
+  "LI-LY-21": renderStatement,
 };
 
 export function renderLinkedInLayout(canvas, layoutId, content = {}) {
