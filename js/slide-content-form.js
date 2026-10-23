@@ -76,9 +76,21 @@ function buildFormHtml(layout, content) {
   }
 
   if (layout === "LY-13" || layout === "LY-14") {
+    const size = ["sm", "md", "lg"].includes(c.textSize) ? c.textSize : "md";
     bits.push(field("number", "Number", c.number ?? ""));
     bits.push(field("sectionTitle", "Section label", c.sectionTitle ?? ""));
-    bits.push(field("question", "Line", c.question ?? c.title ?? "", { type: "textarea", rows: 2 }));
+    bits.push(`
+      <label class="deck-form__field">
+        <span class="deck-form__label">Text size</span>
+        <select class="deck-form__input" name="textSize">
+          <option value="sm" ${size === "sm" ? "selected" : ""}>Small — 56px</option>
+          <option value="md" ${size === "md" ? "selected" : ""}>Medium — 72px</option>
+          <option value="lg" ${size === "lg" ? "selected" : ""}>Large — 90px</option>
+        </select>
+      </label>
+    `);
+    bits.push(field("question", "Line", c.question ?? c.title ?? "", { type: "textarea", rows: 3 }));
+    bits.push(`<p class="deck-form__note">Size applies to the whole line. Wrap orange words in [[double brackets]] and white words in {{curly brackets}}. Words you leave unmarked stay orange.</p>`);
     if (layout === "LY-14") {
       bits.push(field("subtitle", "Sub-line", c.subtitle ?? "", { type: "textarea", rows: 2 }));
     }
@@ -103,6 +115,7 @@ function buildFormHtml(layout, content) {
     bits.push(field("hubLabel", "Hub label", c.hubLabel ?? "PreBreach Intelligence"));
     bits.push(field("symbolCounts", "Circles per symbol (comma-separated)", counts.join(", ")));
     bits.push(`<p class="deck-form__note">Up to 6 symbols, 1–40 circles each. Leave blank for the default set.</p>`);
+    bits.push(`<p class="deck-form__note">In the center text or hub label, wrap orange words in [[double brackets]] for orange text on a 50% black background, and white words in {{curly brackets}}. Unmarked center text stays orange. Unmarked hub text stays white.</p>`);
     return bits.join("");
   }
 
@@ -393,6 +406,7 @@ function readContentFromForm(form, layout, base = {}) {
   if (layout === "LY-13" || layout === "LY-14") {
     next.number = val(form, "number");
     next.sectionTitle = val(form, "sectionTitle");
+    next.textSize = val(form, "textSize") || "md";
     next.question = val(form, "question");
     if (layout === "LY-14") next.subtitle = val(form, "subtitle");
     return next;

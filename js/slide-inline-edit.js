@@ -41,6 +41,19 @@ function readTitleBlock(contentRoot, base) {
   return { title, subtitle };
 }
 
+function readColoredQuestion(el, baseQuestion) {
+  if (!el) return baseQuestion ?? "";
+  if (!el.querySelector(".q-white, .q-orange")) return el.textContent.trim();
+  let out = "";
+  el.childNodes.forEach((node) => {
+    if (node.nodeType === Node.TEXT_NODE) out += node.textContent;
+    else if (node.classList?.contains("q-orange")) out += `[[${node.textContent}]]`;
+    else if (node.classList?.contains("q-white")) out += `{{${node.textContent}}}`;
+    else out += node.textContent;
+  });
+  return out.trim();
+}
+
 function readAccented(el, baseText, baseAccent) {
   if (!el) return { text: baseText ?? "", accent: baseAccent };
   const accentEl = el.querySelector(".accent");
@@ -187,10 +200,18 @@ export function harvestSlideContent(slide) {
   }
 
   if (root.classList.contains("layout-question")) {
+    const line = root.querySelector(".layout-question__text");
     return {
       ...base,
       ...corner,
-      question: root.querySelector(".layout-question__q, h2.type-h2, .type-metric")?.textContent.trim() ?? base.question,
+      textSize: line?.classList.contains("layout-question__text--sm")
+        ? "sm"
+        : line?.classList.contains("layout-question__text--lg")
+          ? "lg"
+          : line?.classList.contains("layout-question__text--md")
+            ? "md"
+            : base.textSize,
+      question: readColoredQuestion(line, base.question),
       subtitle: root.querySelector(".layout-question__aside, p.type-h4")?.textContent.trim() ?? base.subtitle,
     };
   }
@@ -210,6 +231,14 @@ export function harvestSlideContent(slide) {
       bullets: bullets.length ? bullets : base.bullets,
       image: img?.getAttribute?.("src") ?? base.image,
       alt: img?.getAttribute?.("alt") ?? base.alt,
+    };
+  }
+
+  if (root.classList.contains("layout-campaign")) {
+    return {
+      ...base,
+      text: readColoredQuestion(root.querySelector(".layout-campaign__text"), base.text),
+      hubLabel: readColoredQuestion(root.querySelector(".campaign-hub__label"), base.hubLabel),
     };
   }
 

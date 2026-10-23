@@ -1,0 +1,687 @@
+{
+  "savedAt": "2026-10-23T02:16:26.223Z",
+  "publishId": "dec-7-20261022c",
+  "slides": [
+    {
+      "title": "Cover",
+      "layout": "LY-01",
+      "bg": "BG-01",
+      "content": {
+        "headline": "The Cybercriminal Supply Chain: The Commodification of Compromise",
+        "accent": "",
+        "subtitle": "Sept 2026"
+      }
+    },
+    {
+      "title": "Who We Are",
+      "layout": "LY-02",
+      "bg": "BG-08",
+      "content": {
+        "sectionTitle": "",
+        "title": "Who We Are",
+        "subtitle": "The people behind CyberArmor.",
+        "people": [
+          {
+            "name": "Nguyen Nguyen",
+            "role": "CEO",
+            "avatar": "/visual%20assets/avatars/avatar-nguyen-circle.png"
+          },
+          {
+            "name": "Ali Alame",
+            "role": "CTO",
+            "avatar": "/visual%20assets/avatars/avatar-ali-circle.png"
+          },
+          {
+            "name": "Meganne Ohata",
+            "role": "CXO",
+            "avatar": "/visual%20assets/avatars/avatar-meganne-circle.png"
+          }
+        ],
+        "number": ""
+      }
+    },
+    {
+      "title": "Table of contents",
+      "layout": "LY-03",
+      "bg": "BG-02",
+      "content": {
+        "sectionTitle": "",
+        "title": "What we’ll cover",
+        "subtitle": "",
+        "items": [
+          {
+            "number": "01",
+            "title": "PreBreach Intelligence",
+            "description": "What it is and how it works"
+          },
+          {
+            "number": "02",
+            "title": "Common Questions",
+            "description": "How it works, differentiators, pricing structure"
+          },
+          {
+            "number": "03",
+            "title": "Demo",
+            "description": "A look at some real life data on our platform"
+          }
+        ],
+        "number": ""
+      }
+    },
+    {
+      "title": "Section",
+      "layout": "LY-04",
+      "bg": "BG-03",
+      "content": {
+        "number": "01",
+        "sectionTitle": "What does CyberArmor do?",
+        "subtitle": ""
+      }
+    },
+    {
+      "title": "Quote panel",
+      "layout": "LY-05",
+      "bg": "BG-02",
+      "content": {
+        "text": "We alert organizations when their credentials have been compromised, before it’s posted on the dark web.",
+        "accent": "before it’s posted on the dark web."
+      }
+    },
+    {
+      "title": "Campaign symbols",
+      "layout": "LY-25",
+      "bg": "BG-02",
+      "content": {
+        "text": "We do this by reverse engineering active phish and infostealer campaigns.",
+        "hub": false,
+        "hubLabel": "PreBreach Intelligence",
+        "symbols": [
+          {
+            "count": 6,
+            "x": 13,
+            "y": 24
+          },
+          {
+            "count": 30,
+            "x": 34,
+            "y": 16
+          },
+          {
+            "count": 7,
+            "x": 74,
+            "y": 20
+          },
+          {
+            "count": 5,
+            "x": 90,
+            "y": 52
+          },
+          {
+            "count": 15,
+            "x": 18,
+            "y": 72
+          },
+          {
+            "count": 11
+          }
+        ]
+      }
+    },
+    {
+      "title": "PreBreach Intelligence",
+      "layout": "LY-25",
+      "bg": "BG-02",
+      "content": {
+        "text": "",
+        "hub": true,
+        "hubLabel": "PreBreach Intelligence Database",
+        "symbols": [
+          {
+            "count": 6,
+            "x": 13,
+            "y": 24
+          },
+          {
+            "count": 30,
+            "x": 34,
+            "y": 16
+          },
+          {
+            "count": 7,
+            "x": 74,
+            "y": 20
+          },
+          {
+            "count": 5,
+            "x": 90,
+            "y": 52
+          },
+          {
+            "count": 15,
+            "x": 18,
+            "y": 72
+          },
+          {
+            "count": 11,
+            "x": 63,
+            "y": 83
+          }
+        ]
+      }
+    },
+    {
+      "title": "Section",
+      "layout": "LY-04",
+      "bg": "BG-03",
+      "content": {
+        "number": "02",
+        "sectionTitle": "The Criminal Supply Chain",
+        "subtitle": ""
+      }
+    },
+    {
+      "title": "How It Started",
+      "layout": "LY-08",
+      "bg": "BG-09",
+      "content": {
+        "sectionTitle": "",
+        "title": "How It Started",
+        "blurBullets": true,
+        "text": "Nguyen is a malware researcher with +15 years of experience in thousands of investigations.",
+        "bullets": [
+          "Why wait for a breach?",
+          "Breach data is often \"too late\"",
+          "Earlier remediation could make greater impact"
+        ],
+        "subtitle": "",
+        "number": ""
+      }
+    },
+    {
+      "title": "How it Started",
+      "layout": "LY-08",
+      "bg": "BG-09",
+      "content": {
+        "sectionTitle": "",
+        "title": "What We Do",
+        "blurBullets": true,
+        "text": "We focus on alerting on compromised credentials before it is monetized or published on the dark web.",
+        "bullets": [
+          "Traditional tools focus on dark web scraping",
+          "Many compromises never reach the dark web before they're taken advantage of"
+        ],
+        "subtitle": "",
+        "number": ""
+      }
+    },
+    {
+      "title": "How it Started",
+      "layout": "LY-08",
+      "bg": "BG-09",
+      "content": {
+        "sectionTitle": "",
+        "title": "Attack Breakdown",
+        "blurBullets": true,
+        "text": "Let's look at what a typical attack looks like in order to illustrate where our data comes into play",
+        "bullets": [],
+        "subtitle": "",
+        "number": ""
+      }
+    },
+    {
+      "title": "Attack paths",
+      "layout": "LY-24",
+      "bg": "BG-02",
+      "content": {
+        "sources": [
+          {
+            "label": "Linkedin"
+          },
+          {
+            "label": "Leads List"
+          },
+          {
+            "label": "Google Dorking"
+          },
+          {
+            "label": "Company Site"
+          },
+          {
+            "label": "Breach"
+          }
+        ],
+        "stages": [
+          {
+            "label": "Buy domains, build lure, MaaS, PhaaS",
+            "color": "#887DFF"
+          },
+          {
+            "label": "Phish, quish, smish, URL",
+            "color": "#9977FF"
+          },
+          {
+            "label": "Victim engages with lure",
+            "color": "#BF66FF"
+          },
+          {
+            "label": "Keylogger, RAT, infostealer, MFA bypass...",
+            "color": "#F17AFF"
+          },
+          {
+            "label": "Data sent to attacker: Tokens, cookies, passwords...",
+            "color": "#FF8045"
+          }
+        ],
+        "outcomes": [
+          {
+            "label": "Business email compromise"
+          },
+          {
+            "label": "Ransomware"
+          },
+          {
+            "label": "Exfiltration"
+          },
+          {
+            "label": "Fraud"
+          },
+          {
+            "label": "Account takeover"
+          },
+          {
+            "label": "Espionage"
+          }
+        ],
+        "impacts": [
+          {
+            "label": "Ransomware announcement"
+          },
+          {
+            "label": "Notify or report incident"
+          },
+          {
+            "label": "Posted on dark web forums, marketplaces"
+          }
+        ],
+        "phaseTitles": [
+          "Preparation",
+          "Collection",
+          "Breach",
+          "Post-Breach"
+        ],
+        "stepLabels": [
+          "Recon",
+          "Weaponize",
+          "Deliver",
+          "Exploit",
+          "Install",
+          "Command and Control",
+          "Action-on-Objective",
+          "Publication"
+        ],
+        "sourceColor": "#1EADEC",
+        "outcomeColor": "#FF2828",
+        "impactColor": "#FF2828"
+      }
+    },
+    {
+      "title": "Quote panel",
+      "layout": "LY-05",
+      "bg": "BG-02",
+      "content": {
+        "text": "While traditional tools focus on Dark Web monitoring, we focus on compromised credentials in the Collection Phase, before data is sold on the dark web.",
+        "accent": "compromised credentials in the Collection Phase, before data is sold on the dark web."
+      }
+    },
+    {
+      "title": "Campaign symbols",
+      "layout": "LY-25",
+      "bg": "BG-02",
+      "content": {
+        "text": "Data is captured from active malware and phish campaigns through reverse engineering.",
+        "hub": false,
+        "hubLabel": "PreBreach Intelligence",
+        "symbols": [
+          {
+            "count": 6,
+            "x": 13,
+            "y": 24
+          },
+          {
+            "count": 30,
+            "x": 34,
+            "y": 16
+          },
+          {
+            "count": 7,
+            "x": 74,
+            "y": 20
+          },
+          {
+            "count": 5,
+            "x": 90,
+            "y": 52
+          },
+          {
+            "count": 15,
+            "x": 18,
+            "y": 72
+          },
+          {
+            "count": 11
+          }
+        ]
+      }
+    },
+    {
+      "title": "Section",
+      "layout": "LY-04",
+      "bg": "BG-03",
+      "content": {
+        "number": "02",
+        "sectionTitle": "Common Questions",
+        "subtitle": "How it works, differentiators, pricing structure"
+      }
+    },
+    {
+      "title": "How does this differ?",
+      "layout": "LY-13",
+      "bg": "BG-06",
+      "content": {
+        "question": "How does this differ from other tools?"
+      }
+    },
+    {
+      "title": "Infostealer + Phish",
+      "layout": "LY-13",
+      "bg": "BG-03",
+      "content": {
+        "question": "What does your software do?",
+        "number": "",
+        "sectionTitle": ""
+      }
+    },
+    {
+      "title": "Three steps",
+      "layout": "LY-09",
+      "bg": "BG-09",
+      "content": {
+        "number": "",
+        "sectionTitle": "",
+        "title": "",
+        "subtitle": "",
+        "steps": [
+          {
+            "title": "Monitor",
+            "icon": "ph-shield-check",
+            "description": "Get alerted when your data is found in an active campaign."
+          },
+          {
+            "title": "Hunt",
+            "description": "Full data platform access for hunting and investigating."
+          }
+        ]
+      }
+    },
+    {
+      "title": "Single Line",
+      "layout": "LY-13",
+      "bg": "BG-02",
+      "content": {
+        "number": "",
+        "sectionTitle": "",
+        "question": "How is pricing structured?"
+      }
+    },
+    {
+      "title": "Three steps",
+      "layout": "LY-09",
+      "bg": "BG-09",
+      "content": {
+        "number": "",
+        "sectionTitle": "",
+        "title": "",
+        "subtitle": "",
+        "steps": [
+          {
+            "title": "Domains",
+            "icon": "ph-eye",
+            "description": "The number of domains involved"
+          },
+          {
+            "title": "Identities",
+            "icon": "ph-graph",
+            "description": "Emails, usernames, etc"
+          },
+          {
+            "title": "Features",
+            "icon": "ph-shield-check",
+            "description": "Monitoring vs full hunt and investigation"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Single Line",
+      "layout": "LY-13",
+      "bg": "BG-02",
+      "content": {
+        "number": "",
+        "sectionTitle": "",
+        "question": "Other questions?"
+      }
+    },
+    {
+      "title": "Section",
+      "layout": "LY-04",
+      "bg": "BG-03",
+      "content": {
+        "number": "03",
+        "sectionTitle": "Demo",
+        "subtitle": "A look at some real life data on our platform"
+      }
+    },
+    {
+      "title": "Demo",
+      "layout": "LY-22",
+      "bg": "BG-05",
+      "content": {
+        "title": "Demo",
+        "subtitle": "Let’s check out some data we have on the DarkArmor platform",
+        "items": [
+          {
+            "url": "askaribank.com.pk",
+            "severity": "medium"
+          },
+          {
+            "url": "abl.com",
+            "severity": "medium"
+          },
+          {
+            "url": "bankalfalah.com",
+            "severity": "medium"
+          },
+          {
+            "url": "bankalhabib.com",
+            "severity": "medium"
+          },
+          {
+            "url": "bop.com.pk",
+            "severity": "high"
+          },
+          {
+            "url": "bok.com.pk",
+            "severity": "medium"
+          },
+          {
+            "url": "faysalbank.com",
+            "severity": "medium"
+          },
+          {
+            "url": "mcb.com.pk",
+            "severity": "medium"
+          },
+          {
+            "url": "meezanbank.com",
+            "severity": "high"
+          },
+          {
+            "url": "easypaisa.com.pk",
+            "severity": "medium"
+          },
+          {
+            "url": "jazzcash.com.pk",
+            "severity": "medium"
+          },
+          {
+            "url": "mashreq.com",
+            "severity": "medium"
+          },
+          {
+            "url": "alahli.com",
+            "severity": "medium"
+          },
+          {
+            "url": "emiratesnbd.com",
+            "severity": "medium"
+          },
+          {
+            "url": "adcb.com",
+            "severity": "medium"
+          },
+          {
+            "url": "alrajhibank.com.sa",
+            "severity": "high"
+          },
+          {
+            "url": "alinma.com",
+            "severity": "high"
+          },
+          {
+            "url": "riyadbank.com",
+            "severity": "high"
+          },
+          {
+            "url": "bankalbilad.com",
+            "severity": "high"
+          },
+          {
+            "url": "anb.com.sa",
+            "severity": "medium"
+          },
+          {
+            "url": "alfransi.com.sa",
+            "severity": "high"
+          },
+          {
+            "url": "saib.com.sa",
+            "severity": "medium"
+          },
+          {
+            "url": "qnb.com",
+            "severity": "high"
+          },
+          {
+            "url": "qib.com.qa",
+            "severity": "medium"
+          },
+          {
+            "url": "nbk.com",
+            "severity": "medium"
+          },
+          {
+            "url": "nbbonline.com",
+            "severity": "medium"
+          },
+          {
+            "url": "sngpl.com.pk",
+            "severity": "medium"
+          },
+          {
+            "url": "zong.com.pk",
+            "severity": "medium"
+          },
+          {
+            "url": "nayatel.com",
+            "severity": "medium"
+          },
+          {
+            "url": "ke.com.pk",
+            "severity": "high"
+          },
+          {
+            "url": "ufone.com",
+            "severity": "high"
+          },
+          {
+            "url": "stormfiber.com",
+            "severity": "high"
+          },
+          {
+            "url": "ptcl.com.pk",
+            "severity": "high"
+          }
+        ]
+      }
+    },
+    {
+      "title": "Who We Are",
+      "layout": "LY-02",
+      "bg": "BG-08",
+      "content": {
+        "sectionTitle": "",
+        "title": "Thank you!",
+        "subtitle": "",
+        "people": [
+          {
+            "name": "Nguyen Nguyen",
+            "role": "CEO",
+            "avatar": "/visual%20assets/avatars/avatar-nguyen-circle.png"
+          },
+          {
+            "name": "Ali Alame",
+            "role": "CTO",
+            "avatar": "/visual%20assets/avatars/avatar-ali-circle.png"
+          },
+          {
+            "name": "Meganne Ohata",
+            "role": "CXO",
+            "avatar": "/visual%20assets/avatars/avatar-meganne-circle.png"
+          }
+        ],
+        "number": ""
+      }
+    },
+    {
+      "title": "Economic Context",
+      "layout": "LY-12",
+      "bg": "BG-04",
+      "content": {
+        "title": "",
+        "subtitle": "",
+        "metrics": [
+          {
+            "value": "30%",
+            "text": "of attacks involved abuse of user identities as the initial entry point",
+            "source": "IBM",
+            "sourceUrl": "https://www.ibm.com/think/x-force/x-force-threat-intelligence-index-2025-attackers-steal-sell-user-identities"
+          },
+          {
+            "value": "37%",
+            "text": "of organizations victim to ransomware had a\ncredential or infostealer event occur\n>95 days  prior",
+            "source": "Verizon",
+            "sourceUrl": "https://www.verizon.com/business/resources/T343/reports/2026-dbir-data-breach-investigations-report.pdf"
+          },
+          {
+            "value": "46%",
+            "text": "of compromised systems containing corporate logins were non-managed devices",
+            "source": "Lansweeper",
+            "sourceUrl": "https://www.lansweeper.com/blog/cybersecurity/the-vulnerability-you-dont-know-you-have-unmanaged-assets-in-2026/"
+          }
+        ],
+        "number": "",
+        "sectionTitle": ""
+      }
+    }
+  ]
+}

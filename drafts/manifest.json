@@ -1,5 +1,12 @@
 [
   {
+    "title": "Dec 7",
+    "description": "Dec 7 presentation. Starts as a copy of Prebreach intro. Edits stay in this deck.",
+    "href": "drafts/dec-7.html",
+    "status": "Draft",
+    "meta": "25 slides"
+  },
+  {
     "title": "Prebreach intro",
     "description": "Draft deck — origin story, attack-path flow, credential theft focus, data types, and demo URLs.",
     "href": "drafts/prebreach-intro.html",

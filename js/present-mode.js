@@ -4,7 +4,7 @@
  * Also supports ?present=1 for a dedicated present URL.
  */
 
-import { refreshImageTitleLayouts, refreshFlowFunnels } from "./layouts.js?v=79";
+import { refreshImageTitleLayouts, refreshFlowFunnels } from "./layouts.js?v=83";
 
 const AUTH_KEY = "ca-brandkit-auth-v3";
 

@@ -1,4 +1,4 @@
-import { mountSlideFooter } from "./components/footer.js?v=29";
+import { mountSlideFooter } from "./components/footer.js?v=31";
 import { initImageLightbox } from "./components/lightbox.js?v=28";
 
 const LOGO_COVER_SRC = "/visual%20assets/logo/logo-vertical-white-orange.svg";
@@ -493,6 +493,20 @@ function renderSection(content) {
   return el;
 }
 
+function escapeQuestionText(text) {
+  return String(text)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+/** [[orange]] and {{white}}. Unmarked words stay the default orange. */
+function colorizeQuestion(text) {
+  return escapeQuestionText(text)
+    .replace(/\[\[([\s\S]*?)\]\]/g, '<span class="q-orange">$1</span>')
+    .replace(/\{\{([\s\S]*?)\}\}/g, '<span class="q-white">$1</span>');
+}
+
 function renderQuestion(content, { aside = false } = {}) {
   const el = document.createElement("div");
   el.className = aside
@@ -500,10 +514,12 @@ function renderQuestion(content, { aside = false } = {}) {
     : "slide-content layout-question";
   const question = content.question ?? content.title ?? "";
   const subtitle = content.subtitle ?? "";
+  const size = ["sm", "md", "lg"].includes(content.textSize) ? content.textSize : "";
+  const sizeClass = size ? ` layout-question__text--${size}` : "";
   el.innerHTML = `
     ${cornerSection(content)}
     <div class="layout-question__main">
-      ${question ? `<h2 class="type-metric type-metric--md layout-question__text">${question}</h2>` : ""}
+      ${question ? `<h2 class="type-metric type-metric--md layout-question__text${sizeClass}">${colorizeQuestion(question)}</h2>` : ""}
       ${aside && subtitle ? `<p class="type-h4 layout-question__aside">${subtitle}</p>` : ""}
     </div>
   `;
@@ -1584,9 +1600,9 @@ function renderCampaign(content) {
       </svg>
       ${
         hub
-          ? `<div class="campaign-hub"><span class="campaign-hub__label">${escapeHtml(hubLabel)}</span></div>`
+          ? `<div class="campaign-hub"><span class="campaign-hub__label">${colorizeQuestion(hubLabel)}</span></div>`
           : text
-            ? `<div class="layout-campaign__center"><p class="type-h3 layout-campaign__text">${escapeHtml(text)}</p></div>`
+            ? `<div class="layout-campaign__center"><p class="type-h3 layout-campaign__text">${colorizeQuestion(text)}</p></div>`
             : ""
       }
     </div>
