@@ -6,8 +6,10 @@ import {
 /**
  * Background recipes (BG-01 … BG-12) — slide channel (16:9)
  * Grouped by base: nodot · dot1 · dot2
- * Dark Slides (DS-01 … DS-12) use the Dec 7 fill.
- * Their base is bg_swirl-banner.svg at 50%, each recipe zoomed to a different crop.
+ * Dark Slides use the Dec 7 fill. DS-02 is DS-01. DS-07, DS-08, and DS-12 are DS-10.
+ * Their base is bg_swirl-banner.svg, zoomed to a different crop on each recipe.
+ * Banner base is 100%, except DS-03 which stays at 50%.
+ * DS-05, DS-09, and DS-11 stack a second copy of that crop at 15%.
  * Dark Slides swap bg_glow1/3/4 for the Dec 7 glow PNGs and drop orange-glow-1/2, bg_dotglow.svg, and bg_dots1.svg. Glow 2 stays.
  * Fill overlays/bases: cover so W and H are ≥ slide size.
  * Swirl overlays: full slide width (100% auto).
@@ -167,13 +169,15 @@ const SLIDE_BACKGROUNDS = {
 };
 
 /** Dec 7 base fill. Dark Slides paint this behind the banner base. */
-export const DARK_SLIDE_FILL = "linear-gradient(145deg, #060817 0%, #050018 50%, #040937 100%)";
+export const DARK_SLIDE_FILL = "linear-gradient(145deg, #290039 0%, #050018 50%, #040937 100%)";
 
 /** Glow PNGs imported for Dec 7. */
 const DARK_GLOW_NAVY = { asset: "dec7/glow-navy.png", opacity: 0.4 };
 const DARK_GLOW_PURPLE = { asset: "dec7/glow-purple.png", opacity: 0.5 };
 
 const BANNER_BASE = "bg_swirl-banner.svg";
+/** A second copy of the same crop. CSS opacity cannot exceed 100%. */
+const BANNER_BOOST = new Set(["BG-05", "BG-09", "BG-11"]);
 
 /** Each Dark Slide zooms to a different part of the banner. */
 const BANNER_CROPS = [
@@ -183,11 +187,11 @@ const BANNER_CROPS = [
   { baseSize: "180%", basePosition: "0% 40%" },
   { baseSize: "250%", basePosition: "50% 35%" },
   { baseSize: "200%", basePosition: "100% 45%" },
-  { baseSize: "230%", basePosition: "15% 100%" },
-  { baseSize: "175%", basePosition: "50% 100%" },
+  { baseSize: "200%", basePosition: "15% 70%" },
+  { baseSize: "175%", basePosition: "50% 70%" },
   { baseSize: "210%", basePosition: "100% 80%" },
-  { baseSize: "280%", basePosition: "30% 20%" },
-  { baseSize: "240%", basePosition: "80% 70%" },
+  { baseSize: "220%", basePosition: "30% 20%" },
+  { baseSize: "200%", basePosition: "80% 70%" },
   { baseSize: "200%", basePosition: "10% 75%" },
 ];
 
@@ -228,6 +232,14 @@ function darkSlideRecipe(id, recipe) {
   const overlays = darkSlideOverlays(recipe.overlays);
   const index = Number(id.replace(/^BG-/, "")) - 1;
   const crop = BANNER_CROPS[index] ?? BANNER_CROPS[0];
+  if (BANNER_BOOST.has(id)) {
+    overlays.push({
+      asset: BANNER_BASE,
+      opacity: 0.15,
+      size: crop.baseSize,
+      position: crop.basePosition,
+    });
+  }
   return {
     label: recipe.label,
     group: "dark-slides",
@@ -235,7 +247,7 @@ function darkSlideRecipe(id, recipe) {
     basedOn: id,
     fill: DARK_SLIDE_FILL,
     base: BANNER_BASE,
-    baseOpacity: 0.5,
+    baseOpacity: id === "BG-03" ? 0.5 : 1,
     baseSize: crop.baseSize,
     basePosition: crop.basePosition,
     overlays,
@@ -243,18 +255,27 @@ function darkSlideRecipe(id, recipe) {
   };
 }
 
+const DARK_SLIDE_ALIAS = {
+  "DS-02": "DS-01",
+  "DS-07": "DS-10",
+  "DS-08": "DS-10",
+  "DS-12": "DS-10",
+};
+
 export const BACKGROUNDS = {
   ...SLIDE_BACKGROUNDS,
   ...Object.fromEntries(
-    Object.entries(SLIDE_BACKGROUNDS).map(([id, recipe]) => [
-      `DS-${id.replace(/^BG-/, "")}`,
-      darkSlideRecipe(id, recipe),
-    ])
+    Object.entries(SLIDE_BACKGROUNDS)
+      .map(([id, recipe]) => [
+        `DS-${id.replace(/^BG-/, "")}`,
+        darkSlideRecipe(id, recipe),
+      ])
+      .filter(([id]) => !DARK_SLIDE_ALIAS[id])
   ),
 };
 
 export function renderBackground(container, recipeId) {
-  renderFromCatalogs(container, recipeId, BACKGROUNDS);
+  renderFromCatalogs(container, DARK_SLIDE_ALIAS[recipeId] || recipeId, BACKGROUNDS);
 }
 
 export function initSlideBackgrounds(root = document) {

@@ -15,7 +15,7 @@
     {
       "title": "Who We Are",
       "layout": "LY-02",
-      "bg": "DS-08",
+      "bg": "DS-10",
       "content": {
         "sectionTitle": "",
         "title": "Who We Are",
@@ -43,7 +43,7 @@
     {
       "title": "Table of contents",
       "layout": "LY-03",
-      "bg": "DS-02",
+      "bg": "DS-01",
       "content": {
         "sectionTitle": "",
         "title": "What we’ll cover",
@@ -81,7 +81,7 @@
     {
       "title": "Quote panel",
       "layout": "LY-05",
-      "bg": "DS-02",
+      "bg": "DS-01",
       "content": {
         "text": "We alert organizations when their credentials have been compromised, before it’s posted on the dark web.",
         "accent": "before it’s posted on the dark web."
@@ -90,7 +90,7 @@
     {
       "title": "Campaign symbols",
       "layout": "LY-25",
-      "bg": "DS-02",
+      "bg": "DS-01",
       "content": {
         "text": "We do this by reverse engineering active phish and infostealer campaigns.",
         "hub": false,
@@ -130,7 +130,7 @@
     {
       "title": "PreBreach Intelligence",
       "layout": "LY-25",
-      "bg": "DS-02",
+      "bg": "DS-01",
       "content": {
         "text": "",
         "hub": true,
@@ -231,7 +231,7 @@
     {
       "title": "Attack paths",
       "layout": "LY-24",
-      "bg": "DS-02",
+      "bg": "DS-01",
       "content": {
         "sources": [
           {
@@ -327,7 +327,7 @@
     {
       "title": "Quote panel",
       "layout": "LY-05",
-      "bg": "DS-02",
+      "bg": "DS-01",
       "content": {
         "text": "While traditional tools focus on Dark Web monitoring, we focus on compromised credentials in the Collection Phase, before data is sold on the dark web.",
         "accent": "compromised credentials in the Collection Phase, before data is sold on the dark web."
@@ -336,7 +336,7 @@
     {
       "title": "Campaign symbols",
       "layout": "LY-25",
-      "bg": "DS-02",
+      "bg": "DS-01",
       "content": {
         "text": "Data is captured from active malware and phish campaigns through reverse engineering.",
         "hub": false,
@@ -426,7 +426,7 @@
     {
       "title": "Single Line",
       "layout": "LY-13",
-      "bg": "DS-02",
+      "bg": "DS-01",
       "content": {
         "number": "",
         "sectionTitle": "",
@@ -464,7 +464,7 @@
     {
       "title": "Single Line",
       "layout": "LY-13",
-      "bg": "DS-02",
+      "bg": "DS-01",
       "content": {
         "number": "",
         "sectionTitle": "",
@@ -627,7 +627,7 @@
     {
       "title": "Who We Are",
       "layout": "LY-02",
-      "bg": "DS-08",
+      "bg": "DS-10",
       "content": {
         "sectionTitle": "",
         "title": "Thank you!",

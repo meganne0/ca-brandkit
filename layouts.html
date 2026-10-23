@@ -14,18 +14,18 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/light/style.css"
     />
-    <link rel="stylesheet" href="css/slides.css?v=77" />
+    <link rel="stylesheet" href="css/slides.css?v=87" />
       <script src="js/auth-gate.js?v=6"></script>
 </head>
   <body>
-    <div class="bg-gallery">
+    <div class="bg-gallery bg-gallery--legacy">
       <header class="bg-gallery__header">
         <h1>Layout recipes</h1>
         <p>
           Drag to reorder — thumbnail IDs update to LY-01, LY-02… by position.
           <a href="index.html" style="color: var(--ca-orange)">← hub</a>
           ·
-          <a href="slides.html" style="color: var(--ca-orange)">slides</a>
+          <a href="dark-layouts.html" style="color: var(--ca-orange)">Dark slide layouts</a>
           ·
           <a href="backgrounds.html" style="color: var(--ca-orange)">backgrounds</a>
           ·
@@ -74,6 +74,7 @@
 
         const slide = document.createElement("div");
         slide.className = "slide";
+        slide.dataset.layout = recipeId;
         slide.style.position = "absolute";
         slide.style.inset = "0";
         slide.style.width = "1920px";

@@ -1,4 +1,4 @@
-import { renderBackground } from "./backgrounds.js?v=50";
+import { renderBackground } from "./backgrounds.js?v=58";
 import {
   BASE_FIELD,
   buildLayerCatalog,
@@ -6,7 +6,7 @@ import {
   formatOpacity,
   layerAssetUrl,
   loadLayerDetails,
-} from "./background-layers.js?v=12";
+} from "./background-layers.js?v=18";
 
 export function mountRecipePage({
   groups,
@@ -58,7 +58,7 @@ export function mountRecipePage({
               <span class="bg-card__label">${escapeHtml(recipe.label)}</span>
               <p class="bg-card__desc">${
                 recipe.fill
-                  ? `Base fill #060817 → #050018 → #040937. Banner base ${escapeHtml(recipe.baseSize)} at ${escapeHtml(recipe.basePosition)}, ${Math.round(recipe.baseOpacity * 100)}%.`
+                  ? `Base fill #290039 → #050018 → #040937. Banner base ${escapeHtml(recipe.baseSize)} at ${escapeHtml(recipe.basePosition)}, ${Math.round(recipe.baseOpacity * 100)}%.`
                   : `Field under the overlays: ${escapeHtml(field.hex)}. Pieces are separated below.`
               }</p>
             `;
@@ -145,14 +145,14 @@ export function mountRecipePage({
         row.className = "piece-row";
         if (recipe.fill) {
           appendPiece(row, {
-            asset: "#060817 → #050018 → #040937",
+            asset: "#290039 → #050018 → #040937",
             kind: "Base fill",
             gradient: recipe.fill,
             path: "Dark Slides fill",
             sizing: "Full canvas, behind the PNG plate.",
             note: `The middle of the gradient is #050018. The PNG plate on ${id} is at ${Math.round(recipe.baseOpacity * 100)}% opacity, so this fill stays visible.`,
             stops: [
-              { offset: "0%", hex: "#060817", opacity: "100%" },
+              { offset: "0%", hex: "#290039", opacity: "100%" },
               { offset: "50%", hex: "#050018", opacity: "100%" },
               { offset: "100%", hex: "#040937", opacity: "100%" },
             ],
@@ -166,7 +166,7 @@ export function mountRecipePage({
                 placement: "behind the plate",
               },
             ],
-          }, "Base fill · #060817 → #050018 → #040937");
+          }, "Base fill · #290039 → #050018 → #040937");
         } else {
           appendPiece(row, {
             asset: field.hex,

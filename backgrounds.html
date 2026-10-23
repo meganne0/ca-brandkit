@@ -10,11 +10,11 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Mozilla+Text:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/slides.css?v=84" />
+    <link rel="stylesheet" href="css/slides.css?v=87" />
       <script src="js/auth-gate.js?v=6"></script>
 </head>
   <body>
-    <div class="bg-gallery">
+    <div class="bg-gallery bg-gallery--legacy">
       <header class="bg-gallery__header">
         <h1>Background recipes</h1>
         <p>
@@ -23,7 +23,7 @@
           ·
           <a href="dark-slides.html" style="color: var(--ca-orange)">Dark Slides Recipes</a>
           ·
-          <a href="slides.html" style="color: var(--ca-orange)">slides</a>
+          <a href="dark-layouts.html" style="color: var(--ca-orange)">Dark slide layouts</a>
           ·
           <a href="linkedin.html" style="color: var(--ca-orange)">LinkedIn</a>
           ·
@@ -52,10 +52,10 @@
     </dialog>
 
     <script type="module">
-      import { BACKGROUNDS } from "./js/backgrounds.js?v=50";
+      import { BACKGROUNDS } from "./js/backgrounds.js?v=58";
       import { LINKEDIN_BACKGROUNDS } from "./js/backgrounds-linkedin.js?v=18";
       import { YOUTUBE_BACKGROUNDS } from "./js/backgrounds-youtube.js?v=4";
-      import { mountRecipePage } from "./js/recipe-gallery.js?v=6";
+      import { mountRecipePage } from "./js/recipe-gallery.js?v=14";
 
       const recipes = Object.fromEntries(
         Object.entries(BACKGROUNDS).filter(([id]) => id.startsWith("BG-"))

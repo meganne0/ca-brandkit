@@ -7,15 +7,15 @@ const KIND_ORDER = ["Bases", "Swirls", "Glows", "Dots"];
 
 /** Color under the plates. Dec 7 paints this in CSS; it is not an image file. */
 export const BASE_FILL = {
-  asset: "#060817 → #050018 → #040937",
+  asset: "#290039 → #050018 → #040937",
   kind: "Base fill",
   summary: "Dark Slides · Dec 7",
-  gradient: "linear-gradient(145deg, #060817 0%, #050018 50%, #040937 100%)",
+  gradient: "linear-gradient(145deg, #290039 0%, #050018 50%, #040937 100%)",
   path: "js/backgrounds.js · DARK_SLIDE_FILL",
   sizing: "Full canvas, behind the PNG plate. Opacity is 1.",
-  note: "Dark Slides paint this fill behind a cropped bg_swirl-banner.svg at 50%. The middle stop is #050018. Other decks use the canvas color --ca-purple-deep, #0a061a, in the same place.",
+  note: "Dark Slides paint this fill behind a cropped bg_swirl-banner.svg at 100%, except DS-03 which stays at 50%. DS-05, DS-09, and DS-11 add a second copy of that same crop at 15%. DS-02 uses DS-01. DS-07, DS-08, and DS-12 use DS-10. The middle stop is #050018. Other decks use the canvas color --ca-purple-deep, #0a061a, in the same place.",
   stops: [
-    { offset: "0%", hex: "#060817", opacity: "100%" },
+    { offset: "0%", hex: "#290039", opacity: "100%" },
     { offset: "50%", hex: "#050018", opacity: "100%" },
     { offset: "100%", hex: "#040937", opacity: "100%" },
   ],

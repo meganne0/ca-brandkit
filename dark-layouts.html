@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CyberArmor — Dark Slide Layouts</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Mozilla+Headline:wght@300&family=Mozilla+Text:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/light/style.css"
+    />
+    <link rel="stylesheet" href="css/slides.css?v=87" />
+    <script src="js/auth-gate.js?v=6"></script>
+  </head>
+  <body>
+    <div class="bg-gallery">
+      <header class="bg-gallery__header">
+        <h1>Dark slide layouts</h1>
+        <p>
+          The same layouts, each on a Dark Slide. Drag to reorder.
+          <a href="index.html">← hub</a>
+          ·
+          <a href="dark-slides.html">Dark Slides Recipes</a>
+          ·
+          <a href="layouts.html">older layouts</a>
+          ·
+          <a href="tokens.html">colors &amp; type</a>
+        </p>
+      </header>
+      <div class="bg-gallery__grid bg-gallery__grid--slide-tiles" id="gallery"></div>
+    </div>
+
+    <script type="module">
+      import { renderBackground } from "./js/backgrounds.js?v=58";
+      import { LAYOUTS, renderLayout, refreshImageTitleLayouts, refreshFlowFunnels } from "./js/layouts.js?v=83";
+      import { initImageLightbox } from "./js/components/lightbox.js?v=28";
+      import { LAYOUT_SAMPLES as SAMPLES } from "./js/layout-samples.js?v=14";
+
+      const DARK_BG = {
+        "BG-01": "DS-01",
+        "BG-02": "DS-01",
+        "BG-03": "DS-03",
+        "BG-04": "DS-04",
+        "BG-05": "DS-05",
+        "BG-06": "DS-06",
+        "BG-07": "DS-10",
+        "BG-08": "DS-10",
+        "BG-09": "DS-09",
+        "BG-10": "DS-10",
+        "BG-11": "DS-11",
+        "BG-12": "DS-10",
+      };
+
+      const gallery = document.getElementById("gallery");
+      let dragCard = null;
+
+      function padLy(n) {
+        return `LY-${String(n).padStart(2, "0")}`;
+      }
+
+      function refreshOrderNames() {
+        [...gallery.querySelectorAll(".bg-card")].forEach((card, i) => {
+          const idEl = card.querySelector(".bg-card__id");
+          if (idEl) idEl.textContent = padLy(i + 1);
+        });
+      }
+
+      function createCard(recipeId, layout) {
+        const sample = SAMPLES[recipeId];
+        if (!sample) return null;
+
+        const card = document.createElement("article");
+        card.className = "bg-card";
+        card.draggable = true;
+        card.dataset.recipeId = recipeId;
+
+        const preview = document.createElement("div");
+        preview.className = "bg-card__preview";
+        preview.style.aspectRatio = "16 / 9";
+
+        const slide = document.createElement("div");
+        slide.className = "slide";
+        slide.dataset.layout = recipeId;
+        slide.style.position = "absolute";
+        slide.style.inset = "0";
+        slide.style.width = "1920px";
+        slide.style.height = "1080px";
+        slide.style.transformOrigin = "top left";
+
+        const layers = document.createElement("div");
+        layers.className = "slide-layers";
+        slide.appendChild(layers);
+        preview.appendChild(slide);
+
+        const meta = document.createElement("div");
+        meta.className = "bg-card__meta";
+        meta.innerHTML = `
+          <span class="bg-card__id"></span>
+          <span class="bg-card__label">${layout.label}</span>
+        `;
+
+        card.append(preview, meta);
+
+        const scale = () => {
+          slide.style.transform = `scale(${preview.clientWidth / 1920})`;
+        };
+        new ResizeObserver(scale).observe(preview);
+        requestAnimationFrame(scale);
+
+        renderBackground(layers, DARK_BG[sample.bg] || "DS-01");
+        renderLayout(slide, recipeId, sample.content);
+
+        card.addEventListener("dragstart", (e) => {
+          dragCard = card;
+          card.classList.add("is-dragging");
+          e.dataTransfer.effectAllowed = "move";
+          e.dataTransfer.setData("text/plain", recipeId);
+        });
+
+        card.addEventListener("dragend", () => {
+          card.classList.remove("is-dragging");
+          gallery.querySelectorAll(".bg-card").forEach((c) => {
+            c.classList.remove("is-drag-over");
+          });
+          dragCard = null;
+          refreshOrderNames();
+        });
+
+        card.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = "move";
+          if (!dragCard || dragCard === card) return;
+          card.classList.add("is-drag-over");
+
+          const rect = card.getBoundingClientRect();
+          const before = e.clientY < rect.top + rect.height / 2;
+          gallery.insertBefore(dragCard, before ? card : card.nextSibling);
+          refreshOrderNames();
+        });
+
+        card.addEventListener("dragleave", () => {
+          card.classList.remove("is-drag-over");
+        });
+
+        card.addEventListener("drop", (e) => {
+          e.preventDefault();
+          card.classList.remove("is-drag-over");
+          refreshOrderNames();
+        });
+
+        return card;
+      }
+
+      Object.entries(LAYOUTS).forEach(([id, layout]) => {
+        const card = createCard(id, layout);
+        if (card) gallery.appendChild(card);
+      });
+
+      refreshOrderNames();
+      refreshImageTitleLayouts();
+      refreshFlowFunnels();
+      initImageLightbox(document);
+    </script>
+  </body>
+</html>
