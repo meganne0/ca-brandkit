@@ -3,7 +3,7 @@
  * duplicate/delete, drag to reorder, add via layout picker.
  */
 
-import { renderBackground } from "../backgrounds.js?v=37";
+import { renderBackground } from "../backgrounds.js?v=50";
 import {
   LAYOUTS,
   renderLayout,

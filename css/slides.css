@@ -1,7 +1,7 @@
 @import url("./tokens.css?v=7");
 @import url("./type-slides.css?v=7");
 @import url("./type.css?v=7");
-@import url("./backgrounds.css?v=7");
+@import url("./backgrounds.css?v=14");
 @import url("./components/footer.css?v=8");
 @import url("./components/lightbox.css?v=7");
 
@@ -1036,6 +1036,11 @@ body.slide-lightbox-open {
 }
 
 /* LY-03 Table of contents */
+.slide[data-layout="LY-03"] .slide-layer--dots.tl,
+.slide[data-layout="LY-03"] .slide-layer--dots.tr {
+  display: none;
+}
+
 .layout-toc {
   display: flex;
   flex-direction: column;

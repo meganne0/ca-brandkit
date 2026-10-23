@@ -1,16 +1,19 @@
 import {
   renderBackground as renderFromCatalogs,
   renderBackgroundRecipe,
-} from "./backgrounds-core.js";
+} from "./backgrounds-core.js?v=3";
 
 /**
  * Background recipes (BG-01 … BG-12) — slide channel (16:9)
  * Grouped by base: nodot · dot1 · dot2
+ * Dark Slides (DS-01 … DS-12) use the Dec 7 fill.
+ * Their base is bg_swirl-banner.svg at 50%, each recipe zoomed to a different crop.
+ * Dark Slides swap bg_glow1/3/4 for the Dec 7 glow PNGs and drop orange-glow-1/2, bg_dotglow.svg, and bg_dots1.svg. Glow 2 stays.
  * Fill overlays/bases: cover so W and H are ≥ slide size.
  * Swirl overlays: full slide width (100% auto).
  * dots.svg: positioned/contain — never fill.
  */
-export const BACKGROUNDS = {
+const SLIDE_BACKGROUNDS = {
   /* ── base-nodot ── */
   "BG-01": {
     label: "Warm ember",
@@ -161,6 +164,93 @@ export const BACKGROUNDS = {
       { asset: "orange-glow-1.svg", opacity: 0.3, blend: "screen" },
     ],
   },
+};
+
+/** Dec 7 base fill. Dark Slides paint this behind the banner base. */
+export const DARK_SLIDE_FILL = "linear-gradient(145deg, #060817 0%, #050018 50%, #040937 100%)";
+
+/** Glow PNGs imported for Dec 7. */
+const DARK_GLOW_NAVY = { asset: "dec7/glow-navy.png", opacity: 0.4 };
+const DARK_GLOW_PURPLE = { asset: "dec7/glow-purple.png", opacity: 0.5 };
+
+const BANNER_BASE = "bg_swirl-banner.svg";
+
+/** Each Dark Slide zooms to a different part of the banner. */
+const BANNER_CROPS = [
+  { baseSize: "165%", basePosition: "0% 0%" },
+  { baseSize: "190%", basePosition: "50% 0%" },
+  { baseSize: "220%", basePosition: "100% 0%" },
+  { baseSize: "180%", basePosition: "0% 40%" },
+  { baseSize: "250%", basePosition: "50% 35%" },
+  { baseSize: "200%", basePosition: "100% 45%" },
+  { baseSize: "230%", basePosition: "15% 100%" },
+  { baseSize: "175%", basePosition: "50% 100%" },
+  { baseSize: "210%", basePosition: "100% 80%" },
+  { baseSize: "280%", basePosition: "30% 20%" },
+  { baseSize: "240%", basePosition: "80% 70%" },
+  { baseSize: "200%", basePosition: "10% 75%" },
+];
+
+function darkSlideOverlays(overlays = []) {
+  const next = [];
+  let usedNavy = false;
+  let usedPurple = false;
+  overlays.forEach((overlay) => {
+    if (overlay.asset === "bg_glow1.svg" || overlay.asset === "bg_glow4.svg") {
+      if (!usedNavy) {
+        next.push({ ...DARK_GLOW_NAVY });
+        usedNavy = true;
+      }
+      return;
+    }
+    if (overlay.asset === "bg_glow3.svg") {
+      if (!usedPurple) {
+        next.push({ ...DARK_GLOW_PURPLE });
+        usedPurple = true;
+      }
+      return;
+    }
+    if (
+      overlay.asset === "orange-glow-1.svg" ||
+      overlay.asset === "orange-glow-2.svg" ||
+      overlay.asset === "bg_dotglow.svg" ||
+      overlay.asset === "bg_dots1.svg" ||
+      overlay.asset === "bg_swirl-banner.svg"
+    ) {
+      return;
+    }
+    next.push({ ...overlay });
+  });
+  return next;
+}
+
+function darkSlideRecipe(id, recipe) {
+  const overlays = darkSlideOverlays(recipe.overlays);
+  const index = Number(id.replace(/^BG-/, "")) - 1;
+  const crop = BANNER_CROPS[index] ?? BANNER_CROPS[0];
+  return {
+    label: recipe.label,
+    group: "dark-slides",
+    channel: "slide",
+    basedOn: id,
+    fill: DARK_SLIDE_FILL,
+    base: BANNER_BASE,
+    baseOpacity: 0.5,
+    baseSize: crop.baseSize,
+    basePosition: crop.basePosition,
+    overlays,
+    dots: recipe.dots?.map((dot) => ({ ...dot })),
+  };
+}
+
+export const BACKGROUNDS = {
+  ...SLIDE_BACKGROUNDS,
+  ...Object.fromEntries(
+    Object.entries(SLIDE_BACKGROUNDS).map(([id, recipe]) => [
+      `DS-${id.replace(/^BG-/, "")}`,
+      darkSlideRecipe(id, recipe),
+    ])
+  ),
 };
 
 export function renderBackground(container, recipeId) {

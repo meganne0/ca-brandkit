@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CyberArmor — Dark Slides Recipes</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Mozilla+Text:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/slides.css?v=84" />
+      <script src="js/auth-gate.js?v=6"></script>
+</head>
+  <body>
+    <div class="bg-gallery">
+      <header class="bg-gallery__header">
+        <h1>Dark Slides Recipes</h1>
+        <p>
+          DS-01 … DS-12 on the Dec 7 fill. The base is a different crop of bg_swirl-banner.svg at 50%.
+          <a href="index.html" style="color: var(--ca-orange)">← hub</a>
+          ·
+          <a href="backgrounds.html" style="color: var(--ca-orange)">Background Recipes</a>
+          ·
+          <a href="slides.html" style="color: var(--ca-orange)">slides</a>
+          ·
+          <a href="linkedin.html" style="color: var(--ca-orange)">LinkedIn</a>
+          ·
+          <a href="tokens.html" style="color: var(--ca-orange)">colors &amp; type</a>
+        </p>
+      </header>
+      <div id="gallery"></div>
+      <div id="breakdown" class="layer-catalog"></div>
+      <div id="layers" class="layer-catalog"></div>
+    </div>
+
+    <dialog id="layer-dialog" class="layer-dialog" aria-labelledby="layer-dialog-title">
+      <div class="layer-dialog__panel">
+        <div class="layer-dialog__stage" id="layer-dialog-stage">
+          <div class="layer-dialog__under" id="layer-dialog-under"></div>
+          <div class="layer-dialog__art" id="layer-dialog-art"></div>
+        </div>
+        <div class="layer-dialog__copy">
+          <button type="button" class="layer-dialog__close" id="layer-dialog-close">Close</button>
+          <p class="layer-dialog__kicker" id="layer-dialog-kicker"></p>
+          <h2 class="layer-dialog__title" id="layer-dialog-title"></h2>
+          <p class="layer-dialog__path" id="layer-dialog-path"></p>
+          <div id="layer-dialog-body"></div>
+        </div>
+      </div>
+    </dialog>
+
+    <script type="module">
+      import { BACKGROUNDS } from "./js/backgrounds.js?v=50";
+      import { mountRecipePage } from "./js/recipe-gallery.js?v=6";
+
+      const recipes = Object.fromEntries(
+        Object.entries(BACKGROUNDS).filter(([id]) => id.startsWith("DS-"))
+      );
+
+      mountRecipePage({
+        groups: [{ id: "dark-slides", title: "Dark Slides" }],
+        recipes,
+        catalogGroups: [{ channel: "slide", catalog: recipes }],
+        includeBaseFill: true,
+        slideIdTest: (id) => id.startsWith("DS-"),
+      });
+    </script>
+  </body>
+</html>

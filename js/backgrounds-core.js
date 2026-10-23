@@ -60,15 +60,17 @@ export function renderBackgroundRecipe(container, recipe) {
   if (!recipe) return;
 
   container.replaceChildren();
+  container.style.background = recipe.fill || "";
 
   const focus = recipe.focus ?? "center";
 
   const base = document.createElement("div");
   base.className = "slide-layer slide-layer--base";
   base.style.backgroundImage = `url('${layerUrl(recipe.base)}')`;
-  base.style.backgroundSize = "cover";
-  base.style.backgroundPosition = focus;
+  base.style.backgroundSize = recipe.baseSize || "cover";
+  base.style.backgroundPosition = recipe.basePosition || focus;
   base.style.backgroundRepeat = "no-repeat";
+  if (recipe.baseOpacity != null) base.style.opacity = String(recipe.baseOpacity);
   container.appendChild(base);
 
   (recipe.overlays ?? []).forEach((overlay) => {

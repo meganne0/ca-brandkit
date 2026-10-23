@@ -5,7 +5,7 @@
     {
       "title": "Cover",
       "layout": "LY-01",
-      "bg": "BG-01",
+      "bg": "DS-01",
       "content": {
         "headline": "The Cybercriminal Supply Chain: The Commodification of Compromise",
         "accent": "",
@@ -15,7 +15,7 @@
     {
       "title": "Who We Are",
       "layout": "LY-02",
-      "bg": "BG-08",
+      "bg": "DS-08",
       "content": {
         "sectionTitle": "",
         "title": "Who We Are",
@@ -43,7 +43,7 @@
     {
       "title": "Table of contents",
       "layout": "LY-03",
-      "bg": "BG-02",
+      "bg": "DS-02",
       "content": {
         "sectionTitle": "",
         "title": "What we’ll cover",
@@ -71,7 +71,7 @@
     {
       "title": "Section",
       "layout": "LY-04",
-      "bg": "BG-03",
+      "bg": "DS-03",
       "content": {
         "number": "01",
         "sectionTitle": "What does CyberArmor do?",
@@ -81,7 +81,7 @@
     {
       "title": "Quote panel",
       "layout": "LY-05",
-      "bg": "BG-02",
+      "bg": "DS-02",
       "content": {
         "text": "We alert organizations when their credentials have been compromised, before it’s posted on the dark web.",
         "accent": "before it’s posted on the dark web."
@@ -90,7 +90,7 @@
     {
       "title": "Campaign symbols",
       "layout": "LY-25",
-      "bg": "BG-02",
+      "bg": "DS-02",
       "content": {
         "text": "We do this by reverse engineering active phish and infostealer campaigns.",
         "hub": false,
@@ -130,7 +130,7 @@
     {
       "title": "PreBreach Intelligence",
       "layout": "LY-25",
-      "bg": "BG-02",
+      "bg": "DS-02",
       "content": {
         "text": "",
         "hub": true,
@@ -172,7 +172,7 @@
     {
       "title": "Section",
       "layout": "LY-04",
-      "bg": "BG-03",
+      "bg": "DS-03",
       "content": {
         "number": "02",
         "sectionTitle": "The Criminal Supply Chain",
@@ -182,7 +182,7 @@
     {
       "title": "How It Started",
       "layout": "LY-08",
-      "bg": "BG-09",
+      "bg": "DS-09",
       "content": {
         "sectionTitle": "",
         "title": "How It Started",
@@ -200,7 +200,7 @@
     {
       "title": "How it Started",
       "layout": "LY-08",
-      "bg": "BG-09",
+      "bg": "DS-09",
       "content": {
         "sectionTitle": "",
         "title": "What We Do",
@@ -217,7 +217,7 @@
     {
       "title": "How it Started",
       "layout": "LY-08",
-      "bg": "BG-09",
+      "bg": "DS-09",
       "content": {
         "sectionTitle": "",
         "title": "Attack Breakdown",
@@ -231,7 +231,7 @@
     {
       "title": "Attack paths",
       "layout": "LY-24",
-      "bg": "BG-02",
+      "bg": "DS-02",
       "content": {
         "sources": [
           {
@@ -327,7 +327,7 @@
     {
       "title": "Quote panel",
       "layout": "LY-05",
-      "bg": "BG-02",
+      "bg": "DS-02",
       "content": {
         "text": "While traditional tools focus on Dark Web monitoring, we focus on compromised credentials in the Collection Phase, before data is sold on the dark web.",
         "accent": "compromised credentials in the Collection Phase, before data is sold on the dark web."
@@ -336,7 +336,7 @@
     {
       "title": "Campaign symbols",
       "layout": "LY-25",
-      "bg": "BG-02",
+      "bg": "DS-02",
       "content": {
         "text": "Data is captured from active malware and phish campaigns through reverse engineering.",
         "hub": false,
@@ -376,7 +376,7 @@
     {
       "title": "Section",
       "layout": "LY-04",
-      "bg": "BG-03",
+      "bg": "DS-03",
       "content": {
         "number": "02",
         "sectionTitle": "Common Questions",
@@ -386,7 +386,7 @@
     {
       "title": "How does this differ?",
       "layout": "LY-13",
-      "bg": "BG-06",
+      "bg": "DS-06",
       "content": {
         "question": "How does this differ from other tools?"
       }
@@ -394,7 +394,7 @@
     {
       "title": "Infostealer + Phish",
       "layout": "LY-13",
-      "bg": "BG-03",
+      "bg": "DS-03",
       "content": {
         "question": "What does your software do?",
         "number": "",
@@ -404,7 +404,7 @@
     {
       "title": "Three steps",
       "layout": "LY-09",
-      "bg": "BG-09",
+      "bg": "DS-09",
       "content": {
         "number": "",
         "sectionTitle": "",
@@ -426,7 +426,7 @@
     {
       "title": "Single Line",
       "layout": "LY-13",
-      "bg": "BG-02",
+      "bg": "DS-02",
       "content": {
         "number": "",
         "sectionTitle": "",
@@ -436,7 +436,7 @@
     {
       "title": "Three steps",
       "layout": "LY-09",
-      "bg": "BG-09",
+      "bg": "DS-09",
       "content": {
         "number": "",
         "sectionTitle": "",
@@ -464,7 +464,7 @@
     {
       "title": "Single Line",
       "layout": "LY-13",
-      "bg": "BG-02",
+      "bg": "DS-02",
       "content": {
         "number": "",
         "sectionTitle": "",
@@ -474,7 +474,7 @@
     {
       "title": "Section",
       "layout": "LY-04",
-      "bg": "BG-03",
+      "bg": "DS-03",
       "content": {
         "number": "03",
         "sectionTitle": "Demo",
@@ -484,7 +484,7 @@
     {
       "title": "Demo",
       "layout": "LY-22",
-      "bg": "BG-05",
+      "bg": "DS-05",
       "content": {
         "title": "Demo",
         "subtitle": "Let’s check out some data we have on the DarkArmor platform",
@@ -627,7 +627,7 @@
     {
       "title": "Who We Are",
       "layout": "LY-02",
-      "bg": "BG-08",
+      "bg": "DS-08",
       "content": {
         "sectionTitle": "",
         "title": "Thank you!",
@@ -655,7 +655,7 @@
     {
       "title": "Economic Context",
       "layout": "LY-12",
-      "bg": "BG-04",
+      "bg": "DS-04",
       "content": {
         "title": "",
         "subtitle": "",
