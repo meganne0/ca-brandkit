@@ -27,7 +27,7 @@
           · <span id="save-status" class="deck-save-status"></span>
         </div>
         <div class="deck-toolbar" role="toolbar" aria-label="Draft controls">
-          <button type="button" class="deck-toolbar__btn" id="btn-save" title="Save to this browser (survives refresh) + optional project files">Save</button>
+          <button type="button" class="deck-toolbar__btn" id="btn-save" title="Save to this browser and write the project files to disk">Save</button>
           <button type="button" class="deck-toolbar__btn is-active" id="btn-preview" data-mode="preview">
             Preview
           </button>
@@ -339,7 +339,7 @@
         fetchDraftJson,
         persistDraftHtml,
         persistDraftJson,
-      } from "../js/draft-sync.js?v=3";
+      } from "../js/draft-sync.js?v=5";
 
       const DRAFT_FILE_KEY = "prebreach-intro";
       // Bump when published deck must displace stale browser drafts.
@@ -583,14 +583,9 @@
           });
 
           if (htmlResult === "written" && jsonResult === "written") {
-            flashStatus("Saved — restores on refresh · project files updated");
-          } else if (htmlResult === "download" || jsonResult === "download") {
-            flashStatus(
-              "Saved — restores on refresh · downloaded files for drafts/",
-              6000,
-            );
+            flashStatus("Updated the Prebreach files");
           } else {
-            flashStatus("Saved — restores on refresh");
+            flashStatus("Saved in this browser only");
           }
         } catch (err) {
           console.warn(err);

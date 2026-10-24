@@ -155,6 +155,16 @@ async function writeTextToHandle(handle, text) {
   await writable.close();
 }
 
+/** Write through the local dev server so Save lands in the repo without a prompt. */
+async function writeViaDevServer(filename, text) {
+  const res = await fetch("/api/save-draft", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ file: `drafts/${filename}`, content: text }),
+  });
+  if (!res.ok) throw new Error(`Local save failed (${res.status})`);
+}
+
 /**
  * Persist slides into the draft HTML on disk (so git commit ships them).
  * @returns {"written"|"download"|"unavailable"}
@@ -168,26 +178,8 @@ export async function persistDraftHtml({
   const sourceHtml = await fetchHtml();
   const nextHtml = injectSlideSource(sourceHtml, slides);
 
-  try {
-    const handle = await getWritableHandle(
-      `${draftKey}:html`,
-      htmlFileName,
-      {
-        description: "Draft HTML",
-        accept: { "text/html": [".html"] },
-      },
-    );
-    if (handle) {
-      await writeTextToHandle(handle, nextHtml);
-      return "written";
-    }
-  } catch (err) {
-    if (err?.name === "AbortError") return "unavailable";
-    console.warn("File System Access write failed, downloading instead", err);
-  }
-
-  downloadText(htmlFileName, nextHtml, "text/html");
-  return "download";
+  await writeViaDevServer(htmlFileName, nextHtml);
+  return "written";
 }
 
 /**
@@ -200,26 +192,8 @@ export async function persistDraftJson({
   payload,
 }) {
   const text = `${JSON.stringify(payload, null, 2)}\n`;
-  try {
-    const handle = await getWritableHandle(
-      `${draftKey}:json`,
-      jsonFileName,
-      {
-        description: "Slides JSON",
-        accept: { "application/json": [".json"] },
-      },
-    );
-    if (handle) {
-      await writeTextToHandle(handle, text);
-      return "written";
-    }
-  } catch (err) {
-    if (err?.name === "AbortError") return "unavailable";
-    console.warn("JSON write failed, downloading instead", err);
-  }
-
-  downloadText(jsonFileName, text, "application/json");
-  return "download";
+  await writeViaDevServer(jsonFileName, text);
+  return "written";
 }
 
 /** Load committed slides JSON (live site / fresh browsers). */

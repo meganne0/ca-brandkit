@@ -63,8 +63,30 @@ function buildFormHtml(layout, content) {
   }
 
   if (layout === "LY-05") {
+    const size = ["sm", "md", "lg", "xl"].includes(c.textSize) ? c.textSize : "md";
     bits.push(field("text", "Quote", c.text ?? "", { type: "textarea", rows: 4 }));
     bits.push(field("accent", "Accent phrase", c.accent ?? ""));
+    const panelOn = !(c.panel === false || c.panel === "off");
+    bits.push(`
+      <label class="deck-form__field">
+        <span class="deck-form__label">Text size</span>
+        <select class="deck-form__input" name="textSize">
+          <option value="sm" ${size === "sm" ? "selected" : ""}>Small — 32px</option>
+          <option value="md" ${size === "md" ? "selected" : ""}>Medium — 40px</option>
+          <option value="lg" ${size === "lg" ? "selected" : ""}>Large — 56px</option>
+          <option value="xl" ${size === "xl" ? "selected" : ""}>Extra large — 72px</option>
+        </select>
+      </label>
+    `);
+    bits.push(`
+      <label class="deck-form__field">
+        <span class="deck-form__label">Background and border</span>
+        <select class="deck-form__input" name="panel">
+          <option value="on" ${panelOn ? "selected" : ""}>On</option>
+          <option value="off" ${panelOn ? "" : "selected"}>Off</option>
+        </select>
+      </label>
+    `);
     return bits.join("");
   }
 
@@ -393,6 +415,8 @@ function readContentFromForm(form, layout, base = {}) {
   if (layout === "LY-05") {
     next.text = val(form, "text");
     next.accent = val(form, "accent");
+    next.textSize = val(form, "textSize") || "md";
+    next.panel = val(form, "panel") !== "off";
     return next;
   }
 

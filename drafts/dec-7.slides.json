@@ -1,6 +1,6 @@
 {
-  "savedAt": "2026-10-23T02:16:26.223Z",
-  "publishId": "dec-7-20261022c",
+  "savedAt": "2026-10-24T03:24:12.256Z",
+  "publishId": "dec-7-1792812252256",
   "slides": [
     {
       "title": "Cover",
@@ -74,7 +74,7 @@
       "bg": "DS-03",
       "content": {
         "number": "01",
-        "sectionTitle": "What does CyberArmor do?",
+        "sectionTitle": "Hello, World",
         "subtitle": ""
       }
     },
@@ -84,7 +84,9 @@
       "bg": "DS-01",
       "content": {
         "text": "We alert organizations when their credentials have been compromised, before it’s posted on the dark web.",
-        "accent": "before it’s posted on the dark web."
+        "accent": "before it’s posted on the dark web.",
+        "textSize": "lg",
+        "panel": true
       }
     },
     {
@@ -170,13 +172,14 @@
       }
     },
     {
-      "title": "Section",
-      "layout": "LY-04",
-      "bg": "DS-03",
+      "title": "Quote panel",
+      "layout": "LY-05",
+      "bg": "DS-01",
       "content": {
-        "number": "02",
-        "sectionTitle": "The Criminal Supply Chain",
-        "subtitle": ""
+        "text": "Earlier alerts + earlier remediation = cost savings",
+        "accent": "= cost savings",
+        "textSize": "lg",
+        "panel": false
       }
     },
     {
@@ -190,42 +193,32 @@
         "text": "Nguyen is a malware researcher with +15 years of experience in thousands of investigations.",
         "bullets": [
           "Why wait for a breach?",
-          "Breach data is often \"too late\"",
-          "Earlier remediation could make greater impact"
+          "Dark web data is often \"too late\"",
+          "Many compromises never reach the dark web"
         ],
         "subtitle": "",
         "number": ""
       }
     },
     {
-      "title": "How it Started",
-      "layout": "LY-08",
-      "bg": "DS-09",
+      "title": "Section",
+      "layout": "LY-04",
+      "bg": "DS-03",
       "content": {
-        "sectionTitle": "",
-        "title": "What We Do",
-        "blurBullets": true,
-        "text": "We focus on alerting on compromised credentials before it is monetized or published on the dark web.",
-        "bullets": [
-          "Traditional tools focus on dark web scraping",
-          "Many compromises never reach the dark web before they're taken advantage of"
-        ],
-        "subtitle": "",
-        "number": ""
+        "number": "02",
+        "sectionTitle": "The Criminal Supply Chain",
+        "subtitle": ""
       }
     },
     {
-      "title": "How it Started",
-      "layout": "LY-08",
-      "bg": "DS-09",
+      "title": "Quote panel",
+      "layout": "LY-05",
+      "bg": "DS-01",
       "content": {
-        "sectionTitle": "",
-        "title": "Attack Breakdown",
-        "blurBullets": true,
-        "text": "Let's look at what a typical attack looks like in order to illustrate where our data comes into play",
-        "bullets": [],
-        "subtitle": "",
-        "number": ""
+        "text": "It used to take a genius...",
+        "accent": "a genius...",
+        "textSize": "lg",
+        "panel": false
       }
     },
     {
@@ -322,306 +315,6 @@
         "sourceColor": "#1EADEC",
         "outcomeColor": "#FF2828",
         "impactColor": "#FF2828"
-      }
-    },
-    {
-      "title": "Quote panel",
-      "layout": "LY-05",
-      "bg": "DS-01",
-      "content": {
-        "text": "While traditional tools focus on Dark Web monitoring, we focus on compromised credentials in the Collection Phase, before data is sold on the dark web.",
-        "accent": "compromised credentials in the Collection Phase, before data is sold on the dark web."
-      }
-    },
-    {
-      "title": "Campaign symbols",
-      "layout": "LY-25",
-      "bg": "DS-01",
-      "content": {
-        "text": "Data is captured from active malware and phish campaigns through reverse engineering.",
-        "hub": false,
-        "hubLabel": "PreBreach Intelligence",
-        "symbols": [
-          {
-            "count": 6,
-            "x": 13,
-            "y": 24
-          },
-          {
-            "count": 30,
-            "x": 34,
-            "y": 16
-          },
-          {
-            "count": 7,
-            "x": 74,
-            "y": 20
-          },
-          {
-            "count": 5,
-            "x": 90,
-            "y": 52
-          },
-          {
-            "count": 15,
-            "x": 18,
-            "y": 72
-          },
-          {
-            "count": 11
-          }
-        ]
-      }
-    },
-    {
-      "title": "Section",
-      "layout": "LY-04",
-      "bg": "DS-03",
-      "content": {
-        "number": "02",
-        "sectionTitle": "Common Questions",
-        "subtitle": "How it works, differentiators, pricing structure"
-      }
-    },
-    {
-      "title": "How does this differ?",
-      "layout": "LY-13",
-      "bg": "DS-06",
-      "content": {
-        "question": "How does this differ from other tools?"
-      }
-    },
-    {
-      "title": "Infostealer + Phish",
-      "layout": "LY-13",
-      "bg": "DS-03",
-      "content": {
-        "question": "What does your software do?",
-        "number": "",
-        "sectionTitle": ""
-      }
-    },
-    {
-      "title": "Three steps",
-      "layout": "LY-09",
-      "bg": "DS-09",
-      "content": {
-        "number": "",
-        "sectionTitle": "",
-        "title": "",
-        "subtitle": "",
-        "steps": [
-          {
-            "title": "Monitor",
-            "icon": "ph-shield-check",
-            "description": "Get alerted when your data is found in an active campaign."
-          },
-          {
-            "title": "Hunt",
-            "description": "Full data platform access for hunting and investigating."
-          }
-        ]
-      }
-    },
-    {
-      "title": "Single Line",
-      "layout": "LY-13",
-      "bg": "DS-01",
-      "content": {
-        "number": "",
-        "sectionTitle": "",
-        "question": "How is pricing structured?"
-      }
-    },
-    {
-      "title": "Three steps",
-      "layout": "LY-09",
-      "bg": "DS-09",
-      "content": {
-        "number": "",
-        "sectionTitle": "",
-        "title": "",
-        "subtitle": "",
-        "steps": [
-          {
-            "title": "Domains",
-            "icon": "ph-eye",
-            "description": "The number of domains involved"
-          },
-          {
-            "title": "Identities",
-            "icon": "ph-graph",
-            "description": "Emails, usernames, etc"
-          },
-          {
-            "title": "Features",
-            "icon": "ph-shield-check",
-            "description": "Monitoring vs full hunt and investigation"
-          }
-        ]
-      }
-    },
-    {
-      "title": "Single Line",
-      "layout": "LY-13",
-      "bg": "DS-01",
-      "content": {
-        "number": "",
-        "sectionTitle": "",
-        "question": "Other questions?"
-      }
-    },
-    {
-      "title": "Section",
-      "layout": "LY-04",
-      "bg": "DS-03",
-      "content": {
-        "number": "03",
-        "sectionTitle": "Demo",
-        "subtitle": "A look at some real life data on our platform"
-      }
-    },
-    {
-      "title": "Demo",
-      "layout": "LY-22",
-      "bg": "DS-05",
-      "content": {
-        "title": "Demo",
-        "subtitle": "Let’s check out some data we have on the DarkArmor platform",
-        "items": [
-          {
-            "url": "askaribank.com.pk",
-            "severity": "medium"
-          },
-          {
-            "url": "abl.com",
-            "severity": "medium"
-          },
-          {
-            "url": "bankalfalah.com",
-            "severity": "medium"
-          },
-          {
-            "url": "bankalhabib.com",
-            "severity": "medium"
-          },
-          {
-            "url": "bop.com.pk",
-            "severity": "high"
-          },
-          {
-            "url": "bok.com.pk",
-            "severity": "medium"
-          },
-          {
-            "url": "faysalbank.com",
-            "severity": "medium"
-          },
-          {
-            "url": "mcb.com.pk",
-            "severity": "medium"
-          },
-          {
-            "url": "meezanbank.com",
-            "severity": "high"
-          },
-          {
-            "url": "easypaisa.com.pk",
-            "severity": "medium"
-          },
-          {
-            "url": "jazzcash.com.pk",
-            "severity": "medium"
-          },
-          {
-            "url": "mashreq.com",
-            "severity": "medium"
-          },
-          {
-            "url": "alahli.com",
-            "severity": "medium"
-          },
-          {
-            "url": "emiratesnbd.com",
-            "severity": "medium"
-          },
-          {
-            "url": "adcb.com",
-            "severity": "medium"
-          },
-          {
-            "url": "alrajhibank.com.sa",
-            "severity": "high"
-          },
-          {
-            "url": "alinma.com",
-            "severity": "high"
-          },
-          {
-            "url": "riyadbank.com",
-            "severity": "high"
-          },
-          {
-            "url": "bankalbilad.com",
-            "severity": "high"
-          },
-          {
-            "url": "anb.com.sa",
-            "severity": "medium"
-          },
-          {
-            "url": "alfransi.com.sa",
-            "severity": "high"
-          },
-          {
-            "url": "saib.com.sa",
-            "severity": "medium"
-          },
-          {
-            "url": "qnb.com",
-            "severity": "high"
-          },
-          {
-            "url": "qib.com.qa",
-            "severity": "medium"
-          },
-          {
-            "url": "nbk.com",
-            "severity": "medium"
-          },
-          {
-            "url": "nbbonline.com",
-            "severity": "medium"
-          },
-          {
-            "url": "sngpl.com.pk",
-            "severity": "medium"
-          },
-          {
-            "url": "zong.com.pk",
-            "severity": "medium"
-          },
-          {
-            "url": "nayatel.com",
-            "severity": "medium"
-          },
-          {
-            "url": "ke.com.pk",
-            "severity": "high"
-          },
-          {
-            "url": "ufone.com",
-            "severity": "high"
-          },
-          {
-            "url": "stormfiber.com",
-            "severity": "high"
-          },
-          {
-            "url": "ptcl.com.pk",
-            "severity": "high"
-          }
-        ]
       }
     },
     {

@@ -306,9 +306,11 @@ function renderQuote(content) {
   const el = document.createElement("div");
   el.className = "slide-content layout-quote";
   const text = accentize(content.text ?? "", content.accent);
+  const size = ["sm", "md", "lg", "xl"].includes(content.textSize) ? content.textSize : "md";
+  const plain = content.panel === false || content.panel === "off";
   el.innerHTML = `
-    <div class="quote-panel">
-      <p class="type-body">${text}</p>
+    <div class="quote-panel${plain ? " quote-panel--plain" : ""}">
+      <p class="type-body layout-quote__text layout-quote__text--${size}">${text}</p>
     </div>
   `;
   return el;

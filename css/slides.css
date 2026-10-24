@@ -1107,7 +1107,13 @@ body.slide-lightbox-open {
 .layout-quote .quote-panel {
   margin: auto 0;
   align-self: center;
+  padding: 128px;
 }
+
+.layout-quote__text--sm { font-size: 32px; }
+.layout-quote__text--md { font-size: 40px; }
+.layout-quote__text--lg { font-size: 56px; }
+.layout-quote__text--xl { font-size: 72px; }
 
 .quote-panel {
   position: relative;
@@ -1139,6 +1145,16 @@ body.slide-lightbox-open {
 .quote-panel::after {
   filter: blur(10px);
   opacity: 0.75;
+}
+
+.quote-panel--plain {
+  background: none;
+  backdrop-filter: none;
+}
+
+.quote-panel--plain::before,
+.quote-panel--plain::after {
+  display: none;
 }
 
 /* LY-06 Insight + evidence */
