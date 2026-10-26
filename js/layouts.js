@@ -308,9 +308,11 @@ function renderQuote(content) {
   const text = accentize(content.text ?? "", content.accent);
   const size = ["sm", "md", "lg", "xl"].includes(content.textSize) ? content.textSize : "md";
   const plain = content.panel === false || content.panel === "off";
+  const author = String(content.author ?? "").trim();
   el.innerHTML = `
     <div class="quote-panel${plain ? " quote-panel--plain" : ""}">
       <p class="type-body layout-quote__text layout-quote__text--${size}">${text}</p>
+      ${author ? `<p class="type-label layout-quote__author">${escapeHtml(author)}</p>` : ""}
     </div>
   `;
   return el;

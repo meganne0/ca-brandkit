@@ -66,6 +66,7 @@ function buildFormHtml(layout, content) {
     const size = ["sm", "md", "lg", "xl"].includes(c.textSize) ? c.textSize : "md";
     bits.push(field("text", "Quote", c.text ?? "", { type: "textarea", rows: 4 }));
     bits.push(field("accent", "Accent phrase", c.accent ?? ""));
+    bits.push(field("author", "Author (optional)", c.author ?? ""));
     const panelOn = !(c.panel === false || c.panel === "off");
     bits.push(`
       <label class="deck-form__field">
@@ -417,6 +418,7 @@ function readContentFromForm(form, layout, base = {}) {
     next.accent = val(form, "accent");
     next.textSize = val(form, "textSize") || "md";
     next.panel = val(form, "panel") !== "off";
+    next.author = val(form, "author");
     return next;
   }
 

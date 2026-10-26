@@ -9,7 +9,7 @@ import {
   renderLayout,
   refreshImageTitleLayouts,
   refreshFlowFunnels,
-} from "../layouts.js?v=85";
+} from "../layouts.js?v=86";
 import { LAYOUT_SAMPLES } from "../layout-samples.js?v=14";
 import { initImageLightbox } from "./lightbox.js?v=28";
 

@@ -1115,6 +1115,10 @@ body.slide-lightbox-open {
 .layout-quote__text--lg { font-size: 56px; }
 .layout-quote__text--xl { font-size: 72px; }
 
+.layout-quote__author {
+  margin-top: 28px;
+}
+
 .quote-panel {
   position: relative;
   width: min(1180px, 100%);

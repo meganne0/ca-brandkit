@@ -83,7 +83,9 @@ export function harvestSlideContent(slide) {
 
   if (root.classList.contains("layout-quote")) {
     const h = readAccented(root.querySelector(".quote-panel .type-body"), base.text, base.accent);
-    return { ...base, text: h.text, accent: h.accent };
+    const author =
+      root.querySelector(".layout-quote__author")?.textContent.trim() ?? base.author ?? "";
+    return { ...base, text: h.text, accent: h.accent, author };
   }
 
   if (root.classList.contains("layout-section")) {
