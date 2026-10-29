@@ -427,3 +427,100 @@ export async function downloadPaintedThumbnail(paint, filename, opts = {}) {
     mount.remove();
   }
 }
+
+/**
+ * Paint a design-size canvas and download it as a JPEG.
+ * @param {(canvas: HTMLElement) => void} paint
+ * @param {string} filename
+ * @param {{ className?: string, width?: number, height?: number, quality?: number }} [opts]
+ */
+export async function downloadPaintedJpg(paint, filename, opts = {}) {
+  const width = opts.width ?? DESIGN_W;
+  const height = opts.height ?? DESIGN_H;
+  const quality = opts.quality ?? 0.92;
+  const mount = document.createElement("div");
+  mount.setAttribute("aria-hidden", "true");
+  mount.style.cssText = [
+    "position:fixed",
+    "left:-100vw",
+    "top:0",
+    `width:${width}px`,
+    `height:${height}px`,
+    "overflow:hidden",
+    "pointer-events:none",
+    "z-index:0",
+    "opacity:1",
+  ].join(";");
+
+  const canvas = document.createElement("div");
+  canvas.className = opts.className ?? "canvas canvas--yt";
+  canvas.style.cssText = [
+    `width:${width}px`,
+    `height:${height}px`,
+    "transform:none",
+    "transform-origin:top left",
+    "margin:0",
+    "position:relative",
+    "opacity:1",
+  ].join(";");
+  mount.appendChild(canvas);
+  document.body.appendChild(mount);
+
+  try {
+    paint(canvas);
+    await inlineBlobImages(canvas);
+    await waitForImages(canvas);
+    await waitForFonts();
+    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+    const dataUrl = await toPng(canvas, {
+      width,
+      height,
+      pixelRatio: EXPORT_SCALE,
+      cacheBust: true,
+      skipAutoScale: true,
+      style: {
+        transform: "none",
+        transformOrigin: "top left",
+        margin: "0",
+        left: "0",
+        top: "0",
+        right: "auto",
+        bottom: "auto",
+        width: `${width}px`,
+        height: `${height}px`,
+        opacity: "1",
+        position: "relative",
+      },
+      onclone(clonedDoc) {
+        hardenHostForExport(clonedDoc);
+      },
+    });
+
+    const img = await new Promise((resolve, reject) => {
+      const el = new Image();
+      el.onload = () => resolve(el);
+      el.onerror = reject;
+      el.src = dataUrl;
+    });
+    const raster = document.createElement("canvas");
+    raster.width = img.naturalWidth || img.width;
+    raster.height = img.naturalHeight || img.height;
+    const ctx = raster.getContext("2d");
+    if (!ctx) throw new Error("Could not build the JPEG image.");
+    ctx.fillStyle = "#05030d";
+    ctx.fillRect(0, 0, raster.width, raster.height);
+    ctx.drawImage(img, 0, 0);
+    const jpegUrl = raster.toDataURL("image/jpeg", quality);
+    const a = document.createElement("a");
+    a.href = jpegUrl;
+    a.download = filename.toLowerCase().endsWith(".jpg") || filename.toLowerCase().endsWith(".jpeg")
+      ? filename
+      : `${filename}.jpg`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+  } finally {
+    mount.remove();
+  }
+}

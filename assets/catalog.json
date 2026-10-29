@@ -1,0 +1,526 @@
+{
+  "version": 1,
+  "updatedAt": "2026-10-29",
+  "images": [
+    {
+      "id": "avatars/avatar-ali-circle",
+      "group": "avatars",
+      "label": "avatar ali circle",
+      "src": "/visual%20assets/avatars/avatar-ali-circle.png",
+      "path": "visual assets/avatars/avatar-ali-circle.png"
+    },
+    {
+      "id": "avatars/avatar-meganne-circle",
+      "group": "avatars",
+      "label": "avatar meganne circle",
+      "src": "/visual%20assets/avatars/avatar-meganne-circle.png",
+      "path": "visual assets/avatars/avatar-meganne-circle.png"
+    },
+    {
+      "id": "avatars/avatar-nguyen-circle",
+      "group": "avatars",
+      "label": "avatar nguyen circle",
+      "src": "/visual%20assets/avatars/avatar-nguyen-circle.png",
+      "path": "visual assets/avatars/avatar-nguyen-circle.png"
+    },
+    {
+      "id": "logos/logo-horizontal-white-orange",
+      "group": "logos",
+      "label": "logo horizontal white orange",
+      "src": "/visual%20assets/logo/logo-horizontal-white-orange.svg",
+      "path": "visual assets/logo/logo-horizontal-white-orange.svg"
+    },
+    {
+      "id": "logos/logo-vertical-white-orange",
+      "group": "logos",
+      "label": "logo vertical white orange",
+      "src": "/visual%20assets/logo/logo-vertical-white-orange.svg",
+      "path": "visual assets/logo/logo-vertical-white-orange.svg"
+    },
+    {
+      "id": "screenshots/CRA phish that downloads installer for legitimate remote monitoring and management tool pre-configured to connect back to attackers console",
+      "group": "screenshots",
+      "label": "CRA phish that downloads installer for legitimate remote monitoring and management tool pre configured to connect back to attackers console",
+      "src": "/visual%20assets/screenshots/CRA%20phish%20that%20downloads%20installer%20for%20legitimate%20remote%20monitoring%20and%20management%20tool%20pre-configured%20to%20connect%20back%20to%20attackers%20console.png",
+      "path": "visual assets/screenshots/CRA phish that downloads installer for legitimate remote monitoring and management tool pre-configured to connect back to attackers console.png"
+    },
+    {
+      "id": "screenshots/Eviltokens phish with HR department and Docusign for _Salary Adjustment Document_ the victim successfully logs in themselves. The attacker captures the session token and reuses it to impersonate the user without triggering a normal MFA challenge.",
+      "group": "screenshots",
+      "label": "Eviltokens phish with HR department and Docusign for  Salary Adjustment Document  the victim successfully logs in themselves. The attacker captures the session token and reuses it to impersonate the user without triggering a normal MFA challenge.",
+      "src": "/visual%20assets/screenshots/Eviltokens%20phish%20with%20HR%20department%20and%20Docusign%20for%20_Salary%20Adjustment%20Document_%20the%20victim%20successfully%20logs%20in%20themselves.%20The%20attacker%20captures%20the%20session%20token%20and%20reuses%20it%20to%20impersonate%20the%20user%20without%20triggering%20a%20normal%20MFA%20challenge..png",
+      "path": "visual assets/screenshots/Eviltokens phish with HR department and Docusign for _Salary Adjustment Document_ the victim successfully logs in themselves. The attacker captures the session token and reuses it to impersonate the user without triggering a normal MFA challenge..png"
+    },
+    {
+      "id": "screenshots/Example of acces token that is sent to the threat actor as captured on cyberarmor platform",
+      "group": "screenshots",
+      "label": "Example of acces token that is sent to the threat actor as captured on cyberarmor platform",
+      "src": "/visual%20assets/screenshots/Example%20of%20acces%20token%20that%20is%20sent%20to%20the%20threat%20actor%20as%20captured%20on%20cyberarmor%20platform.png",
+      "path": "visual assets/screenshots/Example of acces token that is sent to the threat actor as captured on cyberarmor platform.png"
+    },
+    {
+      "id": "screenshots/PhaaS-Kali365-microsoftphish screenshot with a pdf attachment and verification code",
+      "group": "screenshots",
+      "label": "PhaaS Kali365 microsoftphish screenshot with a pdf attachment and verification code",
+      "src": "/visual%20assets/screenshots/PhaaS-Kali365-microsoftphish%20screenshot%20with%20a%20pdf%20attachment%20and%20verification%20code.png",
+      "path": "visual assets/screenshots/PhaaS-Kali365-microsoftphish screenshot with a pdf attachment and verification code.png"
+    },
+    {
+      "id": "screenshots/Phish campaign impersonnating SSA which installs remotePC, a legit remote access tool. Once an attacker has remote access to a machine, they can access files, monitor activity, and collect credentials. And because RemotePC is legitimate software, i",
+      "group": "screenshots",
+      "label": "Phish campaign impersonnating SSA which installs remotePC, a legit remote access tool. Once an attacker has remote access to a machine, they can access files, monitor activity, and collect credentials. And because RemotePC is legitimate software, i",
+      "src": "/visual%20assets/screenshots/Phish%20campaign%20impersonnating%20SSA%20which%20installs%20remotePC,%20a%20legit%20remote%20access%20tool.%20Once%20an%20attacker%20has%20remote%20access%20to%20a%20machine,%20they%20can%20access%20files,%20monitor%20activity,%20and%20collect%20credentials.%20And%20because%20RemotePC%20is%20legitimate%20software,%20i.png",
+      "path": "visual assets/screenshots/Phish campaign impersonnating SSA which installs remotePC, a legit remote access tool. Once an attacker has remote access to a machine, they can access files, monitor activity, and collect credentials. And because RemotePC is legitimate software, i.png"
+    },
+    {
+      "id": "screenshots/Purchase of recently expired, clean domains",
+      "group": "screenshots",
+      "label": "Purchase of recently expired, clean domains",
+      "src": "/visual%20assets/screenshots/Purchase%20of%20recently%20expired,%20clean%20domains.png",
+      "path": "visual assets/screenshots/Purchase of recently expired, clean domains.png"
+    },
+    {
+      "id": "screenshots/Using bitcoin to pay for expired domains",
+      "group": "screenshots",
+      "label": "Using bitcoin to pay for expired domains",
+      "src": "/visual%20assets/screenshots/Using%20bitcoin%20to%20pay%20for%20expired%20domains.png",
+      "path": "visual assets/screenshots/Using bitcoin to pay for expired domains.png"
+    },
+    {
+      "id": "screenshots/Youtube channel that teaches how to install windows illegally using license activator (KMS), which actually downloads an infostealer that steals credentials and takes screenshots",
+      "group": "screenshots",
+      "label": "Youtube channel that teaches how to install windows illegally using license activator (KMS), which actually downloads an infostealer that steals credentials and takes screenshots",
+      "src": "/visual%20assets/screenshots/Youtube%20channel%20that%20teaches%20how%20to%20install%20windows%20illegally%20using%20license%20activator%20(KMS),%20which%20actually%20downloads%20an%20infostealer%20that%20steals%20credentials%20and%20takes%20screenshots.png",
+      "path": "visual assets/screenshots/Youtube channel that teaches how to install windows illegally using license activator (KMS), which actually downloads an infostealer that steals credentials and takes screenshots.png"
+    },
+    {
+      "id": "screenshots/kali365 product marketing using tokenvault - pricing tiers including a free version with basic support, 1 api key and 5 sessions, 100 api calls a day",
+      "group": "screenshots",
+      "label": "kali365 product marketing using tokenvault   pricing tiers including a free version with basic support, 1 api key and 5 sessions, 100 api calls a day",
+      "src": "/visual%20assets/screenshots/kali365%20product%20marketing%20using%20tokenvault%20-%20pricing%20tiers%20including%20a%20free%20version%20with%20basic%20support,%201%20api%20key%20and%205%20sessions,%20100%20api%20calls%20a%20day.png",
+      "path": "visual assets/screenshots/kali365 product marketing using tokenvault - pricing tiers including a free version with basic support, 1 api key and 5 sessions, 100 api calls a day.png"
+    },
+    {
+      "id": "screenshots/kali365 product marketing using tokenvault - screenshot showing the phishing bait for report_2026.xlsx with a verification code for microsoft sign in",
+      "group": "screenshots",
+      "label": "kali365 product marketing using tokenvault   screenshot showing the phishing bait for report 2026.xlsx with a verification code for microsoft sign in",
+      "src": "/visual%20assets/screenshots/kali365%20product%20marketing%20using%20tokenvault%20-%20screenshot%20showing%20the%20phishing%20bait%20for%20report_2026.xlsx%20with%20a%20verification%20code%20for%20microsoft%20sign%20in.png",
+      "path": "visual assets/screenshots/kali365 product marketing using tokenvault - screenshot showing the phishing bait for report_2026.xlsx with a verification code for microsoft sign in.png"
+    },
+    {
+      "id": "screenshots/kali365 product marketing using tokenvault - supported azure services and login",
+      "group": "screenshots",
+      "label": "kali365 product marketing using tokenvault   supported azure services and login",
+      "src": "/visual%20assets/screenshots/kali365%20product%20marketing%20using%20tokenvault%20-%20supported%20azure%20services%20and%20login.png",
+      "path": "visual assets/screenshots/kali365 product marketing using tokenvault - supported azure services and login.png"
+    },
+    {
+      "id": "screenshots/kali365 product marketing using tokenvault - top of the page",
+      "group": "screenshots",
+      "label": "kali365 product marketing using tokenvault   top of the page",
+      "src": "/visual%20assets/screenshots/kali365%20product%20marketing%20using%20tokenvault%20-%20top%20of%20the%20page.png",
+      "path": "visual assets/screenshots/kali365 product marketing using tokenvault - top of the page.png"
+    },
+    {
+      "id": "screenshots/the _license killer_ kms tool that the youtube channel references",
+      "group": "screenshots",
+      "label": "the  license killer  kms tool that the youtube channel references",
+      "src": "/visual%20assets/screenshots/the%20_license%20killer_%20kms%20tool%20that%20the%20youtube%20channel%20references.png",
+      "path": "visual assets/screenshots/the _license killer_ kms tool that the youtube channel references.png"
+    },
+    {
+      "id": "example-deliverables/example-1",
+      "group": "example-deliverables",
+      "label": "example 1",
+      "src": "/visual%20assets/example_deliverables/example-1.png",
+      "path": "visual assets/example_deliverables/example-1.png"
+    },
+    {
+      "id": "example-deliverables/example-2",
+      "group": "example-deliverables",
+      "label": "example 2",
+      "src": "/visual%20assets/example_deliverables/example-2.png",
+      "path": "visual assets/example_deliverables/example-2.png"
+    },
+    {
+      "id": "linkedin-portraits/portrait-halfsphere-3",
+      "group": "linkedin-portraits",
+      "label": "portrait halfsphere 3",
+      "src": "/visual%20assets/background_assets/linkedin/portrait-halfsphere-3.png",
+      "path": "visual assets/background_assets/linkedin/portrait-halfsphere-3.png"
+    },
+    {
+      "id": "linkedin-portraits/portrait-spheres-2",
+      "group": "linkedin-portraits",
+      "label": "portrait spheres 2",
+      "src": "/visual%20assets/background_assets/linkedin/portrait-spheres-2.png",
+      "path": "visual assets/background_assets/linkedin/portrait-spheres-2.png"
+    },
+    {
+      "id": "linkedin-portraits/portrait-wavy-2",
+      "group": "linkedin-portraits",
+      "label": "portrait wavy 2",
+      "src": "/visual%20assets/background_assets/linkedin/portrait-wavy-2.png",
+      "path": "visual assets/background_assets/linkedin/portrait-wavy-2.png"
+    },
+    {
+      "id": "linkedin-portraits/portrait-zoomy-3",
+      "group": "linkedin-portraits",
+      "label": "portrait zoomy 3",
+      "src": "/visual%20assets/background_assets/linkedin/portrait-zoomy-3.png",
+      "path": "visual assets/background_assets/linkedin/portrait-zoomy-3.png"
+    }
+  ],
+  "people": [
+    {
+      "id": "person-nguyen",
+      "name": "Nguyen Nguyen",
+      "role": "CEO",
+      "avatar": "/visual%20assets/avatars/avatar-nguyen-circle.png"
+    },
+    {
+      "id": "person-ali",
+      "name": "Ali Alame",
+      "role": "CTO",
+      "avatar": "/visual%20assets/avatars/avatar-ali-circle.png"
+    },
+    {
+      "id": "person-meganne",
+      "name": "Meganne Ohata",
+      "role": "CXO",
+      "avatar": "/visual%20assets/avatars/avatar-meganne-circle.png"
+    }
+  ],
+  "peopleSets": [
+    {
+      "id": "leadership",
+      "label": "Leadership",
+      "description": "Nguyen, Ali, and Meganne \u2014 used on Who We Are and Thank You slides.",
+      "personIds": [
+        "person-nguyen",
+        "person-ali",
+        "person-meganne"
+      ]
+    }
+  ],
+  "metrics": [
+    {
+      "value": "30%",
+      "text": "of attacks involved abuse of user identities as the initial entry point",
+      "source": "IBM",
+      "sourceUrl": "https://www.ibm.com/think/x-force/x-force-threat-intelligence-index-2025-attackers-steal-sell-user-identities"
+    },
+    {
+      "value": "37%",
+      "text": "of organizations victim to ransomware had a\ncredential or infostealer event occur\n>95 days  prior",
+      "source": "Verizon",
+      "sourceUrl": "https://www.verizon.com/business/resources/T343/reports/2026-dbir-data-breach-investigations-report.pdf"
+    },
+    {
+      "value": "46%",
+      "text": "of compromised systems containing corporate logins were non-managed devices",
+      "source": "Lansweeper",
+      "sourceUrl": "https://www.lansweeper.com/blog/cybersecurity/the-vulnerability-you-dont-know-you-have-unmanaged-assets-in-2026/"
+    }
+  ],
+  "pieces": [
+    {
+      "id": "dec7-prebreach-intelligence-hub",
+      "label": "PreBreach Intelligence Database",
+      "kind": "campaign-hub",
+      "description": "Dec 7 \u00b7 slide 7 \u2014 campaign symbols wired into the PreBreach Intelligence hub.",
+      "source": {
+        "deck": "dec-7",
+        "slide": 7,
+        "title": "PreBreach Intelligence"
+      },
+      "layout": "LY-25",
+      "bg": "DS-01",
+      "content": {
+        "text": "",
+        "hub": true,
+        "hubLabel": "PreBreach Intelligence Database",
+        "symbols": [
+          {
+            "count": 6,
+            "x": 13,
+            "y": 24
+          },
+          {
+            "count": 30,
+            "x": 34,
+            "y": 16
+          },
+          {
+            "count": 7,
+            "x": 74,
+            "y": 20
+          },
+          {
+            "count": 5,
+            "x": 90,
+            "y": 52
+          },
+          {
+            "count": 15,
+            "x": 18,
+            "y": 72
+          },
+          {
+            "count": 11,
+            "x": 63,
+            "y": 83
+          }
+        ]
+      }
+    },
+    {
+      "id": "prebreach-attack-paths-unlocked",
+      "label": "Attack paths \u00b7 all phases unlocked",
+      "kind": "flow-orbit",
+      "description": "Prebreach intro \u00b7 slide 8 \u2014 kill-chain overview with every phase revealed.",
+      "source": {
+        "deck": "prebreach-intro",
+        "slide": 8,
+        "title": "Attack paths"
+      },
+      "layout": "LY-24",
+      "bg": "BG-02",
+      "content": {
+        "sources": [
+          {
+            "label": "Linkedin"
+          },
+          {
+            "label": "Leads List"
+          },
+          {
+            "label": "Google Dorking"
+          },
+          {
+            "label": "Company Site"
+          },
+          {
+            "label": "Breach"
+          }
+        ],
+        "stages": [
+          {
+            "label": "Buy domains, build lure, MaaS, PhaaS",
+            "color": "#887DFF"
+          },
+          {
+            "label": "Phish, quish, smish, URL",
+            "color": "#9977FF"
+          },
+          {
+            "label": "Victim engages with lure",
+            "color": "#BF66FF"
+          },
+          {
+            "label": "Keylogger, RAT, infostealer, MFA bypass...",
+            "color": "#F17AFF"
+          },
+          {
+            "label": "Data sent to attacker: Tokens, cookies, passwords...",
+            "color": "#FF8045"
+          }
+        ],
+        "outcomes": [
+          {
+            "label": "Business email compromise"
+          },
+          {
+            "label": "Ransomware"
+          },
+          {
+            "label": "Exfiltration"
+          },
+          {
+            "label": "Fraud"
+          },
+          {
+            "label": "Account takeover"
+          },
+          {
+            "label": "Espionage"
+          }
+        ],
+        "impacts": [
+          {
+            "label": "Ransomware announcement"
+          },
+          {
+            "label": "Notify or report incident"
+          },
+          {
+            "label": "Posted on dark web forums, marketplaces"
+          }
+        ],
+        "phaseTitles": [
+          "Preparation",
+          "Collection",
+          "Breach",
+          "Post-Breach"
+        ],
+        "stepLabels": [
+          "Recon",
+          "Weaponize",
+          "Deliver",
+          "Exploit",
+          "Install",
+          "Command and Control",
+          "Action-on-Objective",
+          "Publication"
+        ],
+        "sourceColor": "#1EADEC",
+        "outcomeColor": "#FF2828",
+        "impactColor": "#FF2828"
+      },
+      "options": {
+        "unlockPhases": true
+      }
+    },
+    {
+      "id": "prebreach-main-offerings",
+      "label": "Main offerings",
+      "kind": "steps",
+      "description": "Prebreach intro \u00b7 slide 16 \u2014 Monitor and Hunt.",
+      "source": {
+        "deck": "prebreach-intro",
+        "slide": 16,
+        "title": "Three steps"
+      },
+      "layout": "LY-09",
+      "bg": "BG-09",
+      "content": {
+        "number": "",
+        "sectionTitle": "",
+        "title": "",
+        "subtitle": "",
+        "steps": [
+          {
+            "title": "Monitor",
+            "icon": "ph-shield-check",
+            "description": "Get alerted when your data is found in an active campaign."
+          },
+          {
+            "title": "Hunt",
+            "description": "Full data platform access for hunting and investigating."
+          }
+        ]
+      }
+    },
+    {
+      "id": "prebreach-pricing-structure",
+      "label": "Pricing structure",
+      "kind": "steps",
+      "description": "Prebreach intro \u00b7 slide 18 \u2014 Domains, Identities, and Features.",
+      "source": {
+        "deck": "prebreach-intro",
+        "slide": 18,
+        "title": "Three steps"
+      },
+      "layout": "LY-09",
+      "bg": "BG-09",
+      "content": {
+        "number": "",
+        "sectionTitle": "",
+        "title": "",
+        "subtitle": "",
+        "steps": [
+          {
+            "title": "Domains",
+            "icon": "ph-eye",
+            "description": "The number of domains involved"
+          },
+          {
+            "title": "Identities",
+            "icon": "ph-graph",
+            "description": "Emails, usernames, etc"
+          },
+          {
+            "title": "Features",
+            "icon": "ph-shield-check",
+            "description": "Monitoring vs full hunt and investigation"
+          }
+        ]
+      }
+    },
+    {
+      "id": "prebreach-economic-context",
+      "label": "Statistic blocks",
+      "kind": "metrics",
+      "description": "Prebreach intro \u00b7 slide 23 \u2014 IBM, Verizon, and Lansweeper stats.",
+      "source": {
+        "deck": "prebreach-intro",
+        "slide": 23,
+        "title": "Economic Context"
+      },
+      "layout": "LY-12",
+      "bg": "BG-04",
+      "content": {
+        "title": "",
+        "subtitle": "",
+        "metrics": [
+          {
+            "value": "30%",
+            "text": "of attacks involved abuse of user identities as the initial entry point",
+            "source": "IBM",
+            "sourceUrl": "https://www.ibm.com/think/x-force/x-force-threat-intelligence-index-2025-attackers-steal-sell-user-identities"
+          },
+          {
+            "value": "37%",
+            "text": "of organizations victim to ransomware had a\ncredential or infostealer event occur\n>95 days  prior",
+            "source": "Verizon",
+            "sourceUrl": "https://www.verizon.com/business/resources/T343/reports/2026-dbir-data-breach-investigations-report.pdf"
+          },
+          {
+            "value": "46%",
+            "text": "of compromised systems containing corporate logins were non-managed devices",
+            "source": "Lansweeper",
+            "sourceUrl": "https://www.lansweeper.com/blog/cybersecurity/the-vulnerability-you-dont-know-you-have-unmanaged-assets-in-2026/"
+          }
+        ],
+        "number": "",
+        "sectionTitle": ""
+      }
+    },
+    {
+      "id": "leadership-who-we-are",
+      "label": "Leadership \u00b7 Who We Are",
+      "kind": "team",
+      "description": "Avatar set with name and role \u2014 Nguyen, Ali, Meganne.",
+      "source": {
+        "deck": "prebreach-intro",
+        "slide": 2,
+        "title": "Who We Are"
+      },
+      "layout": "LY-02",
+      "bg": "BG-08",
+      "content": {
+        "sectionTitle": "",
+        "title": "Who We Are",
+        "subtitle": "The people behind CyberArmor.",
+        "people": [
+          {
+            "name": "Nguyen Nguyen",
+            "role": "CEO",
+            "avatar": "/visual%20assets/avatars/avatar-nguyen-circle.png"
+          },
+          {
+            "name": "Ali Alame",
+            "role": "CTO",
+            "avatar": "/visual%20assets/avatars/avatar-ali-circle.png"
+          },
+          {
+            "name": "Meganne Ohata",
+            "role": "CXO",
+            "avatar": "/visual%20assets/avatars/avatar-meganne-circle.png"
+          }
+        ],
+        "number": ""
+      }
+    }
+  ]
+}

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>CyberArmor — Assets</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Mozilla+Headline:wght@300&family=Mozilla+Text:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/light/style.css"
+    />
+    <link rel="stylesheet" href="css/slides.css?v=90" />
+    <link rel="stylesheet" href="css/assets.css?v=1" />
+    <script src="js/auth-gate.js?v=6"></script>
+  </head>
+  <body>
+    <div class="assets-page">
+      <div class="assets-page__inner">
+        <header class="assets-page__header">
+          <h1>Assets</h1>
+          <p>
+            Reusable images and content pieces pulled from the live decks.
+            Use these when building LinkedIn posts, new slides, and other materials.
+            <a href="index.html">← hub</a>
+            ·
+            <a href="drafts/dec-7.html">Dec 7</a>
+            ·
+            <a href="drafts/prebreach-intro.html">Prebreach intro</a>
+            ·
+            <a href="linkedin.html">LinkedIn</a>
+          </p>
+        </header>
+
+        <section class="assets-section" aria-labelledby="assets-pieces">
+          <h2 class="assets-section__title" id="assets-pieces">Content pieces</h2>
+          <p class="assets-section__lead">
+            Slide-ready blocks from Dec 7 and Prebreach. Attack paths is shown with every phase unlocked.
+          </p>
+          <div class="assets-piece-grid" id="piece-grid">
+            <p class="assets-empty">Loading…</p>
+          </div>
+        </section>
+
+        <section class="assets-section" aria-labelledby="assets-people">
+          <h2 class="assets-section__title" id="assets-people">Avatar set</h2>
+          <p class="assets-section__lead">
+            Leadership portraits with name and role.
+          </p>
+          <div class="assets-people" id="people-grid"></div>
+        </section>
+
+        <section class="assets-section" aria-labelledby="assets-metrics">
+          <h2 class="assets-section__title" id="assets-metrics">Statistic blocks</h2>
+          <p class="assets-section__lead">
+            From Prebreach intro · slide 23.
+          </p>
+          <div class="assets-metrics" id="metrics-grid"></div>
+        </section>
+
+        <section class="assets-section" aria-labelledby="assets-images">
+          <h2 class="assets-section__title" id="assets-images">Images</h2>
+          <p class="assets-section__lead">
+            Logos, avatars, screenshots, LinkedIn portrait plates, and example deliverables.
+          </p>
+          <div id="image-groups"></div>
+        </section>
+      </div>
+    </div>
+
+    <script type="module">
+      import { renderBackground } from "./js/backgrounds.js?v=58";
+      import {
+        renderLayout,
+        refreshImageTitleLayouts,
+        refreshFlowFunnels,
+      } from "./js/layouts.js?v=86";
+      import {
+        loadAssetsCatalog,
+        imagesByGroup,
+      } from "./js/assets-catalog.js?v=1";
+      import { initImageLightbox } from "./js/components/lightbox.js?v=28";
+
+      const pieceGrid = document.getElementById("piece-grid");
+      const peopleGrid = document.getElementById("people-grid");
+      const metricsGrid = document.getElementById("metrics-grid");
+      const imageGroups = document.getElementById("image-groups");
+
+      const GROUP_LABELS = {
+        avatars: "Avatars",
+        logos: "Logos",
+        screenshots: "Screenshots",
+        "example-deliverables": "Example deliverables",
+        "linkedin-portraits": "LinkedIn portraits",
+      };
+
+      function fitSlide(stage, slide) {
+        const scale = Math.min(
+          stage.clientWidth / 1920,
+          stage.clientHeight / 1080,
+        );
+        slide.style.transform = `scale(${scale})`;
+      }
+
+      function unlockPhases(root) {
+        root.querySelectorAll(".is-phase-blurred").forEach((el) => {
+          el.classList.remove("is-phase-blurred");
+        });
+      }
+
+      function paintPiece(piece) {
+        const card = document.createElement("article");
+        card.className = "assets-piece";
+        card.dataset.assetId = piece.id;
+
+        const meta = document.createElement("div");
+        meta.className = "assets-piece__meta";
+        meta.innerHTML = `
+          <span class="assets-piece__id">${piece.kind || "piece"}</span>
+          <h3 class="assets-piece__title">${piece.label}</h3>
+          <p class="assets-piece__desc">${piece.description || ""}</p>
+        `;
+
+        const preview = document.createElement("div");
+        preview.className = "assets-piece__preview";
+
+        const slide = document.createElement("div");
+        slide.className = "slide";
+        slide.dataset.layout = piece.layout;
+        slide.dataset.bg = piece.bg;
+        slide.dataset.title = piece.label;
+        const layers = document.createElement("div");
+        layers.className = "slide-layers";
+        layers.setAttribute("aria-hidden", "true");
+        slide.appendChild(layers);
+        preview.appendChild(slide);
+
+        card.append(meta, preview);
+        renderBackground(slide, piece.bg);
+        renderLayout(slide, piece.layout, piece.content || {});
+        refreshImageTitleLayouts(slide);
+        refreshFlowFunnels(slide);
+        if (piece.options?.unlockPhases) unlockPhases(slide);
+        requestAnimationFrame(() => fitSlide(preview, slide));
+
+        const ro = new ResizeObserver(() => fitSlide(preview, slide));
+        ro.observe(preview);
+        return card;
+      }
+
+      function paintPeople(people) {
+        peopleGrid.replaceChildren();
+        people.forEach((person) => {
+          const card = document.createElement("article");
+          card.className = "assets-person";
+          card.innerHTML = `
+            <img class="assets-person__avatar" src="${person.avatar}" alt="" />
+            <h3 class="assets-person__name">${person.name}</h3>
+            <p class="assets-person__role">${person.role}</p>
+          `;
+          peopleGrid.appendChild(card);
+        });
+      }
+
+      function paintMetrics(metrics) {
+        metricsGrid.replaceChildren();
+        metrics.forEach((metric) => {
+          const card = document.createElement("article");
+          card.className = "assets-metric";
+          const source = metric.sourceUrl
+            ? `<a class="assets-metric__source" href="${metric.sourceUrl}" target="_blank" rel="noopener noreferrer">${metric.source || "Source"}</a>`
+            : `<span class="assets-metric__source">${metric.source || ""}</span>`;
+          card.innerHTML = `
+            <p class="assets-metric__value">${metric.value || ""}</p>
+            <p class="assets-metric__text">${metric.text || ""}</p>
+            ${source}
+          `;
+          metricsGrid.appendChild(card);
+        });
+      }
+
+      function paintImages(catalog) {
+        imageGroups.replaceChildren();
+        const groups = imagesByGroup(catalog);
+        for (const [group, images] of groups) {
+          const section = document.createElement("div");
+          section.className = "assets-image-group";
+          const title = document.createElement("h3");
+          title.className = "assets-image-group__title";
+          title.textContent = GROUP_LABELS[group] || group;
+          const grid = document.createElement("div");
+          grid.className = "assets-image-grid";
+          images.forEach((image) => {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "assets-image";
+            btn.dataset.lightboxSrc = image.src;
+            btn.innerHTML = `
+              <span class="assets-image__frame">
+                <img src="${image.src}" alt="" loading="lazy" />
+              </span>
+              <span class="assets-image__label">${image.label}</span>
+            `;
+            grid.appendChild(btn);
+          });
+          section.append(title, grid);
+          imageGroups.appendChild(section);
+        }
+      }
+
+      try {
+        const catalog = await loadAssetsCatalog();
+        pieceGrid.replaceChildren();
+        (catalog.pieces || []).forEach((piece) => {
+          pieceGrid.appendChild(paintPiece(piece));
+        });
+        paintPeople(catalog.people || []);
+        paintMetrics(catalog.metrics || []);
+        paintImages(catalog);
+        const lightbox = initImageLightbox(document);
+        document.querySelectorAll(".assets-image").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            const src = btn.dataset.lightboxSrc;
+            if (!src) return;
+            lightbox.open(src, btn.querySelector(".assets-image__label")?.textContent || "");
+          });
+        });
+      } catch (err) {
+        console.warn(err);
+        pieceGrid.innerHTML =
+          '<p class="assets-empty">Could not load assets/catalog.json.</p>';
+      }
+    </script>
+  </body>
+</html>
