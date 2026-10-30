@@ -12,6 +12,7 @@ import {
   refreshImageTitleLayouts,
 } from "./layouts.js?v=88";
 import { toPng } from "../vendor/html-to-image.esm.js";
+import { cropPngToOpaqueBounds } from "./youtube-download.js?v=8";
 
 const LOGO_SRC = "/visual%20assets/logo/logo-horizontal-white-orange.svg";
 const PIECE_SLIDE_W = 1920;
@@ -20,9 +21,7 @@ const PIECE_SLIDE_H = 1080;
 export { MODAL_ACCENTS };
 
 export const COMPOSER_COMPONENT_TYPES = [
-  { type: "eyebrow", label: "Eyebrow" },
-  { type: "title", label: "Title" },
-  { type: "body", label: "Body text" },
+  { type: "copy", label: "Text" },
   { type: "quote-panel", label: "Quote panel" },
   { type: "split-image", label: "Text + image" },
   { type: "split-modal", label: "Text + modal" },
@@ -145,6 +144,18 @@ export function composerBackgroundGroups({
 export function createComponent(type, seed = {}) {
   const id = seed.id || uid(type);
   switch (type) {
+    case "copy":
+      return {
+        id,
+        type,
+        eyebrow: seed.eyebrow ?? "PreBreach Intelligence",
+        title: seed.title ?? "See the compromise before the breach.",
+        titleSize: seed.titleSize ?? seed.size ?? "lg",
+        body:
+          seed.body ??
+          "Credentials are collected in the open, long before they show up on the dark web.",
+        eyebrowEnd: seed.eyebrowEnd ?? "",
+      };
     case "eyebrow":
       return { id, type, text: seed.text ?? "PreBreach Intelligence" };
     case "title":
@@ -194,6 +205,12 @@ export function createComponent(type, seed = {}) {
         imageAlt: seed.imageAlt ?? "",
         imageFit: seed.imageFit ?? "cover",
         imagePosition: seed.imagePosition ?? "center",
+        imageBorder: ["blue", "purple"].includes(seed.imageBorder)
+          ? seed.imageBorder
+          : "purple",
+        imageSize: ["sm", "md", "lg"].includes(seed.imageSize)
+          ? seed.imageSize
+          : "md",
         mediaSide: seed.mediaSide ?? "right",
         stackOrder: seed.stackOrder ?? "media-below",
       };
@@ -416,9 +433,20 @@ export async function rasterizeLayoutPiece(piece, {
     slide.style.background = "transparent";
 
     refreshFlowFunnels(slide);
+    slide.classList.add("assets-piece--static");
+    // Force campaign wires/hub to painted final state before capture.
+    slide.querySelectorAll(".campaign-wire").forEach((el) => {
+      el.style.animation = "none";
+      el.style.strokeDashoffset = "0";
+    });
+    slide.querySelectorAll(".campaign-hub").forEach((el) => {
+      el.style.animation = "none";
+      el.style.opacity = "1";
+      el.style.transform = "none";
+    });
     await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
 
-    return await toPng(slide, {
+    const raw = await toPng(slide, {
       width,
       height,
       pixelRatio,
@@ -437,6 +465,8 @@ export async function rasterizeLayoutPiece(piece, {
         background: "transparent",
       },
     });
+    // Tight crop — no empty transparent margin around the graphic.
+    return cropPngToOpaqueBounds(raw, { padding: 4, alphaThreshold: 4 });
   } finally {
     host.remove();
   }
@@ -452,11 +482,7 @@ export function createComposerState({
     decor: "",
     footer: true,
     logo: false,
-    components: [
-      createComponent("eyebrow"),
-      createComponent("title"),
-      createComponent("body"),
-    ],
+    components: [createComponent("copy")],
   };
 }
 
@@ -481,17 +507,23 @@ function splitCopyMarkup(component) {
 function splitImageMarkup(component) {
   const fit = component.imageFit === "contain" ? "contain" : "cover";
   const position = escapeHtml(component.imagePosition || "center");
+  const border = component.imageBorder === "blue" ? "blue" : "purple";
+  const size = ["sm", "md", "lg"].includes(component.imageSize)
+    ? component.imageSize
+    : "md";
   if (!component.imageSrc) {
     return `<div class="li-composer-split__media li-composer-split__media--empty">Add an image</div>`;
   }
   return `
-    <div class="li-composer-split__media li-composer-split__media--${fit}">
-      <img
-        class="li-composer-split__img"
-        src="${escapeHtml(component.imageSrc)}"
-        alt="${escapeHtml(component.imageAlt)}"
-        style="object-fit:${fit};object-position:${position}"
-      />
+    <div class="li-composer-split__media li-composer-split__media--${fit} li-composer-split__media--frame-${border} li-composer-split__media--size-${size}">
+      <div class="li-composer-split__frame">
+        <img
+          class="li-composer-split__img"
+          src="${escapeHtml(component.imageSrc)}"
+          alt="${escapeHtml(component.imageAlt)}"
+          style="object-fit:${fit};object-position:${position}"
+        />
+      </div>
     </div>
   `;
 }
@@ -525,22 +557,45 @@ function splitModalMarkup(component) {
   `;
 }
 
+function splitUsesColumns(formatId) {
+  return (
+    formatId === "landscape" ||
+    formatId === "presentation" ||
+    formatId === "portrait" ||
+    formatId === "letter"
+  );
+}
+
+function splitIsPortraitFamily(formatId) {
+  return formatId === "portrait" || formatId === "letter";
+}
+
 function renderSplit(component, formatId, mediaHtml) {
-  const landscape = formatId === "landscape";
+  const columns = splitUsesColumns(formatId);
   const mediaSide = component.mediaSide === "left" ? "left" : "right";
   const stackOrder =
     component.stackOrder === "media-above" ? "media-above" : "media-below";
+  const preserveRatio =
+    component.type === "split-image" && component.imageFit === "contain";
+  const imageSize =
+    component.type === "split-image" &&
+    ["sm", "md", "lg"].includes(component.imageSize)
+      ? component.imageSize
+      : "";
   const classes = [
     "li-composer-split",
-    landscape ? "li-composer-split--columns" : "li-composer-split--stack",
-    landscape
+    columns ? "li-composer-split--columns" : "li-composer-split--stack",
+    columns
       ? `li-composer-split--media-${mediaSide}`
       : `li-composer-split--${stackOrder}`,
-  ];
+    splitIsPortraitFamily(formatId) ? "li-composer-split--portrait" : "",
+    preserveRatio ? "li-composer-split--preserve-ratio" : "",
+    imageSize ? `li-composer-split--size-${imageSize}` : "",
+  ].filter(Boolean);
   const copy = splitCopyMarkup(component);
   const ordered =
-    (landscape && mediaSide === "left") ||
-    (!landscape && stackOrder === "media-above")
+    (columns && mediaSide === "left") ||
+    (!columns && stackOrder === "media-above")
       ? `${mediaHtml}${copy}`
       : `${copy}${mediaHtml}`;
   return `<div class="${classes.join(" ")}">${ordered}</div>`;
@@ -551,7 +606,19 @@ function renderComponent(component, formatId = "square") {
   wrap.className = `li-composer-block li-composer-block--${component.type}`;
   wrap.dataset.componentId = component.id;
 
-  if (component.type === "eyebrow") {
+  if (component.type === "copy") {
+    const size = ["sm", "md", "lg", "xl"].includes(component.titleSize)
+      ? component.titleSize
+      : "lg";
+    wrap.innerHTML = `
+      <div class="li-composer-copy">
+        ${component.eyebrow ? `<p class="type-label">${withBreaks(component.eyebrow)}</p>` : ""}
+        ${component.title ? `<h2 class="type-h2 li-composer-block__title li-composer-block__title--${size}">${withBreaks(component.title)}</h2>` : ""}
+        ${component.body ? `<p class="type-body">${withBreaks(component.body)}</p>` : ""}
+        ${component.eyebrowEnd ? `<p class="type-label li-composer-copy__eyebrow-end">${withBreaks(component.eyebrowEnd)}</p>` : ""}
+      </div>
+    `;
+  } else if (component.type === "eyebrow") {
     wrap.innerHTML = `<p class="type-label">${withBreaks(component.text)}</p>`;
   } else if (component.type === "title") {
     const size = ["sm", "md", "lg", "xl"].includes(component.size)
@@ -688,6 +755,10 @@ export function paintComposerCanvas(canvas, state, {
   const format = formats[state.format] ?? formats.square;
   canvas.replaceChildren();
   canvas.className = `canvas ${format.className}`;
+  const typeScale = (format.w || 1080) / 1080;
+  canvas.style.setProperty("--li-scale", String(typeScale));
+  canvas.style.setProperty("--canvas-w", String(format.w));
+  canvas.style.setProperty("--canvas-h", String(format.h));
   if (state.footer) canvas.classList.add("canvas--with-footer", "slide--with-footer");
   else canvas.classList.remove("canvas--with-footer", "slide--with-footer");
 

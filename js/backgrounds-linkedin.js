@@ -4,18 +4,37 @@ import {
 } from "./backgrounds-core.js?v=3";
 import { DARK_SLIDE_FILL } from "./backgrounds.js?v=58";
 
+/** Baseline width for proportional type/asset scaling across formats. */
+export const LINKEDIN_FORMAT_BASE_W = 1080;
+
 /**
- * LinkedIn formats (design px).
- * Square, landscape, and portrait (4:5).
+ * LinkedIn / print / presentation formats (design px).
+ * `family` groups layout behavior (columns vs stack, bg affinity).
  */
 export const LINKEDIN_FORMATS = {
-  square: { id: "square", w: 1080, h: 1080, label: "Square post", className: "canvas--li-square" },
+  square: {
+    id: "square",
+    w: 1080,
+    h: 1080,
+    label: "Square post",
+    className: "canvas--li-square",
+    family: "square",
+  },
   landscape: {
     id: "landscape",
     w: 1200,
     h: 627,
     label: "Landscape / link preview",
     className: "canvas--li-landscape",
+    family: "landscape",
+  },
+  presentation: {
+    id: "presentation",
+    w: 1920,
+    h: 1080,
+    label: "Presentation · 16:9",
+    className: "canvas--li-presentation",
+    family: "landscape",
   },
   portrait: {
     id: "portrait",
@@ -23,8 +42,22 @@ export const LINKEDIN_FORMATS = {
     h: 1350,
     label: "Portrait post",
     className: "canvas--li-portrait",
+    family: "portrait",
+  },
+  letter: {
+    id: "letter",
+    w: 1275,
+    h: 1650,
+    label: "Letter · print",
+    className: "canvas--li-letter",
+    family: "portrait",
   },
 };
+
+export function linkedInFormatScale(format) {
+  const w = format?.w || LINKEDIN_FORMAT_BASE_W;
+  return w / LINKEDIN_FORMAT_BASE_W;
+}
 
 /** Same banner plate Dark Slides use as their base. */
 const DARK_BANNER = "bg_swirl-banner.svg";

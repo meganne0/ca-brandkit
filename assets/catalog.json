@@ -275,7 +275,8 @@
       },
       "options": {
         "noBackground": true,
-        "noFooter": true
+        "noFooter": true,
+        "static": true
       }
     },
     {
@@ -439,7 +440,8 @@
       },
       "options": {
         "noBackground": true,
-        "noFooter": true
+        "noFooter": true,
+        "static": true
       }
     },
     {
@@ -479,7 +481,8 @@
       },
       "options": {
         "noBackground": true,
-        "noFooter": true
+        "noFooter": true,
+        "static": true
       }
     },
     {
@@ -522,7 +525,8 @@
       },
       "options": {
         "noBackground": true,
-        "noFooter": true
+        "noFooter": true,
+        "static": true
       }
     },
     {
@@ -562,7 +566,8 @@
       },
       "options": {
         "noBackground": true,
-        "noFooter": true
+        "noFooter": true,
+        "static": true
       }
     }
   ]

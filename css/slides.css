@@ -1919,6 +1919,30 @@ a.metric-card__source:hover {
   }
 }
 
+/* Asset library / composer embeds: freeze motion at final state */
+.assets-piece--static,
+.assets-piece--static * {
+  animation: none !important;
+  transition: none !important;
+  scroll-behavior: auto !important;
+}
+
+.assets-piece--static .campaign-wire {
+  stroke-dashoffset: 0 !important;
+  opacity: 0.85 !important;
+}
+
+.assets-piece--static .campaign-hub {
+  opacity: 1 !important;
+  transform: none !important;
+}
+
+.assets-piece--static .flow-dot-row:hover .flow-dot,
+.assets-piece--static .flow-dot-row:hover .flow-dot__label,
+.assets-piece--static .flow-dot {
+  transform: none !important;
+}
+
 /* ---- LY-21 Focus chips ---- */
 
 .layout-focus-grid {

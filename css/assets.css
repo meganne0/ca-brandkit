@@ -144,6 +144,11 @@
   transform-origin: top left;
 }
 
+.assets-piece__preview--hug {
+  aspect-ratio: auto;
+  min-height: 160px;
+}
+
 .assets-people {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));

@@ -14,9 +14,9 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/light/style.css"
     />
-    <link rel="stylesheet" href="css/slides.css?v=91" />
+    <link rel="stylesheet" href="css/slides.css?v=92" />
     <link rel="stylesheet" href="css/backgrounds.css?v=21" />
-    <link rel="stylesheet" href="css/linkedin.css?v=58" />
+    <link rel="stylesheet" href="css/linkedin.css?v=67" />
     <script src="js/auth-gate.js?v=6"></script>
   </head>
   <body>
@@ -24,7 +24,7 @@
       <header class="bg-gallery__header">
         <h1>LinkedIn assets</h1>
         <p>
-          Build square (1080×1080), landscape (1200×627), and portrait (1080×1350) CyberArmor posts.
+          Build square, landscape, presentation (16:9), portrait, and letter (print) CyberArmor images.
           Compose freely, or browse and edit saved examples.
           <a class="gallery-nav" href="index.html">← hub</a>
           ·
@@ -55,7 +55,9 @@
                 <select id="li-composer-format">
                   <option value="square">Square · 1080×1080</option>
                   <option value="landscape">Landscape · 1200×627</option>
+                  <option value="presentation">Presentation · 1920×1080</option>
                   <option value="portrait">Portrait · 1080×1350</option>
+                  <option value="letter">Letter · print · 1275×1650</option>
                 </select>
               </label>
               <label class="li-composer__field">
@@ -68,13 +70,28 @@
                   <option value="">None</option>
                 </select>
               </label>
-              <div class="li-composer__toggles">
+              <div
+                class="li-composer__toggles"
+                role="radiogroup"
+                aria-label="Brand placement"
+              >
                 <label class="li-composer__check">
-                  <input type="checkbox" id="li-composer-footer" checked />
+                  <input
+                    type="radio"
+                    name="li-composer-brand"
+                    id="li-composer-footer"
+                    value="footer"
+                    checked
+                  />
                   <span>Footer</span>
                 </label>
                 <label class="li-composer__check">
-                  <input type="checkbox" id="li-composer-logo" />
+                  <input
+                    type="radio"
+                    name="li-composer-brand"
+                    id="li-composer-logo"
+                    value="logo"
+                  />
                   <span>CyberArmor logo · top left</span>
                 </label>
               </div>
@@ -332,7 +349,7 @@
         LINKEDIN_BACKGROUNDS,
         LINKEDIN_FORMATS,
         renderLinkedInBackground,
-      } from "./js/backgrounds-linkedin.js?v=22";
+      } from "./js/backgrounds-linkedin.js?v=23";
       import {
         BACKGROUNDS as SLIDE_BACKGROUNDS,
       } from "./js/backgrounds.js?v=58";
@@ -367,8 +384,8 @@
         removeComponent,
         updateComponent,
         updateModalField,
-      } from "./js/linkedin-composer.js?v=5";
-      import { loadAssetsCatalog } from "./js/assets-catalog.js?v=4";
+      } from "./js/linkedin-composer.js?v=11";
+      import { loadAssetsCatalog } from "./js/assets-catalog.js?v=5";
 
       const SPEAKERS = [
         {
@@ -455,13 +472,22 @@
 
       function paintComposerPreview() {
         if (!composerStage) return;
+        const formatId = composerState.format;
         composerStage.classList.toggle(
           "li-composer__stage--landscape",
-          composerState.format === "landscape",
+          formatId === "landscape",
+        );
+        composerStage.classList.toggle(
+          "li-composer__stage--presentation",
+          formatId === "presentation",
         );
         composerStage.classList.toggle(
           "li-composer__stage--portrait",
-          composerState.format === "portrait",
+          formatId === "portrait",
+        );
+        composerStage.classList.toggle(
+          "li-composer__stage--letter",
+          formatId === "letter",
         );
         if (!composerCanvas) {
           composerCanvas = document.createElement("div");
@@ -527,6 +553,37 @@
       }
 
       function renderComposerItemFields(component) {
+        if (component.type === "copy") {
+          return (
+            field(
+              "Eyebrow",
+              `<input type="text" data-field="eyebrow" value="${composerEscape(component.eyebrow)}" />`,
+            ) +
+            field(
+              "Title",
+              `<textarea data-field="title">${composerEscape(component.title)}</textarea>`,
+            ) +
+            field(
+              "Title size",
+              `<select data-field="titleSize">
+                ${["sm", "md", "lg", "xl"]
+                  .map(
+                    (size) =>
+                      `<option value="${size}" ${component.titleSize === size ? "selected" : ""}>${size.toUpperCase()}</option>`,
+                  )
+                  .join("")}
+              </select>`,
+            ) +
+            field(
+              "Body text",
+              `<textarea data-field="body">${composerEscape(component.body)}</textarea>`,
+            ) +
+            field(
+              "Eyebrow (below)",
+              `<input type="text" data-field="eyebrowEnd" value="${composerEscape(component.eyebrowEnd)}" placeholder="Optional" />`,
+            )
+          );
+        }
         if (component.type === "eyebrow" || component.type === "body") {
           return field(
             "Text",
@@ -583,8 +640,12 @@
           );
         }
         if (component.type === "split-image" || component.type === "split-modal") {
-          const isLandscape = composerState.format === "landscape";
-          const layoutFields = isLandscape
+          const useColumns =
+            composerState.format === "landscape" ||
+            composerState.format === "presentation" ||
+            composerState.format === "portrait" ||
+            composerState.format === "letter";
+          const layoutFields = useColumns
             ? field(
                 "Media side",
                 `<select data-field="mediaSide">
@@ -624,6 +685,21 @@
               field(
                 "Image URL",
                 `<input type="text" data-field="imageSrc" value="${composerEscape(component.imageSrc)}" />`,
+              ) +
+              field(
+                "Image size",
+                `<select data-field="imageSize">
+                  <option value="sm" ${component.imageSize === "sm" ? "selected" : ""}>Small</option>
+                  <option value="md" ${component.imageSize === "md" || !component.imageSize ? "selected" : ""}>Medium</option>
+                  <option value="lg" ${component.imageSize === "lg" ? "selected" : ""}>Large</option>
+                </select>`,
+              ) +
+              field(
+                "Border",
+                `<select data-field="imageBorder">
+                  <option value="purple" ${component.imageBorder !== "blue" ? "selected" : ""}>Dark purple gradient</option>
+                  <option value="blue" ${component.imageBorder === "blue" ? "selected" : ""}>Blue gradient</option>
+                </select>`,
               ) +
               `<label class="li-composer__check">
                 <input type="checkbox" data-field="imageFit" data-fit-toggle value="contain" ${component.imageFit === "contain" ? "checked" : ""} />
@@ -749,8 +825,13 @@
         composerFormatEl.value = composerState.format;
         fillComposerBgOptions();
         composerDecorEl.value = composerState.decor || "";
-        composerFooterEl.checked = Boolean(composerState.footer);
-        composerLogoEl.checked = Boolean(composerState.logo);
+        if (composerState.logo) {
+          composerLogoEl.checked = true;
+        } else {
+          composerFooterEl.checked = true;
+          composerState.footer = true;
+          composerState.logo = false;
+        }
         renderComposerList();
         paintComposerPreview();
       }
@@ -1157,13 +1238,17 @@
         composerState.decor = composerDecorEl.value;
         paintComposerPreview();
       });
-      composerFooterEl.addEventListener("change", () => {
-        composerState.footer = composerFooterEl.checked;
+      function syncBrandPlacement(value) {
+        const useLogo = value === "logo";
+        composerState.logo = useLogo;
+        composerState.footer = !useLogo;
         paintComposerPreview();
+      }
+      composerFooterEl.addEventListener("change", () => {
+        if (composerFooterEl.checked) syncBrandPlacement("footer");
       });
       composerLogoEl.addEventListener("change", () => {
-        composerState.logo = composerLogoEl.checked;
-        paintComposerPreview();
+        if (composerLogoEl.checked) syncBrandPlacement("logo");
       });
 
       composerListEl.addEventListener("click", (e) => {
