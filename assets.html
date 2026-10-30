@@ -14,8 +14,8 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/light/style.css"
     />
-    <link rel="stylesheet" href="css/slides.css?v=90" />
-    <link rel="stylesheet" href="css/assets.css?v=1" />
+    <link rel="stylesheet" href="css/slides.css?v=91" />
+    <link rel="stylesheet" href="css/assets.css?v=2" />
     <script src="js/auth-gate.js?v=6"></script>
   </head>
   <body>
@@ -39,7 +39,7 @@
         <section class="assets-section" aria-labelledby="assets-pieces">
           <h2 class="assets-section__title" id="assets-pieces">Content pieces</h2>
           <p class="assets-section__lead">
-            Slide-ready blocks from Dec 7 and Prebreach. Attack paths is shown with every phase unlocked.
+            Slide-ready blocks from Dec 7 and Prebreach. Attack paths ships with and without phase panels.
           </p>
           <div class="assets-piece-grid" id="piece-grid">
             <p class="assets-empty">Loading…</p>
@@ -78,11 +78,11 @@
         renderLayout,
         refreshImageTitleLayouts,
         refreshFlowFunnels,
-      } from "./js/layouts.js?v=86";
+      } from "./js/layouts.js?v=88";
       import {
         loadAssetsCatalog,
         imagesByGroup,
-      } from "./js/assets-catalog.js?v=1";
+      } from "./js/assets-catalog.js?v=4";
       import { initImageLightbox } from "./js/components/lightbox.js?v=28";
 
       const pieceGrid = document.getElementById("piece-grid");
@@ -106,13 +106,21 @@
         slide.style.transform = `scale(${scale})`;
       }
 
-      function unlockPhases(root) {
+      function unlockPhases(root, highlightPhase) {
         root.querySelectorAll(".is-phase-blurred").forEach((el) => {
           el.classList.remove("is-phase-blurred");
         });
+        root.querySelectorAll(".flow-phase.is-stroke-on").forEach((el) => {
+          el.classList.remove("is-stroke-on");
+        });
+        if (highlightPhase) {
+          const target = root.querySelector(`.flow-phase--${highlightPhase}`);
+          if (target) target.classList.add("is-stroke-on");
+        }
       }
 
       function paintPiece(piece) {
+        const opts = piece.options || {};
         const card = document.createElement("article");
         card.className = "assets-piece";
         card.dataset.assetId = piece.id;
@@ -127,12 +135,16 @@
 
         const preview = document.createElement("div");
         preview.className = "assets-piece__preview";
+        if (opts.noBackground) preview.classList.add("assets-piece__preview--plain");
 
         const slide = document.createElement("div");
         slide.className = "slide";
+        if (opts.noBackground) slide.classList.add("slide--plain");
+        if (opts.static) slide.classList.add("assets-piece--static");
         slide.dataset.layout = piece.layout;
-        slide.dataset.bg = piece.bg;
         slide.dataset.title = piece.label;
+        if (piece.bg && !opts.noBackground) slide.dataset.bg = piece.bg;
+
         const layers = document.createElement("div");
         layers.className = "slide-layers";
         layers.setAttribute("aria-hidden", "true");
@@ -140,11 +152,34 @@
         preview.appendChild(slide);
 
         card.append(meta, preview);
-        renderBackground(slide, piece.bg);
-        renderLayout(slide, piece.layout, piece.content || {});
+        if (piece.bg && !opts.noBackground) {
+          renderBackground(slide, piece.bg);
+        } else {
+          layers.replaceChildren();
+          layers.style.background = "transparent";
+          slide.style.background = "transparent";
+        }
+        renderLayout(slide, piece.layout, piece.content || {}, {
+          footer: opts.noFooter ? false : undefined,
+        });
         refreshImageTitleLayouts(slide);
         refreshFlowFunnels(slide);
-        if (piece.options?.unlockPhases) unlockPhases(slide);
+        if (opts.unlockPhases || opts.highlightPhase) {
+          unlockPhases(slide, opts.highlightPhase || null);
+        }
+        if (opts.static) {
+          slide.querySelectorAll('[role="button"]').forEach((el) => {
+            el.removeAttribute("role");
+            el.removeAttribute("tabindex");
+            el.removeAttribute("aria-pressed");
+            el.removeAttribute("aria-label");
+          });
+          slide
+            .querySelectorAll(".flow-orbit:not(.flow-orbit--focus) .flow-phase")
+            .forEach((el) => {
+              el.style.cursor = "default";
+            });
+        }
         requestAnimationFrame(() => fitSlide(preview, slide));
 
         const ro = new ResizeObserver(() => fitSlide(preview, slide));

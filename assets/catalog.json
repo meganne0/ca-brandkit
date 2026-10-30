@@ -235,7 +235,7 @@
         "title": "PreBreach Intelligence"
       },
       "layout": "LY-25",
-      "bg": "DS-01",
+      "bg": "",
       "content": {
         "text": "",
         "hub": true,
@@ -272,90 +272,52 @@
             "y": 83
           }
         ]
+      },
+      "options": {
+        "noBackground": true,
+        "noFooter": true
       }
     },
     {
-      "id": "prebreach-attack-paths-unlocked",
-      "label": "Attack paths \u00b7 all phases unlocked",
+      "id": "prebreach-attack-paths-phased",
+      "label": "Attack paths \u00b7 with phases",
       "kind": "flow-orbit",
-      "description": "Prebreach intro \u00b7 slide 8 \u2014 kill-chain overview with every phase revealed.",
+      "description": "Kill-chain overview with Preparation / Collection / Breach / Post-Breach panels. Transparent, non-interactive.",
       "source": {
         "deck": "prebreach-intro",
         "slide": 8,
         "title": "Attack paths"
       },
       "layout": "LY-24",
-      "bg": "BG-02",
+      "bg": "",
       "content": {
+        "phased": true,
         "sources": [
-          {
-            "label": "Linkedin"
-          },
-          {
-            "label": "Leads List"
-          },
-          {
-            "label": "Google Dorking"
-          },
-          {
-            "label": "Company Site"
-          },
-          {
-            "label": "Breach"
-          }
+          { "label": "Linkedin" },
+          { "label": "Leads List" },
+          { "label": "Google Dorking" },
+          { "label": "Company Site" },
+          { "label": "Breach" }
         ],
         "stages": [
-          {
-            "label": "Buy domains, build lure, MaaS, PhaaS",
-            "color": "#887DFF"
-          },
-          {
-            "label": "Phish, quish, smish, URL",
-            "color": "#9977FF"
-          },
-          {
-            "label": "Victim engages with lure",
-            "color": "#BF66FF"
-          },
-          {
-            "label": "Keylogger, RAT, infostealer, MFA bypass...",
-            "color": "#F17AFF"
-          },
-          {
-            "label": "Data sent to attacker: Tokens, cookies, passwords...",
-            "color": "#FF8045"
-          }
+          { "label": "Buy domains, build lure, MaaS, PhaaS", "color": "#887DFF" },
+          { "label": "Phish, quish, smish, URL", "color": "#9977FF" },
+          { "label": "Victim engages with lure", "color": "#BF66FF" },
+          { "label": "Keylogger, RAT, infostealer, MFA bypass...", "color": "#F17AFF" },
+          { "label": "Data sent to attacker: Tokens, cookies, passwords...", "color": "#FF8045" }
         ],
         "outcomes": [
-          {
-            "label": "Business email compromise"
-          },
-          {
-            "label": "Ransomware"
-          },
-          {
-            "label": "Exfiltration"
-          },
-          {
-            "label": "Fraud"
-          },
-          {
-            "label": "Account takeover"
-          },
-          {
-            "label": "Espionage"
-          }
+          { "label": "Business email compromise" },
+          { "label": "Ransomware" },
+          { "label": "Exfiltration" },
+          { "label": "Fraud" },
+          { "label": "Account takeover" },
+          { "label": "Espionage" }
         ],
         "impacts": [
-          {
-            "label": "Ransomware announcement"
-          },
-          {
-            "label": "Notify or report incident"
-          },
-          {
-            "label": "Posted on dark web forums, marketplaces"
-          }
+          { "label": "Ransomware announcement" },
+          { "label": "Notify or report incident" },
+          { "label": "Posted on dark web forums, marketplaces" }
         ],
         "phaseTitles": [
           "Preparation",
@@ -378,7 +340,72 @@
         "impactColor": "#FF2828"
       },
       "options": {
-        "unlockPhases": true
+        "unlockPhases": true,
+        "highlightPhase": "collection",
+        "noBackground": true,
+        "noFooter": true,
+        "static": true
+      }
+    },
+    {
+      "id": "prebreach-attack-paths-flat",
+      "label": "Attack paths \u00b7 no phases",
+      "kind": "flow-orbit",
+      "description": "Same kill-chain without phase titles, black panels, or numbered step labels. Transparent, non-interactive.",
+      "source": {
+        "deck": "prebreach-intro",
+        "slide": 8,
+        "title": "Attack paths"
+      },
+      "layout": "LY-24",
+      "bg": "",
+      "content": {
+        "phased": false,
+        "sources": [
+          { "label": "Linkedin" },
+          { "label": "Leads List" },
+          { "label": "Google Dorking" },
+          { "label": "Company Site" },
+          { "label": "Breach" }
+        ],
+        "stages": [
+          { "label": "Buy domains, build lure, MaaS, PhaaS", "color": "#887DFF" },
+          { "label": "Phish, quish, smish, URL", "color": "#9977FF" },
+          { "label": "Victim engages with lure", "color": "#BF66FF" },
+          { "label": "Keylogger, RAT, infostealer, MFA bypass...", "color": "#F17AFF" },
+          { "label": "Data sent to attacker: Tokens, cookies, passwords...", "color": "#FF8045" }
+        ],
+        "outcomes": [
+          { "label": "Business email compromise" },
+          { "label": "Ransomware" },
+          { "label": "Exfiltration" },
+          { "label": "Fraud" },
+          { "label": "Account takeover" },
+          { "label": "Espionage" }
+        ],
+        "impacts": [
+          { "label": "Ransomware announcement" },
+          { "label": "Notify or report incident" },
+          { "label": "Posted on dark web forums, marketplaces" }
+        ],
+        "stepLabels": [
+          "Recon",
+          "Weaponize",
+          "Deliver",
+          "Exploit",
+          "Install",
+          "Command and Control",
+          "Action-on-Objective",
+          "Publication"
+        ],
+        "sourceColor": "#1EADEC",
+        "outcomeColor": "#FF2828",
+        "impactColor": "#FF2828"
+      },
+      "options": {
+        "noBackground": true,
+        "noFooter": true,
+        "static": true
       }
     },
     {
@@ -392,7 +419,7 @@
         "title": "Three steps"
       },
       "layout": "LY-09",
-      "bg": "BG-09",
+      "bg": "",
       "content": {
         "number": "",
         "sectionTitle": "",
@@ -409,6 +436,10 @@
             "description": "Full data platform access for hunting and investigating."
           }
         ]
+      },
+      "options": {
+        "noBackground": true,
+        "noFooter": true
       }
     },
     {
@@ -422,7 +453,7 @@
         "title": "Three steps"
       },
       "layout": "LY-09",
-      "bg": "BG-09",
+      "bg": "",
       "content": {
         "number": "",
         "sectionTitle": "",
@@ -445,6 +476,10 @@
             "description": "Monitoring vs full hunt and investigation"
           }
         ]
+      },
+      "options": {
+        "noBackground": true,
+        "noFooter": true
       }
     },
     {
@@ -458,7 +493,7 @@
         "title": "Economic Context"
       },
       "layout": "LY-12",
-      "bg": "BG-04",
+      "bg": "",
       "content": {
         "title": "",
         "subtitle": "",
@@ -484,6 +519,10 @@
         ],
         "number": "",
         "sectionTitle": ""
+      },
+      "options": {
+        "noBackground": true,
+        "noFooter": true
       }
     },
     {
@@ -497,11 +536,11 @@
         "title": "Who We Are"
       },
       "layout": "LY-02",
-      "bg": "BG-08",
+      "bg": "",
       "content": {
         "sectionTitle": "",
-        "title": "Who We Are",
-        "subtitle": "The people behind CyberArmor.",
+        "title": "",
+        "subtitle": "",
         "people": [
           {
             "name": "Nguyen Nguyen",
@@ -520,6 +559,10 @@
           }
         ],
         "number": ""
+      },
+      "options": {
+        "noBackground": true,
+        "noFooter": true
       }
     }
   ]

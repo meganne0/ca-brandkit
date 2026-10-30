@@ -4,7 +4,7 @@
  * decks, or other materials.
  */
 
-const CATALOG_URL = new URL("../assets/catalog.json?v=1", import.meta.url);
+const CATALOG_URL = new URL("../assets/catalog.json?v=4", import.meta.url);
 
 let cached = null;
 

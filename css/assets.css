@@ -113,6 +113,28 @@
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
 }
 
+.assets-piece__preview--plain {
+  background:
+    linear-gradient(45deg, rgba(255, 255, 255, 0.03) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255, 255, 255, 0.03) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, rgba(255, 255, 255, 0.03) 75%),
+    linear-gradient(-45deg, transparent 75%, rgba(255, 255, 255, 0.03) 75%);
+  background-size: 24px 24px;
+  background-position: 0 0, 0 12px, 12px -12px, -12px 0;
+  background-color: #0a0614;
+  box-shadow: none;
+}
+
+.assets-piece__preview .slide--plain {
+  background: transparent !important;
+}
+
+.assets-piece--static,
+.assets-piece--static * {
+  pointer-events: none !important;
+  cursor: default !important;
+}
+
 .assets-piece__preview .slide,
 .assets-piece__preview .canvas {
   position: absolute;

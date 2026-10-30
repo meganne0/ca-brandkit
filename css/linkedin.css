@@ -2,6 +2,8 @@
 @import url("./type-linkedin.css?v=21");
 @import url("./type.css?v=21");
 @import url("./backgrounds.css?v=21");
+@import url("./decor-youtube.css?v=1");
+@import url("./modal-panels.css?v=1");
 @import url("./components/footer.css?v=22");
 
 *,
@@ -90,12 +92,17 @@ body.li-lightbox-open {
 
 .canvas {
   --scale: 1;
+  --li-footer-h: 76px;
   position: relative;
   width: calc(var(--canvas-w) * 1px);
   height: calc(var(--canvas-h) * 1px);
   overflow: hidden;
   color: var(--ca-white);
   background: var(--ca-purple-deep);
+}
+
+.canvas--li-landscape {
+  --li-footer-h: 58px;
 }
 
 .li-content {
@@ -2020,7 +2027,7 @@ body.li-editor-open {
 .li-composer__components {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 16px;
 }
 
 .li-composer__item {
@@ -2117,9 +2124,15 @@ body.li-editor-open {
   top: 40px;
   left: 40px;
   z-index: 8;
-  width: 200px;
+  width: 280px;
   height: auto;
   pointer-events: none;
+}
+
+.canvas--li-square .li-composer-logo {
+  top: 44px;
+  left: 44px;
+  width: 300px;
 }
 
 .canvas--li-landscape .li-composer-logo {
@@ -2139,17 +2152,179 @@ body.li-editor-open {
   flex-direction: column;
   justify-content: center;
   align-items: stretch;
-  gap: 22px;
+  gap: 48px;
   text-align: left;
   padding: 12% 10%;
+  box-sizing: border-box;
 }
 
 .li-content.li-layout-composer--with-logo {
   padding-top: 18%;
 }
 
+/* Center in the band above the footer — exclude footer height from the flex area */
 .canvas--with-footer .li-content.li-layout-composer {
-  padding-bottom: 140px;
+  height: calc(100% - var(--li-footer-h, 76px));
+  max-height: calc(100% - var(--li-footer-h, 76px));
+  padding-bottom: 12%;
+}
+
+.canvas--with-footer .li-content.li-layout-composer--with-logo {
+  padding-top: 18%;
+  padding-bottom: 12%;
+}
+
+.canvas--li-landscape .li-content.li-layout-composer {
+  gap: 28px;
+}
+
+.li-composer-block__quote {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.li-composer-split {
+  display: grid;
+  gap: 36px;
+  align-items: center;
+  width: 100%;
+}
+
+.li-composer-split--columns {
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+.li-composer-split--stack {
+  grid-template-columns: 1fr;
+}
+
+.li-composer-split__copy {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  text-align: left;
+  min-width: 0;
+}
+
+.li-composer-split__media {
+  position: relative;
+  min-width: 0;
+  min-height: 220px;
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+.li-composer-split__media--cover {
+  aspect-ratio: 1.15 / 1;
+  background: rgba(0, 0, 0, 0.25);
+}
+
+.li-composer-split__media--contain {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  overflow: visible;
+  min-height: 0;
+}
+
+.li-composer-split__media--empty {
+  display: grid;
+  place-items: center;
+  aspect-ratio: 1.15 / 1;
+  border: 1px dashed rgba(255, 255, 255, 0.25);
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 18px;
+}
+
+.li-composer-split__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.li-composer-split__media--contain .li-composer-split__img {
+  width: 100%;
+  height: auto;
+  max-height: 520px;
+  object-fit: contain;
+}
+
+.li-composer-split__media--modal {
+  overflow: visible;
+  min-height: 0;
+  background: transparent;
+}
+
+.li-composer-split .ca-modal--embedded {
+  position: relative;
+  top: auto;
+  left: auto;
+  transform: none;
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+}
+
+.canvas--li-landscape .li-composer-split .ca-modal--embedded {
+  padding: 28px 30px;
+  gap: 16px;
+  border-radius: 22px;
+}
+
+.canvas--li-landscape .li-composer-split .ca-modal__title {
+  font-size: 28px;
+}
+
+.canvas--li-landscape .li-composer-split .ca-modal__subtitle {
+  font-size: 18px;
+}
+
+.canvas--li-landscape .li-composer-split .ca-modal__body,
+.canvas--li-landscape .li-composer-split .ca-modal__window-title,
+.canvas--li-landscape .li-composer-split .ca-modal__window-body {
+  font-size: 15px;
+}
+
+.canvas--li-landscape .li-composer-split .ca-modal__window {
+  padding: 14px 16px;
+  gap: 8px;
+  border-radius: 14px;
+}
+
+.li-composer__upload-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.li-composer-block--quote-panel .li-layout-quote__panel {
+  width: 100%;
+  max-width: 100%;
+  min-height: 0;
+  padding: 48px 44px;
+}
+
+.li-composer-block--quote-panel .li-layout-quote__shell {
+  width: 100%;
+  max-width: 100%;
+}
+
+.li-composer-block--quote-panel .li-layout-quote--portrait .li-layout-quote__panel {
+  padding-top: 100px;
+  min-height: 0;
+}
+
+.li-composer-block--quote-panel .li-layout-quote__avatar {
+  width: 96px;
+  height: 96px;
+}
+
+.li-composer-block--quote-panel .li-layout-quote__mark--open,
+.li-composer-block--quote-panel .li-layout-quote__mark--close {
+  font-size: 160px;
 }
 
 .li-composer-block__title--sm { font-size: 36px; }
@@ -2160,12 +2335,78 @@ body.li-editor-open {
 .canvas--li-portrait .li-composer-block__title--lg { font-size: 72px; }
 .canvas--li-portrait .li-composer-block__title--xl { font-size: 96px; }
 
+.li-composer-block--image {
+  width: 100%;
+  min-width: 0;
+}
+
 .li-composer-block__image {
   display: block;
   width: 100%;
-  max-height: 420px;
+  max-height: 520px;
   border-radius: 12px;
   object-fit: cover;
+}
+
+/* Catalog pieces (attack path, PreBreach DB, …): fill content width, scale with format */
+.li-composer-block__image.is-contain,
+.li-composer-block--image:has(.is-contain) .li-composer-block__image {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  max-height: none;
+  object-fit: contain;
+  object-position: center;
+  background: transparent;
+}
+
+.li-composer-block__piece,
+.li-piece-mount {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+.li-piece-mount__stage {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  background: transparent;
+}
+
+.li-piece-mount__stage .slide {
+  position: absolute;
+  inset: auto;
+  top: 0;
+  left: 0;
+  right: auto;
+  bottom: auto;
+  width: 1920px;
+  height: 1080px;
+  transform-origin: top left;
+  background: transparent !important;
+}
+
+.li-piece-mount__stage .slide.slide--plain,
+.li-piece-mount__stage .slide-layers {
+  background: transparent !important;
+}
+
+.li-composer-block--layout-piece {
+  width: 100%;
+}
+
+.li-composer-block__piece-image {
+  max-height: none;
+  object-fit: contain;
+  background: transparent;
+}
+
+.li-piece-mount .assets-piece--static,
+.li-piece-mount .assets-piece--static * {
+  pointer-events: none !important;
+  cursor: default !important;
 }
 
 .li-composer-block__image-empty {
@@ -2200,29 +2441,262 @@ body.li-editor-open {
   background: rgba(255, 255, 255, 0.08);
 }
 
-.li-composer__asset-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  max-height: 180px;
-  overflow: auto;
+body.li-asset-modal-open {
+  overflow: hidden;
 }
 
-.li-composer__asset-btn {
-  appearance: none;
-  text-align: left;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 8px;
-  padding: 8px 10px;
-  background: rgba(255, 255, 255, 0.03);
-  color: rgba(255, 255, 255, 0.85);
-  font: inherit;
-  font-size: 13px;
+.li-asset-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 12000;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.li-asset-modal[hidden] {
+  display: none !important;
+}
+
+.li-asset-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  border: none;
+  background: rgba(0, 0, 0, 0.62);
   cursor: pointer;
 }
 
-.li-composer__asset-btn:hover {
-  border-color: rgba(242, 88, 53, 0.45);
+.li-asset-modal__dialog {
+  position: relative;
+  z-index: 1;
+  width: min(920px, 100%);
+  max-height: min(80vh, 840px);
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #120b1c;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+}
+
+.li-asset-modal__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.li-asset-modal__title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.li-asset-modal__body {
+  padding: 16px 18px 22px;
+  overflow: auto;
+}
+
+.li-asset-modal__section + .li-asset-modal__section {
+  margin-top: 22px;
+}
+
+.li-asset-modal__group {
+  margin: 0 0 10px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.42);
+}
+
+.li-asset-modal__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(132px, 1fr));
+  gap: 12px;
+}
+
+.li-asset-modal__grid--pieces {
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+
+.li-asset-modal__card {
+  appearance: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 8px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  color: #fff;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.li-asset-modal__card:hover {
+  border-color: rgba(242, 88, 53, 0.5);
+  background: rgba(242, 88, 53, 0.08);
+}
+
+.li-asset-modal__thumb {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.28);
+  overflow: hidden;
+  position: relative;
+}
+
+.li-asset-modal__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.li-asset-modal__thumb--live {
+  aspect-ratio: 16 / 9;
+  background:
+    linear-gradient(45deg, rgba(255, 255, 255, 0.03) 25%, transparent 25%),
+    linear-gradient(-45deg, rgba(255, 255, 255, 0.03) 25%, transparent 25%),
+    #0a0614;
+  background-size: 16px 16px;
+  background-position: 0 0, 0 8px;
+}
+
+.li-asset-modal__thumb--live .li-piece-mount__stage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
+}
+
+.li-asset-modal__thumb--empty {
+  display: grid;
+  place-items: center;
+  font-size: 18px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.55);
+  background:
+    linear-gradient(135deg, rgba(242, 88, 53, 0.28), rgba(255, 255, 255, 0.06));
+}
+
+.li-asset-modal__caption {
+  font-size: 12px;
+  line-height: 1.3;
+  color: rgba(255, 255, 255, 0.78);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.li-composer__asset-trigger {
+  appearance: none;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  padding: 10px 12px;
+  background: rgba(0, 0, 0, 0.28);
+  color: #fff;
+  font: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.li-composer__asset-trigger-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.li-composer__asset-trigger-caret {
+  opacity: 0.55;
+  flex-shrink: 0;
+}
+
+.li-composer__asset-menu {
+  position: absolute;
+  z-index: 20;
+  top: calc(100% + 6px);
+  left: 0;
+  right: 0;
+  max-height: 280px;
+  overflow: auto;
+  padding: 8px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: #120b1c;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+}
+
+.li-composer__asset-group {
+  margin: 8px 6px 4px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.li-composer__asset-group:first-child {
+  margin-top: 2px;
+}
+
+.li-composer__asset-option {
+  appearance: none;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 8px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.9);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+  text-align: left;
+}
+
+.li-composer__asset-option:hover {
+  background: rgba(242, 88, 53, 0.14);
+}
+
+.li-composer__asset-thumb {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  object-fit: cover;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.li-composer__asset-thumb--empty {
+  display: inline-block;
+  background:
+    linear-gradient(135deg, rgba(242, 88, 53, 0.25), rgba(255, 255, 255, 0.06));
+}
+
+.li-composer__asset-option-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 @media (max-width: 980px) {

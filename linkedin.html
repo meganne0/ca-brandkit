@@ -10,8 +10,13 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Mozilla+Headline:wght@300&family=Mozilla+Text:wght@300;400;500;600;700&display=swap"
       rel="stylesheet"
     />
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/light/style.css"
+    />
+    <link rel="stylesheet" href="css/slides.css?v=91" />
     <link rel="stylesheet" href="css/backgrounds.css?v=21" />
-    <link rel="stylesheet" href="css/linkedin.css?v=50" />
+    <link rel="stylesheet" href="css/linkedin.css?v=58" />
     <script src="js/auth-gate.js?v=6"></script>
   </head>
   <body>
@@ -69,7 +74,7 @@
                   <span>Footer</span>
                 </label>
                 <label class="li-composer__check">
-                  <input type="checkbox" id="li-composer-logo" checked />
+                  <input type="checkbox" id="li-composer-logo" />
                   <span>CyberArmor logo · top left</span>
                 </label>
               </div>
@@ -83,9 +88,14 @@
 
             <section class="li-composer__section">
               <h2 class="li-composer__section-title">From assets</h2>
-              <div class="li-composer__asset-list" id="li-composer-assets">
-                <p class="li-ex-hint">Loading assets…</p>
-              </div>
+              <button
+                type="button"
+                class="li-composer__btn li-composer__btn--ghost"
+                id="li-composer-asset-trigger"
+              >
+                Browse assets…
+              </button>
+              <p class="li-ex-hint" id="li-composer-assets-status">Loading assets…</p>
             </section>
 
             <section class="li-composer__section">
@@ -290,6 +300,32 @@
     </div>
 
     <input type="file" id="li-file-input" accept="image/*" hidden />
+    <input type="file" id="li-composer-file-input" accept="image/*" hidden />
+
+    <div class="li-asset-modal" id="li-asset-modal" hidden>
+      <button
+        type="button"
+        class="li-asset-modal__backdrop"
+        id="li-asset-modal-backdrop"
+        aria-label="Close assets"
+      ></button>
+      <div
+        class="li-asset-modal__dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="li-asset-modal-title"
+      >
+        <header class="li-asset-modal__header">
+          <h2 class="li-asset-modal__title" id="li-asset-modal-title">Assets</h2>
+          <button type="button" class="li-composer__btn li-composer__btn--ghost" id="li-asset-modal-close">
+            Close
+          </button>
+        </header>
+        <div class="li-asset-modal__body" id="li-asset-modal-body">
+          <p class="li-ex-hint">Loading assets…</p>
+        </div>
+      </div>
+    </div>
 
     <script type="module">
       import {
@@ -297,6 +333,10 @@
         LINKEDIN_FORMATS,
         renderLinkedInBackground,
       } from "./js/backgrounds-linkedin.js?v=22";
+      import {
+        BACKGROUNDS as SLIDE_BACKGROUNDS,
+      } from "./js/backgrounds.js?v=58";
+      import { renderBackgroundRecipe } from "./js/backgrounds-core.js?v=3";
       import {
         LINKEDIN_LAYOUTS,
         renderLinkedInLayout,
@@ -313,16 +353,22 @@
       } from "./js/youtube-download.js?v=8";
       import {
         COMPOSER_COMPONENT_TYPES,
-        backgroundsForFormat as composerBgsForFormat,
+        COMPOSER_ASSET_PIECE_TYPE,
+        adaptBackgroundRecipe,
+        composerBackgroundGroups,
         componentFromAsset,
+        mountLayoutPiece,
+        rasterizeLayoutPiece,
+        MODAL_ACCENTS,
         createComponent,
         createComposerState,
         moveComponent,
         paintComposerCanvas,
         removeComponent,
         updateComponent,
-      } from "./js/linkedin-composer.js?v=1";
-      import { loadAssetsCatalog } from "./js/assets-catalog.js?v=1";
+        updateModalField,
+      } from "./js/linkedin-composer.js?v=5";
+      import { loadAssetsCatalog } from "./js/assets-catalog.js?v=4";
 
       const SPEAKERS = [
         {
@@ -379,7 +425,6 @@
       const composerLogoEl = document.getElementById("li-composer-logo");
       const composerAddEl = document.getElementById("li-composer-add");
       const composerListEl = document.getElementById("li-composer-components");
-      const composerAssetsEl = document.getElementById("li-composer-assets");
       let composerState = createComposerState({
         format: "square",
         backgrounds: LINKEDIN_BACKGROUNDS,
@@ -393,9 +438,23 @@
           .replace(/</g, "&lt;");
       }
 
+      function renderComposerBackground(layers, bgId) {
+        const recipe =
+          LINKEDIN_BACKGROUNDS[bgId] ||
+          SLIDE_BACKGROUNDS[bgId] ||
+          null;
+        if (!recipe) {
+          renderLinkedInBackground(layers, bgId);
+          return;
+        }
+        renderBackgroundRecipe(
+          layers,
+          adaptBackgroundRecipe(recipe, composerState.format),
+        );
+      }
+
       function paintComposerPreview() {
         if (!composerStage) return;
-        const format = LINKEDIN_FORMATS[composerState.format] ?? LINKEDIN_FORMATS.square;
         composerStage.classList.toggle(
           "li-composer__stage--landscape",
           composerState.format === "landscape",
@@ -410,7 +469,7 @@
         }
         paintComposerCanvas(composerCanvas, composerState, {
           formats: LINKEDIN_FORMATS,
-          renderBackground: renderLinkedInBackground,
+          renderBackground: renderComposerBackground,
           renderDecor: renderYouTubeDecor,
         });
         requestAnimationFrame(() =>
@@ -430,16 +489,26 @@
       }
 
       function fillComposerBgOptions() {
-        const options = composerBgsForFormat(composerState.format, LINKEDIN_BACKGROUNDS);
-        composerBgEl.replaceChildren();
-        options.forEach(({ id, label }) => {
-          const opt = document.createElement("option");
-          opt.value = id;
-          opt.textContent = label;
-          composerBgEl.appendChild(opt);
+        const groups = composerBackgroundGroups({
+          linkedIn: LINKEDIN_BACKGROUNDS,
+          darkSlides: SLIDE_BACKGROUNDS,
         });
-        if (!options.some((o) => o.id === composerState.bg)) {
-          composerState.bg = options[0]?.id ?? "";
+        composerBgEl.replaceChildren();
+        const allIds = [];
+        groups.forEach((group) => {
+          const optgroup = document.createElement("optgroup");
+          optgroup.label = group.label;
+          group.options.forEach(({ id, label }) => {
+            const opt = document.createElement("option");
+            opt.value = id;
+            opt.textContent = label;
+            optgroup.appendChild(opt);
+            allIds.push(id);
+          });
+          composerBgEl.appendChild(optgroup);
+        });
+        if (!allIds.includes(composerState.bg)) {
+          composerState.bg = allIds[0] ?? "";
         }
         composerBgEl.value = composerState.bg;
       }
@@ -462,6 +531,26 @@
           return field(
             "Text",
             `<textarea data-field="text">${composerEscape(component.text)}</textarea>`,
+          );
+        }
+        if (component.type === "quote-panel") {
+          return (
+            field(
+              "Quote",
+              `<textarea data-field="text">${composerEscape(component.text)}</textarea>`,
+            ) +
+            field(
+              "Attribution",
+              `<input type="text" data-field="attribution" value="${composerEscape(component.attribution)}" />`,
+            ) +
+            field(
+              "Avatar URL (optional)",
+              `<input type="text" data-field="avatar" value="${composerEscape(component.avatar)}" placeholder="Leave empty for panel only" />`,
+            ) +
+            field(
+              "Speaker name",
+              `<input type="text" data-field="speaker" value="${composerEscape(component.speaker)}" />`,
+            )
           );
         }
         if (component.type === "title") {
@@ -491,6 +580,90 @@
                 <option value="contain" ${component.fit === "contain" ? "selected" : ""}>Contain</option>
               </select>`,
             )
+          );
+        }
+        if (component.type === "split-image" || component.type === "split-modal") {
+          const isLandscape = composerState.format === "landscape";
+          const layoutFields = isLandscape
+            ? field(
+                "Media side",
+                `<select data-field="mediaSide">
+                  <option value="right" ${component.mediaSide === "right" ? "selected" : ""}>Text left · media right</option>
+                  <option value="left" ${component.mediaSide === "left" ? "selected" : ""}>Media left · text right</option>
+                </select>`,
+              )
+            : field(
+                "Stack order",
+                `<select data-field="stackOrder">
+                  <option value="media-below" ${component.stackOrder === "media-below" ? "selected" : ""}>Text above · media below</option>
+                  <option value="media-above" ${component.stackOrder === "media-above" ? "selected" : ""}>Media above · text below</option>
+                </select>`,
+              );
+          const shared =
+            field(
+              "Eyebrow",
+              `<input type="text" data-field="eyebrow" value="${composerEscape(component.eyebrow)}" />`,
+            ) +
+            field(
+              "Title",
+              `<textarea data-field="title">${composerEscape(component.title)}</textarea>`,
+            ) +
+            field(
+              "Body",
+              `<textarea data-field="body">${composerEscape(component.body)}</textarea>`,
+            ) +
+            layoutFields;
+
+          if (component.type === "split-image") {
+            return (
+              shared +
+              `<div class="li-composer__upload-row">
+                <button type="button" class="li-composer__btn li-composer__btn--ghost" data-pick-image-asset>From assets…</button>
+                <button type="button" class="li-composer__btn li-composer__btn--ghost" data-upload-image>Upload image</button>
+              </div>` +
+              field(
+                "Image URL",
+                `<input type="text" data-field="imageSrc" value="${composerEscape(component.imageSrc)}" />`,
+              ) +
+              `<label class="li-composer__check">
+                <input type="checkbox" data-field="imageFit" data-fit-toggle value="contain" ${component.imageFit === "contain" ? "checked" : ""} />
+                <span>Preserve original ratio</span>
+              </label>` +
+              (component.imageFit === "contain"
+                ? ""
+                : field(
+                    "Crop from",
+                    `<select data-field="imagePosition">
+                      ${["center", "left", "right", "top", "bottom", "top left", "top right", "bottom left", "bottom right"]
+                        .map(
+                          (pos) =>
+                            `<option value="${pos}" ${component.imagePosition === pos ? "selected" : ""}>${pos}</option>`,
+                        )
+                        .join("")}
+                    </select>`,
+                  ))
+            );
+          }
+
+          const modal = component.modal || {};
+          const accentOpts = Object.entries(MODAL_ACCENTS)
+            .map(
+              ([id, meta]) =>
+                `<option value="${id}" ${modal.accent === id ? "selected" : ""}>${meta.label}</option>`,
+            )
+            .join("");
+          return (
+            shared +
+            `<div class="li-composer__nested">
+              <p class="li-composer__item-type">Modal</p>
+              ${field("Glow / accent", `<select data-modal-field="accent">${accentOpts}</select>`)}
+              ${field("Title", `<input type="text" data-modal-field="title" value="${composerEscape(modal.title)}" />`)}
+              ${field("Subtitle", `<input type="text" data-modal-field="subtitle" value="${composerEscape(modal.subtitle)}" />`)}
+              ${field("Body", `<textarea data-modal-field="body">${composerEscape(modal.body)}</textarea>`)}
+              ${field("Window title", `<input type="text" data-modal-field="windowTitle" value="${composerEscape(modal.windowTitle)}" />`)}
+              ${field("Window body", `<textarea data-modal-field="windowBody" rows="5">${composerEscape(modal.windowBody)}</textarea>`)}
+              <p class="li-ex-hint">Wrap sensitive text in [[like this]] to blur it.</p>
+            </div>`
           );
         }
         if (component.type === "metric") {
@@ -540,12 +713,18 @@
               .join("")
           );
         }
+        if (component.type === "layout-piece") {
+          return `<p class="li-ex-hint">${composerEscape(component.label || "Catalog piece")} — same visual as the assets library thumbnail.</p>`;
+        }
         return "";
       }
 
       function renderComposerList() {
         const typeLabel = Object.fromEntries(
-          COMPOSER_COMPONENT_TYPES.map((item) => [item.type, item.label]),
+          [
+            ...COMPOSER_COMPONENT_TYPES,
+            COMPOSER_ASSET_PIECE_TYPE,
+          ].map((item) => [item.type, item.label]),
         );
         composerListEl.innerHTML = composerState.components
           .map(
@@ -579,7 +758,7 @@
       function paintComposerForExport(canvas, { transparent = false } = {}) {
         paintComposerCanvas(canvas, composerState, {
           formats: LINKEDIN_FORMATS,
-          renderBackground: renderLinkedInBackground,
+          renderBackground: renderComposerBackground,
           renderDecor: renderYouTubeDecor,
           includeBackground: !transparent,
         });
@@ -645,75 +824,312 @@
         });
       }
 
+      const composerAssetTrigger = document.getElementById("li-composer-asset-trigger");
+      const composerAssetsStatus = document.getElementById("li-composer-assets-status");
+      const composerFileInput = document.getElementById("li-composer-file-input");
+      const assetModal = document.getElementById("li-asset-modal");
+      const assetModalBody = document.getElementById("li-asset-modal-body");
+      const assetModalTitle = document.getElementById("li-asset-modal-title");
+      const ASSET_IMAGE_EXCLUDE = new Set([
+        "linkedin-portraits",
+        "example-deliverables",
+      ]);
+      let composerAssetEntries = [];
+      let composerImageAssets = [];
+      let composerUploadTargetId = null;
+      let assetModalMode = "add"; // add | image
+      let assetModalImageTargetId = null;
+
+      function isAllowedCatalogImage(image) {
+        return image && !ASSET_IMAGE_EXCLUDE.has(image.group);
+      }
+
+      function closeAssetModal() {
+        if (!assetModal) return;
+        assetModal.hidden = true;
+        assetModalMode = "add";
+        assetModalImageTargetId = null;
+        document.body.classList.remove("li-asset-modal-open");
+      }
+
+      function openAssetModal({ mode = "add", componentId = null, title = "Assets" } = {}) {
+        assetModalMode = mode;
+        assetModalImageTargetId = componentId;
+        if (assetModalTitle) assetModalTitle.textContent = title;
+        renderAssetModalBody();
+        assetModal.hidden = false;
+        document.body.classList.add("li-asset-modal-open");
+      }
+
+      async function pieceToImageComponent(piece) {
+        if (piece.preview || piece.thumb) {
+          return createComponent("image", {
+            src: piece.preview || piece.thumb,
+            alt: piece.label || "",
+            fit: "contain",
+          });
+        }
+        if (composerAssetsStatus) {
+          composerAssetsStatus.textContent = `Rendering ${piece.label || "asset"}…`;
+        }
+        const src = await rasterizeLayoutPiece(piece, { pixelRatio: 1 });
+        if (piece) piece.preview = src;
+        return createComponent("image", {
+          src,
+          alt: piece.label || "",
+          fit: "contain",
+        });
+      }
+
+      async function addComposerFromAsset(entry) {
+        let component;
+        try {
+          if (entry.piece?.layout) {
+            component = await pieceToImageComponent(entry.piece);
+          } else {
+            component = entry.build();
+          }
+        } catch (err) {
+          console.warn("Asset import failed, falling back", err);
+          component = entry.build();
+        }
+        composerState.components = [...composerState.components, component];
+        if (composerAssetsStatus) {
+          composerAssetsStatus.textContent = `${composerAssetEntries.length} assets available`;
+        }
+        closeAssetModal();
+        syncComposerForm();
+      }
+
+      async function applyImageAssetToComponent(image) {
+        if (!assetModalImageTargetId) return;
+        let src = image?.src || "";
+        let alt = image?.label || "";
+        if (!src && image?.piece?.layout) {
+          try {
+            if (composerAssetsStatus) {
+              composerAssetsStatus.textContent = `Rendering ${image.piece.label || "asset"}…`;
+            }
+            src = await rasterizeLayoutPiece(image.piece, { pixelRatio: 1 });
+            image.piece.preview = src;
+            alt = image.piece.label || alt;
+          } catch (err) {
+            console.warn(err);
+            return;
+          }
+        }
+        if (!src) return;
+        composerState.components = updateComponent(
+          composerState.components,
+          assetModalImageTargetId,
+          { imageSrc: src, imageAlt: alt, imageFit: "contain" },
+        );
+        if (composerAssetsStatus) {
+          composerAssetsStatus.textContent = `${composerAssetEntries.length} assets available`;
+        }
+        closeAssetModal();
+        syncComposerForm();
+      }
+
+      function renderAssetModalBody() {
+        if (!assetModalBody) return;
+        assetModalBody.replaceChildren();
+
+        if (assetModalMode === "image") {
+          const pieceEntries = composerAssetEntries.filter((e) => e.piece?.layout);
+          if (!composerImageAssets.length && !pieceEntries.length) {
+            assetModalBody.innerHTML = `<p class="li-ex-hint">No images found.</p>`;
+            return;
+          }
+          if (pieceEntries.length) {
+            const section = document.createElement("section");
+            section.className = "li-asset-modal__section";
+            section.innerHTML = `<h3 class="li-asset-modal__group">Content pieces</h3>`;
+            const pieceGrid = document.createElement("div");
+            pieceGrid.className = "li-asset-modal__grid li-asset-modal__grid--pieces";
+            pieceEntries.forEach((entry) => {
+              const btn = document.createElement("button");
+              btn.type = "button";
+              btn.className = "li-asset-modal__card";
+              btn.title = entry.label;
+              const thumbHost = document.createElement("span");
+              thumbHost.className = "li-asset-modal__thumb li-asset-modal__thumb--live";
+              if (entry.piece.preview || entry.thumb) {
+                thumbHost.innerHTML = `<img src="${composerEscape(entry.piece.preview || entry.thumb)}" alt="" />`;
+                thumbHost.classList.remove("li-asset-modal__thumb--live");
+              } else {
+                mountLayoutPiece(thumbHost, {
+                  layout: entry.piece.layout,
+                  content: entry.piece.content || {},
+                  options: { ...(entry.piece.options || {}), static: true },
+                  bg: "",
+                  label: entry.piece.label || "",
+                });
+              }
+              const caption = document.createElement("span");
+              caption.className = "li-asset-modal__caption";
+              caption.textContent = entry.label;
+              btn.append(thumbHost, caption);
+              btn.addEventListener("click", () =>
+                applyImageAssetToComponent({ piece: entry.piece, label: entry.label }),
+              );
+              pieceGrid.appendChild(btn);
+            });
+            section.appendChild(pieceGrid);
+            assetModalBody.appendChild(section);
+          }
+          if (composerImageAssets.length) {
+            const section = document.createElement("section");
+            section.className = "li-asset-modal__section";
+            section.innerHTML = `<h3 class="li-asset-modal__group">Images</h3>`;
+            const grid = document.createElement("div");
+            grid.className = "li-asset-modal__grid";
+            composerImageAssets.forEach((image) => {
+              const btn = document.createElement("button");
+              btn.type = "button";
+              btn.className = "li-asset-modal__card";
+              btn.title = image.label;
+              btn.innerHTML = `
+                <span class="li-asset-modal__thumb"><img src="${composerEscape(image.src)}" alt="" /></span>
+                <span class="li-asset-modal__caption">${composerEscape(image.label)}</span>
+              `;
+              btn.addEventListener("click", () => applyImageAssetToComponent(image));
+              grid.appendChild(btn);
+            });
+            section.appendChild(grid);
+            assetModalBody.appendChild(section);
+          }
+          return;
+        }
+
+        if (!composerAssetEntries.length) {
+          assetModalBody.innerHTML = `<p class="li-ex-hint">No assets found.</p>`;
+          return;
+        }
+
+        const groups = new Map();
+        composerAssetEntries.forEach((entry, index) => {
+          if (!groups.has(entry.group)) groups.set(entry.group, []);
+          groups.get(entry.group).push({ ...entry, index });
+        });
+
+        groups.forEach((entries, groupLabel) => {
+          const section = document.createElement("section");
+          section.className = "li-asset-modal__section";
+          const heading = document.createElement("h3");
+          heading.className = "li-asset-modal__group";
+          heading.textContent = groupLabel;
+          section.appendChild(heading);
+          const grid = document.createElement("div");
+          grid.className =
+            groupLabel === "Pieces"
+              ? "li-asset-modal__grid li-asset-modal__grid--pieces"
+              : "li-asset-modal__grid";
+          entries.forEach((entry) => {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "li-asset-modal__card";
+            btn.title = entry.label;
+            const thumbHost = document.createElement("span");
+            thumbHost.className = "li-asset-modal__thumb";
+            if (entry.piece?.preview || entry.thumb) {
+              thumbHost.innerHTML = `<img src="${composerEscape(entry.piece?.preview || entry.thumb)}" alt="" />`;
+            } else if (entry.piece?.layout) {
+              thumbHost.classList.add("li-asset-modal__thumb--live");
+              mountLayoutPiece(thumbHost, {
+                layout: entry.piece.layout,
+                content: entry.piece.content || {},
+                options: {
+                  ...(entry.piece.options || {}),
+                  static: true,
+                },
+                bg: entry.piece.bg || "",
+                label: entry.piece.label || "",
+              });
+            } else {
+              thumbHost.classList.add("li-asset-modal__thumb--empty");
+              thumbHost.setAttribute("aria-hidden", "true");
+              thumbHost.textContent = entry.label.slice(0, 2);
+            }
+            const caption = document.createElement("span");
+            caption.className = "li-asset-modal__caption";
+            caption.textContent = entry.label;
+            btn.append(thumbHost, caption);
+            btn.addEventListener("click", () => {
+              const item = composerAssetEntries[entry.index];
+              if (item) addComposerFromAsset(item);
+            });
+            grid.appendChild(btn);
+          });
+          section.appendChild(grid);
+          assetModalBody.appendChild(section);
+        });
+      }
+
       function renderComposerAssets(catalog) {
-        const buttons = [];
+        composerAssetEntries = [];
+        composerImageAssets = (catalog.images ?? [])
+          .filter(isAllowedCatalogImage)
+          .map((image) => ({
+            src: image.src,
+            label: image.label,
+            group: image.group,
+          }));
         (catalog.people ?? []).forEach((person) => {
-          buttons.push({
-            label: `Person · ${person.name}`,
-            onClick: () => {
-              composerState.components = [
-                ...composerState.components,
-                componentFromAsset(person, "person"),
-              ];
-              syncComposerForm();
-            },
+          composerAssetEntries.push({
+            group: "People",
+            label: person.name,
+            thumb: person.avatar || "",
+            build: () => componentFromAsset(person, "person"),
           });
         });
         (catalog.metrics ?? []).forEach((metric) => {
-          buttons.push({
-            label: `Metric · ${metric.value}`,
-            onClick: () => {
-              composerState.components = [
-                ...composerState.components,
-                componentFromAsset(metric, "metric"),
-              ];
-              syncComposerForm();
-            },
+          composerAssetEntries.push({
+            group: "Metrics",
+            label: `${metric.value} · ${metric.source || "stat"}`,
+            thumb: "",
+            build: () => componentFromAsset(metric, "metric"),
           });
         });
-        (catalog.pieces ?? []).slice(0, 12).forEach((piece) => {
-          buttons.push({
-            label: `Piece · ${piece.label}`,
-            onClick: () => {
-              composerState.components = [
-                ...composerState.components,
-                componentFromAsset(piece),
-              ];
-              syncComposerForm();
-            },
+        (catalog.pieces ?? []).forEach((piece) => {
+          composerAssetEntries.push({
+            group: "Pieces",
+            label: piece.label,
+            thumb: piece.preview || piece.thumb || "",
+            piece,
+            build: () => componentFromAsset(piece),
           });
         });
-        (catalog.images ?? [])
-          .filter((image) => image.group === "screenshots" || image.group === "avatars")
-          .slice(0, 16)
-          .forEach((image) => {
-            buttons.push({
-              label: `Image · ${image.label}`,
-              onClick: () => {
-                composerState.components = [
-                  ...composerState.components,
-                  componentFromAsset(image, "image"),
-                ];
-                syncComposerForm();
-              },
-            });
+        composerImageAssets.forEach((image) => {
+          composerAssetEntries.push({
+            group: image.group === "avatars" ? "Avatars" : "Images",
+            label: image.label,
+            thumb: image.src || "",
+            build: () => componentFromAsset(image, "image"),
           });
+        });
 
-        composerAssetsEl.replaceChildren();
-        if (!buttons.length) {
-          composerAssetsEl.innerHTML = `<p class="li-ex-hint">No assets found.</p>`;
-          return;
+        if (composerAssetsStatus) {
+          composerAssetsStatus.textContent = `${composerAssetEntries.length} assets available`;
         }
-        buttons.forEach(({ label, onClick }) => {
-          const btn = document.createElement("button");
-          btn.type = "button";
-          btn.className = "li-composer__asset-btn";
-          btn.textContent = label;
-          btn.title = label;
-          btn.addEventListener("click", onClick);
-          composerAssetsEl.appendChild(btn);
-        });
+        if (!assetModal.hidden) renderAssetModalBody();
+        renderComposerList();
       }
+
+      composerAssetTrigger?.addEventListener("click", () => {
+        openAssetModal({ mode: "add", title: "From assets" });
+      });
+      document
+        .getElementById("li-asset-modal-close")
+        ?.addEventListener("click", closeAssetModal);
+      document
+        .getElementById("li-asset-modal-backdrop")
+        ?.addEventListener("click", closeAssetModal);
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && assetModal && !assetModal.hidden) {
+          closeAssetModal();
+        }
+      });
 
       document.querySelectorAll(".li-tabs__btn").forEach((btn) => {
         btn.addEventListener("click", () => {
@@ -731,10 +1147,6 @@
 
       composerFormatEl.addEventListener("change", () => {
         composerState.format = composerFormatEl.value;
-        composerState.bg = composerBgsForFormat(
-          composerState.format,
-          LINKEDIN_BACKGROUNDS,
-        )[0]?.id ?? "";
         syncComposerForm();
       });
       composerBgEl.addEventListener("change", () => {
@@ -771,18 +1183,66 @@
             Number(moveBtn.dataset.move),
           );
           syncComposerForm();
+          return;
+        }
+        if (e.target.closest("[data-upload-image]")) {
+          composerUploadTargetId = id;
+          composerFileInput?.click();
+          return;
+        }
+        if (e.target.closest("[data-pick-image-asset]")) {
+          openAssetModal({
+            mode: "image",
+            componentId: id,
+            title: "Choose image",
+          });
+        }
+      });
+
+      composerFileInput?.addEventListener("change", async () => {
+        const file = composerFileInput.files?.[0];
+        const id = composerUploadTargetId;
+        composerFileInput.value = "";
+        composerUploadTargetId = null;
+        if (!file || !id) return;
+        try {
+          const url = await readFileAsDataUrl(file);
+          composerState.components = updateComponent(composerState.components, id, {
+            imageSrc: url,
+          });
+          syncComposerForm();
+        } catch {
+          /* ignore failed reads */
         }
       });
 
       composerListEl.addEventListener("input", (e) => {
-        const fieldEl = e.target.closest("[data-field]");
         const item = e.target.closest(".li-composer__item");
-        if (!fieldEl || !item) return;
+        if (!item) return;
         const id = item.dataset.id;
         const component = composerState.components.find((c) => c.id === id);
         if (!component) return;
+
+        const modalField = e.target.closest("[data-modal-field]");
+        if (modalField) {
+          composerState.components = updateModalField(
+            composerState.components,
+            id,
+            modalField.dataset.modalField,
+            modalField.value,
+          );
+          paintComposerPreview();
+          return;
+        }
+
+        const fieldEl = e.target.closest("[data-field]");
+        if (!fieldEl) return;
         const key = fieldEl.dataset.field;
-        const value = fieldEl.value;
+        let value = fieldEl.value;
+
+        if (fieldEl.dataset.fitToggle != null) {
+          value = fieldEl.checked ? "contain" : "cover";
+        }
 
         if (fieldEl.dataset.card != null) {
           const index = Number(fieldEl.dataset.card);
@@ -800,6 +1260,10 @@
           composerState.components = updateComponent(composerState.components, id, {
             [key]: value,
           });
+        }
+        if (key === "imageFit") {
+          syncComposerForm();
+          return;
         }
         paintComposerPreview();
       });
@@ -823,7 +1287,9 @@
       loadAssetsCatalog()
         .then(renderComposerAssets)
         .catch(() => {
-          composerAssetsEl.innerHTML = `<p class="li-ex-hint">Could not load assets catalog.</p>`;
+          if (composerAssetsStatus) {
+            composerAssetsStatus.textContent = "Could not load assets catalog.";
+          }
         });
       window.addEventListener("resize", () => {
         if (

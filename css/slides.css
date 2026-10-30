@@ -2352,6 +2352,24 @@ a.metric-card__source:hover {
   padding: 4px 8px 16px;
 }
 
+/* Overview: keep phase panels shorter than full slide height */
+.flow-orbit--phased:not(.flow-orbit--focus) {
+  align-items: center;
+  align-content: center;
+}
+
+.flow-orbit--phased:not(.flow-orbit--focus) .flow-phase {
+  height: auto;
+  max-height: 620px;
+}
+
+.flow-orbit--phased:not(.flow-orbit--focus) .flow-phase__body {
+  flex: 0 0 auto;
+  height: 480px;
+  max-height: 480px;
+  padding: 12px 12px 14px;
+}
+
 .flow-orbit--with-outcomes {
   grid-template-columns: minmax(200px, 0.65fr) minmax(0, 1.35fr) minmax(220px, 0.8fr);
 }

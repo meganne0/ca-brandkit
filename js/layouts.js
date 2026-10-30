@@ -1232,6 +1232,7 @@ function renderFlowOrbit(content) {
             ? 3
             : null;
 
+  const phased = content.phased !== false;
   const phaseTitles = Array.isArray(content.phaseTitles)
     ? content.phaseTitles
     : ["Preparation", "Collection", "Breach", "Post-Breach"];
@@ -1270,7 +1271,7 @@ function renderFlowOrbit(content) {
 
   const focusKeys = ["prep", "collection", "breach", "post-breach"];
   const orbitMods = [
-    "flow-orbit--phased",
+    phased ? "flow-orbit--phased" : "",
     focusPhase == null && outcomes.length ? "flow-orbit--with-outcomes" : "",
     focusPhase == null && impacts.length ? "flow-orbit--with-impacts" : "",
     focusPhase != null ? `flow-orbit--focus flow-orbit--focus-${focusKeys[focusPhase]}` : "",
@@ -1293,9 +1294,12 @@ function renderFlowOrbit(content) {
     return "";
   })();
 
+  const stepBadge = (number, label, color) =>
+    phased ? flowStepBadge(number, label, color) : "";
+
   const sourcesBlock = `
     <div class="flow-step flow-step--sources">
-      ${flowStepBadge(1, stepLabels[0] ?? "Recon", sourceColor)}
+      ${stepBadge(1, stepLabels[0] ?? "Recon", sourceColor)}
       <div class="flow-orbit__sources">
         ${sources
           .map((source, index) => {
@@ -1311,7 +1315,7 @@ function renderFlowOrbit(content) {
   const weaponizeBlock = weaponize
     ? `
       <div class="flow-step flow-step--stage">
-        ${flowStepBadge(2, stepLabels[1] ?? "Weaponize", weaponize.color)}
+        ${stepBadge(2, stepLabels[1] ?? "Weaponize", weaponize.color)}
         ${flowDotMarkup(weaponize.label, "stage", "stage-0", weaponize.color, "prep")}
       </div>
     `
@@ -1325,7 +1329,7 @@ function renderFlowOrbit(content) {
       };
       return `
         <div class="flow-step flow-step--stage">
-          ${flowStepBadge(meta.number, meta.label, stage.color)}
+          ${stepBadge(meta.number, meta.label, stage.color)}
           ${flowDotMarkup(stage.label, "stage", `stage-${index + 1}`, stage.color, "collection")}
         </div>
       `;
@@ -1337,94 +1341,120 @@ function renderFlowOrbit(content) {
       ? ` role="button" tabindex="0" aria-pressed="${selected ? "true" : "false"}" aria-label="Select ${escapeHtml(label)} phase"`
       : "";
 
-  const prepPhase = showPrep
-    ? `<section class="flow-phase flow-phase--prep${
-        focusPhase == null ? " is-stroke-on" : ""
-      }"${overviewPhaseAttrs(phaseTitles[0] ?? "Preparation", { selected: focusPhase == null })}>
-        <h3 class="flow-phase__title">${escapeHtml(phaseTitles[0] ?? "Preparation")}</h3>
-        <div class="flow-phase__body">
-          <div class="flow-phase__grid flow-phase__grid--prep">
-            ${sourcesBlock}
-            ${weaponizeBlock}
-          </div>
-        </div>
-      </section>`
-    : "";
+  const outcomesInner = `
+    <div class="flow-step flow-step--outcomes">
+      ${stepBadge(7, stepLabels[6] ?? "Action-on-Objective", outcomeColor)}
+      <div class="flow-orbit__outcomes">
+        ${outcomes
+          .map((outcome, index) =>
+            flowDotMarkup(
+              outcome.label,
+              "outcome",
+              `outcome-${index}`,
+              outcome.color,
+              "breach",
+            ),
+          )
+          .join("")}
+      </div>
+    </div>
+  `;
 
-  const collectionPhase = showCollection
-    ? `<section class="flow-phase flow-phase--collection${
-        focusPhase == null ? " is-phase-blurred" : ""
-      }"${overviewPhaseAttrs(phaseTitles[1] ?? "Collection")}>
-        <h3 class="flow-phase__title">${escapeHtml(phaseTitles[1] ?? "Collection")}</h3>
-        <div class="flow-phase__body">
-          <div class="flow-phase__grid flow-phase__grid--collection" style="--flow-collection-count:${Math.max(collectionStages.length, 1)}">
-            ${collectionBlocks}
-          </div>
-        </div>
-      </section>`
-    : "";
+  const impactsInner = `
+    <div class="flow-step flow-step--impacts">
+      ${stepBadge(8, stepLabels[7] ?? "Publication", impactColor)}
+      <div class="flow-orbit__impacts">
+        ${impacts
+          .map((impact, index) =>
+            flowDotMarkup(
+              impact.label,
+              "impact",
+              `impact-${index}`,
+              impact.color,
+              "post-breach",
+            ),
+          )
+          .join("")}
+      </div>
+    </div>
+  `;
 
-  const breachPhase = showBreach
-    ? `<section class="flow-phase flow-phase--breach${
-        focusPhase == null ? " is-phase-blurred" : ""
-      }"${overviewPhaseAttrs(phaseTitles[2] ?? "Breach")}>
-        <h3 class="flow-phase__title">${escapeHtml(phaseTitles[2] ?? "Breach")}</h3>
-        <div class="flow-phase__body">
-          <div class="flow-step flow-step--outcomes">
-            ${flowStepBadge(7, stepLabels[6] ?? "Action-on-Objective", outcomeColor)}
-            <div class="flow-orbit__outcomes">
-              ${outcomes
-                .map((outcome, index) =>
-                  flowDotMarkup(
-                    outcome.label,
-                    "outcome",
-                    `outcome-${index}`,
-                    outcome.color,
-                    "breach",
-                  ),
-                )
-                .join("")}
+  let orbitInner = "";
+  if (!phased) {
+    const stageCount = Math.max(1 + collectionStages.length, 1);
+    orbitInner = `
+      ${sourcesBlock}
+      <div class="flow-orbit__stages" style="--flow-stage-count:${stageCount}">
+        ${weaponizeBlock}
+        ${collectionBlocks}
+      </div>
+      ${outcomes.length ? outcomesInner : ""}
+      ${impacts.length ? impactsInner : ""}
+    `;
+  } else {
+    const prepPhase = showPrep
+      ? `<section class="flow-phase flow-phase--prep${
+          focusPhase == null ? " is-stroke-on" : ""
+        }"${overviewPhaseAttrs(phaseTitles[0] ?? "Preparation", { selected: focusPhase == null })}>
+          <h3 class="flow-phase__title">${escapeHtml(phaseTitles[0] ?? "Preparation")}</h3>
+          <div class="flow-phase__body">
+            <div class="flow-phase__grid flow-phase__grid--prep">
+              ${sourcesBlock}
+              ${weaponizeBlock}
             </div>
           </div>
-        </div>
-      </section>`
-    : "";
+        </section>`
+      : "";
 
-  const postBreachPhase = showPostBreach
-    ? `<section class="flow-phase flow-phase--post-breach${
-        focusPhase == null ? " is-phase-blurred" : ""
-      }"${overviewPhaseAttrs(phaseTitles[3] ?? "Post-Breach")}>
-        <h3 class="flow-phase__title">${escapeHtml(phaseTitles[3] ?? "Post-Breach")}</h3>
-        <div class="flow-phase__body">
-          <div class="flow-step flow-step--impacts">
-            ${flowStepBadge(8, stepLabels[7] ?? "Publication", impactColor)}
-            <div class="flow-orbit__impacts">
-              ${impacts
-                .map((impact, index) =>
-                  flowDotMarkup(
-                    impact.label,
-                    "impact",
-                    `impact-${index}`,
-                    impact.color,
-                    "post-breach",
-                  ),
-                )
-                .join("")}
+    const collectionPhase = showCollection
+      ? `<section class="flow-phase flow-phase--collection${
+          focusPhase == null ? " is-phase-blurred" : ""
+        }"${overviewPhaseAttrs(phaseTitles[1] ?? "Collection")}>
+          <h3 class="flow-phase__title">${escapeHtml(phaseTitles[1] ?? "Collection")}</h3>
+          <div class="flow-phase__body">
+            <div class="flow-phase__grid flow-phase__grid--collection" style="--flow-collection-count:${Math.max(collectionStages.length, 1)}">
+              ${collectionBlocks}
             </div>
           </div>
-        </div>
-      </section>`
-    : "";
+        </section>`
+      : "";
+
+    const breachPhase = showBreach
+      ? `<section class="flow-phase flow-phase--breach${
+          focusPhase == null ? " is-phase-blurred" : ""
+        }"${overviewPhaseAttrs(phaseTitles[2] ?? "Breach")}>
+          <h3 class="flow-phase__title">${escapeHtml(phaseTitles[2] ?? "Breach")}</h3>
+          <div class="flow-phase__body">
+            ${outcomesInner}
+          </div>
+        </section>`
+      : "";
+
+    const postBreachPhase = showPostBreach
+      ? `<section class="flow-phase flow-phase--post-breach${
+          focusPhase == null ? " is-phase-blurred" : ""
+        }"${overviewPhaseAttrs(phaseTitles[3] ?? "Post-Breach")}>
+          <h3 class="flow-phase__title">${escapeHtml(phaseTitles[3] ?? "Post-Breach")}</h3>
+          <div class="flow-phase__body">
+            ${impactsInner}
+          </div>
+        </section>`
+      : "";
+
+    orbitInner = `
+      ${prepPhase}
+      ${collectionPhase}
+      ${breachPhase}
+      ${postBreachPhase}
+    `;
+  }
 
   el.innerHTML = `
     ${focusPhase == null ? cornerSection(content) : ""}
     ${focusPhase == null ? titleBlock(content) : ""}
     <div class="flow-orbit ${orbitMods}" data-flow-funnel${continueAttrs}>
       <svg class="flow-funnel__wires" aria-hidden="true"></svg>
-      ${prepPhase}
-      ${collectionPhase}
-      ${breachPhase}
-      ${postBreachPhase}
+      ${orbitInner}
     </div>
   `;
 
@@ -1642,7 +1672,7 @@ const RENDERERS = {
   "LY-25": renderCampaign,
 };
 
-export function renderLayout(slide, layoutId, content = {}) {
+export function renderLayout(slide, layoutId, content = {}, opts = {}) {
   const layout = LAYOUTS[layoutId];
   if (!layout) {
     console.warn(`Unknown layout recipe: ${layoutId}`);
@@ -1658,7 +1688,8 @@ export function renderLayout(slide, layoutId, content = {}) {
 
   slide.appendChild(renderer(content));
 
-  if (layout.footer) {
+  const wantFooter = opts.footer !== false && layout.footer;
+  if (wantFooter) {
     mountSlideFooter(slide);
   }
 }
