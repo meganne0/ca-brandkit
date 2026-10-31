@@ -35,7 +35,7 @@
         <section class="modals-panel" aria-labelledby="modals-editor-title">
           <h2 class="modals-panel__title" id="modals-editor-title">Editor</h2>
           <p class="modals-panel__lead">
-            Settings are remembered in this browser. Leave fields blank to hide
+            Refresh resets to the sample defaults. Leave fields blank to hide
             them. Wrap sensitive modal text in <code>[[like this]]</code> to blur it.
           </p>
 
@@ -359,19 +359,25 @@
         renderYouTubeDecor,
       } from "./js/decor-youtube.js?v=2";
       import {
+        STORAGE_KEY,
         defaultModalState,
         paintModals,
         formatForState,
-        normalizeState,
-        loadStoredState,
-        saveStoredState,
         measureImageAspect,
         ensureImageAspects,
-      } from "./js/modals.js?v=18";
+      } from "./js/modals.js?v=19";
       import { downloadPaintedThumbnail } from "./js/youtube-download.js?v=8";
 
-      const stored = loadStoredState();
-      const state = stored ? normalizeState(stored) : defaultModalState();
+      // Always boot from defaults — do not restore prior editor sessions.
+      try {
+        localStorage.removeItem(STORAGE_KEY);
+      } catch {
+        /* private mode */
+      }
+      const state = defaultModalState();
+      function saveStoredState() {
+        /* intentionally not persisted across refresh */
+      }
 
       const stage = document.getElementById("modals-stage");
       const bgSelect = document.getElementById("modals-bg");
