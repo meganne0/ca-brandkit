@@ -85,6 +85,29 @@ function hardenHostForExport(clonedDoc) {
 }
 
 /**
+ * Composite a PNG onto an opaque fill so no transparent fringe survives export.
+ * @param {string} dataUrl
+ * @param {string} color
+ */
+async function flattenPngOnColor(dataUrl, color) {
+  const img = await new Promise((resolve, reject) => {
+    const el = new Image();
+    el.onload = () => resolve(el);
+    el.onerror = reject;
+    el.src = dataUrl;
+  });
+  const canvas = document.createElement("canvas");
+  canvas.width = img.naturalWidth || img.width;
+  canvas.height = img.naturalHeight || img.height;
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return dataUrl;
+  ctx.fillStyle = color;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(img, 0, 0);
+  return canvas.toDataURL("image/png");
+}
+
+/**
  * @param {HTMLElement} el — unscaled .canvas at design size
  * @param {string} filename
  * @param {{ width?: number, height?: number, pixelRatio?: number, backgroundColor?: string | null, cropToContent?: boolean, cropPadding?: number }} [opts]
@@ -94,6 +117,10 @@ export async function downloadElementPng(el, filename, opts = {}) {
   const height = opts.height ?? DESIGN_H;
   const scale = opts.pixelRatio ?? EXPORT_SCALE;
   const hasBg = Object.prototype.hasOwnProperty.call(opts, "backgroundColor");
+  const solidBg =
+    hasBg && typeof opts.backgroundColor === "string" && opts.backgroundColor
+      ? opts.backgroundColor
+      : null;
 
   await inlineBlobImages(el);
   await waitForImages(el);
@@ -106,7 +133,7 @@ export async function downloadElementPng(el, filename, opts = {}) {
     pixelRatio: scale,
     cacheBust: true,
     skipAutoScale: true,
-    ...(hasBg ? { backgroundColor: opts.backgroundColor } : {}),
+    ...(solidBg ? { backgroundColor: solidBg } : hasBg ? { backgroundColor: opts.backgroundColor } : {}),
     style: {
       transform: "none",
       transformOrigin: "top left",
@@ -117,11 +144,25 @@ export async function downloadElementPng(el, filename, opts = {}) {
       bottom: "auto",
       width: `${width}px`,
       height: `${height}px`,
+      maxWidth: "none",
+      maxHeight: "none",
       opacity: "1",
       position: "relative",
+      ...(solidBg ? { backgroundColor: solidBg } : {}),
     },
     onclone(clonedDoc) {
       hardenHostForExport(clonedDoc);
+      if (solidBg) {
+        const cloned = clonedDoc.querySelector("[data-html-to-image-id]") || clonedDoc.body?.firstElementChild;
+        // html-to-image clones the node as root — paint any .ca-modals-hug solid
+        clonedDoc.querySelectorAll(".ca-modals-hug").forEach((node) => {
+          if (node instanceof HTMLElement) {
+            node.style.maxWidth = "none";
+            node.style.backgroundColor = solidBg;
+            node.style.boxSizing = "border-box";
+          }
+        });
+      }
     },
   });
 
@@ -129,6 +170,10 @@ export async function downloadElementPng(el, filename, opts = {}) {
     dataUrl = await cropPngToOpaqueBounds(dataUrl, {
       padding: opts.cropPadding ?? 12,
     });
+  }
+
+  if (solidBg) {
+    dataUrl = await flattenPngOnColor(dataUrl, solidBg);
   }
 
   const a = document.createElement("a");
@@ -429,9 +474,17 @@ export async function downloadPaintedThumbnail(paint, filename, opts = {}) {
     if (opts.cropRootSelector) {
       const root = canvas.querySelector(opts.cropRootSelector);
       if (root instanceof HTMLElement) {
+        // Avoid % max-width shrinking the clone vs measured size (transparent right strip)
+        root.style.maxWidth = "none";
+        root.style.boxSizing = "border-box";
+        if (typeof opts.backgroundColor === "string" && opts.backgroundColor) {
+          root.style.backgroundColor = opts.backgroundColor;
+        }
+        await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+        const rect = root.getBoundingClientRect();
         target = root;
-        exportW = Math.max(1, Math.ceil(root.offsetWidth));
-        exportH = Math.max(1, Math.ceil(root.offsetHeight));
+        exportW = Math.max(1, Math.ceil(rect.width));
+        exportH = Math.max(1, Math.ceil(rect.height));
         // Exact plate capture — no opaque-bounds padding fringe
         cropToContent = false;
       }
