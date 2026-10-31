@@ -12,7 +12,7 @@
     />
     <link rel="stylesheet" href="css/backgrounds.css?v=21" />
     <link rel="stylesheet" href="css/decor-youtube.css?v=1" />
-    <link rel="stylesheet" href="css/modals.css?v=27" />
+    <link rel="stylesheet" href="css/modals.css?v=29" />
     <script src="js/auth-gate.js?v=6"></script>
   </head>
   <body>
@@ -296,8 +296,8 @@
 
           <div id="modals-options-hug" hidden>
             <p class="modals-hint">
-              Fixed look: navy background, violet outline, no glow, close ×,
-              content-hugging modal. Download crops empty space.
+              Fixed look: solid navy background, violet outline, no glow, close ×,
+              content-hugging modal. Download crops with ~10% margin around the modal.
             </p>
             <div class="modals-modal-block">
               <h3 class="modals-modal-block__title">Modal content</h3>
@@ -327,29 +327,6 @@
                 <textarea class="modals-field__textarea" data-hug-field="windowBody" rows="8"></textarea>
               </label>
             </div>
-
-            <fieldset class="modals-fieldset">
-              <legend class="modals-fieldset__legend">Subtitle / message size</legend>
-              <div class="modals-radios" role="radiogroup" aria-label="Message text size">
-                <label class="modals-radio">
-                  <input type="radio" name="hug-message-size" value="sm" />
-                  Small
-                </label>
-                <label class="modals-radio">
-                  <input type="radio" name="hug-message-size" value="md" checked />
-                  Medium
-                </label>
-                <label class="modals-radio">
-                  <input type="radio" name="hug-message-size" value="lg" />
-                  Large
-                </label>
-              </div>
-            </fieldset>
-
-            <label class="modals-field">
-              <span class="modals-field__label">Bottom label (Mozilla Text)</span>
-              <input class="modals-field__input" id="modals-hug-label" type="text" />
-            </label>
           </div>
 
           <div class="modals-actions">
@@ -390,7 +367,7 @@
         saveStoredState,
         measureImageAspect,
         ensureImageAspects,
-      } from "./js/modals.js?v=16";
+      } from "./js/modals.js?v=18";
       import { downloadPaintedThumbnail } from "./js/youtube-download.js?v=7";
 
       const stored = loadStoredState();
@@ -480,7 +457,7 @@
         stage.classList.toggle("modals-stage--hug", hug);
         stage.classList.toggle(
           "modals-stage--checker",
-          hug || state.exportMode === "transparent",
+          !hug && state.exportMode === "transparent",
         );
       }
 
@@ -535,11 +512,6 @@
         document.querySelectorAll("[data-hug-field]").forEach((el) => {
           el.value = state.hugModal[el.dataset.hugField] ?? "";
         });
-        const hugSizeEl = document.querySelector(
-          `input[name="hug-message-size"][value="${state.hugMessageSize || "md"}"]`,
-        );
-        if (hugSizeEl) hugSizeEl.checked = true;
-        document.getElementById("modals-hug-label").value = state.hugLabel ?? "";
 
         imageStatus(document.getElementById("modals-img1-status"), state.images[0]?.src);
         imageStatus(document.getElementById("modals-img2-status"), state.images[1]?.src);
@@ -556,10 +528,6 @@
           document.querySelectorAll("[data-hug-field]").forEach((el) => {
             state.hugModal[el.dataset.hugField] = el.value;
           });
-          state.hugMessageSize =
-            document.querySelector('input[name="hug-message-size"]:checked')
-              ?.value || "md";
-          state.hugLabel = document.getElementById("modals-hug-label").value;
           updateVisibility();
           return;
         }
@@ -685,7 +653,7 @@
 
       document
         .querySelectorAll(
-          'input[name="canvas-format"], input[name="export-mode"], input[name="content-mode"], input[name="modal-count"], input[name="image-count"], input[name="text-placement"], input[name="text-placement-land"], input[name="hug-message-size"], #modals-bg, #modals-decor, #modals-footer, #modals-img1-fit, #modals-img2-fit',
+          'input[name="canvas-format"], input[name="export-mode"], input[name="content-mode"], input[name="modal-count"], input[name="image-count"], input[name="text-placement"], input[name="text-placement-land"], #modals-bg, #modals-decor, #modals-footer, #modals-img1-fit, #modals-img2-fit',
         )
         .forEach((el) => el.addEventListener("change", () => {
           if (el.name === "canvas-format") {
@@ -698,10 +666,6 @@
               document.querySelectorAll("[data-hug-field]").forEach((field) => {
                 state.hugModal[field.dataset.hugField] = field.value;
               });
-              state.hugMessageSize =
-                document.querySelector('input[name="hug-message-size"]:checked')
-                  ?.value || "md";
-              state.hugLabel = document.getElementById("modals-hug-label").value;
             }
             // Entering hug: use dedicated hugModal state (not overlapping modal 1)
             if (nextFormat === "hug") {
@@ -733,7 +697,7 @@
         el.addEventListener("input", persistAndPaint);
         el.addEventListener("change", persistAndPaint);
       });
-      ["modals-eyebrow", "modals-title", "modals-subtitle", "modals-hug-label"].forEach((id) => {
+      ["modals-eyebrow", "modals-title", "modals-subtitle"].forEach((id) => {
         document.getElementById(id).addEventListener("input", persistAndPaint);
       });
 
@@ -808,7 +772,7 @@
               className: `canvas ${format.className} ca-modals-canvas`,
               ...(isHug
                 ? {
-                    backgroundColor: null,
+                    backgroundColor: "#060a14",
                     cropRootSelector: ".ca-modals-hug",
                   }
                 : cropExport

@@ -88,8 +88,6 @@ export function defaultModalState() {
     title: "Stop identity threats before the breach",
     subtitle: "Live demos and threat briefings with the CyberArmor team.",
     textPlacement: "above", // above | below | left | right
-    hugMessageSize: "md", // sm | md | lg — subtitle + body
-    hugLabel: "",
     /** Independent of overlapping modal sample — empty title shows "Message Details" placeholder. */
     hugModal: {
       title: "",
@@ -174,8 +172,8 @@ export function normalizeState(raw) {
   next.modalCount = Number(next.modalCount);
   next.imageCount = Number(next.imageCount);
   next.showFooter = Boolean(next.showFooter);
-  if (!["sm", "md", "lg"].includes(next.hugMessageSize)) next.hugMessageSize = "md";
-  if (typeof next.hugLabel !== "string") next.hugLabel = "";
+  delete next.hugMessageSize;
+  delete next.hugLabel;
   // Drop legacy sample title accidentally shared from modal 1 into hug
   if (next.hugModal.title === "Acme Holdings") next.hugModal.title = "";
   if (next.hugModal.windowTitle === "Attack Timeline") next.hugModal.windowTitle = "";
@@ -329,7 +327,7 @@ function formatHugSubtitleDate(text) {
   return `${monthName} ${Number(day)}, ${year}, ${Number(hour)}:${minute}:${second} ${meridiem.toUpperCase()}`;
 }
 
-function hugModalMarkup(modal, messageSize, label) {
+function hugModalMarkup(modal) {
   const title = modal.title?.trim() || "Message Details";
   const subtitleRaw = modal.subtitle?.trim();
   const subtitle = subtitleRaw ? formatHugSubtitleDate(subtitleRaw) : "";
@@ -337,12 +335,10 @@ function hugModalMarkup(modal, messageSize, label) {
   const windowTitle = modal.windowTitle?.trim();
   const windowBody = modal.windowBody?.trim();
   const hasWindow = windowTitle || windowBody;
-  const size = ["sm", "md", "lg"].includes(messageSize) ? messageSize : "md";
-  const labelText = typeof label === "string" ? label.trim() : "";
 
   return `
     <div class="ca-modals-hug">
-      <article class="ca-modal ca-modal--hug ca-modal--violet ca-modal--msg-${size}">
+      <article class="ca-modal ca-modal--hug ca-modal--violet">
         <span class="ca-modal__close" aria-hidden="true">×</span>
         <div class="ca-modal__header">
           <h2 class="ca-modal__title">${withBreaks(title)}</h2>
@@ -358,21 +354,28 @@ function hugModalMarkup(modal, messageSize, label) {
             : ""
         }
       </article>
-      ${
-        labelText
-          ? `<p class="ca-modals-hug__label">${withBreaks(labelText)}</p>`
-          : ""
-      }
     </div>
   `;
+}
+
+/** ~10% margin around the modal (based on modal width) for hug export plate. */
+function applyHugExportPadding(hugEl) {
+  const modal = hugEl.querySelector(".ca-modal--hug");
+  if (!modal) return;
+  hugEl.style.padding = "0";
+  // Force layout before measuring
+  const modalW = modal.offsetWidth;
+  const pad = Math.max(24, Math.round(modalW * 0.1));
+  hugEl.style.padding = `${pad}px`;
 }
 
 function paintHugModal(canvas, state) {
   const format = MODAL_FORMATS.hug;
   canvas.className =
-    "canvas canvas--li-square ca-modals-canvas ca-modals-canvas--transparent ca-modals-canvas--hug";
+    "canvas canvas--li-square ca-modals-canvas ca-modals-canvas--hug";
   canvas.style.width = `${format.w}px`;
   canvas.style.height = `${format.h}px`;
+  canvas.style.background = "#060a14";
   canvas.replaceChildren();
   delete canvas.dataset.bg;
   delete canvas.dataset.decor;
@@ -381,12 +384,11 @@ function paintHugModal(canvas, state) {
 
   const stage = document.createElement("div");
   stage.className = "ca-modals-hug-stage";
-  stage.innerHTML = hugModalMarkup(
-    state.hugModal || {},
-    state.hugMessageSize,
-    state.hugLabel,
-  );
+  stage.innerHTML = hugModalMarkup(state.hugModal || {});
   canvas.appendChild(stage);
+
+  const hug = stage.querySelector(".ca-modals-hug");
+  if (hug) applyHugExportPadding(hug);
 }
 
 function textBlockMarkup(state) {

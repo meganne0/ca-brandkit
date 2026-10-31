@@ -1085,9 +1085,15 @@ body {
 
 .modals-stage--hug {
   aspect-ratio: 1;
+  background: #060a14;
+  background-image: none;
 }
 
-/* Hugging Screenshot — navy plate, no glow, content-sized modal */
+.canvas.ca-modals-canvas--hug {
+  background: #060a14 !important;
+}
+
+/* Hugging Screenshot — solid navy field, ~10% pad set in JS from modal width */
 .ca-modals-hug-stage {
   position: absolute;
   inset: 0;
@@ -1095,16 +1101,16 @@ body {
   align-items: center;
   justify-content: center;
   pointer-events: none;
+  background: #060a14;
 }
 
 .ca-modals-hug {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  gap: 28px;
   width: max-content;
   max-width: min(580px, 88%);
-  padding: 48px;
+  padding: 0;
   box-sizing: border-box;
   background: #060a14;
 }
@@ -1161,49 +1167,6 @@ body {
   font-weight: 300;
   line-height: 1.35;
   color: rgba(200, 190, 255, 0.88);
-}
-
-.ca-modals-hug__label {
-  margin: 0;
-  font-family: "Mozilla Text", var(--font-body), sans-serif;
-  font-size: 20px;
-  font-weight: 500;
-  line-height: 1.35;
-  letter-spacing: 0.01em;
-  color: rgba(230, 228, 245, 0.78);
-  text-align: center;
-  white-space: pre-wrap;
-}
-
-.ca-modal--msg-sm .ca-modal__subtitle {
-  font-size: 20px;
-}
-
-.ca-modal--msg-sm .ca-modal__body {
-  font-size: 16px;
-}
-
-.ca-modal--msg-md .ca-modal__subtitle {
-  font-size: 26px;
-}
-
-.ca-modal--msg-md .ca-modal__body {
-  font-size: 22px;
-}
-
-.ca-modal--msg-lg .ca-modal__subtitle {
-  font-size: 34px;
-}
-
-.ca-modal--msg-lg .ca-modal__body {
-  font-size: 28px;
-}
-
-.ca-modal--hug.ca-modal--msg-sm .ca-modal__subtitle,
-.ca-modal--hug.ca-modal--msg-md .ca-modal__subtitle,
-.ca-modal--hug.ca-modal--msg-lg .ca-modal__subtitle {
-  font-size: 18px;
-  font-weight: 300;
 }
 
 .ca-modal--hug .ca-modal__window-body {
