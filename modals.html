@@ -12,7 +12,7 @@
     />
     <link rel="stylesheet" href="css/backgrounds.css?v=21" />
     <link rel="stylesheet" href="css/decor-youtube.css?v=1" />
-    <link rel="stylesheet" href="css/modals.css?v=23" />
+    <link rel="stylesheet" href="css/modals.css?v=27" />
     <script src="js/auth-gate.js?v=6"></script>
   </head>
   <body>
@@ -54,9 +54,14 @@
                 <input type="radio" name="canvas-format" value="portrait" />
                 Portrait
               </label>
+              <label class="modals-radio">
+                <input type="radio" name="canvas-format" value="hug" />
+                Hugging Screenshot
+              </label>
             </div>
           </fieldset>
 
+          <div id="modals-options-standard">
           <fieldset class="modals-fieldset">
             <legend class="modals-fieldset__legend">Export</legend>
             <div class="modals-radios" role="radiogroup" aria-label="Export mode">
@@ -287,6 +292,65 @@
               </div>
             </fieldset>
           </div>
+          </div>
+
+          <div id="modals-options-hug" hidden>
+            <p class="modals-hint">
+              Fixed look: navy background, violet outline, no glow, close ×,
+              content-hugging modal. Download crops empty space.
+            </p>
+            <div class="modals-modal-block">
+              <h3 class="modals-modal-block__title">Modal content</h3>
+              <label class="modals-field">
+                <span class="modals-field__label">Title</span>
+                <input
+                  class="modals-field__input"
+                  data-hug-field="title"
+                  type="text"
+                  placeholder="Message Details"
+                />
+              </label>
+              <label class="modals-field">
+                <span class="modals-field__label">Subtitle</span>
+                <input class="modals-field__input" data-hug-field="subtitle" type="text" />
+              </label>
+              <label class="modals-field">
+                <span class="modals-field__label">Body / message</span>
+                <textarea class="modals-field__textarea" data-hug-field="body" rows="3"></textarea>
+              </label>
+              <label class="modals-field">
+                <span class="modals-field__label">Window title</span>
+                <input class="modals-field__input" data-hug-field="windowTitle" type="text" />
+              </label>
+              <label class="modals-field">
+                <span class="modals-field__label">Window content</span>
+                <textarea class="modals-field__textarea" data-hug-field="windowBody" rows="8"></textarea>
+              </label>
+            </div>
+
+            <fieldset class="modals-fieldset">
+              <legend class="modals-fieldset__legend">Subtitle / message size</legend>
+              <div class="modals-radios" role="radiogroup" aria-label="Message text size">
+                <label class="modals-radio">
+                  <input type="radio" name="hug-message-size" value="sm" />
+                  Small
+                </label>
+                <label class="modals-radio">
+                  <input type="radio" name="hug-message-size" value="md" checked />
+                  Medium
+                </label>
+                <label class="modals-radio">
+                  <input type="radio" name="hug-message-size" value="lg" />
+                  Large
+                </label>
+              </div>
+            </fieldset>
+
+            <label class="modals-field">
+              <span class="modals-field__label">Bottom label (Mozilla Text)</span>
+              <input class="modals-field__input" id="modals-hug-label" type="text" />
+            </label>
+          </div>
 
           <div class="modals-actions">
             <button type="button" class="modals-btn modals-btn--primary" id="modals-download">
@@ -326,8 +390,8 @@
         saveStoredState,
         measureImageAspect,
         ensureImageAspects,
-      } from "./js/modals.js?v=12";
-      import { downloadPaintedThumbnail } from "./js/youtube-download.js?v=6";
+      } from "./js/modals.js?v=16";
+      import { downloadPaintedThumbnail } from "./js/youtube-download.js?v=7";
 
       const stored = loadStoredState();
       const state = stored ? normalizeState(stored) : defaultModalState();
@@ -347,9 +411,15 @@
       const footerCheck = document.getElementById("modals-footer");
       const img1FitCheck = document.getElementById("modals-img1-fit");
       const img2FitCheck = document.getElementById("modals-img2-fit");
+      const optionsStandard = document.getElementById("modals-options-standard");
+      const optionsHug = document.getElementById("modals-options-hug");
 
       function bgFormatForCanvas(canvasFormat) {
         return canvasFormat === "landscape" ? "landscape" : "square";
+      }
+
+      function isHugFormat() {
+        return state.canvasFormat === "hug";
       }
 
       function fillBackgroundOptions() {
@@ -389,21 +459,29 @@
       }
 
       function updateVisibility() {
+        const hug = isHugFormat();
+        optionsStandard.hidden = hug;
+        optionsHug.hidden = !hug;
+
         const isBg = state.exportMode === "background";
         const isImages = state.contentMode === "images";
         const isSquare = state.canvasFormat === "square";
-        bgRow.hidden = !isBg;
-        footerCheck.disabled = !isBg;
+        bgRow.hidden = hug || !isBg;
+        footerCheck.disabled = hug || !isBg;
         modeModals.hidden = isImages;
         modeImages.hidden = !isImages;
         block2.hidden = state.modalCount !== 2;
         img2Block.hidden = state.imageCount !== 2;
-        textBlock.hidden = isSquare;
+        textBlock.hidden = isSquare || hug;
         placePortrait.hidden = state.canvasFormat !== "portrait";
         placeLandscape.hidden = state.canvasFormat !== "landscape";
         stage.classList.toggle("modals-stage--landscape", state.canvasFormat === "landscape");
         stage.classList.toggle("modals-stage--portrait", state.canvasFormat === "portrait");
-        stage.classList.toggle("modals-stage--checker", state.exportMode === "transparent");
+        stage.classList.toggle("modals-stage--hug", hug);
+        stage.classList.toggle(
+          "modals-stage--checker",
+          hug || state.exportMode === "transparent",
+        );
       }
 
       function syncFormFromState() {
@@ -453,6 +531,16 @@
           });
         });
 
+        if (!state.hugModal) state.hugModal = {};
+        document.querySelectorAll("[data-hug-field]").forEach((el) => {
+          el.value = state.hugModal[el.dataset.hugField] ?? "";
+        });
+        const hugSizeEl = document.querySelector(
+          `input[name="hug-message-size"][value="${state.hugMessageSize || "md"}"]`,
+        );
+        if (hugSizeEl) hugSizeEl.checked = true;
+        document.getElementById("modals-hug-label").value = state.hugLabel ?? "";
+
         imageStatus(document.getElementById("modals-img1-status"), state.images[0]?.src);
         imageStatus(document.getElementById("modals-img2-status"), state.images[1]?.src);
         updateVisibility();
@@ -462,6 +550,20 @@
         state.canvasFormat = document.querySelector(
           'input[name="canvas-format"]:checked',
         ).value;
+
+        if (state.canvasFormat === "hug") {
+          if (!state.hugModal) state.hugModal = {};
+          document.querySelectorAll("[data-hug-field]").forEach((el) => {
+            state.hugModal[el.dataset.hugField] = el.value;
+          });
+          state.hugMessageSize =
+            document.querySelector('input[name="hug-message-size"]:checked')
+              ?.value || "md";
+          state.hugLabel = document.getElementById("modals-hug-label").value;
+          updateVisibility();
+          return;
+        }
+
         state.exportMode = document.querySelector(
           'input[name="export-mode"]:checked',
         ).value;
@@ -532,10 +634,14 @@
         }
         paintModals(canvas, state, paintDeps());
         const format = formatForState(state);
-        previewMeta.textContent =
-          state.exportMode === "transparent"
-            ? `${format.w} × ${format.h} · transparent · crops on download`
-            : `${format.w} × ${format.h} · ${state.bg}`;
+        if (state.canvasFormat === "hug") {
+          previewMeta.textContent = `Hugging Screenshot · crops to content on download`;
+        } else {
+          previewMeta.textContent =
+            state.exportMode === "transparent"
+              ? `${format.w} × ${format.h} · transparent · crops on download`
+              : `${format.w} × ${format.h} · ${state.bg}`;
+        }
         requestAnimationFrame(fitCanvas);
       }
 
@@ -579,10 +685,33 @@
 
       document
         .querySelectorAll(
-          'input[name="canvas-format"], input[name="export-mode"], input[name="content-mode"], input[name="modal-count"], input[name="image-count"], input[name="text-placement"], input[name="text-placement-land"], #modals-bg, #modals-decor, #modals-footer, #modals-img1-fit, #modals-img2-fit',
+          'input[name="canvas-format"], input[name="export-mode"], input[name="content-mode"], input[name="modal-count"], input[name="image-count"], input[name="text-placement"], input[name="text-placement-land"], input[name="hug-message-size"], #modals-bg, #modals-decor, #modals-footer, #modals-img1-fit, #modals-img2-fit',
         )
         .forEach((el) => el.addEventListener("change", () => {
           if (el.name === "canvas-format") {
+            const nextFormat = document.querySelector(
+              'input[name="canvas-format"]:checked',
+            ).value;
+            // Leaving hug: persist hug fields before switching
+            if (state.canvasFormat === "hug" && nextFormat !== "hug") {
+              if (!state.hugModal) state.hugModal = {};
+              document.querySelectorAll("[data-hug-field]").forEach((field) => {
+                state.hugModal[field.dataset.hugField] = field.value;
+              });
+              state.hugMessageSize =
+                document.querySelector('input[name="hug-message-size"]:checked')
+                  ?.value || "md";
+              state.hugLabel = document.getElementById("modals-hug-label").value;
+            }
+            // Entering hug: use dedicated hugModal state (not overlapping modal 1)
+            if (nextFormat === "hug") {
+              state.canvasFormat = "hug";
+              fillBackgroundOptions();
+              syncFormFromState();
+              saveStoredState(state);
+              paint();
+              return;
+            }
             readFormIntoState();
             fillBackgroundOptions();
             // Sensible default placement when switching formats
@@ -600,11 +729,11 @@
           persistAndPaint();
         }));
 
-      document.querySelectorAll("[data-field]").forEach((el) => {
+      document.querySelectorAll("[data-field], [data-hug-field]").forEach((el) => {
         el.addEventListener("input", persistAndPaint);
         el.addEventListener("change", persistAndPaint);
       });
-      ["modals-eyebrow", "modals-title", "modals-subtitle"].forEach((id) => {
+      ["modals-eyebrow", "modals-title", "modals-subtitle", "modals-hug-label"].forEach((id) => {
         document.getElementById(id).addEventListener("input", persistAndPaint);
       });
 
@@ -658,8 +787,11 @@
         readFormIntoState();
         const format = formatForState(state);
         const stamp = new Date().toISOString().slice(0, 10);
-        const suffix =
-          state.exportMode === "transparent"
+        const isHug = state.canvasFormat === "hug";
+        const cropExport = isHug || state.exportMode === "transparent";
+        const suffix = isHug
+          ? "hug"
+          : state.exportMode === "transparent"
             ? "transparent"
             : state.canvasFormat;
         const btn = document.getElementById("modals-download");
@@ -674,9 +806,14 @@
               width: format.w,
               height: format.h,
               className: `canvas ${format.className} ca-modals-canvas`,
-              ...(state.exportMode === "transparent"
-                ? { backgroundColor: null, cropToContent: true }
-                : {}),
+              ...(isHug
+                ? {
+                    backgroundColor: null,
+                    cropRootSelector: ".ca-modals-hug",
+                  }
+                : cropExport
+                  ? { backgroundColor: null, cropToContent: true }
+                  : {}),
             },
           );
         } catch (err) {

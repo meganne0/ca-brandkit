@@ -21,6 +21,14 @@ export const MODAL_FORMATS = {
     label: "Portrait",
     className: "canvas--li-portrait",
   },
+  /** Working canvas; download always crops to the navy hug box. */
+  hug: {
+    id: "hug",
+    w: 1400,
+    h: 1400,
+    label: "Hugging Screenshot",
+    className: "canvas--li-square",
+  },
 };
 
 /** @deprecated use MODAL_FORMATS.square — kept for older imports */
@@ -64,7 +72,7 @@ export function withBreaks(text) {
 
 export function defaultModalState() {
   return {
-    canvasFormat: "square", // square | landscape | portrait
+    canvasFormat: "square", // square | landscape | portrait | hug
     exportMode: "background", // background | transparent
     bg: "LI-BG-01",
     decor: "YT-DX-02",
@@ -80,6 +88,17 @@ export function defaultModalState() {
     title: "Stop identity threats before the breach",
     subtitle: "Live demos and threat briefings with the CyberArmor team.",
     textPlacement: "above", // above | below | left | right
+    hugMessageSize: "md", // sm | md | lg — subtitle + body
+    hugLabel: "",
+    /** Independent of overlapping modal sample — empty title shows "Message Details" placeholder. */
+    hugModal: {
+      title: "",
+      subtitle: "",
+      body: "",
+      windowTitle: "",
+      windowBody:
+        "Ransomware Attack\nDate · 12 Aug 2025\nInitiated by · Qilin\n\nEmployee Compromise\nDate · 19 Aug 2025\nSource · Telegram\nCredential · reused password",
+    },
     modals: [
       {
         title: "Acme Holdings",
@@ -117,6 +136,10 @@ export function normalizeState(raw) {
     modals: Array.isArray(raw.modals)
       ? base.modals.map((m, i) => ({ ...m, ...(raw.modals[i] || {}) }))
       : base.modals,
+    hugModal: {
+      ...base.hugModal,
+      ...(raw.hugModal && typeof raw.hugModal === "object" ? raw.hugModal : {}),
+    },
     images: Array.isArray(raw.images)
       ? [0, 1].map((i) => {
           const img = raw.images[i] || {};
@@ -151,9 +174,14 @@ export function normalizeState(raw) {
   next.modalCount = Number(next.modalCount);
   next.imageCount = Number(next.imageCount);
   next.showFooter = Boolean(next.showFooter);
+  if (!["sm", "md", "lg"].includes(next.hugMessageSize)) next.hugMessageSize = "md";
+  if (typeof next.hugLabel !== "string") next.hugLabel = "";
+  // Drop legacy sample title accidentally shared from modal 1 into hug
+  if (next.hugModal.title === "Acme Holdings") next.hugModal.title = "";
+  if (next.hugModal.windowTitle === "Attack Timeline") next.hugModal.windowTitle = "";
 
-  if (next.canvasFormat === "square") {
-    // square has no side text placement
+  if (next.canvasFormat === "square" || next.canvasFormat === "hug") {
+    // square / hug have no side text placement
     if (!["above", "below"].includes(next.textPlacement)) next.textPlacement = "above";
   } else if (next.canvasFormat === "portrait") {
     if (!["above", "below"].includes(next.textPlacement)) next.textPlacement = "above";
@@ -274,6 +302,93 @@ function modalMarkup(modal, index) {
   `;
 }
 
+/** Format compact US datetimes for hug subtitles, e.g. 3/31/2026, 5:36:21 AM → March 31, 2026, 5:36:21 AM */
+function formatHugSubtitleDate(text) {
+  const raw = String(text ?? "").trim();
+  const match = raw.match(
+    /^(\d{1,2})\/(\d{1,2})\/(\d{4}),\s+(\d{1,2}):(\d{2}):(\d{2})\s*(AM|PM)$/i,
+  );
+  if (!match) return raw;
+  const [, month, day, year, hour, minute, second, meridiem] = match;
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
+  const monthName = months[Number(month) - 1];
+  if (!monthName) return raw;
+  return `${monthName} ${Number(day)}, ${year}, ${Number(hour)}:${minute}:${second} ${meridiem.toUpperCase()}`;
+}
+
+function hugModalMarkup(modal, messageSize, label) {
+  const title = modal.title?.trim() || "Message Details";
+  const subtitleRaw = modal.subtitle?.trim();
+  const subtitle = subtitleRaw ? formatHugSubtitleDate(subtitleRaw) : "";
+  const body = modal.body?.trim();
+  const windowTitle = modal.windowTitle?.trim();
+  const windowBody = modal.windowBody?.trim();
+  const hasWindow = windowTitle || windowBody;
+  const size = ["sm", "md", "lg"].includes(messageSize) ? messageSize : "md";
+  const labelText = typeof label === "string" ? label.trim() : "";
+
+  return `
+    <div class="ca-modals-hug">
+      <article class="ca-modal ca-modal--hug ca-modal--violet ca-modal--msg-${size}">
+        <span class="ca-modal__close" aria-hidden="true">×</span>
+        <div class="ca-modal__header">
+          <h2 class="ca-modal__title">${withBreaks(title)}</h2>
+          ${subtitle ? `<p class="ca-modal__subtitle">${withBreaks(subtitle)}</p>` : ""}
+          ${body ? `<p class="ca-modal__body">${withBreaks(body)}</p>` : ""}
+        </div>
+        ${
+          hasWindow
+            ? `<div class="ca-modal__window">
+                ${windowTitle ? `<p class="ca-modal__window-title">${withBreaks(windowTitle)}</p>` : ""}
+                ${windowBody ? `<div class="ca-modal__window-body">${withBreaks(windowBody)}</div>` : ""}
+              </div>`
+            : ""
+        }
+      </article>
+      ${
+        labelText
+          ? `<p class="ca-modals-hug__label">${withBreaks(labelText)}</p>`
+          : ""
+      }
+    </div>
+  `;
+}
+
+function paintHugModal(canvas, state) {
+  const format = MODAL_FORMATS.hug;
+  canvas.className =
+    "canvas canvas--li-square ca-modals-canvas ca-modals-canvas--transparent ca-modals-canvas--hug";
+  canvas.style.width = `${format.w}px`;
+  canvas.style.height = `${format.h}px`;
+  canvas.replaceChildren();
+  delete canvas.dataset.bg;
+  delete canvas.dataset.decor;
+  canvas.querySelector('[data-component="SlideFooter"]')?.remove();
+  canvas.classList.remove("canvas--with-footer", "slide--with-footer");
+
+  const stage = document.createElement("div");
+  stage.className = "ca-modals-hug-stage";
+  stage.innerHTML = hugModalMarkup(
+    state.hugModal || {},
+    state.hugMessageSize,
+    state.hugLabel,
+  );
+  canvas.appendChild(stage);
+}
+
 function textBlockMarkup(state) {
   if (state.canvasFormat === "square") return "";
   const eyebrow = state.eyebrow?.trim();
@@ -365,6 +480,11 @@ function placementClass(state) {
  * }} [deps]
  */
 export function paintModals(canvas, state, deps = {}) {
+  if (state.canvasFormat === "hug") {
+    paintHugModal(canvas, state);
+    return;
+  }
+
   const format = formatForState(state);
   const exportTransparent = state.exportMode === "transparent";
   const withFooter = Boolean(state.showFooter) && !exportTransparent;

@@ -87,7 +87,7 @@ function hardenHostForExport(clonedDoc) {
 /**
  * @param {HTMLElement} el — unscaled .canvas at design size
  * @param {string} filename
- * @param {{ width?: number, height?: number, pixelRatio?: number, backgroundColor?: string | null, cropToContent?: boolean }} [opts]
+ * @param {{ width?: number, height?: number, pixelRatio?: number, backgroundColor?: string | null, cropToContent?: boolean, cropPadding?: number }} [opts]
  */
 export async function downloadElementPng(el, filename, opts = {}) {
   const width = opts.width ?? DESIGN_W;
@@ -126,7 +126,9 @@ export async function downloadElementPng(el, filename, opts = {}) {
   });
 
   if (opts.cropToContent) {
-    dataUrl = await cropPngToOpaqueBounds(dataUrl);
+    dataUrl = await cropPngToOpaqueBounds(dataUrl, {
+      padding: opts.cropPadding ?? 12,
+    });
   }
 
   const a = document.createElement("a");
@@ -379,7 +381,7 @@ export async function downloadPaintedPdf(paint, filename, opts = {}) {
  * Build an offscreen 1280×720 canvas, paint it, download, then remove.
  * @param {(canvas: HTMLElement) => void} paint
  * @param {string} filename
- * @param {{ className?: string, width?: number, height?: number, backgroundColor?: string | null, cropToContent?: boolean }} [opts]
+ * @param {{ className?: string, width?: number, height?: number, backgroundColor?: string | null, cropToContent?: boolean, cropPadding?: number, cropRootSelector?: string }} [opts]
  */
 export async function downloadPaintedThumbnail(paint, filename, opts = {}) {
   const width = opts.width ?? DESIGN_W;
@@ -393,7 +395,9 @@ export async function downloadPaintedThumbnail(paint, filename, opts = {}) {
     "top:0",
     `width:${width}px`,
     `height:${height}px`,
-    opts.cropToContent ? "overflow:visible" : "overflow:hidden",
+    opts.cropToContent || opts.cropRootSelector
+      ? "overflow:visible"
+      : "overflow:hidden",
     "pointer-events:none",
     "z-index:0",
     "opacity:1",
@@ -415,13 +419,36 @@ export async function downloadPaintedThumbnail(paint, filename, opts = {}) {
 
   try {
     paint(canvas);
-    await downloadElementPng(canvas, filename, {
-      width,
-      height,
+    await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+
+    let target = canvas;
+    let exportW = width;
+    let exportH = height;
+    let cropToContent = Boolean(opts.cropToContent);
+
+    if (opts.cropRootSelector) {
+      const root = canvas.querySelector(opts.cropRootSelector);
+      if (root instanceof HTMLElement) {
+        target = root;
+        exportW = Math.max(1, Math.ceil(root.offsetWidth));
+        exportH = Math.max(1, Math.ceil(root.offsetHeight));
+        // Exact plate capture — no opaque-bounds padding fringe
+        cropToContent = false;
+      }
+    }
+
+    await downloadElementPng(target, filename, {
+      width: exportW,
+      height: exportH,
       ...(Object.prototype.hasOwnProperty.call(opts, "backgroundColor")
         ? { backgroundColor: opts.backgroundColor }
         : {}),
-      ...(opts.cropToContent ? { cropToContent: true } : {}),
+      ...(cropToContent
+        ? {
+            cropToContent: true,
+            cropPadding: opts.cropPadding ?? 12,
+          }
+        : {}),
     });
   } finally {
     mount.remove();
