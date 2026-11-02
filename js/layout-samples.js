@@ -509,4 +509,32 @@ export const LAYOUT_SAMPLES = {
             ],
           },
         },
+        "LY-26": {
+          bg: "DS-01",
+          content: {
+            title: "Breach sample",
+            subtitle: "Fabricated rows for illustration.",
+            columns: [
+              "First Name",
+              "Last Name",
+              "Email",
+              "Password Hash",
+              "Address",
+              "Phone Number",
+              "Last 4 Digits of Card",
+            ],
+            rows: [
+              [
+                "Jordan",
+                "Lee",
+                "jordan.lee@example.com",
+                "$2b$12$Qk9m…fA3e",
+                "1842 Oak Ave, Austin, TX",
+                "+1 512 555 0142",
+                "4242",
+              ],
+            ],
+            note: "Sample data for illustration — not real identities.",
+          },
+        },
       };

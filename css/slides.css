@@ -3163,3 +3163,129 @@ a.metric-card__source:hover {
     animation: none;
   }
 }
+
+/* LY-26 Data table — dense breach/sample rows */
+.layout-data-table {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  gap: 18px;
+  padding: 5%;
+  box-sizing: border-box;
+}
+
+.layout-data-table .slide-header {
+  margin-bottom: 0;
+}
+
+.layout-data-table__frame {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(0, 0, 0, 0.38);
+}
+
+.layout-data-table__split {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 2.5%;
+  align-items: stretch;
+}
+
+.layout-data-table--split .layout-data-table__frame {
+  min-width: 0;
+}
+
+.layout-data-table--split .layout-data-table__credential {
+  white-space: normal;
+  word-break: break-all;
+}
+
+.layout-data-table__table {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+  font-family: var(--font-body);
+  font-size: 26px;
+  line-height: 1.35;
+}
+
+.layout-data-table__table th,
+.layout-data-table__table td {
+  padding: 22px 26px;
+  text-align: left;
+  vertical-align: middle;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  word-break: break-word;
+}
+
+.layout-data-table--row-lg .layout-data-table__table th,
+.layout-data-table--row-lg .layout-data-table__table td {
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
+.layout-data-table__hug {
+  width: 1%;
+  white-space: nowrap;
+  word-break: normal;
+}
+
+.layout-data-table__multiline {
+  white-space: normal;
+  line-height: 1.25;
+}
+
+.layout-data-table__table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: rgba(12, 8, 28, 0.96);
+  color: rgba(220, 210, 255, 0.92);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  border-bottom-color: rgba(168, 130, 255, 0.35);
+}
+
+.layout-data-table__table tbody tr:nth-child(even) td {
+  background: rgba(255, 255, 255, 0.025);
+}
+
+.layout-data-table__table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.layout-data-table__table td {
+  color: rgba(255, 255, 255, 0.86);
+  font-weight: 500;
+}
+
+.layout-data-table__file {
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 0.92em;
+  color: rgba(158, 220, 255, 0.95);
+  word-break: break-all;
+}
+
+.layout-data-table__credential {
+  font-family: var(--font-mono, ui-monospace, SFMono-Regular, Menlo, monospace);
+  font-size: 0.92em;
+  white-space: nowrap;
+}
+
+.layout-data-table--no-header .layout-data-table__table td {
+  font-size: 24px;
+}
+
+.layout-data-table__note {
+  margin: 0;
+  text-align: right;
+  color: rgba(255, 255, 255, 0.45);
+}

@@ -188,6 +188,14 @@ export const LAYOUTS = {
     footer: true,
     className: "layout-campaign",
   },
+
+  "LY-26": {
+    label: "Data table",
+    description:
+      "Title plus a dense breach/sample data table (columns + rows). Footer.",
+    footer: true,
+    className: "layout-data-table",
+  },
 };
 
 function accentize(text, accent) {
@@ -1669,6 +1677,125 @@ function renderCampaign(content) {
   return el;
 }
 
+/* ---- LY-26 Data table ---- */
+
+function renderDataTableCell(raw, { hug = false } = {}) {
+  const text = String(raw ?? "");
+  const isFile = /\.(pdf|docx?|txt)$/i.test(text);
+  const isMultiline = text.includes("\n");
+  const isCredential = text.includes("@") && text.includes(":");
+  const classes = [
+    hug ? "layout-data-table__hug" : "",
+    isFile ? "layout-data-table__file" : "",
+    isMultiline ? "layout-data-table__multiline" : "",
+    isCredential ? "layout-data-table__credential" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+  const cls = classes ? ` class="${classes}"` : "";
+  const html = escapeHtml(text).replace(/\n/g, "<br>");
+  return `<td${cls}>${html}</td>`;
+}
+
+function renderDataTable(content) {
+  const el = document.createElement("div");
+  const rowPadding = String(content.rowPadding ?? "").trim();
+  const hugFirstCols = content.hugFirstCols !== false;
+  const splitColumns = content.splitColumns === true;
+  const columns = Array.isArray(content.columns)
+    ? content.columns.map((c) => String(c ?? ""))
+    : [];
+  const rows = Array.isArray(content.rows) ? content.rows : [];
+  const note = content.note?.trim() ?? "";
+  const colCount =
+    columns.length ||
+    rows.reduce(
+      (max, row) =>
+        Math.max(max, Array.isArray(row) ? row.length : 0),
+      0,
+    );
+  const showHeader =
+    content.showHeader !== false &&
+    columns.some((col) => String(col).trim());
+
+  el.className = [
+    "slide-content",
+    "layout-data-table",
+    rowPadding === "lg" ? "layout-data-table--row-lg" : "",
+    !showHeader ? "layout-data-table--no-header" : "",
+    splitColumns ? "layout-data-table--split" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
+  const normalizedRows = rows.map((row) =>
+    Array.isArray(row)
+      ? row
+      : columns.map((col) =>
+          row && typeof row === "object" ? (row[col] ?? "") : "",
+        ),
+  );
+
+  let tablesHtml = "";
+  if (splitColumns && colCount > 0) {
+    tablesHtml = `<div class="layout-data-table__split">
+      ${Array.from({ length: colCount }, (_, colIndex) => {
+        const head =
+          showHeader && columns[colIndex]
+            ? `<thead><tr><th scope="col">${escapeHtml(columns[colIndex])}</th></tr></thead>`
+            : "";
+        const body = normalizedRows
+          .map(
+            (cells) =>
+              `<tr>${renderDataTableCell(cells[colIndex] ?? "")}</tr>`,
+          )
+          .join("");
+        return `<div class="layout-data-table__frame">
+          <table class="layout-data-table__table">
+            ${head}
+            <tbody>${body}</tbody>
+          </table>
+        </div>`;
+      }).join("")}
+    </div>`;
+  } else {
+    const colClass = (i) =>
+      hugFirstCols && i < 3 ? ' class="layout-data-table__hug"' : "";
+    const head = showHeader
+      ? `<thead><tr>${columns
+          .map(
+            (col, i) =>
+              `<th scope="col"${colClass(i)}>${escapeHtml(col)}</th>`,
+          )
+          .join("")}</tr></thead>`
+      : "";
+    const body = normalizedRows
+      .map(
+        (cells) =>
+          `<tr>${Array.from({ length: colCount }, (_, i) =>
+            renderDataTableCell(cells[i] ?? "", {
+              hug: hugFirstCols && i < 3,
+            }),
+          ).join("")}</tr>`,
+      )
+      .join("");
+    tablesHtml = `<div class="layout-data-table__frame">
+      <table class="layout-data-table__table">
+        ${head}
+        <tbody>${body}</tbody>
+      </table>
+    </div>`;
+  }
+
+  el.innerHTML = `
+    ${cornerSection(content)}
+    ${titleBlock(content)}
+    ${tablesHtml}
+    ${note ? `<p class="layout-data-table__note type-label">${escapeHtml(note)}</p>` : ""}
+  `;
+  return el;
+}
+
 const RENDERERS = {
   "LY-01": renderCover,
   "LY-02": renderTeam,
@@ -1695,6 +1822,7 @@ const RENDERERS = {
   "LY-23": renderFlowFunnel,
   "LY-24": renderFlowOrbit,
   "LY-25": renderCampaign,
+  "LY-26": renderDataTable,
 };
 
 export function renderLayout(slide, layoutId, content = {}, opts = {}) {

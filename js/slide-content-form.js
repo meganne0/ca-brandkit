@@ -142,6 +142,18 @@ function buildFormHtml(layout, content) {
     return bits.join("");
   }
 
+  if (layout === "LY-26") {
+    bits.push(field("number", "Number", c.number ?? ""));
+    bits.push(field("sectionTitle", "Section label", c.sectionTitle ?? ""));
+    bits.push(field("title", "Title", c.title ?? ""));
+    bits.push(field("subtitle", "Subtitle", c.subtitle ?? "", { type: "textarea", rows: 2 }));
+    bits.push(field("note", "Footer note", c.note ?? "", { type: "textarea", rows: 2 }));
+    bits.push(
+      `<p class="deck-form__note">Table columns and rows are preserved from the slide JSON (edit there or via Save/disk for structural changes).</p>`,
+    );
+    return bits.join("");
+  }
+
   // Shared header fields for most layouts
   const needsCorner = ![
     "LY-01",
@@ -453,6 +465,21 @@ function readContentFromForm(form, layout, base = {}) {
       const kept = prev && typeof prev === "object" ? prev : {};
       return { ...kept, count: Math.min(count, 40) };
     });
+    return next;
+  }
+
+  if (layout === "LY-26") {
+    next.number = val(form, "number");
+    next.sectionTitle = val(form, "sectionTitle");
+    next.title = val(form, "title");
+    next.subtitle = val(form, "subtitle");
+    next.note = val(form, "note");
+    if (Array.isArray(base.columns)) next.columns = base.columns;
+    if (Array.isArray(base.rows)) next.rows = base.rows;
+    if (base.rowPadding != null) next.rowPadding = base.rowPadding;
+    if (base.showHeader != null) next.showHeader = base.showHeader;
+    if (base.hugFirstCols != null) next.hugFirstCols = base.hugFirstCols;
+    if (base.splitColumns != null) next.splitColumns = base.splitColumns;
     return next;
   }
 

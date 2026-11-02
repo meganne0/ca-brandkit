@@ -9,8 +9,8 @@ import {
   renderLayout,
   refreshImageTitleLayouts,
   refreshFlowFunnels,
-} from "../layouts.js?v=89";
-import { LAYOUT_SAMPLES } from "../layout-samples.js?v=14";
+} from "../layouts.js?v=95";
+import { LAYOUT_SAMPLES } from "../layout-samples.js?v=15";
 import { initImageLightbox } from "./lightbox.js?v=28";
 
 function refreshSlideExtras(root) {
