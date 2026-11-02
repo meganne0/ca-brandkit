@@ -621,6 +621,15 @@ function readContentFromForm(form, layout, base = {}) {
     next.sourceColor = base.sourceColor ?? "#1EADEC";
     next.outcomeColor = base.outcomeColor ?? "#FF2828";
     next.impactColor = base.impactColor ?? next.outcomeColor;
+    // Preserve deck-beat / detail-slide fields the form does not edit
+    if (base.revealThroughPhase != null) {
+      next.revealThroughPhase = base.revealThroughPhase;
+    }
+    if (base.revealThrough != null) next.revealThrough = base.revealThrough;
+    if (base.focusPhase != null) next.focusPhase = base.focusPhase;
+    if (Array.isArray(base.phaseTitles)) next.phaseTitles = base.phaseTitles;
+    if (Array.isArray(base.stepLabels)) next.stepLabels = base.stepLabels;
+    if (base.phased != null) next.phased = base.phased;
     return next;
   }
 

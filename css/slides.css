@@ -2406,6 +2406,35 @@ a.metric-card__source:hover {
     minmax(200px, 0.8fr);
 }
 
+/* Progressive deck beats: locked stroke/unblur (no click), taller panels */
+.flow-orbit--phased.flow-orbit--reveal .flow-phase {
+  cursor: default;
+  pointer-events: none;
+}
+
+.flow-orbit--phased.flow-orbit--tall:not(.flow-orbit--focus) {
+  align-items: stretch;
+  align-content: stretch;
+  padding-top: 8px;
+}
+
+.flow-orbit--phased.flow-orbit--tall:not(.flow-orbit--focus) .flow-phase {
+  height: auto;
+  max-height: none;
+}
+
+.flow-orbit--phased.flow-orbit--tall:not(.flow-orbit--focus) .flow-phase__title {
+  margin-bottom: 18px;
+}
+
+.flow-orbit--phased.flow-orbit--tall:not(.flow-orbit--focus) .flow-phase__body {
+  flex: 1 1 auto;
+  height: auto;
+  min-height: 560px;
+  max-height: none;
+  padding-top: 22px;
+}
+
 .flow-orbit--with-outcomes.flow-orbit--with-impacts:not(.flow-orbit--phased) {
   grid-template-columns:
     minmax(160px, 0.55fr)

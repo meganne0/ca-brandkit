@@ -176,7 +176,7 @@ export const LAYOUTS = {
   "LY-24": {
     label: "Flow orbit",
     description:
-      "Kill-chain orbit with phase blocks; optional focusPhase for detail slides. Footer.",
+      "Kill-chain orbit with phase blocks; optional focusPhase detail slides or revealThroughPhase progressive reveal. Footer.",
     footer: true,
     className: "layout-flow-orbit",
   },
@@ -1217,20 +1217,27 @@ function renderFlowOrbit(content) {
   const outcomes = normalizeFlowLabeledNodes(content.outcomes, outcomeColor);
   const impacts = normalizeFlowLabeledNodes(content.impacts, impactColor);
 
-  const focusRaw = content.focusPhase;
-  const focusPhase =
-    focusRaw === 0 || focusRaw === "0" || focusRaw === "prep" || focusRaw === "preparation"
-      ? 0
-      : focusRaw === 1 || focusRaw === "1" || focusRaw === "collection"
-        ? 1
-        : focusRaw === 2 || focusRaw === "2" || focusRaw === "breach"
-          ? 2
-          : focusRaw === 3 ||
-              focusRaw === "3" ||
-              focusRaw === "post-breach" ||
-              focusRaw === "publication"
-            ? 3
-            : null;
+  const parsePhaseIndex = (raw) => {
+    if (raw === 0 || raw === "0" || raw === "prep" || raw === "preparation") return 0;
+    if (raw === 1 || raw === "1" || raw === "collection") return 1;
+    if (raw === 2 || raw === "2" || raw === "breach") return 2;
+    if (
+      raw === 3 ||
+      raw === "3" ||
+      raw === "post-breach" ||
+      raw === "publication"
+    ) {
+      return 3;
+    }
+    return null;
+  };
+
+  const focusPhase = parsePhaseIndex(content.focusPhase);
+  /** Progressive overview: show phases 0..N with stroke on N (prep stays visible). */
+  const revealThrough = parsePhaseIndex(
+    content.revealThroughPhase ?? content.revealThrough,
+  );
+  const progressive = revealThrough != null;
 
   const phased = content.phased !== false;
   const phaseTitles = Array.isArray(content.phaseTitles)
@@ -1264,22 +1271,36 @@ function renderFlowOrbit(content) {
   if (stages[0]?.color) el.style.setProperty("--flow-mid", stages[0].color);
   if (stages[1]?.color) el.style.setProperty("--flow-end", stages[1].color);
 
-  const showPrep = focusPhase == null || focusPhase === 0;
-  const showCollection = focusPhase == null || focusPhase === 1;
-  const showBreach = (focusPhase == null || focusPhase === 2) && outcomes.length > 0;
-  const showPostBreach = (focusPhase == null || focusPhase === 3) && impacts.length > 0;
+  // Progressive deck beats: keep all phases mounted; unblur through revealThrough
+  // and stroke the current phase (same look as clicking that section).
+  const showPrep = progressive || focusPhase == null || focusPhase === 0;
+  const showCollection = progressive || focusPhase == null || focusPhase === 1;
+  const showBreach =
+    (progressive || focusPhase == null || focusPhase === 2) &&
+    outcomes.length > 0;
+  const showPostBreach =
+    (progressive || focusPhase == null || focusPhase === 3) &&
+    impacts.length > 0;
 
   const focusKeys = ["prep", "collection", "breach", "post-breach"];
   const orbitMods = [
     phased ? "flow-orbit--phased" : "",
-    focusPhase == null && outcomes.length ? "flow-orbit--with-outcomes" : "",
-    focusPhase == null && impacts.length ? "flow-orbit--with-impacts" : "",
-    focusPhase != null ? `flow-orbit--focus flow-orbit--focus-${focusKeys[focusPhase]}` : "",
+    (progressive || focusPhase == null) && outcomes.length
+      ? "flow-orbit--with-outcomes"
+      : "",
+    (progressive || focusPhase == null) && impacts.length
+      ? "flow-orbit--with-impacts"
+      : "",
+    progressive ? "flow-orbit--reveal flow-orbit--tall" : "",
+    !progressive && focusPhase != null
+      ? `flow-orbit--focus flow-orbit--focus-${focusKeys[focusPhase]}`
+      : "",
   ]
     .filter(Boolean)
     .join(" ");
 
   const continueAttrs = (() => {
+    if (progressive) return "";
     if (focusPhase === 0 && stages[1]?.color) {
       // Prep → Phish (3rd kill-chain stage)
       return ` data-flow-continue-color="${escapeHtml(stages[1].color)}"`;
@@ -1336,8 +1357,9 @@ function renderFlowOrbit(content) {
     })
     .join("");
 
+  const overviewInteractive = focusPhase == null && !progressive;
   const overviewPhaseAttrs = (label, { selected = false } = {}) =>
-    focusPhase == null
+    overviewInteractive
       ? ` role="button" tabindex="0" aria-pressed="${selected ? "true" : "false"}" aria-label="Select ${escapeHtml(label)} phase"`
       : "";
 
@@ -1392,10 +1414,19 @@ function renderFlowOrbit(content) {
       ${impacts.length ? impactsInner : ""}
     `;
   } else {
+    const strokeClass = (phaseIndex) => {
+      if (progressive) return revealThrough === phaseIndex ? " is-stroke-on" : "";
+      if (focusPhase == null && phaseIndex === 0) return " is-stroke-on";
+      return "";
+    };
+    const blurClass = (phaseIndex) => {
+      if (focusPhase != null) return "";
+      if (progressive) return phaseIndex > revealThrough ? " is-phase-blurred" : "";
+      return phaseIndex > 0 ? " is-phase-blurred" : "";
+    };
+
     const prepPhase = showPrep
-      ? `<section class="flow-phase flow-phase--prep${
-          focusPhase == null ? " is-stroke-on" : ""
-        }"${overviewPhaseAttrs(phaseTitles[0] ?? "Preparation", { selected: focusPhase == null })}>
+      ? `<section class="flow-phase flow-phase--prep${strokeClass(0)}${blurClass(0)}"${overviewPhaseAttrs(phaseTitles[0] ?? "Preparation", { selected: overviewInteractive && revealThrough == null })}>
           <h3 class="flow-phase__title">${escapeHtml(phaseTitles[0] ?? "Preparation")}</h3>
           <div class="flow-phase__body">
             <div class="flow-phase__grid flow-phase__grid--prep">
@@ -1407,9 +1438,7 @@ function renderFlowOrbit(content) {
       : "";
 
     const collectionPhase = showCollection
-      ? `<section class="flow-phase flow-phase--collection${
-          focusPhase == null ? " is-phase-blurred" : ""
-        }"${overviewPhaseAttrs(phaseTitles[1] ?? "Collection")}>
+      ? `<section class="flow-phase flow-phase--collection${strokeClass(1)}${blurClass(1)}"${overviewPhaseAttrs(phaseTitles[1] ?? "Collection")}>
           <h3 class="flow-phase__title">${escapeHtml(phaseTitles[1] ?? "Collection")}</h3>
           <div class="flow-phase__body">
             <div class="flow-phase__grid flow-phase__grid--collection" style="--flow-collection-count:${Math.max(collectionStages.length, 1)}">
@@ -1420,9 +1449,7 @@ function renderFlowOrbit(content) {
       : "";
 
     const breachPhase = showBreach
-      ? `<section class="flow-phase flow-phase--breach${
-          focusPhase == null ? " is-phase-blurred" : ""
-        }"${overviewPhaseAttrs(phaseTitles[2] ?? "Breach")}>
+      ? `<section class="flow-phase flow-phase--breach${strokeClass(2)}${blurClass(2)}"${overviewPhaseAttrs(phaseTitles[2] ?? "Breach")}>
           <h3 class="flow-phase__title">${escapeHtml(phaseTitles[2] ?? "Breach")}</h3>
           <div class="flow-phase__body">
             ${outcomesInner}
@@ -1431,9 +1458,7 @@ function renderFlowOrbit(content) {
       : "";
 
     const postBreachPhase = showPostBreach
-      ? `<section class="flow-phase flow-phase--post-breach${
-          focusPhase == null ? " is-phase-blurred" : ""
-        }"${overviewPhaseAttrs(phaseTitles[3] ?? "Post-Breach")}>
+      ? `<section class="flow-phase flow-phase--post-breach${strokeClass(3)}${blurClass(3)}"${overviewPhaseAttrs(phaseTitles[3] ?? "Post-Breach")}>
           <h3 class="flow-phase__title">${escapeHtml(phaseTitles[3] ?? "Post-Breach")}</h3>
           <div class="flow-phase__body">
             ${impactsInner}
@@ -1777,7 +1802,7 @@ export function ensureFlowOrbitInteractions() {
   const selectPhaseStroke = (phase) => {
     if (!phase || phase.closest(".flow-orbit--focus")) return;
     const orbit = phase.closest(".flow-orbit");
-    if (!orbit) return;
+    if (!orbit || orbit.classList.contains("flow-orbit--reveal")) return;
 
     // First press on a later phase: permanently reveal its content
     if (phase.classList.contains("is-phase-blurred")) {
