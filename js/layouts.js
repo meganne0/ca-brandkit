@@ -1683,7 +1683,11 @@ function renderDataTableCell(raw, { hug = false } = {}) {
   const text = String(raw ?? "");
   const isFile = /\.(pdf|docx?|txt)$/i.test(text);
   const isMultiline = text.includes("\n");
-  const isCredential = text.includes("@") && text.includes(":");
+  const credentialMatch =
+    text.includes("@") && text.includes(":")
+      ? text.match(/^([^:\s]+@[^:\s]+)\s*:\s*(.+)$/)
+      : null;
+  const isCredential = Boolean(credentialMatch);
   const classes = [
     hug ? "layout-data-table__hug" : "",
     isFile ? "layout-data-table__file" : "",
@@ -1693,27 +1697,131 @@ function renderDataTableCell(raw, { hug = false } = {}) {
     .filter(Boolean)
     .join(" ");
   const cls = classes ? ` class="${classes}"` : "";
-  const html = escapeHtml(text).replace(/\n/g, "<br>");
+  let html;
+  if (credentialMatch) {
+    const [, email, password] = credentialMatch;
+    html = `${escapeHtml(email)} : <strong class="layout-data-table__password">${escapeHtml(password)}</strong>`;
+  } else {
+    html = escapeHtml(text).replace(/\n/g, "<br>");
+  }
   return `<td${cls}>${html}</td>`;
+}
+
+function renderCredentialPanel(panel) {
+  const rows = Array.isArray(panel.rows) ? panel.rows : [];
+  const body = rows
+    .map((row) => {
+      const cell = Array.isArray(row) ? row[0] : row;
+      return `<tr>${renderDataTableCell(cell ?? "")}</tr>`;
+    })
+    .join("");
+  const heading = panel.title?.trim()
+    ? `<p class="layout-data-table__panel-title">${escapeHtml(panel.title)}</p>`
+    : "";
+  return `<div class="layout-data-table__frame layout-data-table__frame--credentials">
+    ${heading}
+    <table class="layout-data-table__table">
+      <tbody>${body}</tbody>
+    </table>
+  </div>`;
+}
+
+function renderProfileField(field) {
+  if (!field || typeof field !== "object") return "";
+  if (field.type === "divider") {
+    return `<div class="breach-profile__divider" role="separator"></div>`;
+  }
+  const label = String(field.label ?? "").trim();
+  const raw = String(field.value ?? "");
+  const text = raw.trim();
+  if (!label) return "";
+  if (!text && !field.showEmpty) return "";
+  const valueClass = field.emphasize
+    ? "breach-profile__value breach-profile__value--password"
+    : "breach-profile__value";
+  const display = text || "\u00a0";
+  const valueHtml = field.emphasize
+    ? `<strong class="layout-data-table__password">${escapeHtml(display)}</strong>`
+    : escapeHtml(display);
+  return `<div class="breach-profile__field">
+    <dt>${escapeHtml(label)}</dt>
+    <dd class="${valueClass}">${valueHtml}</dd>
+  </div>`;
+}
+
+function normalizeProfileFields(profile) {
+  if (Array.isArray(profile.fields) && profile.fields.length) {
+    return profile.fields;
+  }
+  // Legacy flat profile shape
+  const fields = [];
+  if (profile.email) fields.push({ label: "Email", value: profile.email });
+  if (profile.password) {
+    fields.push({ label: "Password", value: profile.password, emphasize: true });
+  }
+  if (profile.passwordHash) {
+    fields.push({ label: "Password hash", value: profile.passwordHash });
+  }
+  const hasLower = profile.username || profile.phone || profile.last4 || profile.address;
+  if (fields.length && hasLower) fields.push({ type: "divider" });
+  if (profile.username) fields.push({ label: "Username", value: profile.username });
+  if (profile.phone) fields.push({ label: "Phone", value: profile.phone });
+  if (profile.last4) fields.push({ label: "Last 4 digits", value: profile.last4 });
+  if (profile.address) fields.push({ label: "Address", value: profile.address });
+  return fields;
+}
+
+function renderProfilesPanel(panel) {
+  const profiles = Array.isArray(panel.profiles) ? panel.profiles : [];
+  const heading = panel.title?.trim()
+    ? `<p class="layout-data-table__panel-title">${escapeHtml(panel.title)}</p>`
+    : "";
+  const cards = profiles
+    .map((profile) => {
+      const name = profile.name?.trim() || profile.username?.trim() || "Unknown";
+      const fields = normalizeProfileFields(profile);
+      return `<article class="breach-profile">
+        <header class="breach-profile__head">
+          <h3 class="breach-profile__name">${escapeHtml(name)}</h3>
+        </header>
+        <dl class="breach-profile__fields">
+          ${fields.map((field) => renderProfileField(field)).join("")}
+        </dl>
+      </article>`;
+    })
+    .join("");
+  return `<div class="layout-data-table__frame layout-data-table__frame--profiles">
+    ${heading}
+    <div class="breach-profile-list">${cards}</div>
+  </div>`;
+}
+
+function renderDataPanel(panel) {
+  if (!panel || typeof panel !== "object") return "";
+  if (panel.type === "profiles") return renderProfilesPanel(panel);
+  return renderCredentialPanel(panel);
 }
 
 function renderDataTable(content) {
   const el = document.createElement("div");
   const rowPadding = String(content.rowPadding ?? "").trim();
+  const textSize = String(content.textSize ?? "").trim();
   const hugFirstCols = content.hugFirstCols !== false;
-  const splitColumns = content.splitColumns === true;
+  const panels = Array.isArray(content.panels) ? content.panels : null;
+  const splitColumns = content.splitColumns === true || Boolean(panels?.length);
   const columns = Array.isArray(content.columns)
     ? content.columns.map((c) => String(c ?? ""))
     : [];
   const rows = Array.isArray(content.rows) ? content.rows : [];
   const note = content.note?.trim() ?? "";
-  const colCount =
-    columns.length ||
-    rows.reduce(
-      (max, row) =>
-        Math.max(max, Array.isArray(row) ? row.length : 0),
-      0,
-    );
+  const colCount = panels?.length
+    ? panels.length
+    : columns.length ||
+      rows.reduce(
+        (max, row) =>
+          Math.max(max, Array.isArray(row) ? row.length : 0),
+        0,
+      );
   const showHeader =
     content.showHeader !== false &&
     columns.some((col) => String(col).trim());
@@ -1722,8 +1830,10 @@ function renderDataTable(content) {
     "slide-content",
     "layout-data-table",
     rowPadding === "lg" ? "layout-data-table--row-lg" : "",
-    !showHeader ? "layout-data-table--no-header" : "",
+    textSize === "lg" ? "layout-data-table--text-lg" : "",
+    !showHeader && !panels ? "layout-data-table--no-header" : "",
     splitColumns ? "layout-data-table--split" : "",
+    panels ? "layout-data-table--panels" : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -1737,8 +1847,12 @@ function renderDataTable(content) {
   );
 
   let tablesHtml = "";
-  if (splitColumns && colCount > 0) {
-    tablesHtml = `<div class="layout-data-table__split">
+  if (panels?.length) {
+    tablesHtml = `<div class="layout-data-table__split" style="--layout-data-table-split-count:${panels.length}">
+      ${panels.map((panel) => renderDataPanel(panel)).join("")}
+    </div>`;
+  } else if (splitColumns && colCount > 0) {
+    tablesHtml = `<div class="layout-data-table__split" style="--layout-data-table-split-count:${colCount}">
       ${Array.from({ length: colCount }, (_, colIndex) => {
         const head =
           showHeader && columns[colIndex]

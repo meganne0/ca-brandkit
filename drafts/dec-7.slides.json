@@ -1,6 +1,6 @@
 {
-  "savedAt": "2026-11-02T22:33:04.097Z",
-  "publishId": "dec-7-1793658784074",
+  "savedAt": "2026-11-03T16:06:56.124Z",
+  "publishId": "dec-7-1762189800000",
   "slides": [
     {
       "title": "Cover",
@@ -46,23 +46,28 @@
       "bg": "DS-01",
       "content": {
         "sectionTitle": "",
-        "title": "What we’ll cover",
+        "title": "What we\u2019ll cover",
         "subtitle": "",
         "items": [
           {
             "number": "01",
-            "title": "PreBreach Intelligence",
-            "description": "What it is and how it works"
+            "title": "CyberArmor Intro",
+            "description": ""
           },
           {
             "number": "02",
-            "title": "Common Questions",
-            "description": "How it works, differentiators, pricing structure"
+            "title": "Traditional Cyber Crime",
+            "description": ""
           },
           {
             "number": "03",
-            "title": "Demo",
-            "description": "A look at some real life data on our platform"
+            "title": "Evolving Criminal Ecosystem",
+            "description": ""
+          },
+          {
+            "number": "04",
+            "title": "Real Incidents",
+            "description": ""
           }
         ],
         "number": ""
@@ -74,7 +79,7 @@
       "bg": "DS-03",
       "content": {
         "number": "01",
-        "sectionTitle": "Hello, World",
+        "sectionTitle": "CyberArmor Intro",
         "subtitle": ""
       }
     },
@@ -83,8 +88,8 @@
       "layout": "LY-05",
       "bg": "DS-01",
       "content": {
-        "text": "We alert organizations when their credentials have been compromised, before it’s posted on the dark web.",
-        "accent": "before it’s posted on the dark web.",
+        "text": "We alert organizations when their credentials have been compromised, before it\u2019s posted on the dark web.",
+        "accent": "before it\u2019s posted on the dark web.",
         "textSize": "lg",
         "panel": true
       }
@@ -183,30 +188,12 @@
       }
     },
     {
-      "title": "How It Started",
-      "layout": "LY-08",
-      "bg": "DS-09",
-      "content": {
-        "sectionTitle": "",
-        "title": "How It Started",
-        "blurBullets": true,
-        "text": "Nguyen is a malware researcher with +15 years of experience in thousands of investigations.",
-        "bullets": [
-          "Why wait for a breach?",
-          "Dark web data is often \"too late\"",
-          "Many compromises never reach the dark web"
-        ],
-        "subtitle": "",
-        "number": ""
-      }
-    },
-    {
       "title": "Section",
       "layout": "LY-04",
       "bg": "DS-03",
       "content": {
         "number": "02",
-        "sectionTitle": "The Criminal Supply Chain",
+        "sectionTitle": "Traditional Cyber Crime",
         "subtitle": ""
       }
     },
@@ -222,7 +209,7 @@
       }
     },
     {
-      "title": "Attack paths · Preparation",
+      "title": "Attack paths \u00b7 Preparation",
       "layout": "LY-24",
       "bg": "DS-01",
       "content": {
@@ -319,7 +306,7 @@
       }
     },
     {
-      "title": "Attack paths · Collection",
+      "title": "Attack paths \u00b7 Collection",
       "layout": "LY-24",
       "bg": "DS-01",
       "content": {
@@ -416,7 +403,7 @@
       }
     },
     {
-      "title": "Attack paths · Breach",
+      "title": "Attack paths \u00b7 Breach",
       "layout": "LY-24",
       "bg": "DS-01",
       "content": {
@@ -513,7 +500,7 @@
       }
     },
     {
-      "title": "Attack paths · Post-Breach",
+      "title": "Attack paths \u00b7 Post-Breach",
       "layout": "LY-24",
       "bg": "DS-01",
       "content": {
@@ -614,317 +601,297 @@
       "layout": "LY-05",
       "bg": "BG-02",
       "content": {
-        "text": "Breach:  The unauthorized access to a company’s systems resulting in data theft.",
-        "accent": "unauthorized access to a company’s systems",
+        "text": "Breach:  The unauthorized access to a company\u2019s systems, which can result in data theft, fraud, or extortion.",
+        "accent": "unauthorized access to a company\u2019s systems",
         "textSize": "lg",
         "panel": false,
         "author": ""
       }
     },
     {
-      "title": "Breach sample · Card dump",
+      "title": "Breach sample \u00b7 Card dump",
       "layout": "LY-26",
       "bg": "DS-06",
       "content": {
         "columns": [
-          "First Name",
-          "Last Name",
+          "Username",
           "Email",
           "Password Hash",
-          "Address",
-          "Phone Number",
-          "Last 4 Digits"
+          "Phone Number"
         ],
         "rows": [
           [
-            "Caleb",
-            "Wright",
+            "c_wright",
             "c.wright@northwind.ca",
-            "$2b$12$Df8s…6JmN",
-            "64 Ridge Rd\nSaskatoon, SK",
-            "+1 306 555-0183",
-            "3777"
+            "$2b$12$Df8s\u20266JmN",
+            "+1 306 555-0183"
           ],
           [
-            "Maya",
-            "Torres",
+            "sparklequeen88",
             "admin@lakeview.com",
-            "$2b$12$Gh2u…0RqV",
-            "1101 Canal St\nQuébec, QC",
-            "+1 418 555-0156",
-            "6010"
+            "$2b$12$Gh2u\u20260RqV",
+            "+1 418 555-0156"
           ],
           [
-            "Ethan",
-            "Baker",
+            "ebaker",
             "ebaker@canadaretail.ca",
-            "$2b$12$Jk5v…3WzP",
-            "27 Maple Ct\nEdmonton, AB",
-            "+1 780 555-0121",
-            "4532"
+            "$2b$12$Jk5v\u20263WzP",
+            "+1 780 555-0121"
           ],
           [
-            "Zoe",
-            "Nguyen",
+            "zoe.nguyen",
             "zoe.nguyen@pacificgoods.com",
-            "$2b$12$Mn9w…7HsB",
-            "455 Pacific Ave\nYellowknife, NT",
-            "+1 867 555-0194",
-            "8880"
+            "$2b$12$Mn9w\u20267HsB",
+            "+1 867 555-0194"
           ],
           [
-            "Jordan",
-            "Lee",
+            "bluestar5513",
             "bluestar5513@gmail.com",
-            "$2b$12$Qk9m…fA3e",
-            "1842 Oak Ave\nToronto, ON",
-            "+1 416 555-0142",
-            "4242"
+            "$2b$12$Qk9m\u2026fA3e",
+            "+1 416 555-0142"
           ],
           [
-            "Priya",
-            "Nair",
+            "coolcat2004",
             "coolcat2004@hotmail.com",
-            "$2b$12$Hn4p…9LwQ",
-            "77 Mercer St\nVancouver, BC",
-            "+1 604 555-0198",
-            "8811"
+            "$2b$12$Hn4p\u20269LwQ",
+            "+1 604 555-0198"
           ],
           [
-            "Marcus",
-            "Chen",
+            "xXshadowfoxXx",
             "xXshadowfoxXx@yahoo.com",
-            "$2b$12$Rt2c…7KpM",
-            "905 Rue Saint-Denis\nMontréal, QC",
-            "+1 514 555-0133",
-            "6011"
+            "$2b$12$Rt2c\u20267KpM",
+            "+1 514 555-0133"
           ],
           [
-            "Elena",
-            "Rossi",
+            "mapleleaf99",
             "mapleleaf99@protonmail.com",
-            "$2b$12$Vw8a…2HsY",
-            "41 King St W\nCalgary, AB",
-            "+1 403 555-0177",
-            "4556"
+            "$2b$12$Vw8a\u20262HsY",
+            "+1 403 555-0177"
           ],
           [
-            "Noah",
-            "Patel",
+            "jordan.lee",
             "jordan.lee@gmail.com",
-            "$2b$12$Zm1d…5BqR",
-            "12 Birch Lane\nWinnipeg, MB",
-            "+1 204 555-0164",
-            "3003"
+            "$2b$12$Zm1d\u20265BqR",
+            "+1 204 555-0164"
           ],
           [
-            "Aisha",
-            "Brooks",
+            "gamer_dude7",
             "gamer_dude7@hotmail.com",
-            "$2b$12$Xc7k…8NtP",
-            "560 Market St\nHalifax, NS",
-            "+1 902 555-0119",
-            "9012"
+            "$2b$12$Xc7k\u20268NtP",
+            "+1 902 555-0119"
           ],
           [
-            "Diego",
-            "Morales",
+            "pizza.lover88",
             "pizza.lover88@yahoo.com",
-            "$2b$12$Ab3n…4YwK",
-            "318 Palm Blvd\nOttawa, ON",
-            "+1 613 555-0172",
-            "5100"
+            "$2b$12$Ab3n\u20264YwK",
+            "+1 613 555-0172"
           ],
           [
-            "Hannah",
-            "Kim",
+            "northernlights22",
             "northernlights22@protonmail.com",
-            "$2b$12$Lp6r…1CxT",
-            "902 Laurel Dr\nVictoria, BC",
-            "+1 250 555-0149",
-            "2221"
+            "$2b$12$Lp6r\u20261CxT",
+            "+1 250 555-0149"
           ]
         ],
-        "note": "*Fabricated, example data only"
+        "note": "*Fabricated, example data only",
+        "rowPadding": "lg",
+        "textSize": "lg",
+        "title": "Frendl.io Social Network"
       }
     },
     {
-      "title": "Breach sample · Applicant dump",
+      "title": "Breach sample \u00b7 Applicant dump",
       "layout": "LY-26",
       "bg": "DS-06",
       "content": {
         "columns": [
           "Given Name",
           "Family Name",
-          "SIN",
-          "Phone",
           "Email",
-          "Role Applied For"
+          "Phone",
+          "Last 4 Digits"
         ],
         "rows": [
           [
-            "Sophie",
-            "Martin",
-            "046-454-286",
-            "+1 613 555-0128",
-            "sophie.martin@gmail.com",
-            "Sales Associate"
+            "Maya",
+            "Torres",
+            "admin@lakeview.com",
+            "+1 418 555-0156",
+            "4242"
           ],
           [
-            "Liam",
+            "Zoe",
             "Nguyen",
-            "130-992-471",
-            "+1 604 555-0155",
-            "skaterboi99@hotmail.com",
-            "Warehouse Associate"
+            "zoe.nguyen@pacificgoods.com",
+            "+1 867 555-0194",
+            "8811"
           ],
           [
-            "Amara",
-            "Okoye",
-            "701-338-905",
-            "+1 514 555-0180",
-            "amara.okoye@yahoo.com",
-            "Customer Service Rep"
+            "Jordan",
+            "Lee",
+            "bluestar5513@gmail.com",
+            "+1 416 555-0142",
+            "6011"
           ],
           [
-            "Ethan",
-            "Walsh",
-            "522-117-643",
-            "+1 780 555-0144",
-            "nightowl_42@protonmail.com",
-            "Sales Associate"
+            "Priya",
+            "Nair",
+            "coolcat2004@hotmail.com",
+            "+1 604 555-0198",
+            "4556"
           ],
           [
             "Mia",
             "Singh",
-            "819-660-274",
-            "+1 204 555-0191",
             "sunnydays2001@gmail.com",
-            "Assistant Manager"
+            "+1 204 555-0191",
+            "3003"
           ],
           [
             "Owen",
             "Clarke",
-            "377-205-918",
-            "+1 902 555-0166",
             "owen.clarke@hotmail.com",
-            "Cashier"
+            "+1 902 555-0166",
+            "9012"
           ],
           [
             "Nora",
             "Bennett",
-            "264-881-350",
-            "+1 416 555-0137",
             "coffeelover7@yahoo.com",
-            "Sales Associate"
+            "+1 416 555-0137",
+            "5100"
           ],
           [
             "Kai",
             "Patel",
-            "593-440-712",
-            "+1 647 555-0199",
             "kai.patel@protonmail.com",
-            "Stock Associate"
+            "+1 647 555-0199",
+            "2221"
           ],
           [
             "Isla",
             "Reyes",
-            "158-773-029",
-            "+1 905 555-0140",
             "bluestar5513@gmail.com",
-            "Customer Service Rep"
+            "+1 905 555-0140",
+            "3777"
           ],
           [
             "Theo",
             "Brooks",
-            "842-316-507",
-            "+1 519 555-0175",
             "theo.brooks@hotmail.com",
-            "Cashier"
+            "+1 519 555-0175",
+            "6010"
           ],
           [
             "Ava",
             "Chen",
-            "409-228-661",
-            "+1 289 555-0112",
             "pixelpanda13@yahoo.com",
-            "Sales Associate"
+            "+1 289 555-0112",
+            "4532"
           ],
           [
             "Mason",
             "Dubois",
-            "675-954-183",
-            "+1 438 555-0188",
             "frostbyte_x@protonmail.com",
-            "Warehouse Associate"
+            "+1 438 555-0188",
+            "8880"
           ]
         ],
         "note": "*Fabricated, example data only",
-        "rowPadding": "lg"
+        "rowPadding": "lg",
+        "textSize": "lg",
+        "title": "Bright Star Tires"
       }
     },
     {
-      "title": "Breach sample · Credential pairs",
+      "title": "Breach sample \u00b7 Credential pairs",
       "layout": "LY-26",
       "bg": "DS-06",
       "content": {
         "showHeader": false,
         "hugFirstCols": false,
-        "columns": [],
-        "rows": [
-          [
-            "bluestar5513@gmail.com:123456",
-            "coolcat2004@hotmail.com:admin",
-            "xXshadowfoxXx@yahoo.com:12345678"
-          ],
-          [
-            "mapleleaf99@protonmail.com:password",
-            "jordan.lee@gmail.com:aa123456",
-            "gamer_dude7@hotmail.com:pass@123"
-          ],
-          [
-            "pizza.lover88@yahoo.com:123123123",
-            "northernlights22@protonmail.com:P@$$w0rd",
-            "c.wright@northwind.ca:aaaa1111"
-          ],
-          [
-            "skaterboi99@hotmail.com:987654",
-            "sophie.martin@gmail.com:trustno1",
-            "nightowl_42@protonmail.com:skibidi"
-          ],
-          [
-            "sunnydays2001@gmail.com:minecraft",
-            "priya.nair@hotmail.com:qwerty!",
-            "coffeelover7@yahoo.com:123456"
-          ],
-          [
-            "marcus.chen@yahoo.com:admin",
-            "pixelpanda13@gmail.com:12345678",
-            "frostbyte_x@protonmail.com:password"
-          ],
-          [
-            "elena.rossi@protonmail.com:aa123456",
-            "aisha.brooks@hotmail.com:pass@123",
-            "admin@lakeview.com:123123123"
-          ],
-          [
-            "noah.patel@gmail.com:P@$$w0rd",
-            "diego.morales@yahoo.com:aaaa1111",
-            "hannah.kim@protonmail.com:987654"
-          ],
-          [
-            "ebaker@canadaretail.ca:trustno1",
-            "reddragon77@hotmail.com:skibidi",
-            "moe.beans@yahoo.com:minecraft"
-          ],
-          [
-            "zoe.nguyen@pacificgoods.com:qwerty!",
-            "quietstorm5@gmail.com:123456",
-            "banana_split9@protonmail.com:admin"
-          ]
-        ],
+        "splitColumns": true,
+        "rowPadding": "lg",
+        "textSize": "lg",
         "note": "*Fabricated, example data only",
-        "splitColumns": true
+        "panels": [
+          {
+            "type": "credentials",
+            "rows": [
+              "c.wright@northwind.ca:123456",
+              "admin@lakeview.com:admin",
+              "ebaker@canadaretail.ca:12345678",
+              "zoe.nguyen@pacificgoods.com:password",
+              "bluestar5513@gmail.com:aa123456",
+              "coolcat2004@hotmail.com:pass@123",
+              "sunnydays2001@gmail.com:123123123"
+            ]
+          },
+          {
+            "type": "profiles",
+            "profiles": [
+              {
+                "name": "Jordan Lee",
+                "fields": [
+                  {
+                    "label": "Email",
+                    "value": "bluestar5513@gmail.com"
+                  },
+                  {
+                    "label": "Password",
+                    "value": "aa123456",
+                    "emphasize": true
+                  },
+                  {
+                    "type": "divider"
+                  },
+                  {
+                    "label": "Username",
+                    "value": "bluestar5513"
+                  },
+                  {
+                    "label": "Phone",
+                    "value": "+1 416 555-0142"
+                  },
+                  {
+                    "label": "Last 4 digits",
+                    "value": "6011"
+                  }
+                ]
+              },
+              {
+                "name": "Mia Singh",
+                "fields": [
+                  {
+                    "label": "Email",
+                    "value": "sunnydays2001@gmail.com"
+                  },
+                  {
+                    "label": "Password",
+                    "value": "",
+                    "emphasize": true,
+                    "showEmpty": true
+                  },
+                  {
+                    "type": "divider"
+                  },
+                  {
+                    "label": "Username",
+                    "value": "sunnydays2001"
+                  },
+                  {
+                    "label": "Phone",
+                    "value": "+1 204 555-0191"
+                  },
+                  {
+                    "label": "Last 4 digits",
+                    "value": "3003"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
       }
     },
     {
@@ -969,7 +936,7 @@
         "accent": "employee credentials leak in the 12 months before",
         "textSize": "md",
         "panel": true,
-        "author": "—Verizon DBIR 2026"
+        "author": "\u2014Verizon DBIR 2026"
       }
     },
     {
@@ -1003,7 +970,7 @@
       }
     },
     {
-      "title": "Image title · center",
+      "title": "Image title \u00b7 center",
       "layout": "LY-15",
       "bg": "BG-01",
       "content": {
@@ -1029,7 +996,7 @@
       }
     },
     {
-      "title": "Image title · center",
+      "title": "Image title \u00b7 center",
       "layout": "LY-15",
       "bg": "BG-01",
       "content": {
@@ -1043,7 +1010,7 @@
       }
     },
     {
-      "title": "Image title · center",
+      "title": "Image title \u00b7 center",
       "layout": "LY-15",
       "bg": "BG-01",
       "content": {
@@ -1057,7 +1024,7 @@
       }
     },
     {
-      "title": "Image title · center",
+      "title": "Image title \u00b7 center",
       "layout": "LY-15",
       "bg": "BG-01",
       "content": {
@@ -1071,7 +1038,7 @@
       }
     },
     {
-      "title": "Image title · center",
+      "title": "Image title \u00b7 center",
       "layout": "LY-15",
       "bg": "BG-01",
       "content": {
@@ -1085,7 +1052,7 @@
       }
     },
     {
-      "title": "Image title · center",
+      "title": "Image title \u00b7 center",
       "layout": "LY-15",
       "bg": "BG-01",
       "content": {
@@ -1129,7 +1096,7 @@
       }
     },
     {
-      "title": "Image title · center",
+      "title": "Image title \u00b7 center",
       "layout": "LY-15",
       "bg": "BG-01",
       "content": {
@@ -1143,7 +1110,7 @@
       }
     },
     {
-      "title": "Image title · center",
+      "title": "Image title \u00b7 center",
       "layout": "LY-15",
       "bg": "BG-01",
       "content": {
@@ -1157,7 +1124,7 @@
       }
     },
     {
-      "title": "Image title · center",
+      "title": "Image title \u00b7 center",
       "layout": "LY-15",
       "bg": "BG-01",
       "content": {
@@ -1171,7 +1138,7 @@
       }
     },
     {
-      "title": "Image title · center",
+      "title": "Image title \u00b7 center",
       "layout": "LY-15",
       "bg": "BG-01",
       "content": {
@@ -1185,7 +1152,7 @@
       }
     },
     {
-      "title": "Image title · center",
+      "title": "Image title \u00b7 center",
       "layout": "LY-15",
       "bg": "BG-01",
       "content": {
@@ -1199,7 +1166,7 @@
       }
     },
     {
-      "title": "Image title · center",
+      "title": "Image title \u00b7 center",
       "layout": "LY-15",
       "bg": "BG-01",
       "content": {
@@ -1213,7 +1180,7 @@
       }
     },
     {
-      "title": "Image title · center",
+      "title": "Image title \u00b7 center",
       "layout": "LY-15",
       "bg": "BG-01",
       "content": {
@@ -1294,7 +1261,7 @@
         "accent": "employee credentials leak in the 12 months before",
         "textSize": "md",
         "panel": true,
-        "author": "—BreachSense"
+        "author": "\u2014BreachSense"
       }
     }
   ]

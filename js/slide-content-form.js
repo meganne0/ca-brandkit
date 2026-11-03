@@ -477,9 +477,11 @@ function readContentFromForm(form, layout, base = {}) {
     if (Array.isArray(base.columns)) next.columns = base.columns;
     if (Array.isArray(base.rows)) next.rows = base.rows;
     if (base.rowPadding != null) next.rowPadding = base.rowPadding;
+    if (base.textSize != null) next.textSize = base.textSize;
     if (base.showHeader != null) next.showHeader = base.showHeader;
     if (base.hugFirstCols != null) next.hugFirstCols = base.hugFirstCols;
     if (base.splitColumns != null) next.splitColumns = base.splitColumns;
+    if (Array.isArray(base.panels)) next.panels = base.panels;
     return next;
   }
 
