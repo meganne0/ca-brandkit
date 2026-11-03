@@ -662,6 +662,9 @@ function readContentFromForm(form, layout, base = {}) {
     if (base.mergePrepCollection != null) {
       next.mergePrepCollection = base.mergePrepCollection;
     }
+    if (base.mergeBreachPostBreach != null) {
+      next.mergeBreachPostBreach = base.mergeBreachPostBreach;
+    }
     if (base.hideNodeLabels != null) next.hideNodeLabels = base.hideNodeLabels;
     if (base.hideStepBadges != null) next.hideStepBadges = base.hideStepBadges;
     if (base.outcomeHub != null) next.outcomeHub = base.outcomeHub;
@@ -672,6 +675,10 @@ function readContentFromForm(form, layout, base = {}) {
     }
     if (base.prepSideBranchCount != null) {
       next.prepSideBranchCount = base.prepSideBranchCount;
+    }
+    if (base.breachFanCount != null) next.breachFanCount = base.breachFanCount;
+    if (base.breachFanLongCount != null) {
+      next.breachFanLongCount = base.breachFanLongCount;
     }
     return next;
   }

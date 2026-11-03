@@ -2696,12 +2696,43 @@ a.metric-card__source:hover {
   gap: 10px;
 }
 
+/* Slide 20 Custom: no decorative corner dots behind the diagram */
+.slide[data-title="Attack paths · Custom"] .slide-layer--dots {
+  display: none;
+}
+
 /* Slide 20 custom: prep + collection share one rounded panel */
 .flow-orbit--merge-prep-collection.flow-orbit--phased.flow-orbit--with-outcomes.flow-orbit--with-impacts {
   grid-template-columns:
     minmax(0, 1.7fr)
     minmax(190px, 0.75fr)
     minmax(200px, 0.8fr);
+}
+
+.flow-orbit--merge-prep-collection.flow-orbit--merge-breach-post.flow-orbit--phased.flow-orbit--with-outcomes.flow-orbit--with-impacts {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
+.flow-phase__grid--breach-post {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+  gap: 16px;
+  align-items: stretch;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.flow-phase__grid--breach-post-fan {
+  grid-template-columns: minmax(72px, 0.22fr) minmax(0, 1fr);
+  align-items: center;
+}
+
+.flow-orbit__outcomes-cluster--hub-only {
+  justify-content: center;
+  padding-left: 0;
+  height: 100%;
 }
 
 .flow-phase__grid--prep-collection {
@@ -2783,6 +2814,10 @@ a.metric-card__source:hover {
     minmax(190px, 0.75fr);
 }
 
+.flow-orbit--outcome-hub.flow-orbit--merge-prep-collection.flow-orbit--merge-breach-post.flow-orbit--phased.flow-orbit--with-outcomes.flow-orbit--with-impacts {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+}
+
 .flow-orbit--outcome-hub .flow-orbit__outcomes {
   padding-left: 0;
   align-items: flex-start;
@@ -2796,7 +2831,7 @@ a.metric-card__source:hover {
   color: var(--flow-outcome, #ff2828);
 }
 
-/* Slide 20: shrink all nodes; enlarge the prep·collection red exit */
+/* Slide 20: shrink all nodes; enlarge the two red exit/hub nodes */
 .flow-orbit--prep-exit .flow-dot {
   width: 8px;
   height: 8px;
@@ -2804,13 +2839,15 @@ a.metric-card__source:hover {
 
 .flow-orbit--prep-exit .flow-dot-row--stage .flow-dot,
 .flow-orbit--prep-exit .flow-orbit__prep-side-chain .flow-dot,
-.flow-orbit--prep-exit .flow-orbit__outcome-hub .flow-dot {
+.flow-orbit--prep-exit .flow-orbit__breach-fan .flow-dot {
   width: 8px;
   height: 8px;
 }
 
 .flow-orbit--prep-exit .flow-step--prep-exit .flow-dot,
-.flow-orbit--prep-exit .flow-dot[data-flow-node="stage-exit"] {
+.flow-orbit--prep-exit .flow-dot[data-flow-node="stage-exit"],
+.flow-orbit--prep-exit .flow-orbit__outcome-hub .flow-dot,
+.flow-orbit--prep-exit .flow-dot[data-flow-node="outcome-hub"] {
   width: 34px;
   height: 34px;
   box-shadow:
@@ -2819,8 +2856,34 @@ a.metric-card__source:hover {
 }
 
 .flow-orbit--prep-exit:not(.flow-orbit--focus) .flow-step--prep-exit .flow-dot-row:hover .flow-dot,
-.flow-orbit--prep-exit:not(.flow-orbit--focus) .flow-dot-row:hover .flow-dot[data-flow-node="stage-exit"] {
+.flow-orbit--prep-exit:not(.flow-orbit--focus) .flow-dot-row:hover .flow-dot[data-flow-node="stage-exit"],
+.flow-orbit--prep-exit:not(.flow-orbit--focus) .flow-orbit__outcome-hub .flow-dot-row:hover .flow-dot {
   transform: scale(1.15);
+}
+
+/* Fluid red fan inside merged Breach · Post-Breach */
+.flow-orbit--breach-fan .flow-phase--breach-post .flow-phase__body {
+  overflow: hidden;
+}
+
+.flow-orbit__breach-fan {
+  position: absolute;
+  inset: 10px 12px 12px;
+  z-index: 2;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.flow-orbit:not(.flow-orbit--focus) .flow-orbit__breach-fan .flow-dot-row--side,
+.flow-orbit .flow-orbit__breach-fan .flow-dot-row--side {
+  position: absolute;
+  left: var(--fx, 50%);
+  top: var(--fy, 50%);
+  transform: translate(-50%, -50%);
+  pointer-events: auto;
+  margin: 0;
+  width: auto;
+  color: var(--flow-outcome, #ff2828);
 }
 
 /* Separate side path: blue → lavender → pink → purple → red exit
@@ -3153,8 +3216,13 @@ a.metric-card__source:hover {
   --flow-phase-stroke: linear-gradient(135deg, #ec6b15 0%, #f72ebe 100%);
 }
 
+.flow-orbit:not(.flow-orbit--focus) .flow-phase--prep-collection {
+  --flow-phase-stroke: linear-gradient(135deg, #1eadec 0%, #887dff 45%, #ec6b15 100%);
+}
+
 .flow-orbit:not(.flow-orbit--focus) .flow-phase--breach,
-.flow-orbit:not(.flow-orbit--focus) .flow-phase--post-breach {
+.flow-orbit:not(.flow-orbit--focus) .flow-phase--post-breach,
+.flow-orbit:not(.flow-orbit--focus) .flow-phase--breach-post {
   --flow-phase-stroke: linear-gradient(135deg, #ff5a5a 0%, #ff2828 55%, #c41010 100%);
 }
 

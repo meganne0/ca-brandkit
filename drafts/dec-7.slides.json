@@ -1,6 +1,6 @@
 {
   "savedAt": "2026-11-03T17:31:33.665Z",
-  "publishId": "dec-7-1762198800000",
+  "publishId": "dec-7-1762201200000",
   "slides": [
     {
       "title": "Cover",
@@ -995,7 +995,10 @@
         "hideStepBadges": true,
         "prepExitDot": true,
         "prepSideChain": true,
-        "prepSideBranchExtra": 22
+        "prepSideBranchExtra": 22,
+        "mergeBreachPostBreach": true,
+        "breachFanCount": 35,
+        "publishId": "dec-7-1793728945096"
       }
     },
     {
