@@ -1676,6 +1676,8 @@ function renderFlowOrbit(content) {
       ? "flow-orbit--with-impacts"
       : "",
     progressive ? "flow-orbit--reveal flow-orbit--tall" : "",
+    /* Overview (no focus): same tall phase panels as progressive beats (e.g. Dec 7 slide 12). */
+    !progressive && focusPhase == null && phased ? "flow-orbit--tall" : "",
     !progressive && focusPhase != null
       ? `flow-orbit--focus flow-orbit--focus-${focusKeys[focusPhase]}`
       : "",
