@@ -659,6 +659,20 @@ function readContentFromForm(form, layout, base = {}) {
     if (Array.isArray(base.phaseTitles)) next.phaseTitles = base.phaseTitles;
     if (Array.isArray(base.stepLabels)) next.stepLabels = base.stepLabels;
     if (base.phased != null) next.phased = base.phased;
+    if (base.mergePrepCollection != null) {
+      next.mergePrepCollection = base.mergePrepCollection;
+    }
+    if (base.hideNodeLabels != null) next.hideNodeLabels = base.hideNodeLabels;
+    if (base.hideStepBadges != null) next.hideStepBadges = base.hideStepBadges;
+    if (base.outcomeHub != null) next.outcomeHub = base.outcomeHub;
+    if (base.prepExitDot != null) next.prepExitDot = base.prepExitDot;
+    if (base.prepSideChain != null) next.prepSideChain = base.prepSideChain;
+    if (base.prepSideBranchExtra != null) {
+      next.prepSideBranchExtra = base.prepSideBranchExtra;
+    }
+    if (base.prepSideBranchCount != null) {
+      next.prepSideBranchCount = base.prepSideBranchCount;
+    }
     return next;
   }
 

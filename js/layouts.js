@@ -926,6 +926,7 @@ function fitFlowFunnel(root) {
     ? stageDots
     : [mid, end].filter(Boolean);
 
+  const outcomeHub = host.querySelector(".flow-orbit__outcome-hub .flow-dot");
   const outcomes = [...host.querySelectorAll(".flow-orbit__outcomes .flow-dot")];
   const impacts = [...host.querySelectorAll(".flow-orbit__impacts .flow-dot")];
 
@@ -1016,6 +1017,55 @@ function fitFlowFunnel(root) {
     }
   }
 
+  // Parallel side branches → red prep·collection exit
+  const prepSideBranches = [
+    ...host.querySelectorAll(".flow-orbit__prep-side-branch"),
+  ];
+  const prepExitNode = host.querySelector('[data-flow-node="stage-exit"]');
+  prepSideBranches.forEach((branchEl, branchIndex) => {
+    const nodes = [...branchEl.querySelectorAll(".flow-dot")];
+    if (!nodes.length) return;
+    // Vary weight: some full, some thinner + lighter
+    const weight = branchIndex % 3;
+    const strokeW = weight === 0 ? 3.25 : weight === 1 ? 2.1 : 1.45;
+    const strokeOpacity = weight === 0 ? "1" : weight === 1 ? "0.55" : "0.32";
+    for (let i = 0; i < nodes.length - 1; i += 1) {
+      const fromEl = nodes[i];
+      const toEl = nodes[i + 1];
+      const a = toLocal(fromEl);
+      const b = toLocal(toEl);
+      const colorA = getComputedStyle(fromEl).color || "#1EADEC";
+      const colorB = getComputedStyle(toEl).color || "#887DFF";
+      const gid = `${uid}-side${branchIndex}-${i}`;
+      grads.push(`
+        <linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="${a.cx}" y1="${a.cy}" x2="${b.cx}" y2="${b.cy}">
+          <stop offset="0%" stop-color="${colorA}" />
+          <stop offset="100%" stop-color="${colorB}" />
+        </linearGradient>
+      `);
+      pathEls.push(
+        `<path d="M ${a.cx} ${a.cy} L ${b.cx} ${b.cy}" stroke="url(#${gid})" fill="none" stroke-width="${strokeW}" stroke-linecap="round" stroke-opacity="${strokeOpacity}"${wirePhaseAttrs(fromEl, toEl)} />`,
+      );
+    }
+    if (prepExitNode) {
+      const last = nodes[nodes.length - 1];
+      const a = toLocal(last);
+      const b = toLocal(prepExitNode);
+      const colorA = getComputedStyle(last).color || "#9977FF";
+      const colorB = getComputedStyle(prepExitNode).color || "#FF2828";
+      const gid = `${uid}-side${branchIndex}-exit`;
+      grads.push(`
+        <linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="${a.cx}" y1="${a.cy}" x2="${b.cx}" y2="${b.cy}">
+          <stop offset="0%" stop-color="${colorA}" />
+          <stop offset="100%" stop-color="${colorB}" />
+        </linearGradient>
+      `);
+      pathEls.push(
+        `<path d="M ${a.cx} ${a.cy} L ${b.cx} ${b.cy}" stroke="url(#${gid})" fill="none" stroke-width="${strokeW}" stroke-linecap="round" stroke-opacity="${strokeOpacity}"${wirePhaseAttrs(last, prepExitNode)} />`,
+      );
+    }
+  });
+
   const leftOriginFor = (nodes, fallbackColor) => {
     const pts = nodes.map(toLocal);
     const midY = pts.reduce((sum, pt) => sum + pt.cy, 0) / pts.length;
@@ -1027,29 +1077,79 @@ function fitFlowFunnel(root) {
     };
   };
 
-  // Fan into outcome nodes (from last stage, or from a left lead-in on focus slides)
+  // Fan into outcome nodes (from last stage, optional breach hub, or left lead-in)
   if (outcomes.length) {
-    const originNode = chain.length ? chain[chain.length - 1] : null;
-    const origin = originNode
-      ? {
-          ...toLocal(originNode),
-          color: getComputedStyle(originNode).color || "#FF8045",
-        }
-      : leftOriginFor(outcomes, "#FF8045");
-    outcomes.forEach((outcome, index) => {
-      const pt = toLocal(outcome);
-      const colorB = getComputedStyle(outcome).color || "#FF2828";
-      const gid = `${uid}-o${index}`;
-      grads.push(`
-        <linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="${origin.cx}" y1="${origin.cy}" x2="${pt.cx}" y2="${pt.cy}">
-          <stop offset="0%" stop-color="${origin.color}" />
-          <stop offset="100%" stop-color="${colorB}" />
-        </linearGradient>
-      `);
-      pathEls.push(
-        `<path d="M ${origin.cx} ${origin.cy} L ${pt.cx} ${pt.cy}" stroke="url(#${gid})" fill="none" stroke-width="3.75" stroke-linecap="round"${wirePhaseAttrs(originNode || "", outcome)} />`,
-      );
-    });
+    if (outcomeHub) {
+      const hubPt = toLocal(outcomeHub);
+      const hubColor = getComputedStyle(outcomeHub).color || "#FF2828";
+      const stageOrigin = chain.length ? chain[chain.length - 1] : null;
+      // Dotted bridge when a red prep·collection exit hands off to the breach hub
+      const hubInDashed = host.classList.contains("flow-orbit--prep-exit");
+      const hubInDashAttr = hubInDashed ? ' stroke-dasharray="2.5 10"' : "";
+      const hubInWidth = hubInDashed ? 3 : 3.75;
+      if (stageOrigin) {
+        const from = toLocal(stageOrigin);
+        const colorA = getComputedStyle(stageOrigin).color || "#FF8045";
+        const gid = `${uid}-hub-in`;
+        grads.push(`
+          <linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="${from.cx}" y1="${from.cy}" x2="${hubPt.cx}" y2="${hubPt.cy}">
+            <stop offset="0%" stop-color="${colorA}" />
+            <stop offset="100%" stop-color="${hubColor}" />
+          </linearGradient>
+        `);
+        pathEls.push(
+          `<path d="M ${from.cx} ${from.cy} L ${hubPt.cx} ${hubPt.cy}" stroke="url(#${gid})" fill="none" stroke-width="${hubInWidth}" stroke-linecap="round"${hubInDashAttr}${wirePhaseAttrs(stageOrigin, outcomeHub)} />`,
+        );
+      } else {
+        const lead = leftOriginFor([outcomeHub, ...outcomes], "#FF8045");
+        const gid = `${uid}-hub-in`;
+        grads.push(`
+          <linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="${lead.cx}" y1="${lead.cy}" x2="${hubPt.cx}" y2="${hubPt.cy}">
+            <stop offset="0%" stop-color="${lead.color}" />
+            <stop offset="100%" stop-color="${hubColor}" />
+          </linearGradient>
+        `);
+        pathEls.push(
+          `<path d="M ${lead.cx} ${lead.cy} L ${hubPt.cx} ${hubPt.cy}" stroke="url(#${gid})" fill="none" stroke-width="${hubInWidth}" stroke-linecap="round"${hubInDashAttr}${wirePhaseAttrs("", outcomeHub)} />`,
+        );
+      }
+      outcomes.forEach((outcome, index) => {
+        const pt = toLocal(outcome);
+        const colorB = getComputedStyle(outcome).color || hubColor;
+        const gid = `${uid}-o${index}`;
+        grads.push(`
+          <linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="${hubPt.cx}" y1="${hubPt.cy}" x2="${pt.cx}" y2="${pt.cy}">
+            <stop offset="0%" stop-color="${hubColor}" />
+            <stop offset="100%" stop-color="${colorB}" />
+          </linearGradient>
+        `);
+        pathEls.push(
+          `<path d="M ${hubPt.cx} ${hubPt.cy} L ${pt.cx} ${pt.cy}" stroke="url(#${gid})" fill="none" stroke-width="3.75" stroke-linecap="round"${wirePhaseAttrs(outcomeHub, outcome)} />`,
+        );
+      });
+    } else {
+      const originNode = chain.length ? chain[chain.length - 1] : null;
+      const origin = originNode
+        ? {
+            ...toLocal(originNode),
+            color: getComputedStyle(originNode).color || "#FF8045",
+          }
+        : leftOriginFor(outcomes, "#FF8045");
+      outcomes.forEach((outcome, index) => {
+        const pt = toLocal(outcome);
+        const colorB = getComputedStyle(outcome).color || "#FF2828";
+        const gid = `${uid}-o${index}`;
+        grads.push(`
+          <linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="${origin.cx}" y1="${origin.cy}" x2="${pt.cx}" y2="${pt.cy}">
+            <stop offset="0%" stop-color="${origin.color}" />
+            <stop offset="100%" stop-color="${colorB}" />
+          </linearGradient>
+        `);
+        pathEls.push(
+          `<path d="M ${origin.cx} ${origin.cy} L ${pt.cx} ${pt.cy}" stroke="url(#${gid})" fill="none" stroke-width="3.75" stroke-linecap="round"${wirePhaseAttrs(originNode || "", outcome)} />`,
+        );
+      });
+    }
   }
 
   // Dashed fan into impact nodes (from outcomes, or from a left lead-in)
@@ -1137,26 +1237,39 @@ export function refreshFlowFunnels(root = document) {
   });
 }
 
-function flowDotMarkup(label, tone, role, color, phase = "") {
+function flowDotMarkup(label, tone, role, color, phase = "", extraStyle = "") {
   const display = String(label ?? "")
     .replace(/:\s*/g, ":\n")
     .replace(/,\s*/g, "\n");
-  const colorStyle = color
-    ? ` style="color:${escapeHtml(color)};--flow-dot:${escapeHtml(color)}"`
-    : "";
+  const ariaLabel = String(
+    label ||
+      (tone === "hub" ? "Breach hub" : tone === "side" ? "Side path" : ""),
+  ).trim();
+  const mergedStyle = [
+    color ? `color:${escapeHtml(color)};--flow-dot:${escapeHtml(color)}` : "",
+    extraStyle,
+  ]
+    .filter(Boolean)
+    .join(";");
+  const colorStyle = mergedStyle ? ` style="${mergedStyle}"` : "";
   const phaseAttr = phase ? ` data-flow-phase="${escapeHtml(phase)}"` : "";
-  const labelEl = `<span class="flow-dot__label">${escapeHtml(display)}</span>`;
+  const labelEl =
+    tone === "hub" || tone === "side"
+      ? ""
+      : `<span class="flow-dot__label">${escapeHtml(display)}</span>`;
   const buttonEl = `
       <button
         type="button"
         class="flow-dot flow-node--${escapeHtml(tone)}"
         data-flow-node="${escapeHtml(role)}"${phaseAttr}
-        aria-label="${escapeHtml(label)}"
+        aria-label="${escapeHtml(ariaLabel)}"
       ></button>`;
   const body =
     tone === "outcome" || tone === "impact"
       ? `${buttonEl}${labelEl}`
-      : `${labelEl}${buttonEl}`;
+      : tone === "hub" || tone === "side"
+        ? buttonEl
+        : `${labelEl}${buttonEl}`;
   return `
     <div class="flow-dot-row flow-dot-row--${escapeHtml(tone)}"${colorStyle}>
       ${body}
@@ -1290,6 +1403,60 @@ function renderFlowOrbit(content) {
     (progressive || focusPhase == null || focusPhase === 3) &&
     impacts.length > 0;
 
+  const mergePrepCollection = content.mergePrepCollection === true;
+  const hideNodeLabels = content.hideNodeLabels === true;
+  const hideStepBadges = content.hideStepBadges === true;
+  const outcomeHub = content.outcomeHub === true && outcomes.length > 0;
+  const prepExitDot =
+    content.prepExitDot === true && mergePrepCollection && (showPrep || showCollection);
+  // Mirror OG colors across many fluid branches that all meet the red exit
+  const prepSideColors = [sourceColor, ...stages.map((stage) => stage.color)];
+  const clampPct = (value, min, max) => Math.min(max, Math.max(min, value));
+  const buildPrepSideBranch = (branchIndex, branchCount) => {
+    const colorCount = prepSideColors.length;
+    const slot = branchCount <= 1 ? 0.5 : branchIndex / (branchCount - 1);
+    // Keep OG center path clear: pack branches into upper + lower bands
+    const startY =
+      slot < 0.5
+        ? 6 + slot * 2 * 36
+        : 58 + (slot - 0.5) * 2 * 36;
+    const startX = 5 + ((branchIndex * 7) % 11);
+    const endX = 76 + ((branchIndex * 3) % 5);
+    const endY = 46 + (slot - 0.5) * 18;
+    return prepSideColors.map((color, index) => {
+      const t = colorCount <= 1 ? 0 : index / (colorCount - 1);
+      const ease = t * t;
+      const wobble =
+        Math.sin((branchIndex + 1) * 1.73 + index * 1.1) * (5 - ease * 4);
+      return {
+        x: Math.round(clampPct(startX + (endX - startX) * t + wobble, 4, 88)),
+        y: Math.round(
+          clampPct(startY + (endY - startY) * ease + wobble * 0.45, 5, 95),
+        ),
+        color,
+      };
+    });
+  };
+  const prepSideBranches = (() => {
+    if (!prepExitDot) return [];
+    if (content.prepSideChain === false) return [];
+    const extra = Number(content.prepSideBranchExtra ?? 0);
+    const explicitCount = Number(content.prepSideBranchCount);
+    let branchCount = 0;
+    if (Number.isFinite(explicitCount) && explicitCount > 0) {
+      branchCount = Math.floor(explicitCount);
+    } else if (content.prepSideChain === true || extra > 0) {
+      branchCount = 1 + (Number.isFinite(extra) ? Math.max(0, Math.floor(extra)) : 0);
+    }
+    if (!branchCount && Array.isArray(content.prepSideChain)) {
+      // Legacy single-chain array → one branch
+      return [content.prepSideChain];
+    }
+    if (!branchCount) return [];
+    return Array.from({ length: branchCount }, (_, index) =>
+      buildPrepSideBranch(index, branchCount),
+    );
+  })();
   const focusKeys = ["prep", "collection", "breach", "post-breach"];
   const orbitMods = [
     phased ? "flow-orbit--phased" : "",
@@ -1303,6 +1470,12 @@ function renderFlowOrbit(content) {
     !progressive && focusPhase != null
       ? `flow-orbit--focus flow-orbit--focus-${focusKeys[focusPhase]}`
       : "",
+    mergePrepCollection ? "flow-orbit--merge-prep-collection" : "",
+    hideNodeLabels ? "flow-orbit--no-node-labels" : "",
+    hideStepBadges ? "flow-orbit--no-step-badges" : "",
+    outcomeHub ? "flow-orbit--outcome-hub" : "",
+    prepExitDot ? "flow-orbit--prep-exit" : "",
+    prepSideBranches.length ? "flow-orbit--prep-side-chain" : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -1324,7 +1497,7 @@ function renderFlowOrbit(content) {
   })();
 
   const stepBadge = (number, label, color) =>
-    phased ? flowStepBadge(number, label, color) : "";
+    phased && !hideStepBadges ? flowStepBadge(number, label, color) : "";
 
   const sourcesBlock = `
     <div class="flow-step flow-step--sources">
@@ -1365,27 +1538,69 @@ function renderFlowOrbit(content) {
     })
     .join("");
 
+  // Red terminal node inside prep·collection (becomes last stage in the wire chain)
+  const prepExitBlock = prepExitDot
+    ? `
+      <div class="flow-step flow-step--stage flow-step--prep-exit">
+        ${flowDotMarkup("", "stage", "stage-exit", outcomeColor, "collection")}
+      </div>
+    `
+    : "";
+
+  const prepSideChainLayer = prepSideBranches.length
+    ? `<div class="flow-orbit__prep-side-chain" aria-hidden="true">
+        ${prepSideBranches
+          .map(
+            (branch, branchIndex) => `
+          <div class="flow-orbit__prep-side-branch" data-branch="${branchIndex}">
+            ${branch
+              .map((node, index) =>
+                flowDotMarkup(
+                  "",
+                  "side",
+                  `prep-side-${branchIndex}-${index}`,
+                  node.color,
+                  index === 0 ? "prep" : "collection",
+                  `--fx:${node.x}%;--fy:${node.y}%`,
+                ),
+              )
+              .join("")}
+          </div>`,
+          )
+          .join("")}
+      </div>`
+    : "";
+
   const overviewInteractive = focusPhase == null && !progressive;
   const overviewPhaseAttrs = (label, { selected = false } = {}) =>
     overviewInteractive
       ? ` role="button" tabindex="0" aria-pressed="${selected ? "true" : "false"}" aria-label="Select ${escapeHtml(label)} phase"`
       : "";
 
+  const outcomeHubMarkup = outcomeHub
+    ? `<div class="flow-orbit__outcome-hub">
+        ${flowDotMarkup("", "hub", "outcome-hub", outcomeColor, "breach")}
+      </div>`
+    : "";
+
   const outcomesInner = `
     <div class="flow-step flow-step--outcomes">
       ${stepBadge(7, stepLabels[6] ?? "Action-on-Objective", outcomeColor)}
-      <div class="flow-orbit__outcomes">
-        ${outcomes
-          .map((outcome, index) =>
-            flowDotMarkup(
-              outcome.label,
-              "outcome",
-              `outcome-${index}`,
-              outcome.color,
-              "breach",
-            ),
-          )
-          .join("")}
+      <div class="flow-orbit__outcomes-cluster${outcomeHub ? " flow-orbit__outcomes-cluster--hub" : ""}">
+        ${outcomeHubMarkup}
+        <div class="flow-orbit__outcomes">
+          ${outcomes
+            .map((outcome, index) =>
+              flowDotMarkup(
+                outcome.label,
+                "outcome",
+                `outcome-${index}`,
+                outcome.color,
+                "breach",
+              ),
+            )
+            .join("")}
+        </div>
       </div>
     </div>
   `;
@@ -1456,6 +1671,38 @@ function renderFlowOrbit(content) {
         </section>`
       : "";
 
+    const mergedEarlyStroke =
+      progressive && (revealThrough === 0 || revealThrough === 1)
+        ? " is-stroke-on"
+        : strokeClass(0);
+    const mergedEarlyBlur =
+      progressive && revealThrough != null && revealThrough < 0
+        ? " is-phase-blurred"
+        : progressive
+          ? ""
+          : blurClass(0);
+    const mergedEarlyTitle = [
+      phaseTitles[0] ?? "Preparation",
+      phaseTitles[1] ?? "Collection",
+    ].join(" · ");
+    const prepCollectionCount =
+      Math.max(collectionStages.length, 1) + (prepExitDot ? 1 : 0);
+    const prepCollectionPhase =
+      mergePrepCollection && (showPrep || showCollection)
+        ? `<section class="flow-phase flow-phase--prep-collection${mergedEarlyStroke}${mergedEarlyBlur}"${overviewPhaseAttrs(mergedEarlyTitle)}>
+          <h3 class="flow-phase__title">${escapeHtml(mergedEarlyTitle)}</h3>
+          <div class="flow-phase__body">
+            ${prepSideChainLayer}
+            <div class="flow-phase__grid flow-phase__grid--prep-collection" style="--flow-collection-count:${prepCollectionCount}">
+              ${sourcesBlock}
+              ${weaponizeBlock}
+              ${collectionBlocks}
+              ${prepExitBlock}
+            </div>
+          </div>
+        </section>`
+        : "";
+
     const breachPhase = showBreach
       ? `<section class="flow-phase flow-phase--breach${strokeClass(2)}${blurClass(2)}"${overviewPhaseAttrs(phaseTitles[2] ?? "Breach")}>
           <h3 class="flow-phase__title">${escapeHtml(phaseTitles[2] ?? "Breach")}</h3>
@@ -1474,7 +1721,13 @@ function renderFlowOrbit(content) {
         </section>`
       : "";
 
-    orbitInner = `
+    orbitInner = mergePrepCollection
+      ? `
+      ${prepCollectionPhase}
+      ${breachPhase}
+      ${postBreachPhase}
+    `
+      : `
       ${prepPhase}
       ${collectionPhase}
       ${breachPhase}
