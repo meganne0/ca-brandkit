@@ -929,6 +929,9 @@ function fitFlowFunnel(root) {
   const outcomeHub = host.querySelector(".flow-orbit__outcome-hub .flow-dot");
   const outcomes = [...host.querySelectorAll(".flow-orbit__outcomes .flow-dot")];
   const impacts = [...host.querySelectorAll(".flow-orbit__impacts .flow-dot")];
+  const hasBreachFanNodes = Boolean(
+    host.querySelector(".flow-orbit__breach-fan-branch .flow-dot"),
+  );
 
   const phaseOf = (el) => el?.dataset?.flowPhase?.trim() || "";
   const wirePhaseAttrs = (fromEl, toEl) => {
@@ -937,7 +940,16 @@ function fitFlowFunnel(root) {
     return ` data-from-phase="${from}" data-to-phase="${to}"`;
   };
 
-  if (!chain.length && !outcomes.length && !impacts.length) return;
+  // Hub-only breach fans (e.g. text+breach notes) have no stage/outcome chain
+  if (
+    !chain.length &&
+    !outcomes.length &&
+    !impacts.length &&
+    !outcomeHub &&
+    !hasBreachFanNodes
+  ) {
+    return;
+  }
 
   if (chain.length) {
     const first = chain[0];
@@ -1018,6 +1030,7 @@ function fitFlowFunnel(root) {
   }
 
   // Parallel side branches → red prep·collection exit
+  // Orange feeders converge on each main branch’s orange node (before the red hub)
   const prepSideBranches = [
     ...host.querySelectorAll(".flow-orbit__prep-side-branch"),
   ];
@@ -1025,18 +1038,16 @@ function fitFlowFunnel(root) {
   prepSideBranches.forEach((branchEl, branchIndex) => {
     const nodes = [...branchEl.querySelectorAll(".flow-dot")];
     if (!nodes.length) return;
-    // Vary weight: some full, some thinner + lighter
-    const weight = branchIndex % 3;
+    const weightAttr = Number(branchEl.dataset.weight);
+    const weight = Number.isFinite(weightAttr) ? weightAttr : branchIndex % 3;
     const strokeW = weight === 0 ? 3.25 : weight === 1 ? 2.1 : 1.45;
     const strokeOpacity = weight === 0 ? "1" : weight === 1 ? "0.55" : "0.32";
-    for (let i = 0; i < nodes.length - 1; i += 1) {
-      const fromEl = nodes[i];
-      const toEl = nodes[i + 1];
+    const wirePair = (fromEl, toEl, key) => {
       const a = toLocal(fromEl);
       const b = toLocal(toEl);
       const colorA = getComputedStyle(fromEl).color || "#1EADEC";
       const colorB = getComputedStyle(toEl).color || "#887DFF";
-      const gid = `${uid}-side${branchIndex}-${i}`;
+      const gid = `${uid}-side${branchIndex}-${key}`;
       grads.push(`
         <linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="${a.cx}" y1="${a.cy}" x2="${b.cx}" y2="${b.cy}">
           <stop offset="0%" stop-color="${colorA}" />
@@ -1046,23 +1057,26 @@ function fitFlowFunnel(root) {
       pathEls.push(
         `<path d="M ${a.cx} ${a.cy} L ${b.cx} ${b.cy}" stroke="url(#${gid})" fill="none" stroke-width="${strokeW}" stroke-linecap="round" stroke-opacity="${strokeOpacity}"${wirePhaseAttrs(fromEl, toEl)} />`,
       );
+    };
+    for (let i = 0; i < nodes.length - 1; i += 1) {
+      wirePair(nodes[i], nodes[i + 1], i);
+    }
+    const last = nodes[nodes.length - 1];
+    const isOrangeFeeder = branchEl.hasAttribute("data-feeder");
+    if (isOrangeFeeder) {
+      const parentId = branchEl.dataset.parent;
+      const parentBranch = host.querySelector(
+        `.flow-orbit__prep-side-branch[data-branch="${parentId}"]:not([data-feeder])`,
+      );
+      const parentNodes = parentBranch
+        ? [...parentBranch.querySelectorAll(".flow-dot")]
+        : [];
+      const orangeNode = parentNodes[parentNodes.length - 1];
+      if (orangeNode) wirePair(last, orangeNode, "orange");
+      return;
     }
     if (prepExitNode) {
-      const last = nodes[nodes.length - 1];
-      const a = toLocal(last);
-      const b = toLocal(prepExitNode);
-      const colorA = getComputedStyle(last).color || "#9977FF";
-      const colorB = getComputedStyle(prepExitNode).color || "#FF2828";
-      const gid = `${uid}-side${branchIndex}-exit`;
-      grads.push(`
-        <linearGradient id="${gid}" gradientUnits="userSpaceOnUse" x1="${a.cx}" y1="${a.cy}" x2="${b.cx}" y2="${b.cy}">
-          <stop offset="0%" stop-color="${colorA}" />
-          <stop offset="100%" stop-color="${colorB}" />
-        </linearGradient>
-      `);
-      pathEls.push(
-        `<path d="M ${a.cx} ${a.cy} L ${b.cx} ${b.cy}" stroke="url(#${gid})" fill="none" stroke-width="${strokeW}" stroke-linecap="round" stroke-opacity="${strokeOpacity}"${wirePhaseAttrs(last, prepExitNode)} />`,
-      );
+      wirePair(last, prepExitNode, "exit");
     }
   });
 
@@ -1142,7 +1156,8 @@ function fitFlowFunnel(root) {
     breachFanBranches.forEach((branchEl, branchIndex) => {
       const nodes = [...branchEl.querySelectorAll(".flow-dot")];
       if (!nodes.length) return;
-      const weight = branchIndex % 3;
+      const weightAttr = Number(branchEl.dataset.weight);
+      const weight = Number.isFinite(weightAttr) ? weightAttr : branchIndex % 3;
       const strokeW = weight === 0 ? 3.1 : weight === 1 ? 2 : 1.4;
       const strokeOpacity = weight === 0 ? "0.9" : weight === 1 ? "0.5" : "0.28";
       const wirePair = (fromEl, toEl, key) => {
@@ -1396,11 +1411,56 @@ function renderFlowOrbit(content) {
   };
 
   const focusPhase = parsePhaseIndex(content.focusPhase);
-  /** Progressive overview: show phases 0..N with stroke on N (prep stays visible). */
-  const revealThrough = parsePhaseIndex(
-    content.revealThroughPhase ?? content.revealThrough,
-  );
+  /** Progressive overview: show phases 0..N with stroke on N (prep stays visible).
+   *  Special values: "none" / "all" → both sides clear with no stroke highlight. */
+  const revealRaw = content.revealThroughPhase ?? content.revealThrough;
+  const phaseStrokeOff =
+    revealRaw === "none" ||
+    revealRaw === "all" ||
+    content.phaseHighlight === false;
+  const revealThrough = phaseStrokeOff ? 3 : parsePhaseIndex(revealRaw);
   const progressive = revealThrough != null;
+
+  const orbitPanel =
+    content.orbitPanel && typeof content.orbitPanel === "object"
+      ? content.orbitPanel
+      : null;
+  const orbitPanelSide =
+    orbitPanel?.side === "left" || orbitPanel?.side === "right"
+      ? orbitPanel.side
+      : null;
+
+  // Static SVG illustrations (Custom slides 20–24) — skip live node/wire DOM
+  const DEFAULT_PREP_ILLUSTRATION = "../assets/attack-path/prep-collection.svg?v=2";
+  const DEFAULT_BREACH_ILLUSTRATION = "../assets/attack-path/breach-post.svg?v=3";
+  const useOrbitIllustration =
+    content.orbitIllustration === true ||
+    Boolean(content.orbitIllustrationPrep) ||
+    Boolean(content.orbitIllustrationBreach);
+  const prepIllustrationSrc =
+    typeof content.orbitIllustrationPrep === "string" &&
+    content.orbitIllustrationPrep.trim()
+      ? content.orbitIllustrationPrep.trim()
+      : useOrbitIllustration
+        ? DEFAULT_PREP_ILLUSTRATION
+        : "";
+  const breachIllustrationSrc =
+    typeof content.orbitIllustrationBreach === "string" &&
+    content.orbitIllustrationBreach.trim()
+      ? content.orbitIllustrationBreach.trim()
+      : useOrbitIllustration
+        ? DEFAULT_BREACH_ILLUSTRATION
+        : "";
+  const prepIllustrationMarkup = prepIllustrationSrc
+    ? `<div class="flow-phase__body flow-phase__body--illustration">
+        <img class="flow-orbit-illustration" src="${escapeHtml(prepIllustrationSrc)}" alt="" draggable="false" />
+      </div>`
+    : "";
+  const breachIllustrationMarkup = breachIllustrationSrc
+    ? `<div class="flow-phase__body flow-phase__body--illustration">
+        <img class="flow-orbit-illustration" src="${escapeHtml(breachIllustrationSrc)}" alt="" draggable="false" />
+      </div>`
+    : "";
 
   const phased = content.phased !== false;
   const phaseTitles = Array.isArray(content.phaseTitles)
@@ -1449,17 +1509,32 @@ function renderFlowOrbit(content) {
   const mergeBreachPostBreach = content.mergeBreachPostBreach === true;
   const hideNodeLabels = content.hideNodeLabels === true;
   const hideStepBadges = content.hideStepBadges === true;
-  const outcomeHub = content.outcomeHub === true && outcomes.length > 0;
+  const outcomeHub =
+    !useOrbitIllustration && content.outcomeHub === true && outcomes.length > 0;
   const prepExitDot =
-    content.prepExitDot === true && mergePrepCollection && (showPrep || showCollection);
+    !useOrbitIllustration &&
+    content.prepExitDot === true &&
+    mergePrepCollection &&
+    (showPrep || showCollection) &&
+    orbitPanelSide !== "left";
   const breachFanCount = (() => {
+    if (useOrbitIllustration || orbitPanelSide === "right") return 0;
     const raw = Number(content.breachFanCount);
     if (!outcomeHub) return 0;
     if (Number.isFinite(raw) && raw > 0) return Math.floor(raw);
     return 0;
   })();
+  const breachFanLongCount = (() => {
+    if (useOrbitIllustration || orbitPanelSide === "right") return 0;
+    const raw = Number(content.breachFanLongCount);
+    if (!outcomeHub) return 0;
+    if (Number.isFinite(raw) && raw > 0) return Math.floor(raw);
+    return 0;
+  })();
+  const hasBreachFans = breachFanCount > 0 || breachFanLongCount > 0;
   const clampPct = (value, min, max) => Math.min(max, Math.max(min, value));
-  // Mirror OG colors across many fluid branches that all meet the red exit
+  // Mirror OG colors across many fluid branches that all meet the red exit.
+  // Orange (#FF8045) is the last color before the red prep-exit hub.
   const prepSideColors = [sourceColor, ...stages.map((stage) => stage.color)];
   const buildPrepSideBranch = (branchIndex, branchCount) => {
     const colorCount = prepSideColors.length;
@@ -1486,6 +1561,59 @@ function renderFlowOrbit(content) {
       };
     });
   };
+  // Feeders per main branch that converge on that branch’s orange node
+  const prepOrangeFeederCount = (() => {
+    const raw = Number(content.prepOrangeFeederCount);
+    if (Number.isFinite(raw) && raw >= 0) return Math.floor(raw);
+    return 0;
+  })();
+  const buildPrepOrangeFeeder = (
+    parentIndex,
+    feederIndex,
+    parentNodes,
+    feederTotal,
+  ) => {
+    const orange = parentNodes[parentNodes.length - 1];
+    const feederColors = prepSideColors.slice(0, -1); // stop short of orange
+    if (!orange || !feederColors.length) return [];
+    const parentStart = parentNodes[0] || { x: 8, y: 50 };
+    const total = Math.max(1, feederTotal);
+    const spread = feederIndex - (total - 1) / 2;
+    const band = total > 4 ? 6.2 : 11;
+    const startX = clampPct(
+      parentStart.x - 10 + feederIndex * 1.8 + Math.sin((parentIndex + 1) * 2.1) * 3,
+      3,
+      36,
+    );
+    const startY = clampPct(
+      parentStart.y +
+        spread * band +
+        Math.cos((parentIndex + 1) * 1.4 + feederIndex) * 2.5,
+      4,
+      96,
+    );
+    // Approach the orange node without landing on it (wire finishes the join)
+    return feederColors.map((color, index) => {
+      const t = (index + 1) / (feederColors.length + 1);
+      const ease = t * t;
+      const wobble =
+        Math.sin((parentIndex + 1) * 2.2 + feederIndex * 1.7 + index) *
+        (3.2 - ease * 2.2);
+      return {
+        x: Math.round(
+          clampPct(startX + (orange.x - startX) * t + wobble, 3, 86),
+        ),
+        y: Math.round(
+          clampPct(
+            startY + (orange.y - startY) * ease + wobble * 0.55,
+            4,
+            96,
+          ),
+        ),
+        color,
+      };
+    });
+  };
   const prepSideBranches = (() => {
     if (!prepExitDot) return [];
     if (content.prepSideChain === false) return [];
@@ -1499,12 +1627,44 @@ function renderFlowOrbit(content) {
     }
     if (!branchCount && Array.isArray(content.prepSideChain)) {
       // Legacy single-chain array → one branch
-      return [content.prepSideChain];
+      return [
+        {
+          id: "0",
+          weight: 0,
+          feeder: false,
+          parent: null,
+          nodes: content.prepSideChain,
+        },
+      ];
     }
     if (!branchCount) return [];
-    return Array.from({ length: branchCount }, (_, index) =>
-      buildPrepSideBranch(index, branchCount),
-    );
+    const specs = [];
+    for (let index = 0; index < branchCount; index += 1) {
+      const nodes = buildPrepSideBranch(index, branchCount);
+      specs.push({
+        id: String(index),
+        weight: index % 3,
+        feeder: false,
+        parent: null,
+        nodes,
+      });
+      for (let f = 0; f < prepOrangeFeederCount; f += 1) {
+        specs.push({
+          id: `${index}-f${f}`,
+          weight: (index + f + 1) % 3,
+          feeder: true,
+          parent: String(index),
+          feederIndex: f,
+          nodes: buildPrepOrangeFeeder(
+            index,
+            f,
+            nodes,
+            prepOrangeFeederCount,
+          ),
+        });
+      }
+    }
+    return specs;
   })();
   const focusKeys = ["prep", "collection", "breach", "post-breach"];
   const orbitMods = [
@@ -1526,7 +1686,10 @@ function renderFlowOrbit(content) {
     outcomeHub ? "flow-orbit--outcome-hub" : "",
     prepExitDot ? "flow-orbit--prep-exit" : "",
     prepSideBranches.length ? "flow-orbit--prep-side-chain" : "",
-    breachFanCount ? "flow-orbit--breach-fan" : "",
+    hasBreachFans ? "flow-orbit--breach-fan" : "",
+    useOrbitIllustration ? "flow-orbit--illustration" : "",
+    orbitPanelSide ? "flow-orbit--orbit-panel" : "",
+    orbitPanelSide ? `flow-orbit--orbit-panel-${orbitPanelSide}` : "",
   ]
     .filter(Boolean)
     .join(" ");
@@ -1602,19 +1765,27 @@ function renderFlowOrbit(content) {
     ? `<div class="flow-orbit__prep-side-chain" aria-hidden="true">
         ${prepSideBranches
           .map(
-            (branch, branchIndex) => `
-          <div class="flow-orbit__prep-side-branch" data-branch="${branchIndex}">
-            ${branch
-              .map((node, index) =>
-                flowDotMarkup(
+            (branch) => `
+          <div class="flow-orbit__prep-side-branch" data-branch="${escapeHtml(branch.id)}" data-weight="${branch.weight}"${
+              branch.feeder
+                ? ` data-feeder="${branch.feederIndex}" data-parent="${escapeHtml(branch.parent)}"`
+                : ""
+            }>
+            ${(branch.nodes || [])
+              .map((node, index) => {
+                const isOrange =
+                  !branch.feeder && index === (branch.nodes.length - 1);
+                return flowDotMarkup(
                   "",
                   "side",
-                  `prep-side-${branchIndex}-${index}`,
+                  isOrange
+                    ? `prep-orange-${branch.id}`
+                    : `prep-side-${branch.id}-${index}`,
                   node.color,
                   index === 0 ? "prep" : "collection",
                   `--fx:${node.x}%;--fy:${node.y}%`,
-                ),
-              )
+                );
+              })
               .join("")}
           </div>`,
           )
@@ -1634,45 +1805,109 @@ function renderFlowOrbit(content) {
       </div>`
     : "";
 
-  // Fan rays from the hub: every branch has 4–6 clearly separated red nodes.
-  // Keep the angle/radius range inside the panel so edge rays don’t collapse
-  // into a single clamped tip (which reads as a 1-node branch).
-  const breachFanBranches = Array.from({ length: breachFanCount }, (_, index) => {
-    const slot = breachFanCount <= 1 ? 0.5 : index / (breachFanCount - 1);
+  // Fan rays from the hub: every regular branch has 4–6 clearly separated red nodes.
+  // Reach the right edge of the section; thinner weights get smaller nodes.
+  const buildRegularBreachFan = (index, total) => {
+    const slot = total <= 1 ? 0.5 : index / (total - 1);
     const angle = -0.95 + slot * 1.9;
     const nodeCount = 4 + (index % 3); // 4, 5, or 6
-    const tipRadius = 46 + (index % 6) * 3.5;
+    const weight = index % 3;
+    const tipRadius = 72 + (index % 7) * 4.5;
     const startRadius = 16 + (index % 4) * 1.2;
     const originX = 12;
     const originY = 50;
-    return Array.from({ length: nodeCount }, (_, nodeIndex) => {
-      const t = nodeCount <= 1 ? 1 : nodeIndex / (nodeCount - 1);
-      const radius = startRadius + t * (tipRadius - startRadius);
-      const wobble =
-        Math.sin((index + 1) * 1.37 + nodeIndex * 0.9) * (1.1 - t * 0.55);
-      return {
-        x: Math.round(
-          clampPct(originX + Math.cos(angle) * radius + wobble, 10, 96),
-        ),
-        y: Math.round(
-          clampPct(
-            originY + Math.sin(angle) * radius + wobble * 0.5,
-            8,
-            92,
+    return {
+      weight,
+      long: false,
+      nodes: Array.from({ length: nodeCount }, (_, nodeIndex) => {
+        const t = nodeCount <= 1 ? 1 : nodeIndex / (nodeCount - 1);
+        const radius = startRadius + t * (tipRadius - startRadius);
+        const wobble =
+          Math.sin((index + 1) * 1.37 + nodeIndex * 0.9) * (1.1 - t * 0.55);
+        return {
+          x: Math.round(
+            clampPct(originX + Math.cos(angle) * radius + wobble, 10, 99),
           ),
-        ),
-        color: outcomeColor,
-      };
-    });
-  });
+          y: Math.round(
+            clampPct(
+              originY + Math.sin(angle) * radius + wobble * 0.5,
+              6,
+              94,
+            ),
+          ),
+          color: outcomeColor,
+        };
+      }),
+    };
+  };
+  // Extra long branches (12 nodes): weave fluidly into gaps between regular fans
+  const buildLongBreachFan = (index, total) => {
+    const nodeCount = 12;
+    // Sit in the angular gaps / quieter bands of the regular fan
+    const slot = total <= 1 ? 0.5 : (index + 0.37) / total;
+    const baseAngle = -0.9 + slot * 1.8;
+    const weight = (index + 1) % 3;
+    const tipRadius = 70 + (index % 6) * 5;
+    const startRadius = 12 + (index % 5) * 1.4;
+    const originX = 11 + (index % 3);
+    const originY = 48 + ((index % 5) - 2) * 2.5;
+    const spacingBias = 0.72 + (index % 4) * 0.09; // uneven radial pacing
+    return {
+      weight,
+      long: true,
+      nodes: Array.from({ length: nodeCount }, (_, nodeIndex) => {
+        const u = nodeCount <= 1 ? 1 : nodeIndex / (nodeCount - 1);
+        const t = Math.pow(u, spacingBias);
+        const radius = startRadius + t * (tipRadius - startRadius);
+        // Lateral weave so the path snakes into open pockets
+        const weave =
+          Math.sin(u * Math.PI * (1.55 + index * 0.19) + index * 1.1) *
+          (7.5 + (index % 4) * 1.6);
+        const weave2 =
+          Math.cos(u * Math.PI * (2.05 + index * 0.13) + index) *
+          (2.8 + (index % 3));
+        const angle =
+          baseAngle +
+          weave * 0.014 +
+          Math.sin(index * 0.7 + u * 3.2) * 0.07;
+        return {
+          x: Math.round(
+            clampPct(
+              originX + Math.cos(angle) * radius + weave * 0.35 + weave2 * 0.2,
+              8,
+              99,
+            ),
+          ),
+          y: Math.round(
+            clampPct(
+              originY + Math.sin(angle) * radius + weave * 0.55 + weave2 * 0.35,
+              4,
+              96,
+            ),
+          ),
+          color: outcomeColor,
+        };
+      }),
+    };
+  };
+  const breachFanBranches = [
+    ...Array.from({ length: breachFanCount }, (_, index) =>
+      buildRegularBreachFan(index, breachFanCount),
+    ),
+    ...Array.from({ length: breachFanLongCount }, (_, index) =>
+      buildLongBreachFan(index, breachFanLongCount),
+    ),
+  ];
 
   const breachFanLayer = breachFanBranches.length
     ? `<div class="flow-orbit__breach-fan" aria-hidden="true">
         ${breachFanBranches
           .map(
             (branch, branchIndex) => `
-          <div class="flow-orbit__breach-fan-branch" data-branch="${branchIndex}">
-            ${branch
+          <div class="flow-orbit__breach-fan-branch" data-branch="${branchIndex}" data-weight="${branch.weight}"${
+              branch.long ? ' data-long="true"' : ""
+            }>
+            ${branch.nodes
               .map((node, index) =>
                 flowDotMarkup(
                   "",
@@ -1745,15 +1980,69 @@ function renderFlowOrbit(content) {
     `;
   } else {
     const strokeClass = (phaseIndex) => {
+      if (phaseStrokeOff || orbitPanelSide) return "";
       if (progressive) return revealThrough === phaseIndex ? " is-stroke-on" : "";
       if (focusPhase == null && phaseIndex === 0) return " is-stroke-on";
       return "";
     };
     const blurClass = (phaseIndex) => {
-      if (focusPhase != null) return "";
+      if (focusPhase != null || phaseStrokeOff || orbitPanelSide) return "";
       if (progressive) return phaseIndex > revealThrough ? " is-phase-blurred" : "";
       return phaseIndex > 0 ? " is-phase-blurred" : "";
     };
+
+    const orbitPanelSection = orbitPanelSide
+      ? (() => {
+          const panelTitle = String(orbitPanel.title ?? "").trim();
+          const panelSubtitle = String(orbitPanel.subtitle ?? "").trim();
+          const panelBody = String(
+            orbitPanel.body ?? orbitPanel.text ?? "",
+          ).trim();
+          const panelBullets = Array.isArray(orbitPanel.bullets)
+            ? orbitPanel.bullets
+            : [];
+          return `<section class="flow-phase flow-phase--orbit-panel">
+            <div class="flow-phase__body flow-orbit-panel">
+              ${
+                panelTitle || panelSubtitle
+                  ? `<header class="slide-header flow-orbit-panel__header">
+                      ${
+                        panelTitle
+                          ? `<h2 class="type-h3">${escapeHtml(panelTitle)}</h2>`
+                          : ""
+                      }
+                      ${
+                        panelSubtitle
+                          ? `<p class="type-h4">${escapeHtml(panelSubtitle)}</p>`
+                          : ""
+                      }
+                    </header>`
+                  : ""
+              }
+              ${
+                panelBody
+                  ? `<p class="type-body flow-orbit-panel__body">${escapeHtml(panelBody)}</p>`
+                  : ""
+              }
+              ${
+                panelBullets.length
+                  ? `<ul class="bullet-list flow-orbit-panel__bullets">
+                      ${panelBullets
+                        .map((item) => {
+                          const label =
+                            typeof item === "string"
+                              ? item
+                              : item?.label ?? item?.text ?? "";
+                          return `<li class="type-body">${escapeHtml(String(label))}</li>`;
+                        })
+                        .join("")}
+                    </ul>`
+                  : ""
+              }
+            </div>
+          </section>`;
+        })()
+      : "";
 
     const prepPhase = showPrep
       ? `<section class="flow-phase flow-phase--prep${strokeClass(0)}${blurClass(0)}"${overviewPhaseAttrs(phaseTitles[0] ?? "Preparation", { selected: overviewInteractive && revealThrough == null })}>
@@ -1779,15 +2068,19 @@ function renderFlowOrbit(content) {
       : "";
 
     const mergedEarlyStroke =
-      progressive && (revealThrough === 0 || revealThrough === 1)
-        ? " is-stroke-on"
-        : strokeClass(0);
+      phaseStrokeOff || orbitPanelSide
+        ? ""
+        : progressive && (revealThrough === 0 || revealThrough === 1)
+          ? " is-stroke-on"
+          : strokeClass(0);
     const mergedEarlyBlur =
-      progressive && revealThrough != null && revealThrough < 0
-        ? " is-phase-blurred"
-        : progressive
-          ? ""
-          : blurClass(0);
+      phaseStrokeOff || orbitPanelSide
+        ? ""
+        : progressive && revealThrough != null && revealThrough < 0
+          ? " is-phase-blurred"
+          : progressive
+            ? ""
+            : blurClass(0);
     const mergedEarlyTitle = [
       phaseTitles[0] ?? "Preparation",
       phaseTitles[1] ?? "Collection",
@@ -1798,7 +2091,9 @@ function renderFlowOrbit(content) {
       mergePrepCollection && (showPrep || showCollection)
         ? `<section class="flow-phase flow-phase--prep-collection${mergedEarlyStroke}${mergedEarlyBlur}"${overviewPhaseAttrs(mergedEarlyTitle)}>
           <h3 class="flow-phase__title">${escapeHtml(mergedEarlyTitle)}</h3>
-          <div class="flow-phase__body">
+          ${
+            prepIllustrationMarkup ||
+            `<div class="flow-phase__body">
             ${prepSideChainLayer}
             <div class="flow-phase__grid flow-phase__grid--prep-collection" style="--flow-collection-count:${prepCollectionCount}">
               ${sourcesBlock}
@@ -1806,7 +2101,8 @@ function renderFlowOrbit(content) {
               ${collectionBlocks}
               ${prepExitBlock}
             </div>
-          </div>
+          </div>`
+          }
         </section>`
         : "";
 
@@ -1829,21 +2125,25 @@ function renderFlowOrbit(content) {
       : "";
 
     const mergedLateStroke =
-      progressive && (revealThrough === 2 || revealThrough === 3)
-        ? " is-stroke-on"
-        : strokeClass(2);
+      phaseStrokeOff || orbitPanelSide
+        ? ""
+        : progressive && (revealThrough === 2 || revealThrough === 3)
+          ? " is-stroke-on"
+          : strokeClass(2);
     const mergedLateBlur =
-      progressive && revealThrough != null && revealThrough < 2
-        ? " is-phase-blurred"
-        : progressive
-          ? ""
-          : blurClass(2);
+      phaseStrokeOff || orbitPanelSide
+        ? ""
+        : progressive && revealThrough != null && revealThrough < 2
+          ? " is-phase-blurred"
+          : progressive
+            ? ""
+            : blurClass(2);
     const mergedLateTitle = [
       phaseTitles[2] ?? "Breach",
       phaseTitles[3] ?? "Post-Breach",
     ].join(" · ");
     const breachPostHubOnly =
-      breachFanCount > 0
+      hasBreachFans
         ? `<div class="flow-orbit__outcomes-cluster flow-orbit__outcomes-cluster--hub flow-orbit__outcomes-cluster--hub-only">
             ${outcomeHubMarkup}
           </div>`
@@ -1852,25 +2152,34 @@ function renderFlowOrbit(content) {
       mergeBreachPostBreach && (showBreach || showPostBreach)
         ? `<section class="flow-phase flow-phase--breach-post${mergedLateStroke}${mergedLateBlur}"${overviewPhaseAttrs(mergedLateTitle)}>
           <h3 class="flow-phase__title">${escapeHtml(mergedLateTitle)}</h3>
-          <div class="flow-phase__body">
+          ${
+            breachIllustrationMarkup ||
+            `<div class="flow-phase__body">
             ${breachFanLayer}
-            <div class="flow-phase__grid flow-phase__grid--breach-post${breachFanCount > 0 ? " flow-phase__grid--breach-post-fan" : ""}">
+            <div class="flow-phase__grid flow-phase__grid--breach-post${hasBreachFans ? " flow-phase__grid--breach-post-fan" : ""}">
               ${
-                breachFanCount > 0
+                hasBreachFans
                   ? breachPostHubOnly
                   : `${showBreach ? outcomesInner : ""}${showPostBreach ? impactsInner : ""}`
               }
             </div>
-          </div>
+          </div>`
+          }
         </section>`
         : "";
 
-    const earlyPhases = mergePrepCollection
-      ? prepCollectionPhase
-      : `${prepPhase}${collectionPhase}`;
-    const latePhases = mergeBreachPostBreach
-      ? breachPostPhase
-      : `${breachPhase}${postBreachPhase}`;
+    const earlyPhases =
+      orbitPanelSide === "left"
+        ? orbitPanelSection
+        : mergePrepCollection
+          ? prepCollectionPhase
+          : `${prepPhase}${collectionPhase}`;
+    const latePhases =
+      orbitPanelSide === "right"
+        ? orbitPanelSection
+        : mergeBreachPostBreach
+          ? breachPostPhase
+          : `${breachPhase}${postBreachPhase}`;
     orbitInner = `
       ${earlyPhases}
       ${latePhases}
@@ -1881,12 +2190,14 @@ function renderFlowOrbit(content) {
     ${focusPhase == null ? cornerSection(content) : ""}
     ${focusPhase == null ? titleBlock(content) : ""}
     <div class="flow-orbit ${orbitMods}" data-flow-funnel${continueAttrs}>
-      <svg class="flow-funnel__wires" aria-hidden="true"></svg>
+      ${useOrbitIllustration ? "" : `<svg class="flow-funnel__wires" aria-hidden="true"></svg>`}
       ${orbitInner}
     </div>
   `;
 
-  queueMicrotask(() => fitFlowFunnel(el));
+  if (!useOrbitIllustration) {
+    queueMicrotask(() => fitFlowFunnel(el));
+  }
   return el;
 }
 

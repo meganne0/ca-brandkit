@@ -1,6 +1,6 @@
 {
-  "savedAt": "2026-11-03T17:31:33.665Z",
-  "publishId": "dec-7-1762201200000",
+  "savedAt": "2026-11-03T19:43:58.596Z",
+  "publishId": "dec-7-1793735817066",
   "slides": [
     {
       "title": "Cover",
@@ -907,6 +907,106 @@
       }
     },
     {
+      "title": "Attack paths \u00b7 Custom \u00b7 Prep",
+      "layout": "LY-24",
+      "bg": "DS-01",
+      "content": {
+        "sources": [
+          {
+            "label": ""
+          }
+        ],
+        "stages": [
+          {
+            "label": "Buy domains, build lure",
+            "color": "#887DFF"
+          },
+          {
+            "label": "Phish, quish, smish, URL",
+            "color": "#9977FF"
+          },
+          {
+            "label": "Victim engages with lure",
+            "color": "#BF66FF"
+          },
+          {
+            "label": "Keylogger, RAT",
+            "color": "#F17AFF"
+          },
+          {
+            "label": "Data sent to attacker...",
+            "color": "#FF8045"
+          }
+        ],
+        "outcomes": [
+          {
+            "label": "Business email compromise"
+          },
+          {
+            "label": "Ransomware"
+          },
+          {
+            "label": "Exfiltration"
+          },
+          {
+            "label": "Fraud"
+          },
+          {
+            "label": "Account takeover"
+          },
+          {
+            "label": "Espionage"
+          }
+        ],
+        "impacts": [
+          {
+            "label": "Ransomware announcement"
+          },
+          {
+            "label": "Notify or report incident"
+          },
+          {
+            "label": "Posted on dark web forums, marketplaces"
+          }
+        ],
+        "phaseTitles": [
+          "Preparation",
+          "Collection",
+          "Breach",
+          "Post-Breach"
+        ],
+        "stepLabels": [
+          "Recon",
+          "Weaponize",
+          "Deliver",
+          "Exploit",
+          "Install",
+          "Command and Control",
+          "Action-on-Objective",
+          "Publication"
+        ],
+        "sourceColor": "#1EADEC",
+        "outcomeColor": "#FF2828",
+        "impactColor": "#FF2828",
+        "revealThroughPhase": "collection",
+        "mergePrepCollection": true,
+        "hideNodeLabels": true,
+        "outcomeHub": true,
+        "hideStepBadges": true,
+        "prepExitDot": true,
+        "prepSideChain": true,
+        "mergeBreachPostBreach": true,
+        "breachFanCount": 55,
+        "publishId": "dec-7-17937355321102",
+        "prepSideBranchCount": 8,
+        "prepOrangeFeederCount": 6,
+        "breachFanLongCount": 10,
+        "orbitIllustration": true,
+        "orbitIllustrationPrep": "../assets/attack-path/prep-collection.svg?v=2",
+        "orbitIllustrationBreach": "../assets/attack-path/breach-post.svg?v=3"
+      }
+    },
+    {
       "title": "Attack paths \u00b7 Custom",
       "layout": "LY-24",
       "bg": "DS-01",
@@ -995,10 +1095,345 @@
         "hideStepBadges": true,
         "prepExitDot": true,
         "prepSideChain": true,
-        "prepSideBranchExtra": 22,
         "mergeBreachPostBreach": true,
-        "breachFanCount": 35,
-        "publishId": "dec-7-1793728945096"
+        "breachFanCount": 55,
+        "publishId": "dec-7-17937355321103",
+        "prepSideBranchCount": 8,
+        "prepOrangeFeederCount": 6,
+        "breachFanLongCount": 10,
+        "orbitIllustration": true,
+        "orbitIllustrationPrep": "../assets/attack-path/prep-collection.svg?v=2",
+        "orbitIllustrationBreach": "../assets/attack-path/breach-post.svg?v=3"
+      }
+    },
+    {
+      "title": "Attack paths \u00b7 Custom \u00b7 Prep notes",
+      "layout": "LY-24",
+      "bg": "DS-01",
+      "content": {
+        "sources": [
+          {
+            "label": ""
+          }
+        ],
+        "stages": [
+          {
+            "label": "Buy domains, build lure",
+            "color": "#887DFF"
+          },
+          {
+            "label": "Phish, quish, smish, URL",
+            "color": "#9977FF"
+          },
+          {
+            "label": "Victim engages with lure",
+            "color": "#BF66FF"
+          },
+          {
+            "label": "Keylogger, RAT",
+            "color": "#F17AFF"
+          },
+          {
+            "label": "Data sent to attacker...",
+            "color": "#FF8045"
+          }
+        ],
+        "outcomes": [
+          {
+            "label": "Business email compromise"
+          },
+          {
+            "label": "Ransomware"
+          },
+          {
+            "label": "Exfiltration"
+          },
+          {
+            "label": "Fraud"
+          },
+          {
+            "label": "Account takeover"
+          },
+          {
+            "label": "Espionage"
+          }
+        ],
+        "impacts": [
+          {
+            "label": "Ransomware announcement"
+          },
+          {
+            "label": "Notify or report incident"
+          },
+          {
+            "label": "Posted on dark web forums, marketplaces"
+          }
+        ],
+        "phaseTitles": [
+          "Preparation",
+          "Collection",
+          "Breach",
+          "Post-Breach"
+        ],
+        "stepLabels": [
+          "Recon",
+          "Weaponize",
+          "Deliver",
+          "Exploit",
+          "Install",
+          "Command and Control",
+          "Action-on-Objective",
+          "Publication"
+        ],
+        "sourceColor": "#1EADEC",
+        "outcomeColor": "#FF2828",
+        "impactColor": "#FF2828",
+        "revealThroughPhase": "collection",
+        "mergePrepCollection": true,
+        "hideNodeLabels": true,
+        "outcomeHub": true,
+        "hideStepBadges": true,
+        "prepExitDot": true,
+        "prepSideChain": true,
+        "mergeBreachPostBreach": true,
+        "breachFanCount": 55,
+        "publishId": "dec-7-17937355321104",
+        "prepSideBranchCount": 8,
+        "prepOrangeFeederCount": 6,
+        "breachFanLongCount": 10,
+        "orbitPanel": {
+          "side": "right",
+          "title": "Credential Theft",
+          "subtitle": "PhaaS + MaaS",
+          "body": "",
+          "bullets": [
+            "Phish kits that can steal MS365 auth tokens to bypass MF",
+            "Infostealers that grab session cookies, system specs, autofill data, local passwords",
+            "+$200 / month"
+          ]
+        },
+        "number": "",
+        "sectionTitle": "",
+        "title": "",
+        "subtitle": "",
+        "orbitIllustration": true,
+        "orbitIllustrationPrep": "../assets/attack-path/prep-collection.svg?v=2",
+        "orbitIllustrationBreach": "../assets/attack-path/breach-post.svg?v=3"
+      }
+    },
+    {
+      "title": "Attack paths \u00b7 Custom \u00b7 Breach notes",
+      "layout": "LY-24",
+      "bg": "DS-01",
+      "content": {
+        "sources": [
+          {
+            "label": ""
+          }
+        ],
+        "stages": [
+          {
+            "label": "Buy domains, build lure",
+            "color": "#887DFF"
+          },
+          {
+            "label": "Phish, quish, smish, URL",
+            "color": "#9977FF"
+          },
+          {
+            "label": "Victim engages with lure",
+            "color": "#BF66FF"
+          },
+          {
+            "label": "Keylogger, RAT",
+            "color": "#F17AFF"
+          },
+          {
+            "label": "Data sent to attacker...",
+            "color": "#FF8045"
+          }
+        ],
+        "outcomes": [
+          {
+            "label": "Business email compromise"
+          },
+          {
+            "label": "Ransomware"
+          },
+          {
+            "label": "Exfiltration"
+          },
+          {
+            "label": "Fraud"
+          },
+          {
+            "label": "Account takeover"
+          },
+          {
+            "label": "Espionage"
+          }
+        ],
+        "impacts": [
+          {
+            "label": "Ransomware announcement"
+          },
+          {
+            "label": "Notify or report incident"
+          },
+          {
+            "label": "Posted on dark web forums, marketplaces"
+          }
+        ],
+        "phaseTitles": [
+          "Preparation",
+          "Collection",
+          "Breach",
+          "Post-Breach"
+        ],
+        "stepLabels": [
+          "Recon",
+          "Weaponize",
+          "Deliver",
+          "Exploit",
+          "Install",
+          "Command and Control",
+          "Action-on-Objective",
+          "Publication"
+        ],
+        "sourceColor": "#1EADEC",
+        "outcomeColor": "#FF2828",
+        "impactColor": "#FF2828",
+        "revealThroughPhase": "post-breach",
+        "mergePrepCollection": true,
+        "hideNodeLabels": true,
+        "outcomeHub": true,
+        "hideStepBadges": true,
+        "prepExitDot": true,
+        "prepSideChain": true,
+        "mergeBreachPostBreach": true,
+        "breachFanCount": 55,
+        "publishId": "dec-7-17937355321105",
+        "prepSideBranchCount": 8,
+        "prepOrangeFeederCount": 6,
+        "breachFanLongCount": 10,
+        "orbitPanel": {
+          "side": "left",
+          "title": "Monetization",
+          "subtitle": "Ransomware-as-a-Service",
+          "body": "",
+          "bullets": [
+            "Operators develop and support the system",
+            "Affiliates pay a 1 time fee monthly subscription, or split profits",
+            "Commonly 70 - 80% profit for affiliates"
+          ]
+        },
+        "number": "",
+        "sectionTitle": "",
+        "title": "",
+        "subtitle": "",
+        "orbitIllustration": true,
+        "orbitIllustrationPrep": "../assets/attack-path/prep-collection.svg?v=2",
+        "orbitIllustrationBreach": "../assets/attack-path/breach-post.svg?v=3"
+      }
+    },
+    {
+      "title": "Attack paths \u00b7 Custom \u00b7 Overview",
+      "layout": "LY-24",
+      "bg": "DS-01",
+      "content": {
+        "sources": [
+          {
+            "label": ""
+          }
+        ],
+        "stages": [
+          {
+            "label": "Buy domains, build lure",
+            "color": "#887DFF"
+          },
+          {
+            "label": "Phish, quish, smish, URL",
+            "color": "#9977FF"
+          },
+          {
+            "label": "Victim engages with lure",
+            "color": "#BF66FF"
+          },
+          {
+            "label": "Keylogger, RAT",
+            "color": "#F17AFF"
+          },
+          {
+            "label": "Data sent to attacker...",
+            "color": "#FF8045"
+          }
+        ],
+        "outcomes": [
+          {
+            "label": "Business email compromise"
+          },
+          {
+            "label": "Ransomware"
+          },
+          {
+            "label": "Exfiltration"
+          },
+          {
+            "label": "Fraud"
+          },
+          {
+            "label": "Account takeover"
+          },
+          {
+            "label": "Espionage"
+          }
+        ],
+        "impacts": [
+          {
+            "label": "Ransomware announcement"
+          },
+          {
+            "label": "Notify or report incident"
+          },
+          {
+            "label": "Posted on dark web forums, marketplaces"
+          }
+        ],
+        "phaseTitles": [
+          "Preparation",
+          "Collection",
+          "Breach",
+          "Post-Breach"
+        ],
+        "stepLabels": [
+          "Recon",
+          "Weaponize",
+          "Deliver",
+          "Exploit",
+          "Install",
+          "Command and Control",
+          "Action-on-Objective",
+          "Publication"
+        ],
+        "sourceColor": "#1EADEC",
+        "outcomeColor": "#FF2828",
+        "impactColor": "#FF2828",
+        "revealThroughPhase": "none",
+        "mergePrepCollection": true,
+        "hideNodeLabels": true,
+        "outcomeHub": true,
+        "hideStepBadges": true,
+        "prepExitDot": true,
+        "prepSideChain": true,
+        "mergeBreachPostBreach": true,
+        "breachFanCount": 55,
+        "publishId": "dec-7-17937355321106",
+        "prepSideBranchCount": 8,
+        "prepOrangeFeederCount": 6,
+        "breachFanLongCount": 10,
+        "orbitIllustration": true,
+        "orbitIllustrationPrep": "../assets/attack-path/prep-collection.svg?v=2",
+        "orbitIllustrationBreach": "../assets/attack-path/breach-post.svg?v=3"
       }
     },
     {

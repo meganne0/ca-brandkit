@@ -325,6 +325,41 @@ function buildFormHtml(layout, content) {
   }
 
   if (layout === "LY-24") {
+    // Text+diagram notes slides: edit the copy panel only (diagram nodes stay locked)
+    if (c.orbitPanel && typeof c.orbitPanel === "object") {
+      const panel = c.orbitPanel;
+      const bullets = Array.isArray(panel.bullets) ? panel.bullets : [];
+      bits.push(
+        `<p class="deck-form__note">Diagram nodes are locked on this slide. Edit the text panel only.</p>`,
+      );
+      bits.push(field("panel-title", "Title", panel.title ?? ""));
+      bits.push(
+        field("panel-subtitle", "Subtitle", panel.subtitle ?? "", {
+          type: "textarea",
+          rows: 2,
+        }),
+      );
+      bits.push(
+        field("panel-body", "Body", panel.body ?? panel.text ?? "", {
+          type: "textarea",
+          rows: 4,
+        }),
+      );
+      bits.push(listHeader("Bullets", "Add bullet", "add-panel-bullet"));
+      bits.push(`<div class="deck-form__list" data-list="panel-bullets">`);
+      bullets.forEach((bullet, i) => {
+        const label =
+          typeof bullet === "string" ? bullet : bullet?.label ?? bullet?.text ?? "";
+        bits.push(`
+          <div class="deck-form__row" data-index="${i}">
+            <input class="deck-form__input" name="panel-bullet-${i}" value="${esc(label)}" placeholder="Bullet text" />
+            <button type="button" class="deck-form__btn deck-form__btn--ghost" data-action="remove-panel-bullet" data-index="${i}" aria-label="Remove">✕</button>
+          </div>
+        `);
+      });
+      bits.push(`</div>`);
+      return bits.join("");
+    }
     const sources = Array.isArray(c.sources) ? c.sources : [];
     const stages = Array.isArray(c.stages) ? c.stages : [];
     bits.push(listHeader("Source nodes", "Add source", "add-source"));
@@ -614,6 +649,78 @@ function readContentFromForm(form, layout, base = {}) {
   }
 
   if (layout === "LY-24") {
+    const preserveOrbitFlags = (target) => {
+      if (base.revealThroughPhase != null) {
+        target.revealThroughPhase = base.revealThroughPhase;
+      }
+      if (base.revealThrough != null) target.revealThrough = base.revealThrough;
+      if (base.focusPhase != null) target.focusPhase = base.focusPhase;
+      if (Array.isArray(base.phaseTitles)) target.phaseTitles = base.phaseTitles;
+      if (Array.isArray(base.stepLabels)) target.stepLabels = base.stepLabels;
+      if (base.phased != null) target.phased = base.phased;
+      if (base.mergePrepCollection != null) {
+        target.mergePrepCollection = base.mergePrepCollection;
+      }
+      if (base.mergeBreachPostBreach != null) {
+        target.mergeBreachPostBreach = base.mergeBreachPostBreach;
+      }
+      if (base.hideNodeLabels != null) target.hideNodeLabels = base.hideNodeLabels;
+      if (base.hideStepBadges != null) target.hideStepBadges = base.hideStepBadges;
+      if (base.outcomeHub != null) target.outcomeHub = base.outcomeHub;
+      if (base.prepExitDot != null) target.prepExitDot = base.prepExitDot;
+      if (base.prepSideChain != null) target.prepSideChain = base.prepSideChain;
+      if (base.prepSideBranchExtra != null) {
+        target.prepSideBranchExtra = base.prepSideBranchExtra;
+      }
+      if (base.prepSideBranchCount != null) {
+        target.prepSideBranchCount = base.prepSideBranchCount;
+      }
+      if (base.prepOrangeFeederCount != null) {
+        target.prepOrangeFeederCount = base.prepOrangeFeederCount;
+      }
+      if (base.breachFanCount != null) target.breachFanCount = base.breachFanCount;
+      if (base.breachFanLongCount != null) {
+        target.breachFanLongCount = base.breachFanLongCount;
+      }
+      if (base.phaseHighlight != null) target.phaseHighlight = base.phaseHighlight;
+      if (base.orbitIllustration != null) {
+        target.orbitIllustration = base.orbitIllustration;
+      }
+      if (base.orbitIllustrationPrep != null) {
+        target.orbitIllustrationPrep = base.orbitIllustrationPrep;
+      }
+      if (base.orbitIllustrationBreach != null) {
+        target.orbitIllustrationBreach = base.orbitIllustrationBreach;
+      }
+      return target;
+    };
+
+    // Notes slides: update text panel only; keep diagram node data intact
+    if (base.orbitPanel && typeof base.orbitPanel === "object") {
+      const bullets = [];
+      let bi = 0;
+      while (form.elements.namedItem(`panel-bullet-${bi}`)) {
+        const label = val(form, `panel-bullet-${bi}`);
+        if (label) bullets.push(label);
+        bi += 1;
+      }
+      next.sources = base.sources;
+      next.stages = base.stages;
+      next.outcomes = base.outcomes;
+      next.impacts = base.impacts;
+      next.sourceColor = base.sourceColor ?? "#1EADEC";
+      next.outcomeColor = base.outcomeColor ?? "#FF2828";
+      next.impactColor = base.impactColor ?? next.outcomeColor;
+      next.orbitPanel = {
+        ...base.orbitPanel,
+        title: val(form, "panel-title"),
+        subtitle: val(form, "panel-subtitle"),
+        body: val(form, "panel-body"),
+        bullets,
+      };
+      return preserveOrbitFlags(next);
+    }
+
     const sources = [];
     let i = 0;
     while (form.elements.namedItem(`source-${i}`)) {
@@ -650,37 +757,8 @@ function readContentFromForm(form, layout, base = {}) {
     next.sourceColor = base.sourceColor ?? "#1EADEC";
     next.outcomeColor = base.outcomeColor ?? "#FF2828";
     next.impactColor = base.impactColor ?? next.outcomeColor;
-    // Preserve deck-beat / detail-slide fields the form does not edit
-    if (base.revealThroughPhase != null) {
-      next.revealThroughPhase = base.revealThroughPhase;
-    }
-    if (base.revealThrough != null) next.revealThrough = base.revealThrough;
-    if (base.focusPhase != null) next.focusPhase = base.focusPhase;
-    if (Array.isArray(base.phaseTitles)) next.phaseTitles = base.phaseTitles;
-    if (Array.isArray(base.stepLabels)) next.stepLabels = base.stepLabels;
-    if (base.phased != null) next.phased = base.phased;
-    if (base.mergePrepCollection != null) {
-      next.mergePrepCollection = base.mergePrepCollection;
-    }
-    if (base.mergeBreachPostBreach != null) {
-      next.mergeBreachPostBreach = base.mergeBreachPostBreach;
-    }
-    if (base.hideNodeLabels != null) next.hideNodeLabels = base.hideNodeLabels;
-    if (base.hideStepBadges != null) next.hideStepBadges = base.hideStepBadges;
-    if (base.outcomeHub != null) next.outcomeHub = base.outcomeHub;
-    if (base.prepExitDot != null) next.prepExitDot = base.prepExitDot;
-    if (base.prepSideChain != null) next.prepSideChain = base.prepSideChain;
-    if (base.prepSideBranchExtra != null) {
-      next.prepSideBranchExtra = base.prepSideBranchExtra;
-    }
-    if (base.prepSideBranchCount != null) {
-      next.prepSideBranchCount = base.prepSideBranchCount;
-    }
-    if (base.breachFanCount != null) next.breachFanCount = base.breachFanCount;
-    if (base.breachFanLongCount != null) {
-      next.breachFanLongCount = base.breachFanLongCount;
-    }
-    return next;
+    if (base.orbitPanel != null) next.orbitPanel = base.orbitPanel;
+    return preserveOrbitFlags(next);
   }
 
   if (layout === "LY-03") {
@@ -707,6 +785,10 @@ function mutateList(layout, content, action) {
 
   if (action === "add-bullet") {
     next.bullets = [...(next.bullets ?? []), "New bullet"];
+  } else if (action === "add-panel-bullet") {
+    const panel = { ...(next.orbitPanel || {}) };
+    panel.bullets = [...(panel.bullets ?? []), "New bullet"];
+    next.orbitPanel = panel;
   } else if (action === "remove-bullet") {
     /* handled with index */
   } else if (action === "add-url") {
@@ -801,7 +883,12 @@ export function mountSlideContentForm(container, { layout, content, onChange }) 
       current = readContentFromForm(form, layout, current);
 
       if (action === "remove-bullet") current.bullets = removeAt(current.bullets, index);
-      else if (action === "remove-url") current.items = removeAt(current.items, index);
+      else if (action === "remove-panel-bullet") {
+        current.orbitPanel = {
+          ...(current.orbitPanel || {}),
+          bullets: removeAt(current.orbitPanel?.bullets, index),
+        };
+      } else if (action === "remove-url") current.items = removeAt(current.items, index);
       else if (action === "remove-source") current.sources = removeAt(current.sources, index);
       else if (action === "remove-stage") current.stages = removeAt(current.stages, index);
       else if (action === "remove-outcome") current.outcomes = removeAt(current.outcomes, index);

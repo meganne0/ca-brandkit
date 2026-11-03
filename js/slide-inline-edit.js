@@ -244,6 +244,40 @@ export function harvestSlideContent(slide) {
     };
   }
 
+  if (root.classList.contains("layout-flow-orbit")) {
+    const panel = root.querySelector(".flow-orbit-panel");
+    if (panel && base.orbitPanel && typeof base.orbitPanel === "object") {
+      const title =
+        panel.querySelector(".slide-header .type-h3")?.textContent.trim() ??
+        base.orbitPanel.title ??
+        "";
+      const subtitle =
+        panel.querySelector(".slide-header .type-h4")?.textContent.trim() ??
+        base.orbitPanel.subtitle ??
+        "";
+      const body =
+        panel.querySelector(".flow-orbit-panel__body")?.textContent.trim() ??
+        base.orbitPanel.body ??
+        base.orbitPanel.text ??
+        "";
+      const bullets = [...panel.querySelectorAll(".bullet-list li")].map((li) =>
+        li.textContent.trim(),
+      );
+      return {
+        ...base,
+        orbitPanel: {
+          ...base.orbitPanel,
+          title,
+          subtitle,
+          body,
+          bullets: bullets.length ? bullets : base.orbitPanel.bullets,
+        },
+      };
+    }
+    // Diagram-only orbit slides: keep JSON as-is (nodes aren't inline-edited)
+    return { ...base };
+  }
+
   if (root.classList.contains("layout-timeline")) {
     const steps = [...root.querySelectorAll(".timeline-item")].map((item, i) => ({
       ...(base.steps?.[i] ?? {}),
@@ -309,10 +343,22 @@ export function enableInlineEditing(slide, { onCommit }) {
     "h1, h2, h3, h4, p, li, .type-metric, .type-numeral, .type-label, .type-caption, .type-body, .type-h1, .type-h3, .type-h4, .type-h5, .layout-image-title__chip",
   );
 
+  const orbitPanelMode = Boolean(content.querySelector(".flow-orbit--orbit-panel"));
+
   textTargets.forEach((el) => {
     if (el.closest(".ca-footer")) return;
     if (el.classList.contains("metric-card__source")) return;
     if (el.querySelector(".layout-image-title__chip")) return; // edit chip, not wrapper
+    // Notes slides: only the text panel is editable — not diagram phase titles/nodes
+    if (orbitPanelMode) {
+      if (!el.closest(".flow-orbit-panel")) return;
+    } else if (
+      el.closest(
+        ".flow-orbit__prep-side-chain, .flow-orbit__breach-fan, .flow-phase__title",
+      )
+    ) {
+      return;
+    }
     el.contentEditable = "true";
     el.spellcheck = false;
     el.classList.add("is-editable");
