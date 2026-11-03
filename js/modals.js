@@ -21,7 +21,7 @@ export const MODAL_FORMATS = {
     label: "Portrait",
     className: "canvas--li-portrait",
   },
-  /** Working canvas; download always crops to the navy hug box. */
+  /** Working canvas; download crops to the modal on a transparent PNG. */
   hug: {
     id: "hug",
     w: 1400,
@@ -29,7 +29,7 @@ export const MODAL_FORMATS = {
     label: "Hugging Screenshot",
     className: "canvas--li-square",
   },
-  /** Working canvas; download crops to the navy hug box around the timeline modal. */
+  /** Working canvas; download crops to the timeline modal on a transparent PNG. */
   timeline: {
     id: "timeline",
     w: 1400,
@@ -335,11 +335,16 @@ function accentClass(accent) {
 }
 
 function modalMarkup(modal, index) {
-  const title = modal.title?.trim();
-  const subtitle = modal.subtitle?.trim();
-  const body = modal.body?.trim();
-  const windowTitle = modal.windowTitle?.trim();
-  const windowBody = modal.windowBody?.trim();
+  const titleRaw = modal.title?.trim();
+  const subtitleRaw = modal.subtitle?.trim();
+  const bodyRaw = modal.body?.trim();
+  const windowTitleRaw = modal.windowTitle?.trim();
+  const windowBodyRaw = modal.windowBody?.trim();
+  const title = titleRaw ? formatModalDates(titleRaw) : "";
+  const subtitle = subtitleRaw ? formatModalDates(subtitleRaw) : "";
+  const body = bodyRaw ? formatModalDates(bodyRaw) : "";
+  const windowTitle = windowTitleRaw ? formatModalDates(windowTitleRaw) : "";
+  const windowBody = windowBodyRaw ? formatModalDates(windowBodyRaw) : "";
   const role = index === 0 ? "back" : "front";
   const hasWindow = windowTitle || windowBody;
 
@@ -362,40 +367,71 @@ function modalMarkup(modal, index) {
   `;
 }
 
-/** Format compact US datetimes for hug subtitles, e.g. 3/31/2026, 5:36:21 AM → March 31, 2026, 5:36:21 AM */
-function formatHugSubtitleDate(text) {
-  const raw = String(text ?? "").trim();
-  const match = raw.match(
-    /^(\d{1,2})\/(\d{1,2})\/(\d{4}),\s+(\d{1,2}):(\d{2}):(\d{2})\s*(AM|PM)$/i,
+const MONTH_NAMES = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
+];
+
+/**
+ * Expand compact US dates/datetimes anywhere in modal copy.
+ * Examples:
+ *   3/31/2026, 5:36:21 AM → March 31, 2026, 5:36:21 AM
+ *   3/31/2026, 5:36 AM → March 31, 2026, 5:36 AM
+ *   3/31/2026 → March 31, 2026
+ */
+function formatModalDates(text) {
+  const raw = String(text ?? "");
+  if (!raw) return raw;
+  return raw.replace(
+    /\b(\d{1,2})\/(\d{1,2})\/(\d{4})(?:,\s+(\d{1,2}):(\d{2})(?::(\d{2}))?\s*(AM|PM))?\b/gi,
+    (
+      _full,
+      month,
+      day,
+      year,
+      hour,
+      minute,
+      second,
+      meridiem,
+    ) => {
+      const monthName = MONTH_NAMES[Number(month) - 1];
+      if (!monthName) return _full;
+      const datePart = `${monthName} ${Number(day)}, ${year}`;
+      if (!hour || !minute || !meridiem) return datePart;
+      const time =
+        second != null && second !== ""
+          ? `${Number(hour)}:${minute}:${second}`
+          : `${Number(hour)}:${minute}`;
+      return `${datePart}, ${time} ${meridiem.toUpperCase()}`;
+    },
   );
-  if (!match) return raw;
-  const [, month, day, year, hour, minute, second, meridiem] = match;
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-  const monthName = months[Number(month) - 1];
-  if (!monthName) return raw;
-  return `${monthName} ${Number(day)}, ${year}, ${Number(hour)}:${minute}:${second} ${meridiem.toUpperCase()}`;
+}
+
+/** @deprecated use formatModalDates */
+function formatHugSubtitleDate(text) {
+  return formatModalDates(String(text ?? "").trim());
 }
 
 function hugModalMarkup(modal) {
-  const title = modal.title?.trim() || "Message Details";
+  const title = formatModalDates(modal.title?.trim() || "Message Details");
   const subtitleRaw = modal.subtitle?.trim();
-  const subtitle = subtitleRaw ? formatHugSubtitleDate(subtitleRaw) : "";
-  const body = modal.body?.trim();
-  const windowTitle = modal.windowTitle?.trim();
-  const windowBody = modal.windowBody?.trim();
+  const subtitle = subtitleRaw ? formatModalDates(subtitleRaw) : "";
+  const bodyRaw = modal.body?.trim();
+  const body = bodyRaw ? formatModalDates(bodyRaw) : "";
+  const windowTitleRaw = modal.windowTitle?.trim();
+  const windowTitle = windowTitleRaw ? formatModalDates(windowTitleRaw) : "";
+  const windowBodyRaw = modal.windowBody?.trim();
+  const windowBody = windowBodyRaw ? formatModalDates(windowBodyRaw) : "";
   const hasWindow = windowTitle || windowBody;
 
   return `
@@ -434,10 +470,10 @@ function applyHugExportPadding(hugEl) {
 function paintHugModal(canvas, state) {
   const format = MODAL_FORMATS.hug;
   canvas.className =
-    "canvas canvas--li-square ca-modals-canvas ca-modals-canvas--hug";
+    "canvas canvas--li-square ca-modals-canvas ca-modals-canvas--hug ca-modals-canvas--transparent";
   canvas.style.width = `${format.w}px`;
   canvas.style.height = `${format.h}px`;
-  canvas.style.background = "#060a14";
+  canvas.style.background = "transparent";
   canvas.replaceChildren();
   delete canvas.dataset.bg;
   delete canvas.dataset.decor;
@@ -454,8 +490,9 @@ function paintHugModal(canvas, state) {
 }
 
 function timelineEventMarkup(ev) {
-  const title = ev.title?.trim() || "Employee Compromised";
-  const date = ev.date?.trim();
+  const title = formatModalDates(ev.title?.trim() || "Employee Compromised");
+  const dateRaw = ev.date?.trim();
+  const date = dateRaw ? formatModalDates(dateRaw) : "";
   const name = ev.employeeName?.trim();
   const ip = ev.ip?.trim();
   const metaBits = [
@@ -481,10 +518,12 @@ function timelineEventMarkup(ev) {
 }
 
 function timelineMarkup(timeline = {}) {
-  const title = timeline.title?.trim() || "Attack Timeline";
-  const attackTitle =
-    timeline.attackTitle?.trim() || "Attack Initiated by Qilin";
-  const attackDate = timeline.attackDate?.trim();
+  const title = formatModalDates(timeline.title?.trim() || "Attack Timeline");
+  const attackTitle = formatModalDates(
+    timeline.attackTitle?.trim() || "Attack Initiated by Qilin",
+  );
+  const attackDateRaw = timeline.attackDate?.trim();
+  const attackDate = attackDateRaw ? formatModalDates(attackDateRaw) : "";
   const events = Array.isArray(timeline.events) ? timeline.events : [];
 
   return `
@@ -519,10 +558,10 @@ function timelineMarkup(timeline = {}) {
 function paintTimeline(canvas, state) {
   const format = MODAL_FORMATS.timeline;
   canvas.className =
-    "canvas canvas--li-square ca-modals-canvas ca-modals-canvas--hug ca-modals-canvas--timeline";
+    "canvas canvas--li-square ca-modals-canvas ca-modals-canvas--hug ca-modals-canvas--timeline ca-modals-canvas--transparent";
   canvas.style.width = `${format.w}px`;
   canvas.style.height = `${format.h}px`;
-  canvas.style.background = "#060a14";
+  canvas.style.background = "transparent";
   canvas.replaceChildren();
   delete canvas.dataset.bg;
   delete canvas.dataset.decor;
@@ -540,9 +579,12 @@ function paintTimeline(canvas, state) {
 
 function textBlockMarkup(state) {
   if (state.canvasFormat === "square") return "";
-  const eyebrow = state.eyebrow?.trim();
-  const title = state.title?.trim();
-  const subtitle = state.subtitle?.trim();
+  const eyebrowRaw = state.eyebrow?.trim();
+  const titleRaw = state.title?.trim();
+  const subtitleRaw = state.subtitle?.trim();
+  const eyebrow = eyebrowRaw ? formatModalDates(eyebrowRaw) : "";
+  const title = titleRaw ? formatModalDates(titleRaw) : "";
+  const subtitle = subtitleRaw ? formatModalDates(subtitleRaw) : "";
   if (!eyebrow && !title && !subtitle) return "";
 
   return `

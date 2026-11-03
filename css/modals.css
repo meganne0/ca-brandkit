@@ -1083,17 +1083,19 @@ body {
   display: none;
 }
 
-.modals-stage--hug {
+.modals-stage--hug,
+.modals-stage--timeline {
   aspect-ratio: 1;
-  background: #060a14;
-  background-image: none;
 }
 
-.canvas.ca-modals-canvas--hug {
-  background: #060a14 !important;
+.canvas.ca-modals-canvas--hug,
+.canvas.ca-modals-canvas--timeline {
+  --timeline-red: #ff2828;
+  --timeline-orange: #f25835;
+  background: transparent !important;
 }
 
-/* Hugging Screenshot — solid navy field, ~10% pad set in JS from modal width */
+/* Hugging Screenshot / Timeline — transparent field; ~10% pad set in JS */
 .ca-modals-hug-stage {
   position: absolute;
   inset: 0;
@@ -1101,7 +1103,7 @@ body {
   align-items: center;
   justify-content: center;
   pointer-events: none;
-  background: #060a14;
+  background: transparent;
 }
 
 .ca-modals-hug {
@@ -1112,7 +1114,7 @@ body {
   max-width: none;
   padding: 0;
   box-sizing: border-box;
-  background: #060a14;
+  background: transparent;
 }
 
 .ca-modal.ca-modal--hug {
@@ -1171,19 +1173,6 @@ body {
 
 .ca-modal--hug .ca-modal__window-body {
   font-size: 16px;
-}
-
-/* Attack Timeline — same navy hug plate / violet modal as Hugging Screenshot */
-.modals-stage--timeline {
-  aspect-ratio: 1;
-  background: #060a14;
-  background-image: none;
-}
-
-.canvas.ca-modals-canvas--timeline {
-  --timeline-red: #ff2828;
-  --timeline-orange: #f25835;
-  background: #060a14 !important;
 }
 
 .ca-modal.ca-modal--timeline {

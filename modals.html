@@ -12,7 +12,7 @@
     />
     <link rel="stylesheet" href="css/backgrounds.css?v=21" />
     <link rel="stylesheet" href="css/decor-youtube.css?v=1" />
-    <link rel="stylesheet" href="css/modals.css?v=32" />
+    <link rel="stylesheet" href="css/modals.css?v=33" />
     <script src="js/auth-gate.js?v=6"></script>
   </head>
   <body>
@@ -301,7 +301,7 @@
           <div id="modals-options-hug" hidden>
             <p class="modals-hint">
               Fixed look: solid navy background, violet outline, no glow, close ×,
-              content-hugging modal. Download crops with ~10% margin around the modal.
+              content-hugging modal. Download is a transparent PNG cropped to the modal.
             </p>
             <div class="modals-modal-block">
               <h3 class="modals-modal-block__title">Modal content</h3>
@@ -337,7 +337,7 @@
             <p class="modals-hint">
               Same solid navy + violet modal as Hugging Screenshot. Most recent
               event first: red attack initiation on top, then any number of orange
-              employee-compromise events. Download crops with ~10% margin.
+              employee-compromise events. Download is a transparent PNG cropped to the modal.
             </p>
 
             <div class="modals-modal-block">
@@ -418,7 +418,7 @@
         formatForState,
         measureImageAspect,
         ensureImageAspects,
-      } from "./js/modals.js?v=21";
+      } from "./js/modals.js?v=23";
       import { downloadPaintedThumbnail } from "./js/youtube-download.js?v=8";
 
       // Always boot from defaults — do not restore prior editor sessions.
@@ -591,7 +591,7 @@
         stage.classList.toggle("modals-stage--timeline", timeline);
         stage.classList.toggle(
           "modals-stage--checker",
-          !fixedPlate && state.exportMode === "transparent",
+          fixedPlate || state.exportMode === "transparent",
         );
       }
 
@@ -760,9 +760,9 @@
         paintModals(canvas, state, paintDeps());
         const format = formatForState(state);
         if (state.canvasFormat === "hug") {
-          previewMeta.textContent = `Hugging Screenshot · crops to content on download`;
+          previewMeta.textContent = `Hugging Screenshot · transparent · crops to modal`;
         } else if (state.canvasFormat === "timeline") {
-          previewMeta.textContent = `Timeline · crops to content on download`;
+          previewMeta.textContent = `Timeline · transparent · crops to modal`;
         } else {
           previewMeta.textContent =
             state.exportMode === "transparent"
@@ -985,14 +985,9 @@
               width: format.w,
               height: format.h,
               className: `canvas ${format.className} ca-modals-canvas`,
-              ...(hugPlate
-                ? {
-                    backgroundColor: "#060a14",
-                    cropRootSelector: ".ca-modals-hug",
-                  }
-                : cropExport
-                  ? { backgroundColor: null, cropToContent: true }
-                  : {}),
+              ...(hugPlate || cropExport
+                ? { backgroundColor: null, cropToContent: true, cropPadding: 12 }
+                : {}),
             },
           );
         } catch (err) {
