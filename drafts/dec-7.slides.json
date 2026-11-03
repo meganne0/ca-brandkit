@@ -1,6 +1,6 @@
 {
-  "savedAt": "2026-11-02T22:14:00.000Z",
-  "publishId": "dec-7-1762119200000",
+  "savedAt": "2026-11-02T22:33:04.097Z",
+  "publishId": "dec-7-1793658784074",
   "slides": [
     {
       "title": "Cover",
@@ -46,7 +46,7 @@
       "bg": "DS-01",
       "content": {
         "sectionTitle": "",
-        "title": "What we\u2019ll cover",
+        "title": "What we’ll cover",
         "subtitle": "",
         "items": [
           {
@@ -83,8 +83,8 @@
       "layout": "LY-05",
       "bg": "DS-01",
       "content": {
-        "text": "We alert organizations when their credentials have been compromised, before it\u2019s posted on the dark web.",
-        "accent": "before it\u2019s posted on the dark web.",
+        "text": "We alert organizations when their credentials have been compromised, before it’s posted on the dark web.",
+        "accent": "before it’s posted on the dark web.",
         "textSize": "lg",
         "panel": true
       }
@@ -222,7 +222,7 @@
       }
     },
     {
-      "title": "Attack paths \u00b7 Preparation",
+      "title": "Attack paths · Preparation",
       "layout": "LY-24",
       "bg": "DS-01",
       "content": {
@@ -319,7 +319,7 @@
       }
     },
     {
-      "title": "Attack paths \u00b7 Collection",
+      "title": "Attack paths · Collection",
       "layout": "LY-24",
       "bg": "DS-01",
       "content": {
@@ -416,7 +416,7 @@
       }
     },
     {
-      "title": "Attack paths \u00b7 Breach",
+      "title": "Attack paths · Breach",
       "layout": "LY-24",
       "bg": "DS-01",
       "content": {
@@ -513,7 +513,7 @@
       }
     },
     {
-      "title": "Attack paths \u00b7 Post-Breach",
+      "title": "Attack paths · Post-Breach",
       "layout": "LY-24",
       "bg": "DS-01",
       "content": {
@@ -614,15 +614,15 @@
       "layout": "LY-05",
       "bg": "BG-02",
       "content": {
-        "text": "Breach:  The unauthorized access to a company\u2019s systems resulting in data theft.",
-        "accent": "unauthorized access to a company\u2019s systems",
+        "text": "Breach:  The unauthorized access to a company’s systems resulting in data theft.",
+        "accent": "unauthorized access to a company’s systems",
         "textSize": "lg",
         "panel": false,
         "author": ""
       }
     },
     {
-      "title": "Breach sample \u00b7 Card dump",
+      "title": "Breach sample · Card dump",
       "layout": "LY-26",
       "bg": "DS-06",
       "content": {
@@ -640,7 +640,7 @@
             "Caleb",
             "Wright",
             "c.wright@northwind.ca",
-            "$2b$12$Df8s\u20266JmN",
+            "$2b$12$Df8s…6JmN",
             "64 Ridge Rd\nSaskatoon, SK",
             "+1 306 555-0183",
             "3777"
@@ -649,8 +649,8 @@
             "Maya",
             "Torres",
             "admin@lakeview.com",
-            "$2b$12$Gh2u\u20260RqV",
-            "1101 Canal St\nQu\u00e9bec, QC",
+            "$2b$12$Gh2u…0RqV",
+            "1101 Canal St\nQuébec, QC",
             "+1 418 555-0156",
             "6010"
           ],
@@ -658,7 +658,7 @@
             "Ethan",
             "Baker",
             "ebaker@canadaretail.ca",
-            "$2b$12$Jk5v\u20263WzP",
+            "$2b$12$Jk5v…3WzP",
             "27 Maple Ct\nEdmonton, AB",
             "+1 780 555-0121",
             "4532"
@@ -667,7 +667,7 @@
             "Zoe",
             "Nguyen",
             "zoe.nguyen@pacificgoods.com",
-            "$2b$12$Mn9w\u20267HsB",
+            "$2b$12$Mn9w…7HsB",
             "455 Pacific Ave\nYellowknife, NT",
             "+1 867 555-0194",
             "8880"
@@ -676,7 +676,7 @@
             "Jordan",
             "Lee",
             "bluestar5513@gmail.com",
-            "$2b$12$Qk9m\u2026fA3e",
+            "$2b$12$Qk9m…fA3e",
             "1842 Oak Ave\nToronto, ON",
             "+1 416 555-0142",
             "4242"
@@ -685,7 +685,7 @@
             "Priya",
             "Nair",
             "coolcat2004@hotmail.com",
-            "$2b$12$Hn4p\u20269LwQ",
+            "$2b$12$Hn4p…9LwQ",
             "77 Mercer St\nVancouver, BC",
             "+1 604 555-0198",
             "8811"
@@ -694,8 +694,8 @@
             "Marcus",
             "Chen",
             "xXshadowfoxXx@yahoo.com",
-            "$2b$12$Rt2c\u20267KpM",
-            "905 Rue Saint-Denis\nMontr\u00e9al, QC",
+            "$2b$12$Rt2c…7KpM",
+            "905 Rue Saint-Denis\nMontréal, QC",
             "+1 514 555-0133",
             "6011"
           ],
@@ -703,7 +703,7 @@
             "Elena",
             "Rossi",
             "mapleleaf99@protonmail.com",
-            "$2b$12$Vw8a\u20262HsY",
+            "$2b$12$Vw8a…2HsY",
             "41 King St W\nCalgary, AB",
             "+1 403 555-0177",
             "4556"
@@ -712,7 +712,7 @@
             "Noah",
             "Patel",
             "jordan.lee@gmail.com",
-            "$2b$12$Zm1d\u20265BqR",
+            "$2b$12$Zm1d…5BqR",
             "12 Birch Lane\nWinnipeg, MB",
             "+1 204 555-0164",
             "3003"
@@ -721,7 +721,7 @@
             "Aisha",
             "Brooks",
             "gamer_dude7@hotmail.com",
-            "$2b$12$Xc7k\u20268NtP",
+            "$2b$12$Xc7k…8NtP",
             "560 Market St\nHalifax, NS",
             "+1 902 555-0119",
             "9012"
@@ -730,7 +730,7 @@
             "Diego",
             "Morales",
             "pizza.lover88@yahoo.com",
-            "$2b$12$Ab3n\u20264YwK",
+            "$2b$12$Ab3n…4YwK",
             "318 Palm Blvd\nOttawa, ON",
             "+1 613 555-0172",
             "5100"
@@ -739,7 +739,7 @@
             "Hannah",
             "Kim",
             "northernlights22@protonmail.com",
-            "$2b$12$Lp6r\u20261CxT",
+            "$2b$12$Lp6r…1CxT",
             "902 Laurel Dr\nVictoria, BC",
             "+1 250 555-0149",
             "2221"
@@ -749,7 +749,7 @@
       }
     },
     {
-      "title": "Breach sample \u00b7 Applicant dump",
+      "title": "Breach sample · Applicant dump",
       "layout": "LY-26",
       "bg": "DS-06",
       "content": {
@@ -864,7 +864,7 @@
       }
     },
     {
-      "title": "Breach sample \u00b7 Credential pairs",
+      "title": "Breach sample · Credential pairs",
       "layout": "LY-26",
       "bg": "DS-06",
       "content": {
@@ -932,10 +932,11 @@
       "layout": "LY-05",
       "bg": "BG-02",
       "content": {
-        "text": "...then came the SaaS-ification of cybercrime",
+        "text": "Then came the SaaS-ification of cybercrime",
         "accent": "SaaS-ification",
         "textSize": "lg",
-        "panel": false
+        "panel": false,
+        "author": ""
       }
     },
     {
@@ -968,7 +969,7 @@
         "accent": "employee credentials leak in the 12 months before",
         "textSize": "md",
         "panel": true,
-        "author": "\u2014Verizon DBIR 2026"
+        "author": "—Verizon DBIR 2026"
       }
     },
     {
@@ -1002,7 +1003,7 @@
       }
     },
     {
-      "title": "Image title \u00b7 center",
+      "title": "Image title · center",
       "layout": "LY-15",
       "bg": "BG-01",
       "content": {
@@ -1028,7 +1029,7 @@
       }
     },
     {
-      "title": "Image title \u00b7 center",
+      "title": "Image title · center",
       "layout": "LY-15",
       "bg": "BG-01",
       "content": {
@@ -1042,7 +1043,7 @@
       }
     },
     {
-      "title": "Image title \u00b7 center",
+      "title": "Image title · center",
       "layout": "LY-15",
       "bg": "BG-01",
       "content": {
@@ -1056,7 +1057,7 @@
       }
     },
     {
-      "title": "Image title \u00b7 center",
+      "title": "Image title · center",
       "layout": "LY-15",
       "bg": "BG-01",
       "content": {
@@ -1070,7 +1071,7 @@
       }
     },
     {
-      "title": "Image title \u00b7 center",
+      "title": "Image title · center",
       "layout": "LY-15",
       "bg": "BG-01",
       "content": {
@@ -1084,7 +1085,7 @@
       }
     },
     {
-      "title": "Image title \u00b7 center",
+      "title": "Image title · center",
       "layout": "LY-15",
       "bg": "BG-01",
       "content": {
@@ -1128,7 +1129,7 @@
       }
     },
     {
-      "title": "Image title \u00b7 center",
+      "title": "Image title · center",
       "layout": "LY-15",
       "bg": "BG-01",
       "content": {
@@ -1142,7 +1143,7 @@
       }
     },
     {
-      "title": "Image title \u00b7 center",
+      "title": "Image title · center",
       "layout": "LY-15",
       "bg": "BG-01",
       "content": {
@@ -1156,7 +1157,7 @@
       }
     },
     {
-      "title": "Image title \u00b7 center",
+      "title": "Image title · center",
       "layout": "LY-15",
       "bg": "BG-01",
       "content": {
@@ -1170,7 +1171,7 @@
       }
     },
     {
-      "title": "Image title \u00b7 center",
+      "title": "Image title · center",
       "layout": "LY-15",
       "bg": "BG-01",
       "content": {
@@ -1184,7 +1185,7 @@
       }
     },
     {
-      "title": "Image title \u00b7 center",
+      "title": "Image title · center",
       "layout": "LY-15",
       "bg": "BG-01",
       "content": {
@@ -1198,7 +1199,7 @@
       }
     },
     {
-      "title": "Image title \u00b7 center",
+      "title": "Image title · center",
       "layout": "LY-15",
       "bg": "BG-01",
       "content": {
@@ -1212,7 +1213,7 @@
       }
     },
     {
-      "title": "Image title \u00b7 center",
+      "title": "Image title · center",
       "layout": "LY-15",
       "bg": "BG-01",
       "content": {
@@ -1293,7 +1294,7 @@
         "accent": "employee credentials leak in the 12 months before",
         "textSize": "md",
         "panel": true,
-        "author": "\u2014BreachSense"
+        "author": "—BreachSense"
       }
     }
   ]

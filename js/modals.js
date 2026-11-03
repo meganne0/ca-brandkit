@@ -29,6 +29,14 @@ export const MODAL_FORMATS = {
     label: "Hugging Screenshot",
     className: "canvas--li-square",
   },
+  /** Working canvas; download crops to the navy hug box around the timeline modal. */
+  timeline: {
+    id: "timeline",
+    w: 1400,
+    h: 1400,
+    label: "Timeline",
+    className: "canvas--li-square",
+  },
 };
 
 /** @deprecated use MODAL_FORMATS.square — kept for older imports */
@@ -70,9 +78,18 @@ export function withBreaks(text) {
     .join("");
 }
 
+export function defaultTimelineEvent() {
+  return {
+    title: "Employee Compromised",
+    date: "19 Aug 2025",
+    employeeName: "Jane Smith",
+    ip: "203.0.113.42",
+  };
+}
+
 export function defaultModalState() {
   return {
-    canvasFormat: "square", // square | landscape | portrait | hug
+    canvasFormat: "square", // square | landscape | portrait | hug | timeline
     exportMode: "background", // background | transparent
     bg: "LI-BG-01",
     decor: "YT-DX-02",
@@ -96,6 +113,12 @@ export function defaultModalState() {
       windowTitle: "",
       windowBody:
         "Ransomware Attack\nDate · 12 Aug 2025\nInitiated by · Qilin\n\nEmployee Compromise\nDate · 19 Aug 2025\nSource · Telegram\nCredential · reused password",
+    },
+    timeline: {
+      title: "Attack Timeline",
+      attackTitle: "Attack Initiated by Qilin",
+      attackDate: "12 Aug 2025",
+      events: [defaultTimelineEvent()],
     },
     modals: [
       {
@@ -138,6 +161,10 @@ export function normalizeState(raw) {
       ...base.hugModal,
       ...(raw.hugModal && typeof raw.hugModal === "object" ? raw.hugModal : {}),
     },
+    timeline: normalizeTimeline(
+      raw.timeline && typeof raw.timeline === "object" ? raw.timeline : {},
+      base.timeline,
+    ),
     images: Array.isArray(raw.images)
       ? [0, 1].map((i) => {
           const img = raw.images[i] || {};
@@ -178,8 +205,12 @@ export function normalizeState(raw) {
   if (next.hugModal.title === "Acme Holdings") next.hugModal.title = "";
   if (next.hugModal.windowTitle === "Attack Timeline") next.hugModal.windowTitle = "";
 
-  if (next.canvasFormat === "square" || next.canvasFormat === "hug") {
-    // square / hug have no side text placement
+  if (
+    next.canvasFormat === "square" ||
+    next.canvasFormat === "hug" ||
+    next.canvasFormat === "timeline"
+  ) {
+    // square / hug / timeline have no side text placement
     if (!["above", "below"].includes(next.textPlacement)) next.textPlacement = "above";
   } else if (next.canvasFormat === "portrait") {
     if (!["above", "below"].includes(next.textPlacement)) next.textPlacement = "above";
@@ -188,6 +219,37 @@ export function normalizeState(raw) {
   }
 
   return next;
+}
+
+function normalizeTimeline(raw, base) {
+  const events = Array.isArray(raw.events)
+    ? raw.events
+        .filter((ev) => ev && typeof ev === "object")
+        .map((ev) => ({
+          title:
+            typeof ev.title === "string" && ev.title.trim()
+              ? ev.title
+              : "Employee Compromised",
+          date: typeof ev.date === "string" ? ev.date : "",
+          employeeName:
+            typeof ev.employeeName === "string" ? ev.employeeName : "",
+          ip: typeof ev.ip === "string" ? ev.ip : "",
+        }))
+    : base.events.map((ev) => ({ ...ev }));
+
+  return {
+    title:
+      typeof raw.title === "string" && raw.title.trim()
+        ? raw.title
+        : "Attack Timeline",
+    attackTitle:
+      typeof raw.attackTitle === "string" && raw.attackTitle.trim()
+        ? raw.attackTitle
+        : base.attackTitle,
+    attackDate:
+      typeof raw.attackDate === "string" ? raw.attackDate : base.attackDate,
+    events: events.length ? events : base.events.map((ev) => ({ ...ev })),
+  };
 }
 
 /** Persist editor settings (skip bulky data: URLs for images). */
@@ -391,6 +453,91 @@ function paintHugModal(canvas, state) {
   if (hug) applyHugExportPadding(hug);
 }
 
+function timelineEventMarkup(ev) {
+  const title = ev.title?.trim() || "Employee Compromised";
+  const date = ev.date?.trim();
+  const name = ev.employeeName?.trim();
+  const ip = ev.ip?.trim();
+  const metaBits = [
+    name ? `<span class="ca-timeline__meta-item">${withBreaks(name)}</span>` : "",
+    ip ? `<span class="ca-timeline__meta-item">${withBreaks(ip)}</span>` : "",
+  ]
+    .filter(Boolean)
+    .join("");
+
+  return `
+    <li class="ca-timeline__item ca-timeline__item--event">
+      <div class="ca-timeline__rail" aria-hidden="true">
+        <span class="ca-timeline__dot"></span>
+        <span class="ca-timeline__stem"></span>
+      </div>
+      <div class="ca-timeline__body">
+        <p class="ca-timeline__event-title">${withBreaks(title)}</p>
+        ${date ? `<p class="ca-timeline__date">${withBreaks(date)}</p>` : ""}
+        ${metaBits ? `<p class="ca-timeline__meta">${metaBits}</p>` : ""}
+      </div>
+    </li>
+  `;
+}
+
+function timelineMarkup(timeline = {}) {
+  const title = timeline.title?.trim() || "Attack Timeline";
+  const attackTitle =
+    timeline.attackTitle?.trim() || "Attack Initiated by Qilin";
+  const attackDate = timeline.attackDate?.trim();
+  const events = Array.isArray(timeline.events) ? timeline.events : [];
+
+  return `
+    <div class="ca-modals-hug ca-modals-hug--timeline">
+      <article class="ca-modal ca-modal--hug ca-modal--violet ca-modal--timeline">
+        <span class="ca-modal__close" aria-hidden="true">×</span>
+        <div class="ca-timeline">
+          <h2 class="ca-timeline__title">${withBreaks(title)}</h2>
+          <ol class="ca-timeline__list">
+            <li class="ca-timeline__item ca-timeline__item--attack">
+              <div class="ca-timeline__rail" aria-hidden="true">
+                <span class="ca-timeline__dot"></span>
+                <span class="ca-timeline__stem"></span>
+              </div>
+              <div class="ca-timeline__body">
+                <p class="ca-timeline__event-title">${withBreaks(attackTitle)}</p>
+                ${
+                  attackDate
+                    ? `<p class="ca-timeline__date">${withBreaks(attackDate)}</p>`
+                    : ""
+                }
+              </div>
+            </li>
+            ${events.map((ev) => timelineEventMarkup(ev)).join("")}
+          </ol>
+        </div>
+      </article>
+    </div>
+  `;
+}
+
+function paintTimeline(canvas, state) {
+  const format = MODAL_FORMATS.timeline;
+  canvas.className =
+    "canvas canvas--li-square ca-modals-canvas ca-modals-canvas--hug ca-modals-canvas--timeline";
+  canvas.style.width = `${format.w}px`;
+  canvas.style.height = `${format.h}px`;
+  canvas.style.background = "#060a14";
+  canvas.replaceChildren();
+  delete canvas.dataset.bg;
+  delete canvas.dataset.decor;
+  canvas.querySelector('[data-component="SlideFooter"]')?.remove();
+  canvas.classList.remove("canvas--with-footer", "slide--with-footer");
+
+  const stage = document.createElement("div");
+  stage.className = "ca-modals-hug-stage";
+  stage.innerHTML = timelineMarkup(state.timeline || {});
+  canvas.appendChild(stage);
+
+  const hug = stage.querySelector(".ca-modals-hug");
+  if (hug) applyHugExportPadding(hug);
+}
+
 function textBlockMarkup(state) {
   if (state.canvasFormat === "square") return "";
   const eyebrow = state.eyebrow?.trim();
@@ -484,6 +631,10 @@ function placementClass(state) {
 export function paintModals(canvas, state, deps = {}) {
   if (state.canvasFormat === "hug") {
     paintHugModal(canvas, state);
+    return;
+  }
+  if (state.canvasFormat === "timeline") {
+    paintTimeline(canvas, state, deps);
     return;
   }
 

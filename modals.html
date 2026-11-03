@@ -12,7 +12,7 @@
     />
     <link rel="stylesheet" href="css/backgrounds.css?v=21" />
     <link rel="stylesheet" href="css/decor-youtube.css?v=1" />
-    <link rel="stylesheet" href="css/modals.css?v=30" />
+    <link rel="stylesheet" href="css/modals.css?v=32" />
     <script src="js/auth-gate.js?v=6"></script>
   </head>
   <body>
@@ -57,6 +57,10 @@
               <label class="modals-radio">
                 <input type="radio" name="canvas-format" value="hug" />
                 Hugging Screenshot
+              </label>
+              <label class="modals-radio">
+                <input type="radio" name="canvas-format" value="timeline" />
+                Timeline
               </label>
             </div>
           </fieldset>
@@ -329,6 +333,54 @@
             </div>
           </div>
 
+          <div id="modals-options-timeline" hidden>
+            <p class="modals-hint">
+              Same solid navy + violet modal as Hugging Screenshot. Most recent
+              event first: red attack initiation on top, then any number of orange
+              employee-compromise events. Download crops with ~10% margin.
+            </p>
+
+            <div class="modals-modal-block">
+              <h3 class="modals-modal-block__title">Timeline</h3>
+              <label class="modals-field">
+                <span class="modals-field__label">Title</span>
+                <input
+                  class="modals-field__input"
+                  id="modals-timeline-title"
+                  type="text"
+                  placeholder="Attack Timeline"
+                />
+              </label>
+            </div>
+
+            <div class="modals-modal-block">
+              <h3 class="modals-modal-block__title">Most recent · red</h3>
+              <label class="modals-field">
+                <span class="modals-field__label">Window title</span>
+                <input
+                  class="modals-field__input"
+                  id="modals-timeline-attack-title"
+                  type="text"
+                  placeholder="Attack Initiated by Qilin"
+                />
+              </label>
+              <label class="modals-field">
+                <span class="modals-field__label">Date</span>
+                <input class="modals-field__input" id="modals-timeline-attack-date" type="text" />
+              </label>
+            </div>
+
+            <div class="modals-modal-block">
+              <div class="modals-timeline-event__head">
+                <h3 class="modals-modal-block__title" style="margin:0">Earlier events · orange</h3>
+                <button type="button" class="modals-btn modals-btn--ghost" id="modals-timeline-add">
+                  Add event
+                </button>
+              </div>
+              <div class="modals-timeline-events" id="modals-timeline-events"></div>
+            </div>
+          </div>
+
           <div class="modals-actions">
             <button type="button" class="modals-btn modals-btn--primary" id="modals-download">
               Download PNG
@@ -361,11 +413,12 @@
       import {
         STORAGE_KEY,
         defaultModalState,
+        defaultTimelineEvent,
         paintModals,
         formatForState,
         measureImageAspect,
         ensureImageAspects,
-      } from "./js/modals.js?v=19";
+      } from "./js/modals.js?v=21";
       import { downloadPaintedThumbnail } from "./js/youtube-download.js?v=8";
 
       // Always boot from defaults — do not restore prior editor sessions.
@@ -396,6 +449,8 @@
       const img2FitCheck = document.getElementById("modals-img2-fit");
       const optionsStandard = document.getElementById("modals-options-standard");
       const optionsHug = document.getElementById("modals-options-hug");
+      const optionsTimeline = document.getElementById("modals-options-timeline");
+      const timelineEventsEl = document.getElementById("modals-timeline-events");
 
       function bgFormatForCanvas(canvasFormat) {
         return canvasFormat === "landscape" ? "landscape" : "square";
@@ -405,25 +460,33 @@
         return state.canvasFormat === "hug";
       }
 
-      function fillBackgroundOptions() {
-        const want = bgFormatForCanvas(state.canvasFormat);
+      function isTimelineFormat() {
+        return state.canvasFormat === "timeline";
+      }
+
+      function fillBackgroundSelect(selectEl, canvasFormat) {
+        const want = bgFormatForCanvas(canvasFormat);
         const entries = Object.entries(LINKEDIN_BACKGROUNDS).filter(
           ([, bg]) => (bg.format ?? "square") === want,
         );
         const prev = state.bg;
-        bgSelect.replaceChildren();
+        selectEl.replaceChildren();
         entries.forEach(([id, bg]) => {
           const opt = document.createElement("option");
           opt.value = id;
           opt.textContent = `${id} · ${bg.label}`;
-          bgSelect.appendChild(opt);
+          selectEl.appendChild(opt);
         });
         if (entries.some(([id]) => id === prev)) {
-          bgSelect.value = prev;
+          selectEl.value = prev;
         } else if (entries.length) {
-          bgSelect.value = entries[0][0];
+          selectEl.value = entries[0][0];
           state.bg = entries[0][0];
         }
+      }
+
+      function fillBackgroundOptions() {
+        fillBackgroundSelect(bgSelect, state.canvasFormat);
       }
 
       const noneDecor = document.createElement("option");
@@ -441,29 +504,94 @@
         el.textContent = src ? "Image set (re-upload to replace)" : "No image";
       }
 
+      function ensureTimelineState() {
+        if (!state.timeline || typeof state.timeline !== "object") {
+          state.timeline = defaultModalState().timeline;
+        }
+        if (!Array.isArray(state.timeline.events)) {
+          state.timeline.events = [defaultTimelineEvent()];
+        }
+      }
+
+      function renderTimelineEventFields() {
+        ensureTimelineState();
+        const events = state.timeline.events;
+        timelineEventsEl.replaceChildren();
+        events.forEach((ev, index) => {
+          const block = document.createElement("div");
+          block.className = "modals-timeline-event";
+          block.dataset.timelineEventIndex = String(index);
+          block.innerHTML = `
+            <div class="modals-timeline-event__head">
+              <p class="modals-timeline-event__label">Event ${index + 1}</p>
+              <button type="button" class="modals-btn modals-btn--ghost" data-timeline-remove="${index}">
+                Remove
+              </button>
+            </div>
+            <label class="modals-field">
+              <span class="modals-field__label">Title</span>
+              <input class="modals-field__input" data-timeline-event-field="title" type="text" />
+            </label>
+            <label class="modals-field">
+              <span class="modals-field__label">Date</span>
+              <input class="modals-field__input" data-timeline-event-field="date" type="text" />
+            </label>
+            <label class="modals-field">
+              <span class="modals-field__label">Employee name</span>
+              <input class="modals-field__input" data-timeline-event-field="employeeName" type="text" />
+            </label>
+            <label class="modals-field">
+              <span class="modals-field__label">IP address</span>
+              <input class="modals-field__input" data-timeline-event-field="ip" type="text" />
+            </label>
+          `;
+          block.querySelectorAll("[data-timeline-event-field]").forEach((el) => {
+            el.value = ev[el.dataset.timelineEventField] ?? "";
+          });
+          timelineEventsEl.appendChild(block);
+        });
+      }
+
+      function readTimelineEventsFromDom() {
+        ensureTimelineState();
+        const next = [];
+        timelineEventsEl.querySelectorAll("[data-timeline-event-index]").forEach((block) => {
+          const ev = {};
+          block.querySelectorAll("[data-timeline-event-field]").forEach((el) => {
+            ev[el.dataset.timelineEventField] = el.value;
+          });
+          next.push(ev);
+        });
+        state.timeline.events = next;
+      }
+
       function updateVisibility() {
         const hug = isHugFormat();
-        optionsStandard.hidden = hug;
+        const timeline = isTimelineFormat();
+        const fixedPlate = hug || timeline;
+        optionsStandard.hidden = fixedPlate;
         optionsHug.hidden = !hug;
+        optionsTimeline.hidden = !timeline;
 
         const isBg = state.exportMode === "background";
         const isImages = state.contentMode === "images";
         const isSquare = state.canvasFormat === "square";
-        bgRow.hidden = hug || !isBg;
-        footerCheck.disabled = hug || !isBg;
+        bgRow.hidden = fixedPlate || !isBg;
+        footerCheck.disabled = fixedPlate || !isBg;
         modeModals.hidden = isImages;
         modeImages.hidden = !isImages;
         block2.hidden = state.modalCount !== 2;
         img2Block.hidden = state.imageCount !== 2;
-        textBlock.hidden = isSquare || hug;
+        textBlock.hidden = isSquare || fixedPlate;
         placePortrait.hidden = state.canvasFormat !== "portrait";
         placeLandscape.hidden = state.canvasFormat !== "landscape";
         stage.classList.toggle("modals-stage--landscape", state.canvasFormat === "landscape");
         stage.classList.toggle("modals-stage--portrait", state.canvasFormat === "portrait");
         stage.classList.toggle("modals-stage--hug", hug);
+        stage.classList.toggle("modals-stage--timeline", timeline);
         stage.classList.toggle(
           "modals-stage--checker",
-          !hug && state.exportMode === "transparent",
+          !fixedPlate && state.exportMode === "transparent",
         );
       }
 
@@ -519,6 +647,15 @@
           el.value = state.hugModal[el.dataset.hugField] ?? "";
         });
 
+        ensureTimelineState();
+        document.getElementById("modals-timeline-title").value =
+          state.timeline.title ?? "Attack Timeline";
+        document.getElementById("modals-timeline-attack-title").value =
+          state.timeline.attackTitle ?? "";
+        document.getElementById("modals-timeline-attack-date").value =
+          state.timeline.attackDate ?? "";
+        renderTimelineEventFields();
+
         imageStatus(document.getElementById("modals-img1-status"), state.images[0]?.src);
         imageStatus(document.getElementById("modals-img2-status"), state.images[1]?.src);
         updateVisibility();
@@ -534,6 +671,20 @@
           document.querySelectorAll("[data-hug-field]").forEach((el) => {
             state.hugModal[el.dataset.hugField] = el.value;
           });
+          updateVisibility();
+          return;
+        }
+
+        if (state.canvasFormat === "timeline") {
+          ensureTimelineState();
+          state.timeline.title =
+            document.getElementById("modals-timeline-title").value.trim() ||
+            "Attack Timeline";
+          state.timeline.attackTitle =
+            document.getElementById("modals-timeline-attack-title").value;
+          state.timeline.attackDate =
+            document.getElementById("modals-timeline-attack-date").value;
+          readTimelineEventsFromDom();
           updateVisibility();
           return;
         }
@@ -610,6 +761,8 @@
         const format = formatForState(state);
         if (state.canvasFormat === "hug") {
           previewMeta.textContent = `Hugging Screenshot · crops to content on download`;
+        } else if (state.canvasFormat === "timeline") {
+          previewMeta.textContent = `Timeline · crops to content on download`;
         } else {
           previewMeta.textContent =
             state.exportMode === "transparent"
@@ -673,9 +826,32 @@
                 state.hugModal[field.dataset.hugField] = field.value;
               });
             }
-            // Entering hug: use dedicated hugModal state (not overlapping modal 1)
+            // Leaving timeline: persist timeline fields
+            if (state.canvasFormat === "timeline" && nextFormat !== "timeline") {
+              ensureTimelineState();
+              state.timeline.title =
+                document.getElementById("modals-timeline-title").value.trim() ||
+                "Attack Timeline";
+              state.timeline.attackTitle =
+                document.getElementById("modals-timeline-attack-title").value;
+              state.timeline.attackDate =
+                document.getElementById("modals-timeline-attack-date").value;
+              readTimelineEventsFromDom();
+            }
             if (nextFormat === "hug") {
               state.canvasFormat = "hug";
+              fillBackgroundOptions();
+              syncFormFromState();
+              saveStoredState(state);
+              paint();
+              return;
+            }
+            if (nextFormat === "timeline") {
+              state.canvasFormat = "timeline";
+              ensureTimelineState();
+              if (!state.timeline.title?.trim()) {
+                state.timeline.title = "Attack Timeline";
+              }
               fillBackgroundOptions();
               syncFormFromState();
               saveStoredState(state);
@@ -703,8 +879,37 @@
         el.addEventListener("input", persistAndPaint);
         el.addEventListener("change", persistAndPaint);
       });
-      ["modals-eyebrow", "modals-title", "modals-subtitle"].forEach((id) => {
+      [
+        "modals-eyebrow",
+        "modals-title",
+        "modals-subtitle",
+        "modals-timeline-title",
+        "modals-timeline-attack-title",
+        "modals-timeline-attack-date",
+      ].forEach((id) => {
         document.getElementById(id).addEventListener("input", persistAndPaint);
+      });
+
+      timelineEventsEl.addEventListener("input", (e) => {
+        if (e.target.matches("[data-timeline-event-field]")) persistAndPaint();
+      });
+      timelineEventsEl.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-timeline-remove]");
+        if (!btn) return;
+        readTimelineEventsFromDom();
+        const index = Number(btn.dataset.timelineRemove);
+        if (!Number.isFinite(index)) return;
+        state.timeline.events.splice(index, 1);
+        renderTimelineEventFields();
+        saveStoredState(state);
+        paint();
+      });
+      document.getElementById("modals-timeline-add").addEventListener("click", () => {
+        readTimelineEventsFromDom();
+        state.timeline.events.push(defaultTimelineEvent());
+        renderTimelineEventFields();
+        saveStoredState(state);
+        paint();
       });
 
       document.getElementById("modals-img1-btn").addEventListener("click", () => {
@@ -758,12 +963,16 @@
         const format = formatForState(state);
         const stamp = new Date().toISOString().slice(0, 10);
         const isHug = state.canvasFormat === "hug";
-        const cropExport = isHug || state.exportMode === "transparent";
+        const isTimeline = state.canvasFormat === "timeline";
+        const hugPlate = isHug || isTimeline;
+        const cropExport = hugPlate || state.exportMode === "transparent";
         const suffix = isHug
           ? "hug"
-          : state.exportMode === "transparent"
-            ? "transparent"
-            : state.canvasFormat;
+          : isTimeline
+            ? "timeline"
+            : state.exportMode === "transparent"
+              ? "transparent"
+              : state.canvasFormat;
         const btn = document.getElementById("modals-download");
         btn.disabled = true;
         try {
@@ -776,7 +985,7 @@
               width: format.w,
               height: format.h,
               className: `canvas ${format.className} ca-modals-canvas`,
-              ...(isHug
+              ...(hugPlate
                 ? {
                     backgroundColor: "#060a14",
                     cropRootSelector: ".ca-modals-hug",
