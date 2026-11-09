@@ -54,6 +54,16 @@ export const MODAL_ACCENTS = {
 
 export const STORAGE_KEY = "ca-modals-editor-v1";
 
+/** Fixed Hugging Screenshot plate widths, in pixels. */
+export const HUG_PANEL_WIDTHS = ["520", "600", "680", "750", "800"];
+
+const HUG_WIDTH_LEGACY = { default: "520", wide: "600", xwide: "680" };
+
+export function normalizeHugWidth(value) {
+  const raw = HUG_WIDTH_LEGACY[value] || String(value ?? "");
+  return HUG_PANEL_WIDTHS.includes(raw) ? raw : "520";
+}
+
 /**
  * Escape HTML, turn newlines into <br>, and wrap [[redacted]] spans.
  * Example: Card number: [[4532 1199 8842 4242]]
@@ -105,8 +115,8 @@ export function defaultModalState() {
     title: "Stop identity threats before the breach",
     subtitle: "Live demos and threat briefings with the CyberArmor team.",
     textPlacement: "above", // above | below | left | right
-    /** default hugs content up to 520px; wide and extra wide are fixed plates. */
-    hugWidth: "default", // default | wide | xwide
+    /** Fixed plate width in px. One of HUG_PANEL_WIDTHS. */
+    hugWidth: "520",
     /** Independent of overlapping modal sample — empty title shows "Message Details" placeholder. */
     hugModal: {
       title: "",
@@ -203,7 +213,7 @@ export function normalizeState(raw) {
   next.showFooter = Boolean(next.showFooter);
   delete next.hugMessageSize;
   delete next.hugLabel;
-  if (!["default", "wide", "xwide"].includes(next.hugWidth)) next.hugWidth = "default";
+  next.hugWidth = normalizeHugWidth(next.hugWidth);
   // Drop legacy sample title accidentally shared from modal 1 into hug
   if (next.hugModal.title === "Acme Holdings") next.hugModal.title = "";
   if (next.hugModal.windowTitle === "Attack Timeline") next.hugModal.windowTitle = "";
@@ -436,16 +446,11 @@ function hugModalMarkup(modal) {
   const windowBodyRaw = modal.windowBody?.trim();
   const windowBody = windowBodyRaw ? formatModalDates(windowBodyRaw) : "";
   const hasWindow = windowTitle || windowBody;
-  const widthClass =
-    modal.width === "wide"
-      ? " ca-modal--wide"
-      : modal.width === "xwide"
-        ? " ca-modal--xwide"
-        : "";
+  const width = normalizeHugWidth(modal.width);
 
   return `
     <div class="ca-modals-hug">
-      <article class="ca-modal ca-modal--hug ca-modal--violet${widthClass}">
+      <article class="ca-modal ca-modal--hug ca-modal--violet ca-modal--plate" style="--hug-panel-width:${width}px">
         <span class="ca-modal__close" aria-hidden="true">×</span>
         <div class="ca-modal__header">
           <h2 class="ca-modal__title">${withBreaks(title)}</h2>
