@@ -12,7 +12,7 @@
     />
     <link rel="stylesheet" href="css/backgrounds.css?v=21" />
     <link rel="stylesheet" href="css/decor-youtube.css?v=1" />
-    <link rel="stylesheet" href="css/modals.css?v=33" />
+    <link rel="stylesheet" href="css/modals.css?v=36" />
     <script src="js/auth-gate.js?v=6"></script>
   </head>
   <body>
@@ -331,6 +331,24 @@
                 <textarea class="modals-field__textarea" data-hug-field="windowBody" rows="8"></textarea>
               </label>
             </div>
+
+            <fieldset class="modals-fieldset">
+              <legend class="modals-fieldset__legend">Panel width</legend>
+              <div class="modals-radios" role="radiogroup" aria-label="Hugging screenshot panel width">
+                <label class="modals-radio">
+                  <input type="radio" name="hug-width" value="default" checked />
+                  Default
+                </label>
+                <label class="modals-radio">
+                  <input type="radio" name="hug-width" value="wide" />
+                  Wide
+                </label>
+                <label class="modals-radio">
+                  <input type="radio" name="hug-width" value="xwide" />
+                  Extra wide
+                </label>
+              </div>
+            </fieldset>
           </div>
 
           <div id="modals-options-timeline" hidden>
@@ -418,7 +436,7 @@
         formatForState,
         measureImageAspect,
         ensureImageAspects,
-      } from "./js/modals.js?v=23";
+      } from "./js/modals.js?v=24";
       import { downloadPaintedThumbnail } from "./js/youtube-download.js?v=8";
 
       // Always boot from defaults — do not restore prior editor sessions.
@@ -646,6 +664,13 @@
         document.querySelectorAll("[data-hug-field]").forEach((el) => {
           el.value = state.hugModal[el.dataset.hugField] ?? "";
         });
+        const hugWidth = ["default", "wide", "xwide"].includes(state.hugWidth)
+          ? state.hugWidth
+          : "default";
+        const hugWidthInput = document.querySelector(
+          `input[name="hug-width"][value="${hugWidth}"]`,
+        );
+        if (hugWidthInput) hugWidthInput.checked = true;
 
         ensureTimelineState();
         document.getElementById("modals-timeline-title").value =
@@ -671,6 +696,9 @@
           document.querySelectorAll("[data-hug-field]").forEach((el) => {
             state.hugModal[el.dataset.hugField] = el.value;
           });
+          state.hugWidth = document.querySelector(
+            'input[name="hug-width"]:checked',
+          ).value;
           updateVisibility();
           return;
         }
@@ -812,7 +840,7 @@
 
       document
         .querySelectorAll(
-          'input[name="canvas-format"], input[name="export-mode"], input[name="content-mode"], input[name="modal-count"], input[name="image-count"], input[name="text-placement"], input[name="text-placement-land"], #modals-bg, #modals-decor, #modals-footer, #modals-img1-fit, #modals-img2-fit',
+          'input[name="canvas-format"], input[name="export-mode"], input[name="content-mode"], input[name="modal-count"], input[name="image-count"], input[name="text-placement"], input[name="text-placement-land"], input[name="hug-width"], #modals-bg, #modals-decor, #modals-footer, #modals-img1-fit, #modals-img2-fit',
         )
         .forEach((el) => el.addEventListener("change", () => {
           if (el.name === "canvas-format") {
@@ -825,6 +853,9 @@
               document.querySelectorAll("[data-hug-field]").forEach((field) => {
                 state.hugModal[field.dataset.hugField] = field.value;
               });
+              state.hugWidth = document.querySelector(
+                'input[name="hug-width"]:checked',
+              ).value;
             }
             // Leaving timeline: persist timeline fields
             if (state.canvasFormat === "timeline" && nextFormat !== "timeline") {

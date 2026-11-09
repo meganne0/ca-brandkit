@@ -1135,6 +1135,22 @@ body {
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
 }
 
+/* Wide plates stay a fixed width so longer screenshots have room to sit. */
+.ca-modal.ca-modal--hug.ca-modal--wide,
+.ca-modal.ca-modal--hug.ca-modal--xwide {
+  width: var(--hug-panel-width);
+  min-width: var(--hug-panel-width);
+  max-width: var(--hug-panel-width);
+}
+
+.ca-modal.ca-modal--hug.ca-modal--wide {
+  --hug-panel-width: 600px;
+}
+
+.ca-modal.ca-modal--hug.ca-modal--xwide {
+  --hug-panel-width: 680px;
+}
+
 .ca-modal.ca-modal--hug.ca-modal--violet {
   border-color: rgba(168, 130, 255, 0.62);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.04) inset;

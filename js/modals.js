@@ -105,6 +105,8 @@ export function defaultModalState() {
     title: "Stop identity threats before the breach",
     subtitle: "Live demos and threat briefings with the CyberArmor team.",
     textPlacement: "above", // above | below | left | right
+    /** default hugs content up to 520px; wide and extra wide are fixed plates. */
+    hugWidth: "default", // default | wide | xwide
     /** Independent of overlapping modal sample — empty title shows "Message Details" placeholder. */
     hugModal: {
       title: "",
@@ -201,6 +203,7 @@ export function normalizeState(raw) {
   next.showFooter = Boolean(next.showFooter);
   delete next.hugMessageSize;
   delete next.hugLabel;
+  if (!["default", "wide", "xwide"].includes(next.hugWidth)) next.hugWidth = "default";
   // Drop legacy sample title accidentally shared from modal 1 into hug
   if (next.hugModal.title === "Acme Holdings") next.hugModal.title = "";
   if (next.hugModal.windowTitle === "Attack Timeline") next.hugModal.windowTitle = "";
@@ -433,10 +436,16 @@ function hugModalMarkup(modal) {
   const windowBodyRaw = modal.windowBody?.trim();
   const windowBody = windowBodyRaw ? formatModalDates(windowBodyRaw) : "";
   const hasWindow = windowTitle || windowBody;
+  const widthClass =
+    modal.width === "wide"
+      ? " ca-modal--wide"
+      : modal.width === "xwide"
+        ? " ca-modal--xwide"
+        : "";
 
   return `
     <div class="ca-modals-hug">
-      <article class="ca-modal ca-modal--hug ca-modal--violet">
+      <article class="ca-modal ca-modal--hug ca-modal--violet${widthClass}">
         <span class="ca-modal__close" aria-hidden="true">×</span>
         <div class="ca-modal__header">
           <h2 class="ca-modal__title">${withBreaks(title)}</h2>
@@ -482,7 +491,10 @@ function paintHugModal(canvas, state) {
 
   const stage = document.createElement("div");
   stage.className = "ca-modals-hug-stage";
-  stage.innerHTML = hugModalMarkup(state.hugModal || {});
+  stage.innerHTML = hugModalMarkup({
+    ...(state.hugModal || {}),
+    width: state.hugWidth,
+  });
   canvas.appendChild(stage);
 
   const hug = stage.querySelector(".ca-modals-hug");
