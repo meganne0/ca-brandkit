@@ -100,8 +100,6 @@ function buildFormHtml(layout, content) {
 
   if (layout === "LY-13" || layout === "LY-14") {
     const size = ["sm", "md", "lg"].includes(c.textSize) ? c.textSize : "md";
-    bits.push(field("number", "Number", c.number ?? ""));
-    bits.push(field("sectionTitle", "Section label", c.sectionTitle ?? ""));
     bits.push(`
       <label class="deck-form__field">
         <span class="deck-form__label">Text size</span>
@@ -143,10 +141,9 @@ function buildFormHtml(layout, content) {
   }
 
   if (layout === "LY-26") {
-    bits.push(field("number", "Number", c.number ?? ""));
-    bits.push(field("sectionTitle", "Section label", c.sectionTitle ?? ""));
     bits.push(field("title", "Title", c.title ?? ""));
     bits.push(field("subtitle", "Subtitle", c.subtitle ?? "", { type: "textarea", rows: 2 }));
+    bits.push(field("text", "Body", c.text ?? "", { type: "textarea", rows: 4 }));
     bits.push(field("note", "Footer note", c.note ?? "", { type: "textarea", rows: 2 }));
     bits.push(
       `<p class="deck-form__note">Table columns and rows are preserved from the slide JSON (edit there or via Save/disk for structural changes).</p>`,
@@ -154,15 +151,6 @@ function buildFormHtml(layout, content) {
     return bits.join("");
   }
 
-  // Shared header fields for most layouts
-  const needsCorner = ![
-    "LY-01",
-    "LY-05",
-  ].includes(layout);
-  if (needsCorner) {
-    bits.push(field("number", "Number", c.number ?? ""));
-    bits.push(field("sectionTitle", "Section label", c.sectionTitle ?? ""));
-  }
   bits.push(field("title", "Title", c.title ?? ""));
   bits.push(field("subtitle", "Subtitle", c.subtitle ?? "", { type: "textarea", rows: 2 }));
 
@@ -477,8 +465,6 @@ function readContentFromForm(form, layout, base = {}) {
   }
 
   if (layout === "LY-13" || layout === "LY-14") {
-    next.number = val(form, "number");
-    next.sectionTitle = val(form, "sectionTitle");
     next.textSize = val(form, "textSize") || "md";
     next.question = val(form, "question");
     if (layout === "LY-14") next.subtitle = val(form, "subtitle");
@@ -504,10 +490,9 @@ function readContentFromForm(form, layout, base = {}) {
   }
 
   if (layout === "LY-26") {
-    next.number = val(form, "number");
-    next.sectionTitle = val(form, "sectionTitle");
     next.title = val(form, "title");
     next.subtitle = val(form, "subtitle");
+    next.text = val(form, "text");
     next.note = val(form, "note");
     if (Array.isArray(base.columns)) next.columns = base.columns;
     if (Array.isArray(base.rows)) next.rows = base.rows;

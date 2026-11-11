@@ -2539,6 +2539,7 @@ function renderDataTable(content) {
   const showHeader =
     content.showHeader !== false &&
     columns.some((col) => String(col).trim());
+  const asideCopy = panels?.length === 1;
 
   el.className = [
     "slide-content",
@@ -2546,7 +2547,8 @@ function renderDataTable(content) {
     rowPadding === "lg" ? "layout-data-table--row-lg" : "",
     textSize === "lg" ? "layout-data-table--text-lg" : "",
     !showHeader && !panels ? "layout-data-table--no-header" : "",
-    splitColumns ? "layout-data-table--split" : "",
+    splitColumns && !asideCopy ? "layout-data-table--split" : "",
+    asideCopy ? "layout-data-table--aside" : "",
     panels ? "layout-data-table--panels" : "",
   ]
     .filter(Boolean)
@@ -2560,8 +2562,24 @@ function renderDataTable(content) {
         ),
   );
 
+  const asideTitle = String(content.title ?? "").trim();
+  const asideSubtitle = String(content.subtitle ?? "").trim();
+  const asideBody = String(content.text ?? content.body ?? "").trim();
   let tablesHtml = "";
-  if (panels?.length) {
+  if (asideCopy) {
+    tablesHtml = `<div class="layout-data-table__row">
+      ${renderDataPanel(panels[0])}
+      <aside class="layout-data-table__copy">
+        ${asideTitle ? `<h2 class="type-h3">${escapeHtml(asideTitle)}</h2>` : ""}
+        ${asideSubtitle ? `<p class="type-h4">${escapeHtml(asideSubtitle)}</p>` : ""}
+        ${
+          asideBody
+            ? `<p class="type-body">${escapeHtml(asideBody).replace(/\n/g, "<br>")}</p>`
+            : ""
+        }
+      </aside>
+    </div>`;
+  } else if (panels?.length) {
     tablesHtml = `<div class="layout-data-table__split" style="--layout-data-table-split-count:${panels.length}">
       ${panels.map((panel) => renderDataPanel(panel)).join("")}
     </div>`;
@@ -2617,7 +2635,7 @@ function renderDataTable(content) {
 
   el.innerHTML = `
     ${cornerSection(content)}
-    ${titleBlock(content)}
+    ${asideCopy ? "" : titleBlock(content)}
     ${tablesHtml}
     ${note ? `<p class="layout-data-table__note type-label">${escapeHtml(note)}</p>` : ""}
   `;

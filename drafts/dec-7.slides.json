@@ -1,6 +1,6 @@
 {
-  "savedAt": "2026-11-11T17:56:22.817Z",
-  "publishId": "dec-7-1794419782799",
+  "savedAt": "2026-11-11T18:14:45.301Z",
+  "publishId": "dec-7-1794420885272",
   "slides": [
     {
       "title": "Cover",
@@ -659,7 +659,7 @@
           ],
           [
             "sparklequeen88",
-            "admin@lakeview.com",
+            "admin@bc-copper.ca",
             "$2b$12$Gh2u…0RqV",
             "+1 418 555-0156"
           ],
@@ -727,7 +727,9 @@
         "note": "*Fabricated, example data only",
         "rowPadding": "lg",
         "textSize": "lg",
-        "title": "Frendl.io Social Network"
+        "title": "Frendl.io Social Network*",
+        "subtitle": "",
+        "text": ""
       }
     },
     {
@@ -746,7 +748,7 @@
           [
             "Maya",
             "Torres",
-            "admin@lakeview.com",
+            "admin@bc-copper.ca",
             "+1 418 555-0156",
             "4242"
           ],
@@ -831,7 +833,9 @@
         "note": "*Fabricated, example data only",
         "rowPadding": "lg",
         "textSize": "lg",
-        "title": "Bright Star Tires"
+        "title": "Bright Star Tires*",
+        "subtitle": "",
+        "text": ""
       }
     },
     {
@@ -850,14 +854,32 @@
             "type": "credentials",
             "rows": [
               "c.wright@northwind.ca:123456",
-              "admin@lakeview.com:password1",
+              "admin@bc-copper.ca:password1",
               "ebaker@canadaretail.ca:12345678",
               "zoe.nguyen@pacificgoods.com:password",
               "bluestar5513@gmail.com:aa123456",
               "coolcat2004@hotmail.com:pass@123",
               "sunnydays2001@gmail.com:123123123"
             ]
-          },
+          }
+        ],
+        "title": "adaf",
+        "subtitle": "adfaf",
+        "text": "adfa"
+      }
+    },
+    {
+      "title": "Breach sample · Profiles",
+      "layout": "LY-26",
+      "bg": "DS-06",
+      "content": {
+        "showHeader": false,
+        "hugFirstCols": false,
+        "splitColumns": true,
+        "rowPadding": "lg",
+        "textSize": "lg",
+        "note": "*Fabricated, example data only",
+        "panels": [
           {
             "type": "profiles",
             "profiles": [
@@ -895,7 +917,7 @@
                 "fields": [
                   {
                     "label": "Email",
-                    "value": "admin@lakeview.com"
+                    "value": "admin@bc-copper.ca"
                   },
                   {
                     "label": "Password",
@@ -921,7 +943,10 @@
               }
             ]
           }
-        ]
+        ],
+        "title": "adfadf",
+        "subtitle": "",
+        "text": ""
       }
     },
     {

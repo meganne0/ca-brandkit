@@ -299,6 +299,18 @@ export function harvestSlideContent(slide) {
     };
   }
 
+  if (root.classList.contains("layout-data-table")) {
+    const copy = root.querySelector(".layout-data-table__copy");
+    return {
+      ...base,
+      ...corner,
+      title: copy?.querySelector(".type-h3")?.textContent.trim() ?? base.title,
+      subtitle: copy?.querySelector(".type-h4")?.textContent.trim() ?? base.subtitle,
+      text: copy?.querySelector(".type-body")?.innerText.trim() ?? base.text,
+      note: root.querySelector(".layout-data-table__note")?.textContent.trim() ?? base.note,
+    };
+  }
+
   // Generic fallback
   return { ...base, ...corner, ...titles };
 }
