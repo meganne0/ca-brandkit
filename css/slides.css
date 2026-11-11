@@ -1243,6 +1243,50 @@ body.slide-lightbox-open {
   object-position: center;
 }
 
+/* LY-07 with no title, subtitle, or body: screenshots use the open slide. */
+.layout-split--textless {
+  display: block;
+  height: 100%;
+}
+
+.layout-split--textless .layout-split__media {
+  height: 100%;
+  min-height: 0;
+}
+
+.layout-split--textless .media-stack .shot-back {
+  width: auto;
+  height: auto;
+  max-width: 70%;
+  max-height: 70%;
+  top: 0;
+  left: 0;
+  right: auto;
+  bottom: auto;
+  object-fit: contain;
+  object-position: left top;
+}
+
+.layout-split--textless .media-stack .shot-front {
+  width: auto;
+  height: auto;
+  max-width: 70%;
+  max-height: 70%;
+  top: auto;
+  left: auto;
+  right: 0;
+  bottom: 0;
+  object-fit: contain;
+  object-position: right bottom;
+  z-index: 1;
+}
+
+.layout-split--textless.layout-split--single .media-stack .shot-single {
+  width: auto;
+  max-width: 100%;
+  max-height: 100%;
+}
+
 .layout-split__copy {
   display: flex;
   flex-direction: column;

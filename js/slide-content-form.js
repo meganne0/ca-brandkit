@@ -3,6 +3,58 @@
  * Layout-aware fields → content JSON (Modal Maker / LinkedIn style).
  */
 
+import { loadAssetsCatalog } from "./assets-catalog.js?v=5";
+
+const SCREENSHOT_LABELS = [
+  ["cra phish", "CRA phish · remote monitoring installer"],
+  ["eviltokens", "Eviltokens · salary adjustment DocuSign"],
+  ["acces token", "Access token · CyberArmor capture"],
+  ["phaas-kali365", "Kali365 · Microsoft phish with PDF"],
+  ["remotepc", "SSA phish · RemotePC"],
+  ["expired, clean domains", "Expired domain purchase"],
+  ["bitcoin", "Bitcoin payment for domains"],
+  ["youtube channel", "YouTube · KMS activator"],
+  ["pricing tiers", "Kali365 · pricing tiers"],
+  ["report_2026", "Kali365 · report bait"],
+  ["supported azure", "Kali365 · Azure login"],
+  ["top of the page", "Kali365 · top of page"],
+  ["license killer", "License Killer · KMS tool"],
+];
+
+let screenshotLibrary = [];
+
+function imageKey(src) {
+  if (!src || String(src).startsWith("data:")) return String(src || "");
+  let path = String(src).split("?")[0];
+  try {
+    path = decodeURIComponent(path);
+  } catch {
+    /* keep the encoded path */
+  }
+  return path.replace(/^(\.\.\/)+/, "").replace(/^\//, "").toLowerCase();
+}
+
+function screenshotLabel(image) {
+  const file = imageKey(image.path || image.src || image.label || "");
+  const hit = SCREENSHOT_LABELS.find(([needle]) => file.includes(needle));
+  if (hit) return hit[1];
+  const bare = file.split("/").pop()?.replace(/\.png$/i, "") || "Screenshot";
+  return bare.length > 64 ? `${bare.slice(0, 62).trim()}…` : bare;
+}
+
+const screenshotLibraryReady = loadAssetsCatalog()
+  .then((catalog) => {
+    screenshotLibrary = (catalog.images || [])
+      .filter((image) => image.group === "screenshots")
+      .map((image) => ({ ...image, label: screenshotLabel(image) }))
+      .sort((a, b) => a.label.localeCompare(b.label));
+    return screenshotLibrary;
+  })
+  .catch(() => {
+    screenshotLibrary = [];
+    return screenshotLibrary;
+  });
+
 function esc(value) {
   return String(value ?? "")
     .replace(/&/g, "&amp;")
@@ -185,6 +237,36 @@ function buildFormHtml(layout, content) {
         </label>
       </fieldset>
     `);
+    const visibleCount = count === "1" ? 1 : 2;
+    const shots = Array.isArray(c.shots) ? c.shots : [];
+    if (!screenshotLibrary.length) {
+      bits.push(`<p class="deck-form__note">Loading screenshots…</p>`);
+    } else {
+      for (let i = 0; i < visibleCount; i += 1) {
+        const shot = shots[i] || {};
+        const currentKey = imageKey(shot.src);
+        const inLibrary = screenshotLibrary.some((image) => imageKey(image.src) === currentKey);
+        const label = visibleCount === 1 ? "Image" : i === 0 ? "Top image" : "Bottom image";
+        const options = screenshotLibrary
+          .map((image) => {
+            const selected = imageKey(image.src) === currentKey ? "selected" : "";
+            return `<option value="${esc(image.src)}" ${selected}>${esc(image.label)}</option>`;
+          })
+          .join("");
+        bits.push(`
+          <label class="deck-form__field">
+            <span class="deck-form__label">${label}</span>
+            <select class="deck-form__input" name="shot-src-${i}">
+              <option value="__keep__" ${shot.src && !inLibrary ? "selected" : ""}>${
+                shot.src && !inLibrary ? "Custom upload" : "Choose a screenshot…"
+              }</option>
+              ${options}
+            </select>
+          </label>
+        `);
+      }
+      bits.push(`<p class="deck-form__note">Pick a brand screenshot, or click the image on the slide to upload your own.</p>`);
+    }
   }
 
   if (layout === "LY-15") {
@@ -570,6 +652,19 @@ function readContentFromForm(form, layout, base = {}) {
   if (form.elements.namedItem("shotCount")) {
     next.shotCount = val(form, "shotCount") === "1" ? 1 : 2;
   }
+  for (let i = 0; i < 2; i += 1) {
+    const name = `shot-src-${i}`;
+    if (!form.elements.namedItem(name)) continue;
+    const picked = val(form, name);
+    if (!picked || picked === "__keep__") continue;
+    const shots = Array.isArray(next.shots) ? [...next.shots] : [];
+    const prev = shots[i] && typeof shots[i] === "object" ? shots[i] : {};
+    if (imageKey(prev.src) === imageKey(picked)) continue;
+    const label = screenshotLibrary.find((image) => imageKey(image.src) === imageKey(picked))?.label;
+    while (shots.length <= i) shots.push({ src: "", alt: "" });
+    shots[i] = { ...prev, src: picked, alt: label || prev.alt || "" };
+    next.shots = shots;
+  }
 
   if (layout === "LY-08") {
     const bullets = [];
@@ -914,7 +1009,10 @@ export function mountSlideContentForm(container, { layout, content, onChange }) 
     form = container.querySelector("#deck-content-form");
 
     form.addEventListener("input", emit);
-    form.addEventListener("change", emit);
+    form.addEventListener("change", (event) => {
+      emit();
+      if (event.target?.name === "shotCount") render();
+    });
 
     form.addEventListener("click", (event) => {
       const btn = event.target.closest("[data-action]");
@@ -951,9 +1049,18 @@ export function mountSlideContentForm(container, { layout, content, onChange }) 
     });
   }
 
+  const hadLibrary = screenshotLibrary.length > 0;
+  let alive = true;
   render();
+  if ((layout === "LY-06" || layout === "LY-07") && !hadLibrary) {
+    screenshotLibraryReady.then(() => {
+      if (!alive) return;
+      render();
+    });
+  }
 
   return () => {
+    alive = false;
     container.replaceChildren();
   };
 }

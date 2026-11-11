@@ -326,7 +326,13 @@ function renderQuote(content) {
   return el;
 }
 
-function renderSplit(content, { defaultSide = "right" } = {}) {
+function splitCopyIsEmpty(content) {
+  return !String(content.title ?? "").trim()
+    && !String(content.subtitle ?? "").trim()
+    && !String(content.text ?? "").trim();
+}
+
+function renderSplit(content, { defaultSide = "right", expandWhenEmpty = false } = {}) {
   const el = document.createElement("div");
   const side =
     content.imageSide === "left" || content.imageSide === "right"
@@ -334,15 +340,18 @@ function renderSplit(content, { defaultSide = "right" } = {}) {
       : defaultSide;
   const count = Number(content.shotCount) === 1 ? 1 : 2;
   const mediaLeft = side === "left";
+  const textless = expandWhenEmpty && splitCopyIsEmpty(content);
   el.className = [
     "slide-content",
     "layout-split",
     mediaLeft ? "layout-split--media-left" : "",
     count === 1 ? "layout-split--single" : "",
+    textless ? "layout-split--textless" : "",
   ]
     .filter(Boolean)
     .join(" ");
   const shots = (content.shots ?? [])
+    .filter((shot) => shot?.src)
     .slice(0, count)
     .map((shot, i) => {
       const cls = count === 1 ? "shot-single" : i === 0 ? "shot-back" : "shot-front";
@@ -360,15 +369,99 @@ function renderSplit(content, { defaultSide = "right" } = {}) {
       <div class="media-stack">${shots}</div>
     </div>
   `;
-  el.innerHTML = `
+  el.innerHTML = textless
+    ? `${cornerSection(content)}${media}`
+    : `
     ${cornerSection(content)}
     ${mediaLeft ? `${media}${copy}` : `${copy}${media}`}
   `;
+  if (textless && count === 2) queueMicrotask(() => fitTextlessPair(el));
   return el;
 }
 
+function placeTextlessShot(img, x, y, w, h) {
+  img.style.width = `${w}px`;
+  img.style.height = `${h}px`;
+  img.style.maxWidth = "none";
+  img.style.maxHeight = "none";
+  img.style.top = `${y}px`;
+  img.style.left = `${x}px`;
+  img.style.right = "auto";
+  img.style.bottom = "auto";
+}
+
+/** Two screenshots on an empty LY-07 slide: large, pinned to opposite corners. */
+function fitTextlessPair(root) {
+  if (!root?.classList?.contains("layout-split--textless")) return;
+  if (root.classList.contains("layout-split--single")) return;
+  const stack = root.querySelector(".media-stack");
+  const imgs = stack ? [...stack.querySelectorAll("img")] : [];
+  if (imgs.length < 2) return;
+  const slide = root.closest(".slide");
+  if (!slide || !stack.clientWidth || !stack.clientHeight) return;
+
+  const pending = imgs.filter((img) => !img.naturalWidth);
+  if (pending.length) {
+    pending.forEach((img) => {
+      img.addEventListener("load", () => fitTextlessPair(root), { once: true });
+    });
+    return;
+  }
+
+  const slideW = slide.clientWidth;
+  const slideH = slide.clientHeight;
+  const stackW = stack.clientWidth;
+  const stackH = stack.clientHeight;
+  const maxW = slideW * 0.62;
+  const maxH = slideH * 0.58;
+  const sized = imgs.slice(0, 2).map((img) => {
+    const scale = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight);
+    return { img, w: img.naturalWidth * scale, h: img.naturalHeight * scale };
+  });
+  const [a, b] = sized;
+  let ax = 0;
+  let ay = 0;
+  let bx = stackW - b.w;
+  let by = stackH - b.h;
+  const targetX = slideW * 0.025;
+  const targetY = slideH * 0.025;
+
+  const overlapX = ax + a.w - bx;
+  if (overlapX > targetX) {
+    const extra = (overlapX - targetX) / 2;
+    ax = Math.max(0, ax - extra);
+    bx = Math.min(stackW - b.w, bx + extra);
+  } else if (overlapX < targetX) {
+    const need = (targetX - overlapX) / 2;
+    ax += need;
+    bx -= need;
+  }
+
+  const overlapY = ay + a.h - by;
+  if (overlapY > targetY) {
+    const extra = (overlapY - targetY) / 2;
+    ay = Math.max(0, ay - extra);
+    by = Math.min(stackH - b.h, by + extra);
+  } else if (overlapY < targetY) {
+    const need = (targetY - overlapY) / 2;
+    ay += need;
+    by -= need;
+  }
+
+  ax = Math.max(0, Math.min(ax, stackW - a.w));
+  ay = Math.max(0, Math.min(ay, stackH - a.h));
+  bx = Math.max(0, Math.min(bx, stackW - b.w));
+  by = Math.max(0, Math.min(by, stackH - b.h));
+  placeTextlessShot(a.img, ax, ay, a.w, a.h);
+  placeTextlessShot(b.img, bx, by, b.w, b.h);
+}
+
+function refreshTextlessSplits(root = document) {
+  root.querySelectorAll(".layout-split--textless").forEach((el) => fitTextlessPair(el));
+}
+
 function renderSplitMediaLeft(content) {
-  return renderSplit(content, { defaultSide: "left" });
+  return renderSplit(content, { defaultSide: "left", expandWhenEmpty: true });
 }
 
 function renderTextBullets(content) {
@@ -644,6 +737,7 @@ export function refreshImageTitleLayouts(root = document) {
   root.querySelectorAll(".layout-image-title").forEach((el) => {
     fitImageTitleMedia(el);
   });
+  refreshTextlessSplits(root);
 }
 
 function renderImageTitleCenter(content) {
