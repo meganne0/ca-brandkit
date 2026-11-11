@@ -151,6 +151,42 @@ function buildFormHtml(layout, content) {
     return bits.join("");
   }
 
+  if (layout === "LY-06" || layout === "LY-07") {
+    const side =
+      c.imageSide === "left" || c.imageSide === "right"
+        ? c.imageSide
+        : layout === "LY-07"
+          ? "left"
+          : "right";
+    const count = Number(c.shotCount) === 1 ? "1" : "2";
+    bits.push(`
+      <fieldset class="deck-form__field deck-form__radios">
+        <legend class="deck-form__label">Images</legend>
+        <label class="deck-form__radio">
+          <input type="radio" name="imageSide" value="left" ${side === "left" ? "checked" : ""} />
+          Left
+        </label>
+        <label class="deck-form__radio">
+          <input type="radio" name="imageSide" value="right" ${side === "right" ? "checked" : ""} />
+          Right
+        </label>
+      </fieldset>
+    `);
+    bits.push(`
+      <fieldset class="deck-form__field deck-form__radios">
+        <legend class="deck-form__label">Count</legend>
+        <label class="deck-form__radio">
+          <input type="radio" name="shotCount" value="1" ${count === "1" ? "checked" : ""} />
+          1
+        </label>
+        <label class="deck-form__radio">
+          <input type="radio" name="shotCount" value="2" ${count === "2" ? "checked" : ""} />
+          2
+        </label>
+      </fieldset>
+    `);
+  }
+
   if (layout === "LY-15") {
     const side = c.imageSide === "left" ? "left" : "right";
     bits.push(`
@@ -530,6 +566,9 @@ function readContentFromForm(form, layout, base = {}) {
   if (form.elements.namedItem("text")) next.text = val(form, "text");
   if (form.elements.namedItem("imageSide")) {
     next.imageSide = val(form, "imageSide") === "left" ? "left" : "right";
+  }
+  if (form.elements.namedItem("shotCount")) {
+    next.shotCount = val(form, "shotCount") === "1" ? 1 : 2;
   }
 
   if (layout === "LY-08") {

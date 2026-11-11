@@ -118,17 +118,23 @@ export function harvestSlideContent(slide) {
   }
 
   if (root.classList.contains("layout-split")) {
-    const shots = [...root.querySelectorAll(".media-stack img")].map((img, i) => ({
+    const visible = [...root.querySelectorAll(".media-stack img")].map((img, i) => ({
       ...(base.shots?.[i] ?? {}),
       src: img.getAttribute("src") ?? "",
       alt: img.getAttribute("alt") ?? "",
     }));
+    const shots = Array.isArray(base.shots) ? base.shots.map((shot) => ({ ...shot })) : [];
+    visible.forEach((shot, i) => {
+      shots[i] = shot;
+    });
     return {
       ...base,
       ...corner,
       ...titles,
       text: root.querySelector(".layout-split__copy > p.type-body")?.textContent.trim() ?? base.text,
       shots: shots.length ? shots : base.shots,
+      imageSide: root.classList.contains("layout-split--media-left") ? "left" : "right",
+      shotCount: root.classList.contains("layout-split--single") ? 1 : 2,
     };
   }
 

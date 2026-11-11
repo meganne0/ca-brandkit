@@ -46,14 +46,14 @@ export const LAYOUTS = {
 
   "LY-06": {
     label: "Insight + evidence",
-    description: "Copy left, screenshots right. Footer.",
+    description: "Copy and screenshots. Choose image side and one or two images. Footer.",
     footer: true,
     className: "layout-split",
   },
 
   "LY-07": {
     label: "Evidence + insight",
-    description: "Screenshots left, copy right — mirror of LY-06. Footer.",
+    description: "Same as LY-06, starting with screenshots on the left. Footer.",
     footer: true,
     className: "layout-split layout-split--media-left",
   },
@@ -326,14 +326,26 @@ function renderQuote(content) {
   return el;
 }
 
-function renderSplit(content, { mediaLeft = false } = {}) {
+function renderSplit(content, { defaultSide = "right" } = {}) {
   const el = document.createElement("div");
-  el.className = mediaLeft
-    ? "slide-content layout-split layout-split--media-left"
-    : "slide-content layout-split";
+  const side =
+    content.imageSide === "left" || content.imageSide === "right"
+      ? content.imageSide
+      : defaultSide;
+  const count = Number(content.shotCount) === 1 ? 1 : 2;
+  const mediaLeft = side === "left";
+  el.className = [
+    "slide-content",
+    "layout-split",
+    mediaLeft ? "layout-split--media-left" : "",
+    count === 1 ? "layout-split--single" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
   const shots = (content.shots ?? [])
+    .slice(0, count)
     .map((shot, i) => {
-      const cls = i === 0 ? "shot-back" : "shot-front";
+      const cls = count === 1 ? "shot-single" : i === 0 ? "shot-back" : "shot-front";
       return `<img class="${cls}" src="${shot.src}" alt="${shot.alt ?? ""}" />`;
     })
     .join("");
@@ -356,7 +368,7 @@ function renderSplit(content, { mediaLeft = false } = {}) {
 }
 
 function renderSplitMediaLeft(content) {
-  return renderSplit(content, { mediaLeft: true });
+  return renderSplit(content, { defaultSide: "left" });
 }
 
 function renderTextBullets(content) {

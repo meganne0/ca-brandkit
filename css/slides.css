@@ -1224,6 +1224,25 @@ body.slide-lightbox-open {
   object-position: bottom right;
 }
 
+.layout-split--single .media-stack {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.layout-split--single .media-stack .shot-single {
+  position: relative;
+  width: 90%;
+  height: auto;
+  max-height: 84%;
+  top: auto;
+  right: auto;
+  bottom: auto;
+  left: auto;
+  object-fit: contain;
+  object-position: center;
+}
+
 .layout-split__copy {
   display: flex;
   flex-direction: column;
