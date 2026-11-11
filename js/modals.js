@@ -110,6 +110,9 @@ export function defaultModalState() {
     eyebrow: "EVENT",
     title: "Stop identity threats before the breach",
     subtitle: "Live demos and threat briefings with the CyberArmor team.",
+    /** Optional headline above the square modal. Blank hides each line. */
+    squareTitle: "",
+    squareSubtitle: "",
     textPlacement: "above", // above | below | left | right
     /** Fixed plate width in px. One of HUG_PANEL_WIDTHS. */
     hugWidth: "520",
@@ -210,6 +213,8 @@ export function normalizeState(raw) {
   next.modalCount = Number(next.modalCount);
   next.imageCount = Number(next.imageCount);
   next.showFooter = Boolean(next.showFooter);
+  next.squareTitle = typeof next.squareTitle === "string" ? next.squareTitle : "";
+  next.squareSubtitle = typeof next.squareSubtitle === "string" ? next.squareSubtitle : "";
   delete next.hugMessageSize;
   delete next.hugLabel;
   next.hugWidth = normalizeHugWidth(next.hugWidth);
@@ -591,8 +596,24 @@ function paintTimeline(canvas, state) {
   if (hug) applyHugExportPadding(hug);
 }
 
+function squareOverlayMarkup(state) {
+  if (state.contentMode !== "modals") return "";
+  const titleRaw = state.squareTitle?.trim();
+  const subtitleRaw = state.squareSubtitle?.trim();
+  const title = titleRaw ? formatModalDates(titleRaw) : "";
+  const subtitle = subtitleRaw ? formatModalDates(subtitleRaw) : "";
+  if (!title && !subtitle) return "";
+
+  return `
+    <div class="ca-modals-copy ca-modals-copy--square">
+      ${title ? `<h2 class="type-h2 ca-modals-copy__title">${withBreaks(title)}</h2>` : ""}
+      ${subtitle ? `<p class="type-h4 ca-modals-copy__subtitle">${withBreaks(subtitle)}</p>` : ""}
+    </div>
+  `;
+}
+
 function textBlockMarkup(state) {
-  if (state.canvasFormat === "square") return "";
+  if (state.canvasFormat === "square") return squareOverlayMarkup(state);
   const eyebrowRaw = state.eyebrow?.trim();
   const titleRaw = state.title?.trim();
   const subtitleRaw = state.subtitle?.trim();
@@ -732,7 +753,9 @@ export function paintModals(canvas, state, deps = {}) {
     .filter(Boolean)
     .join(" ");
 
-  if (state.canvasFormat === "square" || !copy) {
+  if (state.canvasFormat === "square") {
+    compose.innerHTML = `<div class="ca-modals-compose__visual">${copy}${visual}</div>`;
+  } else if (!copy) {
     compose.innerHTML = `<div class="ca-modals-compose__visual">${visual}</div>`;
   } else if (
     state.textPlacement === "below" ||

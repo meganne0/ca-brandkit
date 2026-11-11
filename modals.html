@@ -12,7 +12,7 @@
     />
     <link rel="stylesheet" href="css/backgrounds.css?v=21" />
     <link rel="stylesheet" href="css/decor-youtube.css?v=1" />
-    <link rel="stylesheet" href="css/modals.css?v=40" />
+    <link rel="stylesheet" href="css/modals.css?v=41" />
     <script src="js/auth-gate.js?v=6"></script>
   </head>
   <body>
@@ -108,6 +108,21 @@
           </fieldset>
 
           <div id="modals-mode-modals">
+            <div id="modals-square-copy" hidden>
+              <h3 class="modals-modal-block__title">Above the modal</h3>
+              <p class="modals-hint">
+                Optional. Shown centered above the square modal. Leave a field blank to hide it.
+              </p>
+              <label class="modals-field">
+                <span class="modals-field__label">Title</span>
+                <input class="modals-field__input" id="modals-square-title" type="text" />
+              </label>
+              <label class="modals-field">
+                <span class="modals-field__label">Subtitle</span>
+                <textarea class="modals-field__textarea" id="modals-square-subtitle" rows="2"></textarea>
+              </label>
+            </div>
+
             <div class="modals-modal-block" data-modal-index="0">
               <h3 class="modals-modal-block__title" id="modals-block-1-title">Modal</h3>
               <label class="modals-field">
@@ -410,7 +425,7 @@
         ensureImageAspects,
         normalizeHugWidth,
         LANDSCAPE_DECOR_IDS,
-      } from "./js/modals.js?v=27";
+      } from "./js/modals.js?v=28";
       import { downloadPaintedThumbnail } from "./js/youtube-download.js?v=8";
 
       // Always boot from defaults — do not restore prior editor sessions.
@@ -430,6 +445,7 @@
       const bgRow = document.getElementById("modals-bg-row");
       const block2 = document.getElementById("modals-block-2");
       const addModalBtn = document.getElementById("modals-add-modal");
+      const squareCopy = document.getElementById("modals-square-copy");
       const block1Title = document.getElementById("modals-block-1-title");
       const previewMeta = document.getElementById("modals-preview-meta");
       const modeModals = document.getElementById("modals-mode-modals");
@@ -589,6 +605,7 @@
         block1Title.textContent = state.modalCount === 2 ? "Modal 1 · back" : "Modal";
         img2Block.hidden = state.imageCount !== 2;
         textBlock.hidden = isSquare || fixedPlate;
+        squareCopy.hidden = !isSquare;
         placeLandscape.hidden = state.canvasFormat !== "landscape";
         stage.classList.toggle("modals-stage--landscape", state.canvasFormat === "landscape");
         stage.classList.toggle("modals-stage--hug", hug);
@@ -621,6 +638,8 @@
         document.getElementById("modals-eyebrow").value = state.eyebrow ?? "";
         document.getElementById("modals-title").value = state.title ?? "";
         document.getElementById("modals-subtitle").value = state.subtitle ?? "";
+        document.getElementById("modals-square-title").value = state.squareTitle ?? "";
+        document.getElementById("modals-square-subtitle").value = state.squareSubtitle ?? "";
 
         if (state.canvasFormat === "landscape") {
           const el = document.querySelector(
@@ -709,6 +728,8 @@
         state.eyebrow = document.getElementById("modals-eyebrow").value;
         state.title = document.getElementById("modals-title").value;
         state.subtitle = document.getElementById("modals-subtitle").value;
+        state.squareTitle = document.getElementById("modals-square-title").value;
+        state.squareSubtitle = document.getElementById("modals-square-subtitle").value;
 
         if (state.canvasFormat === "landscape") {
           state.textPlacement = document.querySelector(
@@ -877,6 +898,8 @@
         "modals-eyebrow",
         "modals-title",
         "modals-subtitle",
+        "modals-square-title",
+        "modals-square-subtitle",
         "modals-timeline-title",
         "modals-timeline-attack-title",
         "modals-timeline-attack-date",

@@ -775,11 +775,80 @@ body {
   min-height: min(500px, 70%);
 }
 
-/* Square, one modal — larger plate so it fills more of the canvas. */
+/* Square, one modal — wide plate that hugs short content and caps at the stage. */
 .ca-modals-compose--square .ca-modals-stage--n1 .ca-modal--back {
   width: min(860px, 88%);
   min-width: min(760px, 82%);
-  min-height: min(720px, 78%);
+  min-height: 0;
+  height: auto;
+  max-height: 100%;
+  overflow: auto;
+}
+
+.ca-modals-compose--square .ca-modal__window-title {
+  font-size: 24px;
+}
+
+.ca-modals-compose--square .ca-modal__window-body {
+  font-size: 28px;
+  line-height: 1.4;
+}
+
+/* Optional title and subtitle sit just above the card; the pair stays centered. */
+.ca-modals-compose--square.ca-modals-compose--has-copy .ca-modals-compose__visual {
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 28px;
+  height: 100%;
+  min-height: 0;
+}
+
+.ca-modals-compose--square .ca-modals-copy {
+  flex: 0 0 auto;
+  align-items: center;
+  text-align: center;
+  width: min(860px, 88%);
+  max-width: 88%;
+  gap: 10px;
+}
+
+.ca-modals-compose--square .ca-modals-copy .type-h2 {
+  font-family: var(--font-headline);
+  font-size: 42px;
+  font-weight: 600;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  color: var(--ca-orange);
+}
+
+.ca-modals-compose--square .ca-modals-copy .type-h4 {
+  font-family: var(--font-headline);
+  font-size: 26px;
+  font-weight: 400;
+  line-height: 1.3;
+  color: var(--ca-tagline);
+}
+
+.ca-modals-compose--square.ca-modals-compose--has-copy .ca-modals-stage {
+  height: auto;
+  flex: 1 1 auto;
+  min-height: 0;
+  max-height: 100%;
+}
+
+.ca-modals-compose--square.ca-modals-compose--has-copy .ca-modals-stage--n1 {
+  flex: 0 1 auto;
+  width: min(860px, 88%);
+}
+
+.ca-modals-compose--square.ca-modals-compose--has-copy .ca-modals-stage--n1 .ca-modal--back {
+  position: relative;
+  top: auto;
+  left: auto;
+  transform: none;
+  width: 100%;
+  min-width: 0;
 }
 
 .ca-modals-stage--n2 .ca-modal {
