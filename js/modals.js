@@ -102,7 +102,7 @@ export function defaultModalState() {
     showFooter: true,
     contentMode: "modals", // modals | images
     modalCount: 1,
-    imageCount: 2,
+    imageCount: 1,
     images: [
       { src: "", fit: "cover", aspect: null },
       { src: "", fit: "cover", aspect: null },
@@ -209,9 +209,8 @@ export function normalizeState(raw) {
   if (next.canvasFormat === "landscape" && !LANDSCAPE_DECOR_IDS.includes(next.decor)) {
     next.decor = "";
   }
-  if (![1, 2].includes(Number(next.imageCount))) next.imageCount = 2;
   next.modalCount = Number(next.modalCount);
-  next.imageCount = Number(next.imageCount);
+  next.imageCount = 1;
   next.showFooter = Boolean(next.showFooter);
   next.squareTitle = typeof next.squareTitle === "string" ? next.squareTitle : "";
   next.squareSubtitle = typeof next.squareSubtitle === "string" ? next.squareSubtitle : "";
@@ -597,7 +596,6 @@ function paintTimeline(canvas, state) {
 }
 
 function squareOverlayMarkup(state) {
-  if (state.contentMode !== "modals") return "";
   const titleRaw = state.squareTitle?.trim();
   const subtitleRaw = state.squareSubtitle?.trim();
   const title = titleRaw ? formatModalDates(titleRaw) : "";
@@ -631,6 +629,9 @@ function textBlockMarkup(state) {
   `;
 }
 
+const IMAGE_RATIO_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 4H5v3"/><path d="M16 4h3v3"/><path d="M19 16v3h-3"/><path d="M5 16v3h3"/><rect x="8" y="8" width="8" height="8" rx="1"/></svg>`;
+const IMAGE_CLEAR_ICON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"/><path d="M9 7V5h6v2"/><path d="M7 7l1 13h8l1-13"/></svg>`;
+
 function imageElement(img, role, extraClass = "") {
   const fitContain = img?.fit === "contain";
   const fitClass = fitContain
@@ -642,37 +643,25 @@ function imageElement(img, role, extraClass = "") {
   const extra = extraClass ? ` ${extraClass}` : "";
   const src = img?.src?.trim();
   if (src) {
-    return `<img class="ca-modals-images__img ca-modals-images__img--${role} ${fitClass}${ratioClass}${extra}" src="${src}" alt=""${aspectStyle} />`;
-  }
-  return `<div class="ca-modals-images__img ca-modals-images__img--${role} ${fitClass}${ratioClass}${extra} ca-modals-images__img--empty" aria-hidden="true"${aspectStyle}></div>`;
-}
-
-function imagesMarkup(state) {
-  const count = state.imageCount === 1 ? 1 : 2;
-  const list = (state.images || []).slice(0, count);
-  const useAxisLayout = state.canvasFormat === "landscape";
-
-  if (count === 2 && useAxisLayout) {
+    const ratioOn = fitContain ? " is-on" : "";
     return `
-      <div class="ca-modals-images ca-modals-images--n2">
-        ${list.map((img, i) => imageElement(img, i === 0 ? "back" : "front")).join("")}
-      </div>
-    `;
-  }
-
-  if (count === 2) {
-    return `
-      <div class="ca-modals-images ca-modals-images--n2">
-        <div class="ca-modals-images__stack">
-          ${list.map((img, i) => imageElement(img, i === 0 ? "back" : "front")).join("")}
+      <div class="ca-modals-images__frame ca-modals-images__img ca-modals-images__img--${role} ${fitClass}${ratioClass}${extra}"${aspectStyle}>
+        <img class="ca-modals-images__photo" src="${src}" alt="" />
+        <div class="ca-modals-images__tools">
+          <button type="button" class="ca-modals-images__tool${ratioOn}" data-modals-image-ratio aria-pressed="${fitContain ? "true" : "false"}" aria-label="Keep original image ratio">${IMAGE_RATIO_ICON}</button>
+          <button type="button" class="ca-modals-images__tool" data-modals-image-clear aria-label="Clear image">${IMAGE_CLEAR_ICON}</button>
         </div>
       </div>
     `;
   }
+  return `<button type="button" class="ca-modals-images__img ca-modals-images__img--${role} ${fitClass}${ratioClass}${extra} ca-modals-images__img--empty" data-modals-image-pick="0"${aspectStyle}>Add image</button>`;
+}
 
+function imagesMarkup(state) {
+  const img = (state.images || [])[0];
   return `
-    <div class="ca-modals-images ca-modals-images--n${count}">
-      ${imageElement(list[0], "back")}
+    <div class="ca-modals-images ca-modals-images--n1">
+      ${imageElement(img, "back")}
     </div>
   `;
 }
@@ -774,7 +763,8 @@ export function paintModals(canvas, state, deps = {}) {
   canvas.appendChild(compose);
 
   const decorId =
-    state.canvasFormat === "landscape" && !LANDSCAPE_DECOR_IDS.includes(state.decor)
+    state.canvasFormat === "square" ||
+    (state.canvasFormat === "landscape" && !LANDSCAPE_DECOR_IDS.includes(state.decor))
       ? ""
       : state.decor;
   if (decorId && deps.renderDecor) {

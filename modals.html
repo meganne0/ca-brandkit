@@ -12,7 +12,7 @@
     />
     <link rel="stylesheet" href="css/backgrounds.css?v=21" />
     <link rel="stylesheet" href="css/decor-youtube.css?v=1" />
-    <link rel="stylesheet" href="css/modals.css?v=41" />
+    <link rel="stylesheet" href="css/modals.css?v=51" />
     <script src="js/auth-gate.js?v=6"></script>
   </head>
   <body>
@@ -83,10 +83,12 @@
             </label>
           </div>
 
-          <label class="modals-field">
-            <span class="modals-field__label">Decor (behind content)</span>
-            <select class="modals-field__select" id="modals-decor"></select>
-          </label>
+          <div id="modals-decor-row">
+            <label class="modals-field">
+              <span class="modals-field__label">Decor (behind content)</span>
+              <select class="modals-field__select" id="modals-decor"></select>
+            </label>
+          </div>
 
           <label class="modals-check" for="modals-footer">
             <input type="checkbox" id="modals-footer" checked />
@@ -107,22 +109,22 @@
             </div>
           </fieldset>
 
-          <div id="modals-mode-modals">
-            <div id="modals-square-copy" hidden>
-              <h3 class="modals-modal-block__title">Above the modal</h3>
-              <p class="modals-hint">
-                Optional. Shown centered above the square modal. Leave a field blank to hide it.
-              </p>
-              <label class="modals-field">
-                <span class="modals-field__label">Title</span>
-                <input class="modals-field__input" id="modals-square-title" type="text" />
-              </label>
-              <label class="modals-field">
-                <span class="modals-field__label">Subtitle</span>
-                <textarea class="modals-field__textarea" id="modals-square-subtitle" rows="2"></textarea>
-              </label>
-            </div>
+          <div id="modals-square-copy" hidden>
+            <h3 class="modals-modal-block__title">Above the card</h3>
+            <p class="modals-hint">
+              Optional. Shown centered above the square modal or image. Leave a field blank to hide it.
+            </p>
+            <label class="modals-field">
+              <span class="modals-field__label">Title</span>
+              <input class="modals-field__input" id="modals-square-title" type="text" />
+            </label>
+            <label class="modals-field">
+              <span class="modals-field__label">Subtitle</span>
+              <textarea class="modals-field__textarea" id="modals-square-subtitle" rows="2"></textarea>
+            </label>
+          </div>
 
+          <div id="modals-mode-modals">
             <div class="modals-modal-block" data-modal-index="0">
               <h3 class="modals-modal-block__title" id="modals-block-1-title">Modal</h3>
               <label class="modals-field">
@@ -206,29 +208,18 @@
           </div>
 
           <div id="modals-mode-images" hidden>
-            <fieldset class="modals-fieldset">
-              <legend class="modals-fieldset__legend">Image count</legend>
-              <div class="modals-radios" role="radiogroup" aria-label="Image count">
-                <label class="modals-radio">
-                  <input type="radio" name="image-count" value="1" />
-                  One image
-                </label>
-                <label class="modals-radio">
-                  <input type="radio" name="image-count" value="2" checked />
-                  Two overlapping
-                </label>
-              </div>
-            </fieldset>
-
             <p class="modals-hint">
-              Images are centered and overlap like the modals. Check “keep original
-              ratio” to crop each image card to that file’s proportions.
+              Click the placeholder in the preview to add the image. Hover the
+              image to clear it or keep its original ratio.
             </p>
 
             <div class="modals-modal-block">
-              <h3 class="modals-modal-block__title">Image 1 · back</h3>
+              <h3 class="modals-modal-block__title">Image</h3>
               <div class="modals-file">
-                <button type="button" class="modals-btn" id="modals-img1-btn">Upload image 1</button>
+                <label class="modals-btn modals-file-btn">
+                  Upload image
+                  <input id="modals-img1-file" type="file" accept="image/*" />
+                </label>
                 <button type="button" class="modals-btn modals-btn--ghost" id="modals-img1-clear">
                   Clear
                 </button>
@@ -239,23 +230,6 @@
               </label>
               <p class="modals-hint" id="modals-img1-status">No image</p>
             </div>
-
-            <div class="modals-modal-block" id="modals-img2-block">
-              <h3 class="modals-modal-block__title">Image 2 · front</h3>
-              <div class="modals-file">
-                <button type="button" class="modals-btn" id="modals-img2-btn">Upload image 2</button>
-                <button type="button" class="modals-btn modals-btn--ghost" id="modals-img2-clear">
-                  Clear
-                </button>
-              </div>
-              <label class="modals-check" for="modals-img2-fit">
-                <input type="checkbox" id="modals-img2-fit" />
-                <span>Keep original image ratio</span>
-              </label>
-              <p class="modals-hint" id="modals-img2-status">No image</p>
-            </div>
-            <input id="modals-img1-file" type="file" accept="image/*" hidden />
-            <input id="modals-img2-file" type="file" accept="image/*" hidden />
           </div>
 
           <div id="modals-text-block" hidden>
@@ -425,7 +399,7 @@
         ensureImageAspects,
         normalizeHugWidth,
         LANDSCAPE_DECOR_IDS,
-      } from "./js/modals.js?v=28";
+      } from "./js/modals.js?v=32";
       import { downloadPaintedThumbnail } from "./js/youtube-download.js?v=8";
 
       // Always boot from defaults — do not restore prior editor sessions.
@@ -442,6 +416,7 @@
       const stage = document.getElementById("modals-stage");
       const bgSelect = document.getElementById("modals-bg");
       const decorSelect = document.getElementById("modals-decor");
+      const decorRow = document.getElementById("modals-decor-row");
       const bgRow = document.getElementById("modals-bg-row");
       const block2 = document.getElementById("modals-block-2");
       const addModalBtn = document.getElementById("modals-add-modal");
@@ -452,10 +427,8 @@
       const modeImages = document.getElementById("modals-mode-images");
       const textBlock = document.getElementById("modals-text-block");
       const placeLandscape = document.getElementById("modals-place-landscape");
-      const img2Block = document.getElementById("modals-img2-block");
       const footerCheck = document.getElementById("modals-footer");
       const img1FitCheck = document.getElementById("modals-img1-fit");
-      const img2FitCheck = document.getElementById("modals-img2-fit");
       const optionsStandard = document.getElementById("modals-options-standard");
       const optionsHug = document.getElementById("modals-options-hug");
       const optionsTimeline = document.getElementById("modals-options-timeline");
@@ -499,8 +472,8 @@
       }
 
       function fillDecorOptions() {
-        const landscape = state.canvasFormat === "landscape";
-        const ids = landscape ? LANDSCAPE_DECOR_IDS : Object.keys(YOUTUBE_DECORS);
+        if (state.canvasFormat === "square") return;
+        const ids = LANDSCAPE_DECOR_IDS;
         const prev = state.decor || "";
         const next = ids.includes(prev) ? prev : "";
         state.decor = next;
@@ -603,9 +576,9 @@
         block2.hidden = state.modalCount !== 2;
         addModalBtn.hidden = state.modalCount === 2;
         block1Title.textContent = state.modalCount === 2 ? "Modal 1 · back" : "Modal";
-        img2Block.hidden = state.imageCount !== 2;
         textBlock.hidden = isSquare || fixedPlate;
         squareCopy.hidden = !isSquare;
+        decorRow.hidden = isSquare;
         placeLandscape.hidden = state.canvasFormat !== "landscape";
         stage.classList.toggle("modals-stage--landscape", state.canvasFormat === "landscape");
         stage.classList.toggle("modals-stage--hug", hug);
@@ -626,12 +599,8 @@
         document.querySelector(
           `input[name="content-mode"][value="${state.contentMode}"]`,
         ).checked = true;
-        document.querySelector(
-          `input[name="image-count"][value="${state.imageCount}"]`,
-        ).checked = true;
         footerCheck.checked = Boolean(state.showFooter);
         img1FitCheck.checked = state.images[0]?.fit === "contain";
-        img2FitCheck.checked = state.images[1]?.fit === "contain";
         fillBackgroundOptions();
         fillDecorOptions();
 
@@ -674,7 +643,6 @@
         renderTimelineEventFields();
 
         imageStatus(document.getElementById("modals-img1-status"), state.images[0]?.src);
-        imageStatus(document.getElementById("modals-img2-status"), state.images[1]?.src);
         updateVisibility();
       }
 
@@ -715,14 +683,10 @@
         state.contentMode = document.querySelector(
           'input[name="content-mode"]:checked',
         ).value;
-        state.imageCount = Number(
-          document.querySelector('input[name="image-count"]:checked').value,
-        );
+        state.imageCount = 1;
         state.showFooter = footerCheck.checked;
         if (!state.images[0]) state.images[0] = { src: "", fit: "cover", aspect: null };
-        if (!state.images[1]) state.images[1] = { src: "", fit: "cover", aspect: null };
         state.images[0].fit = img1FitCheck.checked ? "contain" : "cover";
-        state.images[1].fit = img2FitCheck.checked ? "contain" : "cover";
         state.bg = bgSelect.value || state.bg;
         state.decor = decorSelect.value || "";
         state.eyebrow = document.getElementById("modals-eyebrow").value;
@@ -817,17 +781,14 @@
         state.images[index].src = url;
         const aspect = await measureImageAspect(url);
         state.images[index].aspect = aspect;
-        imageStatus(
-          document.getElementById(index === 0 ? "modals-img1-status" : "modals-img2-status"),
-          url,
-        );
+        imageStatus(document.getElementById("modals-img1-status"), url);
         saveStoredState(state);
         await persistAndPaint();
       }
 
       document
         .querySelectorAll(
-          'input[name="canvas-format"], input[name="export-mode"], input[name="content-mode"], input[name="image-count"], input[name="text-placement-land"], #modals-hug-width, #modals-bg, #modals-decor, #modals-footer, #modals-img1-fit, #modals-img2-fit',
+          'input[name="canvas-format"], input[name="export-mode"], input[name="content-mode"], input[name="text-placement-land"], #modals-hug-width, #modals-bg, #modals-decor, #modals-footer, #modals-img1-fit',
         )
         .forEach((el) => el.addEventListener("change", () => {
           if (el.name === "canvas-format") {
@@ -944,21 +905,28 @@
         paint();
       });
 
-      document.getElementById("modals-img1-btn").addEventListener("click", () => {
+      function pickPreviewImage() {
         document.getElementById("modals-img1-file").click();
-      });
-      document.getElementById("modals-img2-btn").addEventListener("click", () => {
-        document.getElementById("modals-img2-file").click();
+      }
+
+      stage.addEventListener("click", (event) => {
+        if (event.target.closest("[data-modals-image-clear]")) {
+          document.getElementById("modals-img1-clear").click();
+          return;
+        }
+        if (event.target.closest("[data-modals-image-ratio]")) {
+          const fit = document.getElementById("modals-img1-fit");
+          fit.checked = !fit.checked;
+          fit.dispatchEvent(new Event("change", { bubbles: true }));
+          return;
+        }
+        if (!event.target.closest("[data-modals-image-pick]")) return;
+        pickPreviewImage();
       });
       document.getElementById("modals-img1-file").addEventListener("change", async (e) => {
         const file = e.target.files?.[0];
         e.target.value = "";
         await assignImage(0, file);
-      });
-      document.getElementById("modals-img2-file").addEventListener("change", async (e) => {
-        const file = e.target.files?.[0];
-        e.target.value = "";
-        await assignImage(1, file);
       });
       document.getElementById("modals-img1-clear").addEventListener("click", () => {
         state.images[0] = {
@@ -967,16 +935,6 @@
           aspect: null,
         };
         imageStatus(document.getElementById("modals-img1-status"), "");
-        saveStoredState(state);
-        paint();
-      });
-      document.getElementById("modals-img2-clear").addEventListener("click", () => {
-        state.images[1] = {
-          src: "",
-          fit: state.images[1]?.fit === "contain" ? "contain" : "cover",
-          aspect: null,
-        };
-        imageStatus(document.getElementById("modals-img2-status"), "");
         saveStoredState(state);
         paint();
       });
