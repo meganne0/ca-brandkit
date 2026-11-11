@@ -266,6 +266,10 @@ body {
   background: transparent;
 }
 
+.modals-add {
+  margin: 0 0 18px;
+}
+
 .modals-preview__head {
   display: flex;
   align-items: baseline;
@@ -302,9 +306,12 @@ body {
 
 .modals-stage {
   position: relative;
-  width: 100%;
+  /* Cap width to the same limit as height so a square canvas isn't left-aligned
+     inside a wider frame (that left a dark strip on the right). */
+  width: min(100%, min(72vh, 720px));
   aspect-ratio: 1;
   max-height: min(72vh, 720px);
+  margin-inline: auto;
   overflow: hidden;
   border-radius: 18px;
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -312,7 +319,10 @@ body {
 }
 
 .modals-stage--landscape {
+  width: 100%;
   aspect-ratio: 1200 / 627;
+  max-height: none;
+  margin-inline: 0;
 }
 
 .modals-stage--portrait {
@@ -569,6 +579,9 @@ body {
 .ca-modals-compose--landscape .ca-modals-copy {
   align-items: flex-start;
   text-align: left;
+  padding-left: 32px;
+  padding-right: 32px;
+  box-sizing: border-box;
 }
 
 .ca-modals-copy__eyebrow,
@@ -762,6 +775,13 @@ body {
   min-height: min(500px, 70%);
 }
 
+/* Square, one modal — larger plate so it fills more of the canvas. */
+.ca-modals-compose--square .ca-modals-stage--n1 .ca-modal--back {
+  width: min(860px, 88%);
+  min-width: min(760px, 82%);
+  min-height: min(720px, 78%);
+}
+
 .ca-modals-stage--n2 .ca-modal {
   min-width: min(400px, 55%);
   min-height: min(400px, 55%);
@@ -794,6 +814,14 @@ body {
 .ca-modals-compose--square .ca-modals-images {
   width: min(760px, 86%);
   height: min(760px, 86%);
+}
+
+/* Square, one image — zoom the card so it fills the canvas. */
+.ca-modals-compose--square .ca-modals-images--n1 {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
 }
 
 /* ---- Landscape / portrait visual region ---- */
@@ -867,6 +895,14 @@ body {
   right: 0;
   bottom: 0;
   z-index: 2;
+}
+
+/* Landscape modal pair — a little more stagger than the 90% corner pin. */
+.ca-modals-compose--landscape .ca-modals-stage--n2 .ca-modal {
+  width: 80%;
+  height: 80%;
+  max-width: 80%;
+  max-height: 80%;
 }
 
 .ca-modals-compose--landscape .ca-modals-images--n2 .ca-modals-images__img--ratio,
@@ -975,6 +1011,11 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+}
+
+.ca-modals-compose--square .ca-modals-images--n1 .ca-modals-images__img--back {
+  width: 94%;
+  height: 94%;
 }
 
 .ca-modals-images--n2 .ca-modals-images__img--back {

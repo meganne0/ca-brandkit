@@ -1,6 +1,6 @@
 /**
  * Modal compositor — glass panels or overlapping images for
- * square / landscape / portrait export (background or transparent PNG).
+ * square / landscape export (background or transparent PNG).
  */
 
 import { mountSlideFooter } from "./components/footer.js?v=9";
@@ -13,13 +13,6 @@ export const MODAL_FORMATS = {
     h: 627,
     label: "Landscape",
     className: "canvas--li-landscape",
-  },
-  portrait: {
-    id: "portrait",
-    w: 1080,
-    h: 1350,
-    label: "Portrait",
-    className: "canvas--li-portrait",
   },
   /** Working canvas; download crops to the modal on a transparent PNG. */
   hug: {
@@ -53,6 +46,9 @@ export const MODAL_ACCENTS = {
 };
 
 export const STORAGE_KEY = "ca-modals-editor-v1";
+
+/** Decor recipes allowed on the landscape canvas. Square keeps the full list. */
+export const LANDSCAPE_DECOR_IDS = ["YT-DX-03", "YT-DX-06"];
 
 /** Fixed Hugging Screenshot plate widths, in pixels. */
 export const HUG_PANEL_WIDTHS = ["520", "600", "680", "750", "800"];
@@ -99,13 +95,13 @@ export function defaultTimelineEvent() {
 
 export function defaultModalState() {
   return {
-    canvasFormat: "square", // square | landscape | portrait | hug | timeline
+    canvasFormat: "square", // square | landscape | hug | timeline
     exportMode: "background", // background | transparent
     bg: "LI-BG-01",
     decor: "YT-DX-02",
     showFooter: true,
     contentMode: "modals", // modals | images
-    modalCount: 2,
+    modalCount: 1,
     imageCount: 2,
     images: [
       { src: "", fit: "cover", aspect: null },
@@ -206,7 +202,10 @@ export function normalizeState(raw) {
   }
   if (!MODAL_FORMATS[next.canvasFormat]) next.canvasFormat = "square";
   if (!["modals", "images"].includes(next.contentMode)) next.contentMode = "modals";
-  if (![1, 2].includes(Number(next.modalCount))) next.modalCount = 2;
+  if (![1, 2].includes(Number(next.modalCount))) next.modalCount = 1;
+  if (next.canvasFormat === "landscape" && !LANDSCAPE_DECOR_IDS.includes(next.decor)) {
+    next.decor = "";
+  }
   if (![1, 2].includes(Number(next.imageCount))) next.imageCount = 2;
   next.modalCount = Number(next.modalCount);
   next.imageCount = Number(next.imageCount);
@@ -224,8 +223,6 @@ export function normalizeState(raw) {
     next.canvasFormat === "timeline"
   ) {
     // square / hug / timeline have no side text placement
-    if (!["above", "below"].includes(next.textPlacement)) next.textPlacement = "above";
-  } else if (next.canvasFormat === "portrait") {
     if (!["above", "below"].includes(next.textPlacement)) next.textPlacement = "above";
   } else if (!["left", "right"].includes(next.textPlacement)) {
     next.textPlacement = "left";
@@ -632,8 +629,7 @@ function imageElement(img, role, extraClass = "") {
 function imagesMarkup(state) {
   const count = state.imageCount === 1 ? 1 : 2;
   const list = (state.images || []).slice(0, count);
-  const useAxisLayout =
-    state.canvasFormat === "landscape" || state.canvasFormat === "portrait";
+  const useAxisLayout = state.canvasFormat === "landscape";
 
   if (count === 2 && useAxisLayout) {
     return `
@@ -754,8 +750,12 @@ export function paintModals(canvas, state, deps = {}) {
   }
   canvas.appendChild(compose);
 
-  if (state.decor && deps.renderDecor) {
-    deps.renderDecor(canvas, state.decor);
+  const decorId =
+    state.canvasFormat === "landscape" && !LANDSCAPE_DECOR_IDS.includes(state.decor)
+      ? ""
+      : state.decor;
+  if (decorId && deps.renderDecor) {
+    deps.renderDecor(canvas, decorId);
   } else {
     delete canvas.dataset.decor;
   }

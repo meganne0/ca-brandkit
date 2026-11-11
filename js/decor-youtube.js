@@ -463,10 +463,12 @@ export function renderYouTubeDecor(canvas, decorId) {
   const node = wrap.firstElementChild;
   canvas.dataset.decor = decorId;
 
-  const content = canvas.querySelector(
-    ".yt-content, .ca-modals-stage, .li-content",
+  // Anchor must be a direct child. .ca-modals-stage is nested inside
+  // .ca-modals-compose, and insertBefore throws if the anchor isn't a child.
+  const anchor = canvas.querySelector(
+    ":scope > .yt-content, :scope > .ca-modals-compose, :scope > .li-content, :scope > .ca-modals-stage",
   );
-  if (content) canvas.insertBefore(node, content);
+  if (anchor) canvas.insertBefore(node, anchor);
   else canvas.appendChild(node);
 }
 

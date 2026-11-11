@@ -12,7 +12,7 @@
     />
     <link rel="stylesheet" href="css/backgrounds.css?v=21" />
     <link rel="stylesheet" href="css/decor-youtube.css?v=1" />
-    <link rel="stylesheet" href="css/modals.css?v=37" />
+    <link rel="stylesheet" href="css/modals.css?v=40" />
     <script src="js/auth-gate.js?v=6"></script>
   </head>
   <body>
@@ -23,8 +23,8 @@
           <span class="modals-badge">In Progress</span>
         </div>
         <p>
-          Compose overlapping glass modals or images for square, landscape, or
-          portrait posts — with optional CyberArmor footer and transparent PNG export.
+          Compose overlapping glass modals or images for square or landscape
+          posts — with optional CyberArmor footer and transparent PNG export.
           <a class="gallery-nav" href="index.html">← hub</a>
           ·
           <a class="gallery-nav" href="linkedin.html">LinkedIn</a>
@@ -49,10 +49,6 @@
               <label class="modals-radio">
                 <input type="radio" name="canvas-format" value="landscape" />
                 Landscape
-              </label>
-              <label class="modals-radio">
-                <input type="radio" name="canvas-format" value="portrait" />
-                Portrait
               </label>
               <label class="modals-radio">
                 <input type="radio" name="canvas-format" value="hug" />
@@ -112,22 +108,8 @@
           </fieldset>
 
           <div id="modals-mode-modals">
-            <fieldset class="modals-fieldset">
-              <legend class="modals-fieldset__legend">Modal count</legend>
-              <div class="modals-radios" role="radiogroup" aria-label="Modal count">
-                <label class="modals-radio">
-                  <input type="radio" name="modal-count" value="1" />
-                  One modal
-                </label>
-                <label class="modals-radio">
-                  <input type="radio" name="modal-count" value="2" checked />
-                  Two overlapping
-                </label>
-              </div>
-            </fieldset>
-
             <div class="modals-modal-block" data-modal-index="0">
-              <h3 class="modals-modal-block__title">Modal 1 · back</h3>
+              <h3 class="modals-modal-block__title" id="modals-block-1-title">Modal</h3>
               <label class="modals-field">
                 <span class="modals-field__label">Title</span>
                 <input class="modals-field__input" data-field="title" type="text" />
@@ -161,8 +143,19 @@
               </label>
             </div>
 
-            <div class="modals-modal-block" data-modal-index="1" id="modals-block-2">
-              <h3 class="modals-modal-block__title">Modal 2 · front</h3>
+            <button type="button" class="modals-btn modals-add" id="modals-add-modal">
+              Add modal
+            </button>
+
+            <div class="modals-modal-block" data-modal-index="1" id="modals-block-2" hidden>
+              <div class="modals-timeline-event__head">
+                <h3 class="modals-modal-block__title" id="modals-block-2-title" style="margin:0">
+                  Modal 2 · front
+                </h3>
+                <button type="button" class="modals-btn modals-btn--ghost" id="modals-remove-modal">
+                  Remove
+                </button>
+              </div>
               <label class="modals-field">
                 <span class="modals-field__label">Title</span>
                 <input class="modals-field__input" data-field="title" type="text" />
@@ -253,7 +246,7 @@
           <div id="modals-text-block" hidden>
             <h3 class="modals-modal-block__title">Headline text</h3>
             <p class="modals-hint">
-              Shown on landscape and portrait only (LinkedIn-style eyebrow, title, subheadline).
+              Shown on landscape only (LinkedIn-style eyebrow, title, subheadline).
             </p>
             <label class="modals-field">
               <span class="modals-field__label">Eyebrow</span>
@@ -267,20 +260,6 @@
               <span class="modals-field__label">Subheadline</span>
               <textarea class="modals-field__textarea" id="modals-subtitle" rows="2"></textarea>
             </label>
-
-            <fieldset class="modals-fieldset" id="modals-place-portrait">
-              <legend class="modals-fieldset__legend">Text placement · portrait</legend>
-              <div class="modals-radios" role="radiogroup" aria-label="Portrait text placement">
-                <label class="modals-radio">
-                  <input type="radio" name="text-placement" value="above" checked />
-                  Above
-                </label>
-                <label class="modals-radio">
-                  <input type="radio" name="text-placement" value="below" />
-                  Below
-                </label>
-              </div>
-            </fieldset>
 
             <fieldset class="modals-fieldset" id="modals-place-landscape" hidden>
               <legend class="modals-fieldset__legend">Text placement · landscape</legend>
@@ -420,7 +399,7 @@
       import {
         YOUTUBE_DECORS,
         renderYouTubeDecor,
-      } from "./js/decor-youtube.js?v=2";
+      } from "./js/decor-youtube.js?v=3";
       import {
         STORAGE_KEY,
         defaultModalState,
@@ -430,7 +409,8 @@
         measureImageAspect,
         ensureImageAspects,
         normalizeHugWidth,
-      } from "./js/modals.js?v=25";
+        LANDSCAPE_DECOR_IDS,
+      } from "./js/modals.js?v=27";
       import { downloadPaintedThumbnail } from "./js/youtube-download.js?v=8";
 
       // Always boot from defaults — do not restore prior editor sessions.
@@ -449,11 +429,12 @@
       const decorSelect = document.getElementById("modals-decor");
       const bgRow = document.getElementById("modals-bg-row");
       const block2 = document.getElementById("modals-block-2");
+      const addModalBtn = document.getElementById("modals-add-modal");
+      const block1Title = document.getElementById("modals-block-1-title");
       const previewMeta = document.getElementById("modals-preview-meta");
       const modeModals = document.getElementById("modals-mode-modals");
       const modeImages = document.getElementById("modals-mode-images");
       const textBlock = document.getElementById("modals-text-block");
-      const placePortrait = document.getElementById("modals-place-portrait");
       const placeLandscape = document.getElementById("modals-place-landscape");
       const img2Block = document.getElementById("modals-img2-block");
       const footerCheck = document.getElementById("modals-footer");
@@ -501,16 +482,27 @@
         fillBackgroundSelect(bgSelect, state.canvasFormat);
       }
 
-      const noneDecor = document.createElement("option");
-      noneDecor.value = "";
-      noneDecor.textContent = "None";
-      decorSelect.appendChild(noneDecor);
-      Object.entries(YOUTUBE_DECORS).forEach(([id, recipe]) => {
-        const opt = document.createElement("option");
-        opt.value = id;
-        opt.textContent = `${id} · ${recipe.label}`;
-        decorSelect.appendChild(opt);
-      });
+      function fillDecorOptions() {
+        const landscape = state.canvasFormat === "landscape";
+        const ids = landscape ? LANDSCAPE_DECOR_IDS : Object.keys(YOUTUBE_DECORS);
+        const prev = state.decor || "";
+        const next = ids.includes(prev) ? prev : "";
+        state.decor = next;
+        decorSelect.replaceChildren();
+        const noneDecor = document.createElement("option");
+        noneDecor.value = "";
+        noneDecor.textContent = "None";
+        decorSelect.appendChild(noneDecor);
+        ids.forEach((id) => {
+          const recipe = YOUTUBE_DECORS[id];
+          if (!recipe) return;
+          const opt = document.createElement("option");
+          opt.value = id;
+          opt.textContent = `${id} · ${recipe.label}`;
+          decorSelect.appendChild(opt);
+        });
+        decorSelect.value = next;
+      }
 
       function imageStatus(el, src) {
         el.textContent = src ? "Image set (re-upload to replace)" : "No image";
@@ -593,12 +585,12 @@
         modeModals.hidden = isImages;
         modeImages.hidden = !isImages;
         block2.hidden = state.modalCount !== 2;
+        addModalBtn.hidden = state.modalCount === 2;
+        block1Title.textContent = state.modalCount === 2 ? "Modal 1 · back" : "Modal";
         img2Block.hidden = state.imageCount !== 2;
         textBlock.hidden = isSquare || fixedPlate;
-        placePortrait.hidden = state.canvasFormat !== "portrait";
         placeLandscape.hidden = state.canvasFormat !== "landscape";
         stage.classList.toggle("modals-stage--landscape", state.canvasFormat === "landscape");
-        stage.classList.toggle("modals-stage--portrait", state.canvasFormat === "portrait");
         stage.classList.toggle("modals-stage--hug", hug);
         stage.classList.toggle("modals-stage--timeline", timeline);
         stage.classList.toggle(
@@ -618,27 +610,18 @@
           `input[name="content-mode"][value="${state.contentMode}"]`,
         ).checked = true;
         document.querySelector(
-          `input[name="modal-count"][value="${state.modalCount}"]`,
-        ).checked = true;
-        document.querySelector(
           `input[name="image-count"][value="${state.imageCount}"]`,
         ).checked = true;
         footerCheck.checked = Boolean(state.showFooter);
         img1FitCheck.checked = state.images[0]?.fit === "contain";
         img2FitCheck.checked = state.images[1]?.fit === "contain";
         fillBackgroundOptions();
-        decorSelect.value = state.decor || "";
+        fillDecorOptions();
 
         document.getElementById("modals-eyebrow").value = state.eyebrow ?? "";
         document.getElementById("modals-title").value = state.title ?? "";
         document.getElementById("modals-subtitle").value = state.subtitle ?? "";
 
-        if (state.canvasFormat === "portrait") {
-          const el = document.querySelector(
-            `input[name="text-placement"][value="${state.textPlacement}"]`,
-          );
-          if (el) el.checked = true;
-        }
         if (state.canvasFormat === "landscape") {
           const el = document.querySelector(
             `input[name="text-placement-land"][value="${state.textPlacement}"]`,
@@ -713,9 +696,6 @@
         state.contentMode = document.querySelector(
           'input[name="content-mode"]:checked',
         ).value;
-        state.modalCount = Number(
-          document.querySelector('input[name="modal-count"]:checked').value,
-        );
         state.imageCount = Number(
           document.querySelector('input[name="image-count"]:checked').value,
         );
@@ -730,11 +710,7 @@
         state.title = document.getElementById("modals-title").value;
         state.subtitle = document.getElementById("modals-subtitle").value;
 
-        if (state.canvasFormat === "portrait") {
-          state.textPlacement = document.querySelector(
-            'input[name="text-placement"]:checked',
-          ).value;
-        } else if (state.canvasFormat === "landscape") {
+        if (state.canvasFormat === "landscape") {
           state.textPlacement = document.querySelector(
             'input[name="text-placement-land"]:checked',
           ).value;
@@ -830,7 +806,7 @@
 
       document
         .querySelectorAll(
-          'input[name="canvas-format"], input[name="export-mode"], input[name="content-mode"], input[name="modal-count"], input[name="image-count"], input[name="text-placement"], input[name="text-placement-land"], #modals-hug-width, #modals-bg, #modals-decor, #modals-footer, #modals-img1-fit, #modals-img2-fit',
+          'input[name="canvas-format"], input[name="export-mode"], input[name="content-mode"], input[name="image-count"], input[name="text-placement-land"], #modals-hug-width, #modals-bg, #modals-decor, #modals-footer, #modals-img1-fit, #modals-img2-fit',
         )
         .forEach((el) => el.addEventListener("change", () => {
           if (el.name === "canvas-format") {
@@ -882,9 +858,6 @@
             readFormIntoState();
             fillBackgroundOptions();
             // Sensible default placement when switching formats
-            if (state.canvasFormat === "portrait" && !["above", "below"].includes(state.textPlacement)) {
-              state.textPlacement = "above";
-            }
             if (state.canvasFormat === "landscape" && !["left", "right"].includes(state.textPlacement)) {
               state.textPlacement = "left";
             }
@@ -925,6 +898,21 @@
         saveStoredState(state);
         paint();
       });
+      document.getElementById("modals-add-modal").addEventListener("click", () => {
+        readFormIntoState();
+        state.modalCount = 2;
+        updateVisibility();
+        saveStoredState(state);
+        paint();
+      });
+      document.getElementById("modals-remove-modal").addEventListener("click", () => {
+        readFormIntoState();
+        state.modalCount = 1;
+        updateVisibility();
+        saveStoredState(state);
+        paint();
+      });
+
       document.getElementById("modals-timeline-add").addEventListener("click", () => {
         readTimelineEventsFromDom();
         state.timeline.events.push(defaultTimelineEvent());
