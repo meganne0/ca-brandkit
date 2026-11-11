@@ -1659,9 +1659,14 @@ a.metric-card__source:hover {
 }
 
 .layout-image-title__title,
-.layout-image-title__subtitle {
+.layout-image-title__subtitle,
+.layout-image-title__body {
   margin: 0;
   max-width: 100%;
+}
+
+.layout-image-title__body .layout-image-title__chip {
+  white-space: pre-wrap;
 }
 
 /*

@@ -583,6 +583,7 @@ function renderImageTitle(content, position = "center") {
   el.className = `slide-content layout-image-title layout-image-title--${position}`;
   const title = content.title ?? "";
   const subtitle = content.subtitle ?? "";
+  const body = String(content.text ?? content.body ?? "").trim();
   const image = content.image ?? content.src ?? "";
   const alt = content.alt ?? "";
   const bullets = content.bullets ?? [];
@@ -603,6 +604,11 @@ function renderImageTitle(content, position = "center") {
         ${
           subtitle
             ? `<p class="type-h4 layout-image-title__subtitle"><span class="layout-image-title__chip">${subtitle}</span></p>`
+            : ""
+        }
+        ${
+          body
+            ? `<p class="type-body layout-image-title__body"><span class="layout-image-title__chip">${escapeHtml(body)}</span></p>`
             : ""
         }
         ${

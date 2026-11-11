@@ -230,6 +230,9 @@ export function harvestSlideContent(slide) {
       subtitle:
         root.querySelector(".layout-image-title__subtitle .layout-image-title__chip")?.textContent.trim() ??
         base.subtitle,
+      text:
+        root.querySelector(".layout-image-title__body .layout-image-title__chip")?.textContent.trim() ??
+        base.text,
       bullets: bullets.length ? bullets : base.bullets,
       image: img?.getAttribute?.("src") ?? base.image,
       alt: img?.getAttribute?.("alt") ?? base.alt,
