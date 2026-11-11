@@ -376,10 +376,12 @@ function renderSplit(content, { defaultSide = "right", expandWhenEmpty = false }
     ${mediaLeft ? `${media}${copy}` : `${copy}${media}`}
   `;
   if (textless && count === 2) queueMicrotask(() => fitTextlessPair(el));
+  if (textless && count === 1) queueMicrotask(() => fitTextlessSingle(el));
   return el;
 }
 
 function placeTextlessShot(img, x, y, w, h) {
+  img.style.position = "absolute";
   img.style.width = `${w}px`;
   img.style.height = `${h}px`;
   img.style.maxWidth = "none";
@@ -388,6 +390,33 @@ function placeTextlessShot(img, x, y, w, h) {
   img.style.left = `${x}px`;
   img.style.right = "auto";
   img.style.bottom = "auto";
+  img.style.transform = "none";
+}
+
+/** One screenshot on an empty LY-07 slide: fill the area above the footer. */
+function fitTextlessSingle(root) {
+  if (!root?.classList?.contains("layout-split--textless")) return;
+  if (!root.classList.contains("layout-split--single")) return;
+  const stack = root.querySelector(".media-stack");
+  const img = stack?.querySelector("img");
+  if (!img || !stack.clientWidth || !stack.clientHeight) return;
+  if (!img.naturalWidth) {
+    img.addEventListener("load", () => fitTextlessSingle(root), { once: true });
+    return;
+  }
+  const scale = Math.min(
+    stack.clientWidth / img.naturalWidth,
+    stack.clientHeight / img.naturalHeight,
+  );
+  const w = img.naturalWidth * scale;
+  const h = img.naturalHeight * scale;
+  placeTextlessShot(
+    img,
+    (stack.clientWidth - w) / 2,
+    (stack.clientHeight - h) / 2,
+    w,
+    h,
+  );
 }
 
 /** Two screenshots on an empty LY-07 slide: large, pinned to opposite corners. */
@@ -457,7 +486,10 @@ function fitTextlessPair(root) {
 }
 
 function refreshTextlessSplits(root = document) {
-  root.querySelectorAll(".layout-split--textless").forEach((el) => fitTextlessPair(el));
+  root.querySelectorAll(".layout-split--textless").forEach((el) => {
+    if (el.classList.contains("layout-split--single")) fitTextlessSingle(el);
+    else fitTextlessPair(el);
+  });
 }
 
 function renderSplitMediaLeft(content) {
