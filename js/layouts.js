@@ -578,9 +578,10 @@ function fitImageTitleMedia(root) {
   }
 }
 
-function renderImageTitle(content, position = "center") {
+function renderImageTitle(content, position = "center", imageSide = "right") {
   const el = document.createElement("div");
-  el.className = `slide-content layout-image-title layout-image-title--${position}`;
+  const side = imageSide === "left" ? "image-left" : "";
+  el.className = `slide-content layout-image-title layout-image-title--${position}${side ? ` layout-image-title--${side}` : ""}`;
   const title = content.title ?? "";
   const subtitle = content.subtitle ?? "";
   const body = String(content.text ?? content.body ?? "").trim();
@@ -634,7 +635,7 @@ export function refreshImageTitleLayouts(root = document) {
 }
 
 function renderImageTitleCenter(content) {
-  return renderImageTitle(content, "center");
+  return renderImageTitle(content, "center", content.imageSide);
 }
 
 function renderImageTitleTop(content) {

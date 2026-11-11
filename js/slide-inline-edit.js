@@ -236,6 +236,11 @@ export function harvestSlideContent(slide) {
       bullets: bullets.length ? bullets : base.bullets,
       image: img?.getAttribute?.("src") ?? base.image,
       alt: img?.getAttribute?.("alt") ?? base.alt,
+      imageSide: root.classList.contains("layout-image-title--center")
+        ? root.classList.contains("layout-image-title--image-left")
+          ? "left"
+          : "right"
+        : base.imageSide,
     };
   }
 

@@ -151,6 +151,23 @@ function buildFormHtml(layout, content) {
     return bits.join("");
   }
 
+  if (layout === "LY-15") {
+    const side = c.imageSide === "left" ? "left" : "right";
+    bits.push(`
+      <fieldset class="deck-form__field deck-form__radios">
+        <legend class="deck-form__label">Image</legend>
+        <label class="deck-form__radio">
+          <input type="radio" name="imageSide" value="left" ${side === "left" ? "checked" : ""} />
+          Left
+        </label>
+        <label class="deck-form__radio">
+          <input type="radio" name="imageSide" value="right" ${side === "right" ? "checked" : ""} />
+          Right
+        </label>
+      </fieldset>
+    `);
+  }
+
   bits.push(field("title", "Title", c.title ?? ""));
   bits.push(field("subtitle", "Subtitle", c.subtitle ?? "", { type: "textarea", rows: 2 }));
 
@@ -511,6 +528,9 @@ function readContentFromForm(form, layout, base = {}) {
   if (form.elements.namedItem("subtitle")) next.subtitle = val(form, "subtitle");
   if (form.elements.namedItem("hint")) next.hint = val(form, "hint");
   if (form.elements.namedItem("text")) next.text = val(form, "text");
+  if (form.elements.namedItem("imageSide")) {
+    next.imageSide = val(form, "imageSide") === "left" ? "left" : "right";
+  }
 
   if (layout === "LY-08") {
     const bullets = [];

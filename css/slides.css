@@ -305,6 +305,35 @@ body.is-presenting:-webkit-full-screen .present-deck:hover .present-deck__chrome
   margin-bottom: 0;
 }
 
+.deck-form__radios {
+  border: 0;
+  margin: 0 0 12px;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+}
+
+.deck-form__radios .deck-form__label {
+  flex: 1 0 100%;
+}
+
+.deck-form__radio {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.88);
+  cursor: pointer;
+}
+
+.deck-form__radio input {
+  accent-color: var(--ca-orange);
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+
 .deck-form__label {
   font-size: 11px;
   font-weight: 600;
@@ -1648,6 +1677,17 @@ a.metric-card__source:hover {
 .layout-image-title--center .layout-image-title__copy {
   top: 50%;
   transform: translateY(-50%);
+}
+
+.layout-image-title--image-left .layout-image-title__stage {
+  justify-content: flex-start;
+  padding-right: 0;
+  padding-left: 2.5%;
+}
+
+.layout-image-title--image-left .layout-image-title__copy {
+  left: auto;
+  right: 120px;
 }
 
 .layout-image-title--top .layout-image-title__copy {
