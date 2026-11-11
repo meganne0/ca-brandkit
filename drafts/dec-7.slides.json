@@ -1,6 +1,6 @@
 {
-  "savedAt": "2026-11-11T21:01:42.450Z",
-  "publishId": "dec-7-1794430902413",
+  "savedAt": "2026-11-11T21:18:07.172Z",
+  "publishId": "dec-7-1794431887113",
   "slides": [
     {
       "title": "Cover",
@@ -8,8 +8,8 @@
       "bg": "DS-01",
       "content": {
         "headline": "The Cybercriminal Supply Chain: The Commodification of Compromise",
-        "accent": "",
-        "subtitle": "Sept 2026"
+        "accent": "The Commodification of Compromise",
+        "subtitle": ""
       }
     },
     {
