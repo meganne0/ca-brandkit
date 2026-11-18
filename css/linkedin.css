@@ -2034,6 +2034,14 @@ body.li-editor-open {
   margin: 12px 0 4px;
 }
 
+.li-composer__image-preview {
+  width: 100%;
+  max-height: 140px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
 .li-composer__add-column {
   margin-top: 12px;
 }
@@ -2640,6 +2648,80 @@ body.li-editor-open {
   line-height: 1.2;
 }
 
+.canvas--li-landscape .li-content.li-layout-composer .li-composer-block__title--lg {
+  font-size: 38px;
+}
+
+.canvas--li-landscape .li-content.li-layout-composer .type-body {
+  font-size: 26px;
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+.canvas--li-landscape .li-composer-columns--panel {
+  padding: 40px 36px;
+}
+
+.canvas--li-landscape .li-composer-columns .li-composer-block__image {
+  max-height: 280px;
+}
+
+.li-content.li-layout-composer .li-composer-list,
+.li-content.li-layout-composer .li-composer-list li {
+  font-family: var(--font-body);
+  font-size: calc(28px * var(--li-scale, 1));
+  font-weight: var(--type-body-weight, 500);
+  line-height: 1.45;
+  letter-spacing: normal;
+  text-transform: none;
+  color: var(--type-body-color);
+}
+
+.canvas--li-square .li-content.li-layout-composer .li-composer-list,
+.canvas--li-square .li-content.li-layout-composer .li-composer-list li {
+  font-size: 44px;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.canvas--li-landscape .li-content.li-layout-composer .li-composer-list,
+.canvas--li-landscape .li-content.li-layout-composer .li-composer-list li {
+  font-size: 26px;
+  font-weight: 400;
+  line-height: 1.25;
+}
+
+.li-content.li-layout-composer .li-composer-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.35em;
+}
+
+.li-layout-composer--align-center .li-composer-list {
+  align-items: center;
+}
+
+.li-content.li-layout-composer .li-composer-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55em;
+  text-align: left;
+}
+
+.li-content.li-layout-composer .li-composer-list li::before {
+  content: "";
+  width: 0.42em;
+  height: 0.42em;
+  margin-top: 0.42em;
+  border-radius: 50%;
+  background: var(--ca-orange);
+  flex: 0 0 auto;
+}
+
 .li-layout-composer--align-center {
   text-align: center;
 }
@@ -3065,7 +3147,7 @@ body.li-asset-modal-open {
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   gap: 10px;
   border: 1px solid rgba(255, 255, 255, 0.14);
   border-radius: 8px;
@@ -3089,19 +3171,57 @@ body.li-asset-modal-open {
   flex-shrink: 0;
 }
 
+.li-composer__asset-pick {
+  position: relative;
+}
+
 .li-composer__asset-menu {
   position: absolute;
-  z-index: 20;
+  z-index: 30;
   top: calc(100% + 6px);
   left: 0;
   right: 0;
-  max-height: 280px;
-  overflow: auto;
-  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  max-height: 320px;
+  overflow: hidden;
+  padding: 0;
   border-radius: 10px;
   border: 1px solid rgba(255, 255, 255, 0.12);
   background: #120b1c;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+}
+
+#li-composer-asset-menu[hidden] {
+  display: none !important;
+}
+
+.li-composer__asset-list {
+  overflow: auto;
+  min-height: 0;
+  padding: 8px;
+}
+
+.li-composer__asset-upload {
+  appearance: none;
+  flex: 0 0 auto;
+  position: sticky;
+  bottom: 0;
+  width: 100%;
+  border: none;
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 12px 14px;
+  background: #1c1228;
+  color: #fff;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+}
+
+.li-composer__asset-upload:hover {
+  background: rgba(242, 88, 53, 0.2);
 }
 
 .li-composer__asset-group {
@@ -3142,10 +3262,31 @@ body.li-asset-modal-open {
   width: 36px;
   height: 36px;
   border-radius: 6px;
-  object-fit: cover;
+  object-fit: contain;
   flex-shrink: 0;
   background: rgba(255, 255, 255, 0.06);
   border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.li-composer__asset-thumb-live {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  pointer-events: none;
+}
+
+.li-composer__asset-thumb-live .li-piece-mount,
+.li-composer__asset-thumb-live .li-piece-mount__stage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  aspect-ratio: auto;
 }
 
 .li-composer__asset-thumb--empty {

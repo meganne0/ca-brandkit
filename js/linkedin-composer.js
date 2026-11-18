@@ -76,7 +76,37 @@ function uid(prefix = "c") {
 }
 
 function withBreaks(text) {
-  return String(text ?? "").replace(/\r\n|\r|\n/g, "<br>");
+  const lines = String(text ?? "").replace(/\r\n|\r/g, "\n").split("\n");
+  const html = [];
+  let list = [];
+  let prose = [];
+  const flushList = () => {
+    if (!list.length) return;
+    html.push(
+      `<ul class="li-composer-list">${list
+        .map((item) => `<li>${escapeHtml(item)}</li>`)
+        .join("")}</ul>`,
+    );
+    list = [];
+  };
+  const flushProse = () => {
+    if (!prose.length) return;
+    html.push(prose.map((line) => escapeHtml(line)).join("<br>"));
+    prose = [];
+  };
+  lines.forEach((line) => {
+    if (/^\s*-(?:\s|$)/.test(line)) {
+      flushProse();
+      const item = line.replace(/^\s*-\s?/, "");
+      if (item) list.push(item);
+      return;
+    }
+    flushList();
+    prose.push(line);
+  });
+  flushProse();
+  flushList();
+  return html.join("");
 }
 
 function escapeHtml(value) {
@@ -532,7 +562,7 @@ export function createComposerState({
     logo: false,
     align: "left",
     components:
-      format === "square"
+      format === "square" || format === "landscape"
         ? [createComponent("column-set", { count: 1, sample: true })]
         : [createComponent("copy")],
   };
@@ -551,7 +581,7 @@ function splitCopyMarkup(component) {
     <div class="li-composer-split__copy">
       ${component.eyebrow ? `<p class="type-label">${withBreaks(component.eyebrow)}</p>` : ""}
       ${component.title ? `<h2 class="type-h2 li-composer-block__title li-composer-block__title--md">${withBreaks(component.title)}</h2>` : ""}
-      ${component.body ? `<p class="type-body">${withBreaks(component.body)}</p>` : ""}
+      ${component.body ? `<div class="type-body">${withBreaks(component.body)}</div>` : ""}
     </div>
   `;
 }
@@ -683,11 +713,17 @@ function renderPerson(person) {
 }
 
 function renderColumn(col) {
+  if (col.asset) {
+    return renderComponent(col.asset, "landscape").innerHTML;
+  }
+  if (col.image && col.src) {
+    return `<img class="li-composer-block__image is-contain" src="${escapeHtml(col.src)}" alt="${escapeHtml(col.alt)}" />`;
+  }
   const people = columnPeople(col);
   return `
     ${col.eyebrow ? `<p class="type-label">${withBreaks(col.eyebrow)}</p>` : ""}
     ${col.title ? `<h2 class="type-h2 li-composer-block__title li-composer-block__title--lg">${withBreaks(col.title)}</h2>` : ""}
-    ${col.body ? `<p class="type-body">${withBreaks(col.body)}</p>` : ""}
+    ${col.body ? `<div class="type-body">${withBreaks(col.body)}</div>` : ""}
     ${people.length ? `<div class="li-composer-people">${people.map((person) => renderPerson(person)).join("")}</div>` : ""}
   `;
 }
@@ -701,7 +737,7 @@ function renderColumnBlock(block) {
     return `<h2 class="type-h2 li-composer-block__title li-composer-block__title--${size}">${withBreaks(block.text)}</h2>`;
   }
   if (block.type === "body") {
-    return `<p class="type-body">${withBreaks(block.text)}</p>`;
+    return `<div class="type-body">${withBreaks(block.text)}</div>`;
   }
   if (block.type === "person") {
     return renderPerson(composerPerson(block));
@@ -728,7 +764,7 @@ function renderComponent(component, formatId = "square") {
       <div class="li-composer-copy">
         ${component.eyebrow ? `<p class="type-label">${withBreaks(component.eyebrow)}</p>` : ""}
         ${component.title ? `<h2 class="type-h2 li-composer-block__title li-composer-block__title--${size}">${withBreaks(component.title)}</h2>` : ""}
-        ${component.body ? `<p class="type-body">${withBreaks(component.body)}</p>` : ""}
+        ${component.body ? `<div class="type-body">${withBreaks(component.body)}</div>` : ""}
         ${component.eyebrowEnd ? `<p class="type-label li-composer-copy__eyebrow-end">${withBreaks(component.eyebrowEnd)}</p>` : ""}
       </div>
     `;
@@ -740,7 +776,7 @@ function renderComponent(component, formatId = "square") {
       : "lg";
     wrap.innerHTML = `<h2 class="type-h2 li-composer-block__title li-composer-block__title--${size}">${withBreaks(component.text)}</h2>`;
   } else if (component.type === "body") {
-    wrap.innerHTML = `<p class="type-body">${withBreaks(component.text)}</p>`;
+    wrap.innerHTML = `<div class="type-body">${withBreaks(component.text)}</div>`;
   } else if (component.type === "quote-panel") {
     const hasAvatar = Boolean(component.avatar);
     const panel = `
@@ -795,7 +831,7 @@ function renderComponent(component, formatId = "square") {
             (card) => `
               <article class="li-layout-cards__card">
                 ${card.label ? `<p class="type-label">${withBreaks(card.label)}</p>` : ""}
-                ${card.body ? `<p class="type-body">${withBreaks(card.body)}</p>` : ""}
+                ${card.body ? `<div class="type-body">${withBreaks(card.body)}</div>` : ""}
               </article>
             `,
           )
@@ -813,7 +849,7 @@ function renderComponent(component, formatId = "square") {
               <article class="li-layout-columns__col">
                 <p class="type-numeral type-numeral--xl li-layout-columns__num">${withBreaks(col.number ?? "")}</p>
                 ${col.title ? `<h3 class="type-h5 li-layout-columns__title">${withBreaks(col.title)}</h3>` : ""}
-                ${col.body ? `<p class="type-body li-layout-columns__body">${withBreaks(col.body)}</p>` : ""}
+                ${col.body ? `<div class="type-body li-layout-columns__body">${withBreaks(col.body)}</div>` : ""}
               </article>
             `,
           )
@@ -824,7 +860,7 @@ function renderComponent(component, formatId = "square") {
     wrap.innerHTML = `
       <article class="li-composer-block__metric">
         <p class="type-metric li-composer-block__metric-value">${withBreaks(component.value)}</p>
-        <p class="type-body">${withBreaks(component.text)}</p>
+        <div class="type-body">${withBreaks(component.text)}</div>
         ${component.source ? `<p class="type-label">${withBreaks(component.source)}</p>` : ""}
       </article>
     `;
@@ -842,11 +878,20 @@ function renderComponent(component, formatId = "square") {
       </article>
     `;
   } else if (component.type === "column-set") {
-    const columns = (component.columns ?? []).slice(0, 1);
-    const panel = component.quotePanel ? " li-composer-columns--panel" : "";
+    const stored = component.columns ?? [];
+    const textColumn = stored[0];
+    const imageColumn =
+      formatId === "landscape" &&
+      ((stored[1]?.image && stored[1]?.src) || stored[1]?.asset)
+        ? stored[1]
+        : null;
+    const columns = [textColumn, imageColumn].filter(Boolean);
+    const count = Math.max(1, columns.length);
+    const panel = count === 1 && component.quotePanel ? " li-composer-columns--panel" : "";
+    const template = count === 1 ? "minmax(0, 1fr)" : "minmax(0, 1.15fr) minmax(0, 0.85fr)";
     wrap.innerHTML = `
-      <div class="li-composer-columns li-composer-columns--1${panel}">
-        <div class="li-composer-columns__grid" style="display:grid;grid-template-columns:minmax(0, 1fr);width:100%;align-items:start">
+      <div class="li-composer-columns li-composer-columns--${count}${panel}">
+        <div class="li-composer-columns__grid" style="display:grid;grid-template-columns:${template};width:100%;align-items:center">
           ${columns
             .map(
               (col) => `
@@ -921,7 +966,7 @@ export function paintComposerCanvas(canvas, state, {
   const content = document.createElement("div");
   content.className = "li-content li-layout-composer";
   if (state.logo) content.classList.add("li-layout-composer--with-logo");
-  if (state.format === "square") {
+  if (state.format === "square" || state.format === "landscape") {
     content.classList.add(
       state.align === "center"
         ? "li-layout-composer--align-center"
@@ -977,7 +1022,9 @@ export function updateModalField(components, id, field, value) {
 
 export function componentFromAsset(asset, kind) {
   if (kind === "person" || (asset.name && !asset.layout)) {
+    const known = COMPOSER_PEOPLE.find((person) => person.name === asset.name);
     return createComponent("person", {
+      personId: known?.id,
       name: asset.name,
       role: asset.role,
       avatar: asset.avatar,

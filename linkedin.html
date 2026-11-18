@@ -16,7 +16,7 @@
     />
     <link rel="stylesheet" href="css/slides.css?v=92" />
     <link rel="stylesheet" href="css/backgrounds.css?v=21" />
-    <link rel="stylesheet" href="css/linkedin.css?v=76" />
+    <link rel="stylesheet" href="css/linkedin.css?v=79" />
     <script src="js/auth-gate.js?v=6"></script>
   </head>
   <body>
@@ -116,15 +116,24 @@
             </section>
 
             <section class="li-composer__section">
-              <h2 class="li-composer__section-title">From assets</h2>
-              <button
-                type="button"
-                class="li-composer__btn li-composer__btn--ghost"
-                id="li-composer-asset-trigger"
-              >
-                Browse assets…
-              </button>
-              <p class="li-ex-hint" id="li-composer-assets-status">Loading assets…</p>
+              <h2 class="li-composer__section-title">Image</h2>
+              <div class="li-composer__asset-pick" id="li-composer-asset-pick">
+                <button
+                  type="button"
+                  class="li-composer__asset-trigger"
+                  id="li-composer-asset-trigger"
+                  aria-expanded="false"
+                  aria-controls="li-composer-asset-menu"
+                >
+                  <span class="li-composer__asset-trigger-label">Add image</span>
+                  <span class="li-composer__asset-trigger-caret" aria-hidden="true">▾</span>
+                </button>
+                <div class="li-composer__asset-menu" id="li-composer-asset-menu" hidden>
+                  <div class="li-composer__asset-list" id="li-composer-asset-list"></div>
+                  <button type="button" class="li-composer__asset-upload" id="li-composer-asset-upload">Upload</button>
+                </div>
+              </div>
+              <p class="li-ex-hint" id="li-composer-assets-status" hidden>Loading assets…</p>
             </section>
 
             <section class="li-composer__section">
@@ -397,7 +406,7 @@
         removeComponent,
         updateComponent,
         updateModalField,
-      } from "./js/linkedin-composer.js?v=20";
+      } from "./js/linkedin-composer.js?v=24";
       import { loadAssetsCatalog } from "./js/assets-catalog.js?v=5";
 
       const SPEAKERS = [
@@ -633,16 +642,42 @@
         `;
       }
 
+      function landscapeAssetLabel(asset) {
+        if (!asset) return "Asset";
+        if (asset.type === "metric") return [asset.value, asset.source].filter(Boolean).join(" · ") || "Metric";
+        if (asset.type === "person") return [asset.name, asset.role].filter(Boolean).join(", ") || "Person";
+        return asset.label || asset.alt || "Asset";
+      }
+
       function renderColumnSetFields(component) {
         const column = (component.columns ?? [])[0];
+        const second = (component.columns ?? [])[1];
+        const hasSecond =
+          composerState.format === "landscape" &&
+          Boolean(second && ((second.image && second.src) || second.asset));
         const editor = column ? renderColumnEditor(column, 0) : "";
-        const quote = `<label class="li-composer__check li-composer__quote-check">
+        const quote = hasSecond
+          ? ""
+          : `<label class="li-composer__check li-composer__quote-check">
             <input type="checkbox" data-quote-panel ${component.quotePanel ? "checked" : ""} />
             <span>Quote panel background</span>
           </label>`;
+        const preview = second?.asset
+          ? `<p class="li-composer__item-type">${composerEscape(landscapeAssetLabel(second.asset))}</p>`
+          : `<img class="li-composer__image-preview" src="${composerEscape(second?.src || "")}" alt="" />`;
+        const image = hasSecond
+          ? `<div class="li-composer__nested">
+              <div class="li-composer__column-label">
+                <p class="li-composer__item-type">${second?.asset ? "Asset" : "Image"}</p>
+                <button type="button" class="li-composer__icon-btn" data-remove-landscape-image title="Remove">×</button>
+              </div>
+              ${preview}
+            </div>`
+          : "";
         return `
           ${editor}
           ${quote}
+          ${image}
         `;
       }
 
@@ -900,7 +935,8 @@
         composerListEl.innerHTML = composerState.components
           .map((component) => {
             const squareColumn =
-              composerState.format === "square" && component.type === "column-set";
+              (composerState.format === "square" || composerState.format === "landscape") &&
+              component.type === "column-set";
             const head = squareColumn
               ? ""
               : `
@@ -937,9 +973,10 @@
         const squareTools = document.getElementById("li-composer-square-tools");
         const decorField = document.getElementById("li-composer-decor-field");
         const square = composerState.format === "square";
-        if (squareTools) squareTools.hidden = !square;
+        const guided = square || composerState.format === "landscape";
+        if (squareTools) squareTools.hidden = !guided;
         if (decorField) decorField.hidden = square;
-        if (composerAddEl) composerAddEl.hidden = square;
+        if (composerAddEl) composerAddEl.hidden = guided;
         document.querySelectorAll(".li-composer__align-btn").forEach((btn) => {
           const on = btn.dataset.align === (composerState.align === "center" ? "center" : "left");
           btn.classList.toggle("is-active", on);
@@ -1028,6 +1065,7 @@
         "example-deliverables",
       ]);
       let composerAssetEntries = [];
+      let composerPickEntries = [];
       let composerImageAssets = [];
       let composerUploadTarget = null;
       let assetModalMode = "add"; // add | image
@@ -1063,6 +1101,7 @@
           });
         }
         if (composerAssetsStatus) {
+          composerAssetsStatus.hidden = false;
           composerAssetsStatus.textContent = `Rendering ${piece.label || "asset"}…`;
         }
         const src = await rasterizeLayoutPiece(piece, { pixelRatio: 1 });
@@ -1086,11 +1125,18 @@
           console.warn("Asset import failed, falling back", err);
           component = entry.build();
         }
-        composerState.components = [...composerState.components, component];
-        if (composerAssetsStatus) {
-          composerAssetsStatus.textContent = `${composerAssetEntries.length} assets available`;
+        if (composerState.format === "landscape") {
+          placeLandscapeAsset(component);
+          closeAssetModal();
+          closeAssetPick();
+          if (composerAssetsStatus) composerAssetsStatus.hidden = true;
+          syncComposerForm();
+          return;
         }
+        composerState.components = [...composerState.components, component];
         closeAssetModal();
+        closeAssetPick();
+        if (composerAssetsStatus) composerAssetsStatus.hidden = true;
         syncComposerForm();
       }
 
@@ -1296,22 +1342,31 @@
         composerImageAssets.forEach((image) => {
           composerAssetEntries.push({
             group: image.group === "avatars" ? "Avatars" : "Images",
+            imageGroup: image.group,
+            kind: "image",
             label: image.label,
             thumb: image.src || "",
             build: () => componentFromAsset(image, "image"),
           });
         });
+        const pieceEntries = composerAssetEntries.filter((entry) => entry.piece?.layout);
+        const imageEntries = (catalog.images ?? [])
+          .filter((image) => image.group !== "logos")
+          .map((image) => ({
+            group: "Images",
+            imageGroup: image.group,
+            kind: "image",
+            label: image.label,
+            thumb: image.src || "",
+            build: () => componentFromAsset(image, "image"),
+          }));
+        composerPickEntries = [...pieceEntries, ...imageEntries];
 
-        if (composerAssetsStatus) {
-          composerAssetsStatus.textContent = `${composerAssetEntries.length} assets available`;
-        }
+        if (composerAssetsStatus) composerAssetsStatus.hidden = true;
         if (!assetModal.hidden) renderAssetModalBody();
+        if (!document.getElementById("li-composer-asset-menu")?.hidden) renderAssetPickMenu();
         renderComposerList();
       }
-
-      composerAssetTrigger?.addEventListener("click", () => {
-        openAssetModal({ mode: "add", title: "From assets" });
-      });
       document
         .getElementById("li-asset-modal-close")
         ?.addEventListener("click", closeAssetModal);
@@ -1319,9 +1374,9 @@
         .getElementById("li-asset-modal-backdrop")
         ?.addEventListener("click", closeAssetModal);
       document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape" && assetModal && !assetModal.hidden) {
-          closeAssetModal();
-        }
+        if (e.key !== "Escape") return;
+        if (assetModal && !assetModal.hidden) closeAssetModal();
+        if (assetPickMenu && !assetPickMenu.hidden) closeAssetPick();
       });
 
       document.querySelectorAll(".li-tabs__btn").forEach((btn) => {
@@ -1338,8 +1393,169 @@
         });
       });
 
+      const assetPick = document.getElementById("li-composer-asset-pick");
+      const assetPickMenu = document.getElementById("li-composer-asset-menu");
+      const assetPickList = document.getElementById("li-composer-asset-list");
+      const assetPickUpload = document.getElementById("li-composer-asset-upload");
+
+      function closeAssetPick() {
+        if (!assetPickMenu) return;
+        assetPickMenu.hidden = true;
+        composerAssetTrigger?.setAttribute("aria-expanded", "false");
+      }
+
+      function placeAssetPickMenu() {
+        if (!assetPickMenu || assetPickMenu.hidden || !composerAssetTrigger) return;
+        const rect = composerAssetTrigger.getBoundingClientRect();
+        const margin = 8;
+        const maxH = 340;
+        const spaceBelow = window.innerHeight - rect.bottom - margin;
+        const spaceAbove = rect.top - margin;
+        const openUp = spaceBelow < 220 && spaceAbove > spaceBelow;
+        const height = Math.max(160, Math.min(maxH, openUp ? spaceAbove : spaceBelow));
+        assetPickMenu.style.position = "fixed";
+        assetPickMenu.style.left = `${Math.max(margin, rect.left)}px`;
+        assetPickMenu.style.width = `${rect.width}px`;
+        assetPickMenu.style.right = "auto";
+        assetPickMenu.style.maxHeight = `${height}px`;
+        if (openUp) {
+          assetPickMenu.style.top = "auto";
+          assetPickMenu.style.bottom = `${window.innerHeight - rect.top + 6}px`;
+        } else {
+          assetPickMenu.style.bottom = "auto";
+          assetPickMenu.style.top = `${rect.bottom + 6}px`;
+        }
+      }
+
+      function appendAssetPickGroup(label, entries) {
+        if (!entries.length || !assetPickList) return;
+        const heading = document.createElement("p");
+        heading.className = "li-composer__asset-group";
+        heading.textContent = label;
+        assetPickList.appendChild(heading);
+        entries.forEach((entry) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "li-composer__asset-option";
+          btn.title = entry.label;
+          const thumbSrc = entry.piece?.preview || entry.piece?.thumb || entry.thumb || "";
+          if (thumbSrc) {
+            const img = document.createElement("img");
+            img.className = "li-composer__asset-thumb";
+            img.alt = "";
+            img.src = thumbSrc;
+            btn.appendChild(img);
+          } else if (entry.piece?.layout) {
+            const host = document.createElement("span");
+            host.className = "li-composer__asset-thumb-live";
+            host.setAttribute("aria-hidden", "true");
+            btn.appendChild(host);
+            mountLayoutPiece(host, {
+              layout: entry.piece.layout,
+              content: entry.piece.content || {},
+              options: { ...(entry.piece.options || {}), static: true },
+              bg: "",
+              label: entry.piece.label || "",
+            });
+          } else {
+            const empty = document.createElement("span");
+            empty.className = "li-composer__asset-thumb li-composer__asset-thumb--empty";
+            btn.appendChild(empty);
+          }
+          const caption = document.createElement("span");
+          caption.className = "li-composer__asset-option-label";
+          caption.textContent = entry.label;
+          btn.append(caption);
+          btn.addEventListener("click", () => {
+            closeAssetPick();
+            addComposerFromAsset(entry);
+          });
+          assetPickList.appendChild(btn);
+        });
+      }
+
+      function renderAssetPickMenu() {
+        if (!assetPickList) return;
+        assetPickList.replaceChildren();
+        const pieces = composerPickEntries.filter((entry) => entry.piece?.layout);
+        const images = composerPickEntries.filter(
+          (entry) => entry.kind === "image" && entry.imageGroup !== "logos",
+        );
+        if (!pieces.length && !images.length) {
+          const empty = document.createElement("p");
+          empty.className = "li-ex-hint";
+          empty.textContent = "No images yet.";
+          assetPickList.appendChild(empty);
+          return;
+        }
+        appendAssetPickGroup("Pieces", pieces);
+        appendAssetPickGroup("Images", images);
+      }
+
+      function openAssetPick() {
+        renderAssetPickMenu();
+        if (assetPickMenu) assetPickMenu.hidden = false;
+        composerAssetTrigger?.setAttribute("aria-expanded", "true");
+        placeAssetPickMenu();
+      }
+
+      composerAssetTrigger?.addEventListener("click", () => {
+        if (assetPickMenu?.hidden) openAssetPick();
+        else closeAssetPick();
+      });
+      assetPickUpload?.addEventListener("click", () => {
+        closeAssetPick();
+        composerUploadTarget = { mode: "asset-pick" };
+        composerFileInput?.click();
+      });
+      document.addEventListener("click", (e) => {
+        if (!assetPick?.contains(e.target)) closeAssetPick();
+      });
+      document.getElementById("li-composer-panel")?.addEventListener(
+        "scroll",
+        () => {
+          if (assetPickMenu && !assetPickMenu.hidden) placeAssetPickMenu();
+        },
+        { passive: true },
+      );
+
+      function placeLandscapeAsset(component) {
+        let set = composerState.components.find((item) => item.type === "column-set");
+        if (!set) set = createComponent("column-set", { count: 1, sample: true });
+        const first = (set.columns ?? [])[0] ?? {
+          id: `col-${crypto.randomUUID()}`,
+          image: false,
+          eyebrow: "",
+          title: "",
+          body: "",
+          people: [],
+          src: "",
+          alt: "",
+        };
+        const src = component.src || component.imageSrc || component.preview || "";
+        const asImage = Boolean(src) && (component.type === "image" || component.type === "layout-piece");
+        const second = {
+          id: (set.columns ?? [])[1]?.id || `col-${crypto.randomUUID()}`,
+          image: asImage,
+          eyebrow: "",
+          title: "",
+          body: "",
+          people: [],
+          src: asImage ? src : "",
+          alt: asImage ? component.alt || component.imageAlt || component.label || "" : "",
+          asset: asImage ? null : component,
+        };
+        composerState.components = [{ ...set, quotePanel: false, columns: [first, second] }];
+      }
+
       composerFormatEl.addEventListener("change", () => {
         composerState.format = composerFormatEl.value;
+        if (composerState.format === "square" || composerState.format === "landscape") {
+          const set = composerState.components.find((item) => item.type === "column-set");
+          composerState.components = set
+            ? [set]
+            : [createComponent("column-set", { count: 1, sample: true })];
+        }
         syncComposerForm();
       });
       composerBgEl.addEventListener("change", () => {
@@ -1385,6 +1601,12 @@
             composerState.components = updateComponent(composerState.components, id, { columns });
             syncComposerForm();
           }
+          return;
+        }
+        if (e.target.closest("[data-remove-landscape-image]") && component?.type === "column-set") {
+          const columns = (component.columns ?? []).slice(0, 1);
+          composerState.components = updateComponent(composerState.components, id, { columns });
+          syncComposerForm();
           return;
         }
         const removeColumn = e.target.closest("[data-remove-column]");
@@ -1472,9 +1694,21 @@
         const target = composerUploadTarget;
         composerFileInput.value = "";
         composerUploadTarget = null;
-        if (!file || !target?.id) return;
+        if (!file || !target) return;
         try {
           const url = await readFileAsDataUrl(file);
+          if (target.mode === "asset-pick") {
+            const component = createComponent("image", {
+              src: url,
+              alt: file.name || "Upload",
+              fit: "contain",
+            });
+            if (composerState.format === "landscape") placeLandscapeAsset(component);
+            else composerState.components = [...composerState.components, component];
+            syncComposerForm();
+            return;
+          }
+          if (!target.id) return;
           if (target.colIndex != null) {
             const component = composerState.components.find((item) => item.id === target.id);
             const columns = (component?.columns ?? []).map((col, index) =>
@@ -1497,6 +1731,21 @@
       function componentOf(id) {
         return composerState.components.find((item) => item.id === id);
       }
+
+      composerListEl.addEventListener("keydown", (e) => {
+        if (e.key !== "Enter" || e.shiftKey) return;
+        const field = e.target;
+        if (!(field instanceof HTMLTextAreaElement)) return;
+        const start = field.selectionStart ?? 0;
+        const value = field.value;
+        const lineStart = value.lastIndexOf("\n", start - 1) + 1;
+        const line = value.slice(lineStart, start);
+        if (!/^\s*-(?:\s|$)/.test(line)) return;
+        e.preventDefault();
+        const next = "- ";
+        field.setRangeText(`\n${next}`, start, field.selectionEnd ?? start, "end");
+        field.dispatchEvent(new Event("input", { bubbles: true }));
+      });
 
       composerListEl.addEventListener("input", (e) => {
         const item = e.target.closest(".li-composer__item");
