@@ -907,13 +907,15 @@ export function paintComposerCanvas(canvas, state, {
     canvas.style.background = "transparent";
   }
 
-  if (state.decor && renderDecor) {
+  if (state.decor && renderDecor && state.format !== "square") {
     // Decor inserts before .li-content; create a placeholder first
     const placeholder = document.createElement("div");
     placeholder.className = "li-content";
     canvas.appendChild(placeholder);
     renderDecor(canvas, state.decor);
     placeholder.remove();
+  } else {
+    delete canvas.dataset.decor;
   }
 
   const content = document.createElement("div");

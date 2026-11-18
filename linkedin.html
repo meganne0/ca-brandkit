@@ -16,7 +16,7 @@
     />
     <link rel="stylesheet" href="css/slides.css?v=92" />
     <link rel="stylesheet" href="css/backgrounds.css?v=21" />
-    <link rel="stylesheet" href="css/linkedin.css?v=75" />
+    <link rel="stylesheet" href="css/linkedin.css?v=76" />
     <script src="js/auth-gate.js?v=6"></script>
   </head>
   <body>
@@ -64,7 +64,7 @@
                 <span>Background</span>
                 <select id="li-composer-bg"></select>
               </label>
-              <label class="li-composer__field">
+              <label class="li-composer__field" id="li-composer-decor-field">
                 <span>Decor (YouTube)</span>
                 <select id="li-composer-decor">
                   <option value="">None</option>
@@ -397,7 +397,7 @@
         removeComponent,
         updateComponent,
         updateModalField,
-      } from "./js/linkedin-composer.js?v=18";
+      } from "./js/linkedin-composer.js?v=20";
       import { loadAssetsCatalog } from "./js/assets-catalog.js?v=5";
 
       const SPEAKERS = [
@@ -935,8 +935,10 @@
         }
         renderComposerList();
         const squareTools = document.getElementById("li-composer-square-tools");
+        const decorField = document.getElementById("li-composer-decor-field");
         const square = composerState.format === "square";
         if (squareTools) squareTools.hidden = !square;
+        if (decorField) decorField.hidden = square;
         if (composerAddEl) composerAddEl.hidden = square;
         document.querySelectorAll(".li-composer__align-btn").forEach((btn) => {
           const on = btn.dataset.align === (composerState.align === "center" ? "center" : "left");
