@@ -1,5 +1,5 @@
 @import url("./tokens.css?v=21");
-@import url("./type-linkedin.css?v=21");
+@import url("./type-linkedin.css?v=23");
 @import url("./type.css?v=21");
 @import url("./backgrounds.css?v=21");
 @import url("./decor-youtube.css?v=1");
@@ -633,7 +633,7 @@ body.li-lightbox-open {
 }
 
 .li-layout-cards__card .type-body {
-  font-size: 28px;
+  font-size: 34px;
   line-height: 1.32;
 }
 
@@ -1982,6 +1982,92 @@ body.li-editor-open {
   color: rgba(255, 255, 255, 0.85);
 }
 
+.li-composer__square-tools {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.li-composer__square-tools[hidden],
+#li-composer-add[hidden] {
+  display: none !important;
+}
+
+.li-composer__align {
+  display: flex;
+  gap: 8px;
+}
+
+.li-composer__column-label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.li-composer__mode {
+  display: flex;
+  gap: 6px;
+}
+
+.li-composer__mode-btn {
+  appearance: none;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  padding: 7px 14px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.78);
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.li-composer__mode-btn[aria-selected="true"] {
+  border-color: rgba(242, 88, 53, 0.75);
+  background: rgba(242, 88, 53, 0.16);
+  color: #fff;
+}
+
+.li-composer__quote-check {
+  margin: 12px 0 4px;
+}
+
+.li-composer__add-column {
+  margin-top: 12px;
+}
+
+.li-composer__align-btn {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  padding: 8px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  color: rgba(255, 255, 255, 0.82);
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.li-composer__align-btn svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+}
+
+.li-composer__align-btn.is-active {
+  border-color: var(--ca-orange);
+  color: #fff;
+  background: rgba(242, 88, 53, 0.16);
+}
+
 .li-composer__add-row {
   display: flex;
   flex-wrap: wrap;
@@ -2004,6 +2090,25 @@ body.li-editor-open {
 .li-composer__chip:hover {
   border-color: rgba(242, 88, 53, 0.55);
   color: #fff;
+}
+
+.li-composer__people {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.li-composer__person-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+  padding: 6px 6px 6px 10px;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.04);
+  font-size: 13px;
 }
 
 .li-composer__export {
@@ -2524,8 +2629,106 @@ body.li-editor-open {
 }
 
 .li-content.li-layout-composer .type-body {
-  font-size: calc(22px * var(--li-scale, 1));
+  font-size: calc(28px * var(--li-scale, 1));
   line-height: 1.45;
+}
+
+.canvas--li-square .li-content.li-layout-composer .type-body {
+  font-size: 44px;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+.li-layout-composer--align-center {
+  text-align: center;
+}
+
+.li-layout-composer--align-center .li-composer-copy,
+.li-layout-composer--align-center .li-composer-columns__col {
+  align-items: center;
+  text-align: center;
+}
+
+.li-layout-composer--align-left .li-composer-columns__col {
+  align-items: flex-start;
+  text-align: left;
+}
+
+.li-composer-block--column-set {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  align-self: stretch;
+}
+
+.li-composer-columns {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.li-composer-columns__grid {
+  display: grid;
+  grid-auto-flow: row;
+  align-items: start;
+  gap: calc(28px * var(--li-scale, 1));
+  width: 100%;
+  min-width: 0;
+}
+
+.li-composer-columns--2 .li-composer-columns__grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.li-composer-columns--3 .li-composer-columns__grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.li-composer-columns__col {
+  display: flex;
+  flex-direction: column;
+  gap: calc(14px * var(--li-scale, 1));
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: break-word;
+}
+
+.li-composer-columns--panel {
+  position: relative;
+  box-sizing: border-box;
+  padding: calc(112px * var(--li-scale, 1)) calc(96px * var(--li-scale, 1));
+  background: var(--panel-bg);
+  border-radius: calc(28px * var(--li-scale, 1));
+  backdrop-filter: blur(8px);
+}
+
+.li-composer-columns--panel::before,
+.li-composer-columns--panel::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  background: var(--panel-stroke-gradient);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+.li-composer-columns--panel::after {
+  filter: blur(10px);
+  opacity: 0.75;
+}
+
+.li-composer-columns .li-composer-block__image,
+.li-composer-columns .li-composer-block__image.is-contain {
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: calc(320px * var(--li-scale, 1));
+  object-fit: contain;
 }
 
 .li-content.li-layout-composer .type-h5 {
@@ -2651,15 +2854,44 @@ body.li-editor-open {
   color: var(--ca-orange);
 }
 
+.li-composer-people {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: calc(16px * var(--li-scale, 1));
+  width: 100%;
+}
+
+.li-layout-composer--align-center .li-composer-people {
+  align-items: center;
+}
+
 .li-composer-block__person {
   display: flex;
+  flex-direction: row;
   align-items: center;
   gap: calc(18px * var(--li-scale, 1));
+  text-align: left;
+}
+
+.li-layout-composer--align-left .li-composer-block__person,
+.li-layout-composer--align-center .li-composer-block__person {
+  align-items: center;
+  text-align: left;
+}
+
+.li-composer-block__person-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  text-align: left;
 }
 
 .li-composer-block__avatar {
   width: calc(88px * var(--li-scale, 1));
   height: calc(88px * var(--li-scale, 1));
+  flex-shrink: 0;
   border-radius: 50%;
   object-fit: cover;
   border: 2px solid rgba(242, 88, 53, 0.55);

@@ -16,7 +16,7 @@
     />
     <link rel="stylesheet" href="css/slides.css?v=92" />
     <link rel="stylesheet" href="css/backgrounds.css?v=21" />
-    <link rel="stylesheet" href="css/linkedin.css?v=67" />
+    <link rel="stylesheet" href="css/linkedin.css?v=75" />
     <script src="js/auth-gate.js?v=6"></script>
   </head>
   <body>
@@ -99,6 +99,18 @@
 
             <section class="li-composer__section">
               <h2 class="li-composer__section-title">Components</h2>
+              <div class="li-composer__square-tools" id="li-composer-square-tools" hidden>
+                <div class="li-composer__align" role="group" aria-label="Alignment">
+                  <button type="button" class="li-composer__align-btn is-active" data-align="left" title="Align left" aria-pressed="true">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h10M4 18h14" /></svg>
+                    <span>Left</span>
+                  </button>
+                  <button type="button" class="li-composer__align-btn" data-align="center" title="Align center" aria-pressed="false">
+                    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M7 12h10M5 18h14" /></svg>
+                    <span>Center</span>
+                  </button>
+                </div>
+              </div>
               <div class="li-composer__add-row" id="li-composer-add"></div>
               <div class="li-composer__components" id="li-composer-components"></div>
             </section>
@@ -377,6 +389,7 @@
         mountLayoutPiece,
         rasterizeLayoutPiece,
         MODAL_ACCENTS,
+        COMPOSER_PEOPLE,
         createComponent,
         createComposerState,
         moveComponent,
@@ -384,7 +397,7 @@
         removeComponent,
         updateComponent,
         updateModalField,
-      } from "./js/linkedin-composer.js?v=11";
+      } from "./js/linkedin-composer.js?v=18";
       import { loadAssetsCatalog } from "./js/assets-catalog.js?v=5";
 
       const SPEAKERS = [
@@ -552,7 +565,89 @@
         return `<label class="li-composer__field"><span>${label}</span>${controlHtml}</label>`;
       }
 
+      function imageAssetSelect(col, index) {
+        const src = col.src || "";
+        const known = composerImageAssets.some((image) => image.src === src);
+        const custom =
+          src && !known
+            ? `<option value="${composerEscape(src)}" selected>Custom upload</option>`
+            : "";
+        const options = composerImageAssets
+          .map((image) => {
+            const label =
+              image.label.length > 52
+                ? `${image.label.slice(0, 50).trim()}…`
+                : image.label;
+            return `<option value="${composerEscape(image.src)}" ${
+              image.src === src ? "selected" : ""
+            }>${composerEscape(label)}</option>`;
+          })
+          .join("");
+        return `<select data-col-index="${index}" data-col-field="src">
+          <option value="" ${src ? "" : "selected"}>Choose an asset…</option>
+          ${custom}
+          ${options}
+        </select>`;
+      }
+
+      function columnPeopleIds(col) {
+        const ids = Array.isArray(col?.people) ? col.people : col?.personId ? [col.personId] : [];
+        return ids.filter((id) => COMPOSER_PEOPLE.some((person) => person.id === id)).slice(0, 3);
+      }
+
+      function renderPeopleEditor(col, index) {
+        const ids = columnPeopleIds(col);
+        const rows = ids
+          .map((id, personIndex) => {
+            const person = COMPOSER_PEOPLE.find((item) => item.id === id);
+            return `<div class="li-composer__person-row">
+              <span>${composerEscape(person.name)}, ${composerEscape(person.role)}</span>
+              <button type="button" class="li-composer__icon-btn" data-remove-person data-col-index="${index}" data-person-index="${personIndex}" title="Remove person">×</button>
+            </div>`;
+          })
+          .join("");
+        const add =
+          ids.length >= 3
+            ? ""
+            : `<button type="button" class="li-composer__chip" data-add-person data-col-index="${index}">+ Person</button>`;
+        return `<div class="li-composer__field"><span>People</span><div class="li-composer__people">${rows}${add}</div></div>`;
+      }
+
+      function renderColumnEditor(col, index) {
+        return `
+          <div class="li-composer__nested">
+            ${field(
+              "Eyebrow",
+              `<textarea data-col-index="${index}" data-col-field="eyebrow">${composerEscape(col.eyebrow)}</textarea>`,
+            )}
+            ${field(
+              "Title",
+              `<textarea data-col-index="${index}" data-col-field="title">${composerEscape(col.title)}</textarea>`,
+            )}
+            ${field(
+              "Body",
+              `<textarea data-col-index="${index}" data-col-field="body">${composerEscape(col.body)}</textarea>`,
+            )}
+            ${renderPeopleEditor(col, index)}
+          </div>
+        `;
+      }
+
+      function renderColumnSetFields(component) {
+        const column = (component.columns ?? [])[0];
+        const editor = column ? renderColumnEditor(column, 0) : "";
+        const quote = `<label class="li-composer__check li-composer__quote-check">
+            <input type="checkbox" data-quote-panel ${component.quotePanel ? "checked" : ""} />
+            <span>Quote panel background</span>
+          </label>`;
+        return `
+          ${editor}
+          ${quote}
+        `;
+      }
+
       function renderComposerItemFields(component) {
+        if (component.type === "column-set") return renderColumnSetFields(component);
         if (component.type === "copy") {
           return (
             field(
@@ -803,9 +898,12 @@
           ].map((item) => [item.type, item.label]),
         );
         composerListEl.innerHTML = composerState.components
-          .map(
-            (component) => `
-              <article class="li-composer__item" data-id="${composerEscape(component.id)}">
+          .map((component) => {
+            const squareColumn =
+              composerState.format === "square" && component.type === "column-set";
+            const head = squareColumn
+              ? ""
+              : `
                 <div class="li-composer__item-head">
                   <span class="li-composer__item-type">${typeLabel[component.type] || component.type}</span>
                   <div class="li-composer__item-actions">
@@ -813,11 +911,14 @@
                     <button type="button" class="li-composer__icon-btn" data-move="1" title="Move down">↓</button>
                     <button type="button" class="li-composer__icon-btn" data-remove title="Remove">×</button>
                   </div>
-                </div>
+                </div>`;
+            return `
+              <article class="li-composer__item" data-id="${composerEscape(component.id)}">
+                ${head}
                 ${renderComposerItemFields(component)}
               </article>
-            `,
-          )
+            `;
+          })
           .join("");
       }
 
@@ -833,6 +934,15 @@
           composerState.logo = false;
         }
         renderComposerList();
+        const squareTools = document.getElementById("li-composer-square-tools");
+        const square = composerState.format === "square";
+        if (squareTools) squareTools.hidden = !square;
+        if (composerAddEl) composerAddEl.hidden = square;
+        document.querySelectorAll(".li-composer__align-btn").forEach((btn) => {
+          const on = btn.dataset.align === (composerState.align === "center" ? "center" : "left");
+          btn.classList.toggle("is-active", on);
+          btn.setAttribute("aria-pressed", on ? "true" : "false");
+        });
         paintComposerPreview();
       }
 
@@ -917,7 +1027,7 @@
       ]);
       let composerAssetEntries = [];
       let composerImageAssets = [];
-      let composerUploadTargetId = null;
+      let composerUploadTarget = null;
       let assetModalMode = "add"; // add | image
       let assetModalImageTargetId = null;
 
@@ -1255,6 +1365,71 @@
         const item = e.target.closest(".li-composer__item");
         if (!item) return;
         const id = item.dataset.id;
+        const component = composerState.components.find((entry) => entry.id === id);
+        const addColumn = e.target.closest("[data-add-column]");
+        if (addColumn && component?.type === "column-set") {
+          const columns = [...(component.columns ?? [])];
+          if (columns.length < 3) {
+            columns.push({
+              id: `col-${crypto.randomUUID()}`,
+              image: false,
+              eyebrow: "",
+              title: "",
+              body: "",
+              people: [],
+              src: "",
+              alt: "",
+            });
+            composerState.components = updateComponent(composerState.components, id, { columns });
+            syncComposerForm();
+          }
+          return;
+        }
+        const removeColumn = e.target.closest("[data-remove-column]");
+        if (removeColumn && component?.type === "column-set") {
+          const index = Number(removeColumn.dataset.colIndex);
+          const columns = (component.columns ?? []).filter((_, i) => i !== index);
+          if (columns.length) {
+            composerState.components = updateComponent(composerState.components, id, { columns });
+            syncComposerForm();
+          }
+          return;
+        }
+        const modeBtn = e.target.closest("[data-col-mode]");
+        if (modeBtn && component?.type === "column-set") {
+          const index = Number(modeBtn.dataset.colIndex);
+          const image = modeBtn.dataset.colMode === "image";
+          const columns = (component.columns ?? []).map((col, i) =>
+            i === index ? { ...col, image } : col,
+          );
+          composerState.components = updateComponent(composerState.components, id, { columns });
+          syncComposerForm();
+          return;
+        }
+        const addPerson = e.target.closest("[data-add-person]");
+        if (addPerson && component?.type === "column-set") {
+          const index = Number(addPerson.dataset.colIndex);
+          const columns = (component.columns ?? []).map((col, i) => {
+            if (i !== index) return col;
+            return { ...col, people: COMPOSER_PEOPLE.map((person) => person.id), personId: "" };
+          });
+          composerState.components = updateComponent(composerState.components, id, { columns });
+          syncComposerForm();
+          return;
+        }
+        const removePerson = e.target.closest("[data-remove-person]");
+        if (removePerson && component?.type === "column-set") {
+          const index = Number(removePerson.dataset.colIndex);
+          const personIndex = Number(removePerson.dataset.personIndex);
+          const columns = (component.columns ?? []).map((col, i) => {
+            if (i !== index) return col;
+            const people = columnPeopleIds(col).filter((_, n) => n !== personIndex);
+            return { ...col, people, personId: "" };
+          });
+          composerState.components = updateComponent(composerState.components, id, { columns });
+          syncComposerForm();
+          return;
+        }
         if (e.target.closest("[data-remove]")) {
           composerState.components = removeComponent(composerState.components, id);
           syncComposerForm();
@@ -1270,8 +1445,14 @@
           syncComposerForm();
           return;
         }
+        const uploadCol = e.target.closest("[data-upload-col]");
+        if (uploadCol) {
+          composerUploadTarget = { id, colIndex: Number(uploadCol.dataset.uploadCol) };
+          composerFileInput?.click();
+          return;
+        }
         if (e.target.closest("[data-upload-image]")) {
-          composerUploadTargetId = id;
+          composerUploadTarget = { id };
           composerFileInput?.click();
           return;
         }
@@ -1286,20 +1467,34 @@
 
       composerFileInput?.addEventListener("change", async () => {
         const file = composerFileInput.files?.[0];
-        const id = composerUploadTargetId;
+        const target = composerUploadTarget;
         composerFileInput.value = "";
-        composerUploadTargetId = null;
-        if (!file || !id) return;
+        composerUploadTarget = null;
+        if (!file || !target?.id) return;
         try {
           const url = await readFileAsDataUrl(file);
-          composerState.components = updateComponent(composerState.components, id, {
-            imageSrc: url,
-          });
+          if (target.colIndex != null) {
+            const component = composerState.components.find((item) => item.id === target.id);
+            const columns = (component?.columns ?? []).map((col, index) =>
+              index === target.colIndex
+                ? { ...col, image: true, src: url, alt: file.name || "Upload" }
+                : col,
+            );
+            composerState.components = updateComponent(composerState.components, target.id, { columns });
+          } else {
+            composerState.components = updateComponent(composerState.components, target.id, {
+              imageSrc: url,
+            });
+          }
           syncComposerForm();
         } catch {
           /* ignore failed reads */
         }
       });
+
+      function componentOf(id) {
+        return composerState.components.find((item) => item.id === id);
+      }
 
       composerListEl.addEventListener("input", (e) => {
         const item = e.target.closest(".li-composer__item");
@@ -1307,6 +1502,45 @@
         const id = item.dataset.id;
         const component = composerState.components.find((c) => c.id === id);
         if (!component) return;
+
+        if (e.target.matches("[data-quote-panel]")) {
+          composerState.components = updateComponent(composerState.components, id, {
+            quotePanel: e.target.checked,
+          });
+          paintComposerPreview();
+          return;
+        }
+
+        if (e.target.matches("[data-col-image]") && component.type === "column-set") {
+          const index = Number(e.target.dataset.colIndex);
+          const columns = (component.columns ?? []).map((col, i) =>
+            i === index ? { ...col, image: e.target.checked } : col,
+          );
+          composerState.components = updateComponent(composerState.components, id, { columns });
+          syncComposerForm();
+          return;
+        }
+
+        const colField = e.target.closest("[data-col-field]");
+        if (colField && component.type === "column-set") {
+          const index = Number(colField.dataset.colIndex);
+          const key = colField.dataset.colField;
+          const columns = (component.columns ?? []).map((col, i) => {
+            if (i !== index) return col;
+            if (key === "src") {
+              const image = composerImageAssets.find((entry) => entry.src === colField.value);
+              return {
+                ...col,
+                src: colField.value,
+                alt: image?.label || (colField.value ? col.alt : ""),
+              };
+            }
+            return { ...col, [key]: colField.value };
+          });
+          composerState.components = updateComponent(composerState.components, id, { columns });
+          paintComposerPreview();
+          return;
+        }
 
         const modalField = e.target.closest("[data-modal-field]");
         if (modalField) {
@@ -1365,6 +1599,13 @@
       document
         .getElementById("li-composer-export-pdf")
         .addEventListener("click", () => exportComposer("pdf"));
+
+      document.querySelectorAll(".li-composer__align-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          composerState.align = btn.dataset.align === "center" ? "center" : "left";
+          syncComposerForm();
+        });
+      });
 
       renderComposerAddChips();
       fillComposerDecorOptions();

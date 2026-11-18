@@ -50,7 +50,7 @@
   --type-h6-tracking: -0.01em;
   --type-h6-color: var(--ca-white);
 
-  --type-body-size: 34px;
+  --type-body-size: 44px;
   --type-body-weight: 500;
   --type-body-line: 1.35;
   --type-body-color: rgba(255, 255, 255, 0.92);
@@ -92,7 +92,7 @@
   --type-h2-size: 48px;
   --type-h3-size: 42px;
   --type-h4-size: 32px;
-  --type-body-size: 28px;
+  --type-body-size: 34px;
   --type-metric-size: 96px;
   --type-metric-size-lg: 80px;
   --type-label-size: 18px;
@@ -107,7 +107,7 @@
   --type-h2-size: 48px;
   --type-h3-size: 42px;
   --type-h4-size: 32px;
-  --type-body-size: 28px;
+  --type-body-size: 34px;
   --type-metric-size: 96px;
   --type-metric-size-lg: 80px;
   --type-label-size: 18px;

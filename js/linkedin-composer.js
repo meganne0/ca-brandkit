@@ -20,6 +20,27 @@ const PIECE_SLIDE_H = 1080;
 
 export { MODAL_ACCENTS };
 
+export const COMPOSER_PEOPLE = [
+  {
+    id: "ali",
+    name: "Ali Alame",
+    role: "CTO",
+    avatar: "/visual%20assets/avatars/avatar-ali-circle.png",
+  },
+  {
+    id: "nguyen",
+    name: "Nguyen Nguyen",
+    role: "CEO",
+    avatar: "/visual%20assets/avatars/avatar-nguyen-circle.png",
+  },
+  {
+    id: "meganne",
+    name: "Meganne Ohata",
+    role: "CXO",
+    avatar: "/visual%20assets/avatars/avatar-meganne-circle.png",
+  },
+];
+
 export const COMPOSER_COMPONENT_TYPES = [
   { type: "copy", label: "Text" },
   { type: "quote-panel", label: "Quote panel" },
@@ -262,10 +283,37 @@ export function createComponent(type, seed = {}) {
       return {
         id,
         type,
+        personId: COMPOSER_PEOPLE.some((person) => person.id === seed.personId)
+          ? seed.personId
+          : seed.personId || "ali",
         name: seed.name ?? "Name",
         role: seed.role ?? "Role",
         avatar: seed.avatar ?? "",
       };
+    case "column-set": {
+      const count = seed.count === 2 || seed.count === 3 ? seed.count : 1;
+      const columns =
+        seed.columns ??
+        Array.from({ length: count }, (_, index) => ({
+          id: uid("col"),
+          image: false,
+          eyebrow: index === 0 && seed.sample ? "PreBreach Intelligence" : "",
+          title: index === 0 && seed.sample ? "See the compromise before the breach." : "",
+          body:
+            index === 0 && seed.sample
+              ? "Credentials are collected in the open, long before they show up on the dark web."
+              : "",
+          people: [],
+          src: "",
+          alt: "",
+        }));
+      return {
+        id,
+        type,
+        quotePanel: Boolean(seed.quotePanel),
+        columns,
+      };
+    }
     case "layout-piece":
       return {
         id,
@@ -482,7 +530,11 @@ export function createComposerState({
     decor: "",
     footer: true,
     logo: false,
-    components: [createComponent("copy")],
+    align: "left",
+    components:
+      format === "square"
+        ? [createComponent("column-set", { count: 1, sample: true })]
+        : [createComponent("copy")],
   };
 }
 
@@ -601,6 +653,68 @@ function renderSplit(component, formatId, mediaHtml) {
   return `<div class="${classes.join(" ")}">${ordered}</div>`;
 }
 
+function composerPerson(block) {
+  return (
+    COMPOSER_PEOPLE.find((person) => person.id === block?.personId) ||
+    COMPOSER_PEOPLE[0]
+  );
+}
+
+function columnPeople(col) {
+  const ids = Array.isArray(col?.people)
+    ? col.people
+    : col?.personId
+      ? [col.personId]
+      : [];
+  return ids
+    .map((id) => COMPOSER_PEOPLE.find((person) => person.id === id))
+    .filter(Boolean)
+    .slice(0, 3);
+}
+
+function renderPerson(person) {
+  return `<article class="li-composer-block__person">
+    <img class="li-composer-block__avatar" src="${escapeHtml(person.avatar)}" alt="" />
+    <div class="li-composer-block__person-copy">
+      <p class="type-h5">${withBreaks(person.name)}</p>
+      <p class="type-label">${withBreaks(person.role)}</p>
+    </div>
+  </article>`;
+}
+
+function renderColumn(col) {
+  const people = columnPeople(col);
+  return `
+    ${col.eyebrow ? `<p class="type-label">${withBreaks(col.eyebrow)}</p>` : ""}
+    ${col.title ? `<h2 class="type-h2 li-composer-block__title li-composer-block__title--lg">${withBreaks(col.title)}</h2>` : ""}
+    ${col.body ? `<p class="type-body">${withBreaks(col.body)}</p>` : ""}
+    ${people.length ? `<div class="li-composer-people">${people.map((person) => renderPerson(person)).join("")}</div>` : ""}
+  `;
+}
+
+function renderColumnBlock(block) {
+  if (block.type === "eyebrow") {
+    return `<p class="type-label">${withBreaks(block.text)}</p>`;
+  }
+  if (block.type === "title") {
+    const size = ["sm", "md", "lg", "xl"].includes(block.size) ? block.size : "lg";
+    return `<h2 class="type-h2 li-composer-block__title li-composer-block__title--${size}">${withBreaks(block.text)}</h2>`;
+  }
+  if (block.type === "body") {
+    return `<p class="type-body">${withBreaks(block.text)}</p>`;
+  }
+  if (block.type === "person") {
+    return renderPerson(composerPerson(block));
+  }
+  if (block.type === "image") {
+    if (!block.src) {
+      return `<div class="li-composer-block__image-empty">Add an image</div>`;
+    }
+    return `<img class="li-composer-block__image is-contain" src="${escapeHtml(block.src)}" alt="${escapeHtml(block.alt)}" />`;
+  }
+  return "";
+}
+
 function renderComponent(component, formatId = "square") {
   const wrap = document.createElement("div");
   wrap.className = `li-composer-block li-composer-block--${component.type}`;
@@ -715,14 +829,35 @@ function renderComponent(component, formatId = "square") {
       </article>
     `;
   } else if (component.type === "person") {
-    wrap.innerHTML = `
+    const known = COMPOSER_PEOPLE.find((person) => person.id === component.personId);
+    wrap.innerHTML = known
+      ? renderPerson(known)
+      : `
       <article class="li-composer-block__person">
         ${component.avatar ? `<img class="li-composer-block__avatar" src="${escapeHtml(component.avatar)}" alt="" />` : `<div class="li-composer-block__avatar li-composer-block__avatar--empty"></div>`}
-        <div>
+        <div class="li-composer-block__person-copy">
           <p class="type-h5">${withBreaks(component.name)}</p>
           <p class="type-label">${withBreaks(component.role)}</p>
         </div>
       </article>
+    `;
+  } else if (component.type === "column-set") {
+    const columns = (component.columns ?? []).slice(0, 1);
+    const panel = component.quotePanel ? " li-composer-columns--panel" : "";
+    wrap.innerHTML = `
+      <div class="li-composer-columns li-composer-columns--1${panel}">
+        <div class="li-composer-columns__grid" style="display:grid;grid-template-columns:minmax(0, 1fr);width:100%;align-items:start">
+          ${columns
+            .map(
+              (col) => `
+                <div class="li-composer-columns__col">
+                  ${col.blocks ? (col.blocks ?? []).map((block) => renderColumnBlock(block)).join("") : renderColumn(col)}
+                </div>
+              `,
+            )
+            .join("")}
+        </div>
+      </div>
     `;
   } else if (component.type === "layout-piece") {
     if (component.preview) {
@@ -784,6 +919,13 @@ export function paintComposerCanvas(canvas, state, {
   const content = document.createElement("div");
   content.className = "li-content li-layout-composer";
   if (state.logo) content.classList.add("li-layout-composer--with-logo");
+  if (state.format === "square") {
+    content.classList.add(
+      state.align === "center"
+        ? "li-layout-composer--align-center"
+        : "li-layout-composer--align-left",
+    );
+  }
   (state.components ?? []).forEach((component) => {
     content.appendChild(renderComponent(component, state.format));
   });
