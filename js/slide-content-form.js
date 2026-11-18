@@ -3,7 +3,7 @@
  * Layout-aware fields → content JSON (Modal Maker / LinkedIn style).
  */
 
-import { loadAssetsCatalog } from "./assets-catalog.js?v=5";
+import { loadAssetsCatalog } from "./assets-catalog.js?v=6";
 
 const SCREENSHOT_LABELS = [
   ["cra phish", "CRA phish · remote monitoring installer"],

@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-10-29",
+  "updatedAt": "2026-11-18",
   "images": [
     {
       "id": "avatars/avatar-ali-circle",
@@ -127,6 +127,76 @@
       "label": "the  license killer  kms tool that the youtube channel references",
       "src": "/visual%20assets/screenshots/the%20_license%20killer_%20kms%20tool%20that%20the%20youtube%20channel%20references.png",
       "path": "visual assets/screenshots/the _license killer_ kms tool that the youtube channel references.png"
+    },
+    {
+      "id": "screenshots/Hancock Whitney banking session reached after an Adobe Acrobat ScreenConnect phish",
+      "group": "screenshots",
+      "label": "Hancock Whitney banking session reached after an Adobe Acrobat ScreenConnect phish",
+      "src": "/visual%20assets/screenshots/Hancock%20Whitney%20banking%20session%20reached%20after%20an%20Adobe%20Acrobat%20ScreenConnect%20phish.png",
+      "path": "visual assets/screenshots/Hancock Whitney banking session reached after an Adobe Acrobat ScreenConnect phish.png"
+    },
+    {
+      "id": "screenshots/Phantom Stealer password report from a Windows device that also runs Windows Defender and CrowdStrike",
+      "group": "screenshots",
+      "label": "Phantom Stealer password report from a Windows device that also runs Windows Defender and CrowdStrike",
+      "src": "/visual%20assets/screenshots/Phantom%20Stealer%20password%20report%20from%20a%20Windows%20device%20that%20also%20runs%20Windows%20Defender%20and%20CrowdStrike.png",
+      "path": "visual assets/screenshots/Phantom Stealer password report from a Windows device that also runs Windows Defender and CrowdStrike.png"
+    },
+    {
+      "id": "screenshots/Adobe Acrobat Sign phish that asks the victim to sign a payment verification",
+      "group": "screenshots",
+      "label": "Adobe Acrobat Sign phish that asks the victim to sign a payment verification",
+      "src": "/visual%20assets/screenshots/Adobe%20Acrobat%20Sign%20phish%20that%20asks%20the%20victim%20to%20sign%20a%20payment%20verification.png",
+      "path": "visual assets/screenshots/Adobe Acrobat Sign phish that asks the victim to sign a payment verification.png"
+    },
+    {
+      "id": "screenshots/Minnesota K-12 phish that poses as a secured Adobe PDF and tells the victim to update Adobe PDF Reader",
+      "group": "screenshots",
+      "label": "Minnesota K-12 phish that poses as a secured Adobe PDF and tells the victim to update Adobe PDF Reader",
+      "src": "/visual%20assets/screenshots/Minnesota%20K-12%20phish%20that%20poses%20as%20a%20secured%20Adobe%20PDF%20and%20tells%20the%20victim%20to%20update%20Adobe%20PDF%20Reader.png",
+      "path": "visual assets/screenshots/Minnesota K-12 phish that poses as a secured Adobe PDF and tells the victim to update Adobe PDF Reader.png"
+    },
+    {
+      "id": "screenshots/Simple phishing page designed to steal Gmail credentials",
+      "group": "screenshots",
+      "label": "Simple phishing page designed to steal Gmail credentials",
+      "src": "/visual%20assets/screenshots/Simple%20phishing%20page%20designed%20to%20steal%20Gmail%20credentials.png",
+      "path": "visual assets/screenshots/Simple phishing page designed to steal Gmail credentials.png"
+    },
+    {
+      "id": "screenshots/AI overview that describes checkmydata.co.uk as a trusted mobile data portal",
+      "group": "screenshots",
+      "label": "AI overview that describes checkmydata.co.uk as a trusted mobile data portal",
+      "src": "/visual%20assets/screenshots/AI%20overview%20that%20describes%20checkmydata.co.uk%20as%20a%20trusted%20mobile%20data%20portal.png",
+      "path": "visual assets/screenshots/AI overview that describes checkmydata.co.uk as a trusted mobile data portal.png"
+    },
+    {
+      "id": "screenshots/checkmydata.co.uk phish that asks for a card number, expiration date, and CVC",
+      "group": "screenshots",
+      "label": "checkmydata.co.uk phish that asks for a card number, expiration date, and CVC",
+      "src": "/visual%20assets/screenshots/checkmydata.co.uk%20phish%20that%20asks%20for%20a%20card%20number,%20expiration%20date,%20and%20CVC.png",
+      "path": "visual assets/screenshots/checkmydata.co.uk phish that asks for a card number, expiration date, and CVC.png"
+    },
+    {
+      "id": "screenshots/Fake Adobe Secure Download Center that offers a Windows or Mac installer for ScreenConnect",
+      "group": "screenshots",
+      "label": "Fake Adobe Secure Download Center that offers a Windows or Mac installer for ScreenConnect",
+      "src": "/visual%20assets/screenshots/Fake%20Adobe%20Secure%20Download%20Center%20that%20offers%20a%20Windows%20or%20Mac%20installer%20for%20ScreenConnect.png",
+      "path": "visual assets/screenshots/Fake Adobe Secure Download Center that offers a Windows or Mac installer for ScreenConnect.png"
+    },
+    {
+      "id": "screenshots/Victim graph of the Minnesota K-12 phishing campaign",
+      "group": "screenshots",
+      "label": "Victim graph of the Minnesota K-12 phishing campaign",
+      "src": "/visual%20assets/screenshots/Victim%20graph%20of%20the%20Minnesota%20K-12%20phishing%20campaign.png",
+      "path": "visual assets/screenshots/Victim graph of the Minnesota K-12 phishing campaign.png"
+    },
+    {
+      "id": "screenshots/Victim graph of a phishing campaign that downloads a payload",
+      "group": "screenshots",
+      "label": "Victim graph of a phishing campaign that downloads a payload",
+      "src": "/visual%20assets/screenshots/Victim%20graph%20of%20a%20phishing%20campaign%20that%20downloads%20a%20payload.png",
+      "path": "visual assets/screenshots/Victim graph of a phishing campaign that downloads a payload.png"
     },
     {
       "id": "example-deliverables/example-1",
