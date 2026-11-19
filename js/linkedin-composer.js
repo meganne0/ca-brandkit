@@ -723,13 +723,25 @@ function renderPerson(person) {
   </article>`;
 }
 
+const CROP_ANCHORS = {
+  center: "center",
+  "top-left": "left top",
+  "top-right": "right top",
+  "bottom-left": "left bottom",
+  "bottom-right": "right bottom",
+  "left-center": "left center",
+  "right-center": "right center",
+};
+
 function renderColumn(col) {
   if (col.asset) {
     const node = renderComponent(col.asset, "landscape");
     return node ? node.innerHTML : "";
   }
   if (col.image && col.src) {
-    return `<img class="li-composer-block__image is-contain" src="${escapeHtml(col.src)}" alt="${escapeHtml(col.alt)}" />`;
+    const fit = col.fit === "contain" ? "contain" : "cover";
+    const position = CROP_ANCHORS[col.position] || "center";
+    return `<div class="li-composer-columns__media${fit === "contain" ? " is-contain" : ""}"><img class="li-composer-block__image" src="${escapeHtml(col.src)}" alt="${escapeHtml(col.alt)}" style="object-fit:${fit};object-position:${position}" /></div>`;
   }
   const people = columnPeople(col);
   return [
@@ -931,25 +943,27 @@ function renderComponent(component, formatId = "square") {
         ? stored[1]
         : null;
     const columns = [textColumn, imageColumn].filter(Boolean);
-    const renderedColumns = columns.map((col) =>
-      col.blocks
+    const renderedColumns = columns.map((col) => ({
+      html: col.blocks
         ? (col.blocks ?? []).map((block) => renderColumnBlock(block)).join("")
         : renderColumn(col),
-    );
+      media: Boolean(col.image && col.src),
+    }));
     const count = Math.max(1, columns.length);
     const panel =
-      count === 1 && component.quotePanel && renderedColumns.some((html) => html.trim())
+      count === 1 && component.quotePanel && renderedColumns.some((col) => col.html.trim())
         ? " li-composer-columns--panel"
         : "";
-    const template = count === 1 ? "minmax(0, 1fr)" : "minmax(0, 1.15fr) minmax(0, 0.85fr)";
+    const template = count === 1 ? "minmax(0, 1fr)" : "minmax(0, 35%) minmax(0, 1fr)";
+    const align = count === 1 ? "center" : "stretch";
     wrap.innerHTML = `
       <div class="li-composer-columns li-composer-columns--${count}${panel}">
-        <div class="li-composer-columns__grid" style="display:grid;grid-template-columns:${template};width:100%;align-items:center">
+        <div class="li-composer-columns__grid" style="display:grid;grid-template-columns:${template};width:100%;align-items:${align}">
           ${renderedColumns
             .map(
-              (html) => `
-                <div class="li-composer-columns__col">
-                  ${html}
+              (col) => `
+                <div class="li-composer-columns__col${col.media ? " li-composer-columns__col--media" : ""}">
+                  ${col.html}
                 </div>
               `,
             )

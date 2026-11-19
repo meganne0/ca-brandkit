@@ -16,7 +16,7 @@
     />
     <link rel="stylesheet" href="css/slides.css?v=93" />
     <link rel="stylesheet" href="css/backgrounds.css?v=21" />
-    <link rel="stylesheet" href="css/linkedin.css?v=81" />
+    <link rel="stylesheet" href="css/linkedin.css?v=86" />
     <script src="js/auth-gate.js?v=6"></script>
   </head>
   <body>
@@ -406,7 +406,7 @@
         removeComponent,
         updateComponent,
         updateModalField,
-      } from "./js/linkedin-composer.js?v=26";
+      } from "./js/linkedin-composer.js?v=27";
       import { loadAssetsCatalog } from "./js/assets-catalog.js?v=6";
 
       const SPEAKERS = [
@@ -561,8 +561,12 @@
         composerBgEl.value = composerState.bg;
       }
 
+      const COMPOSER_DECOR_IDS = ["YT-DX-03", "YT-DX-06"];
+
       function fillComposerDecorOptions() {
-        Object.entries(YOUTUBE_DECORS).forEach(([id, recipe]) => {
+        COMPOSER_DECOR_IDS.forEach((id) => {
+          const recipe = YOUTUBE_DECORS[id];
+          if (!recipe) return;
           const opt = document.createElement("option");
           opt.value = id;
           opt.textContent = recipe.label || id;
@@ -665,6 +669,40 @@
         const preview = second?.asset
           ? `<p class="li-composer__item-type">${composerEscape(landscapeAssetLabel(second.asset))}</p>`
           : `<img class="li-composer__image-preview" src="${composerEscape(second?.src || "")}" alt="" />`;
+        const anchors = [
+          ["center", "True center"],
+          ["top-left", "Top left"],
+          ["top-right", "Top right"],
+          ["bottom-left", "Bottom left"],
+          ["bottom-right", "Bottom right"],
+          ["left-center", "Left center"],
+          ["right-center", "Right center"],
+        ];
+        const anchor = anchors.some(([value]) => value === second?.position)
+          ? second.position
+          : "center";
+        const crop =
+          second?.asset || second?.fit === "contain"
+            ? ""
+            : `<fieldset class="li-composer__radios">
+                <legend class="li-composer__radios-title">Crop from</legend>
+                ${anchors
+                  .map(
+                    ([value, label]) => `
+                      <label class="li-composer__radio">
+                        <input type="radio" name="li-landscape-crop" data-col-index="1" data-col-field="position" value="${value}" ${anchor === value ? "checked" : ""} />
+                        <span>${label}</span>
+                      </label>`,
+                  )
+                  .join("")}
+              </fieldset>`;
+        const ratio = second?.asset
+          ? ""
+          : `<label class="li-composer__check">
+              <input type="checkbox" data-col-index="1" data-col-field="fit" value="contain" ${second?.fit === "contain" ? "checked" : ""} />
+              <span>Keep original image ratio</span>
+            </label>
+            ${crop}`;
         const image = hasSecond
           ? `<div class="li-composer__nested">
               <div class="li-composer__column-label">
@@ -672,6 +710,7 @@
                 <button type="button" class="li-composer__icon-btn" data-remove-landscape-image title="Remove">×</button>
               </div>
               ${preview}
+              ${ratio}
             </div>`
           : "";
         return `
@@ -961,6 +1000,9 @@
       function syncComposerForm() {
         composerFormatEl.value = composerState.format;
         fillComposerBgOptions();
+        if (composerState.decor && !COMPOSER_DECOR_IDS.includes(composerState.decor)) {
+          composerState.decor = "";
+        }
         composerDecorEl.value = composerState.decor || "";
         if (composerState.logo) {
           composerLogoEl.checked = true;
@@ -1534,8 +1576,9 @@
         };
         const src = component.src || component.imageSrc || component.preview || "";
         const asImage = Boolean(src) && (component.type === "image" || component.type === "layout-piece");
+        const previous = (set.columns ?? [])[1] ?? {};
         const second = {
-          id: (set.columns ?? [])[1]?.id || `col-${crypto.randomUUID()}`,
+          id: previous.id || `col-${crypto.randomUUID()}`,
           image: asImage,
           eyebrow: "",
           title: "",
@@ -1544,6 +1587,8 @@
           src: asImage ? src : "",
           alt: asImage ? component.alt || component.imageAlt || component.label || "" : "",
           asset: asImage ? null : component,
+          fit: previous.fit === "contain" ? "contain" : "cover",
+          position: previous.position || "center",
         };
         composerState.components = [{ ...set, quotePanel: false, columns: [first, second] }];
       }
@@ -1786,9 +1831,20 @@
                 alt: image?.label || (colField.value ? col.alt : ""),
               };
             }
+            if (key === "fit") {
+              return {
+                ...col,
+                fit: colField.checked ? "contain" : "cover",
+                position: col.position || "center",
+              };
+            }
             return { ...col, [key]: colField.value };
           });
           composerState.components = updateComponent(composerState.components, id, { columns });
+          if (key === "fit") {
+            syncComposerForm();
+            return;
+          }
           paintComposerPreview();
           return;
         }
