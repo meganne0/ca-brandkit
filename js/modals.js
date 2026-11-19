@@ -3,7 +3,7 @@
  * square / landscape export (background or transparent PNG).
  */
 
-import { mountSlideFooter } from "./components/footer.js?v=9";
+import { mountSlideFooter } from "./components/footer.js?v=10";
 
 export const MODAL_FORMATS = {
   square: { id: "square", w: 1080, h: 1080, label: "Square", className: "canvas--li-square" },

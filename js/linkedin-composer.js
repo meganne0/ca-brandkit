@@ -1,16 +1,16 @@
 /**
  * Freeform LinkedIn composer — stackable components, live preview, assets.
  */
-import { mountSlideFooter } from "./components/footer.js?v=9";
+import { mountSlideFooter } from "./components/footer.js?v=10";
 import {
   MODAL_ACCENTS,
   withBreaks as modalWithBreaks,
-} from "./modals.js?v=24";
+} from "./modals.js?v=25";
 import {
   renderLayout,
   refreshFlowFunnels,
   refreshImageTitleLayouts,
-} from "./layouts.js?v=88";
+} from "./layouts.js?v=89";
 import { toPng } from "../vendor/html-to-image.esm.js";
 import { cropPngToOpaqueBounds } from "./youtube-download.js?v=8";
 

@@ -1,7 +1,7 @@
 @import url("./tokens.css");
 @import url("./type.css");
 @import url("./type-linkedin.css?v=2");
-@import url("./components/footer.css");
+@import url("./components/footer.css?v=9");
 
 *,
 *::before,

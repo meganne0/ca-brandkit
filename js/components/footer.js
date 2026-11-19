@@ -4,7 +4,8 @@
  */
 export const FOOTER_LOGO_SRC =
   "/visual%20assets/logo/logo-horizontal-white-orange.svg";
-export const FOOTER_TAGLINE = "Proactive defense. Prebreach technology.";
+export const FOOTER_TAGLINE =
+  'Visibility on identity compromise <em class="ca-footer__em">before</em> the dark web.';
 export const FOOTER_URL = "cyberarmor.tech";
 
 export function SlideFooter({
