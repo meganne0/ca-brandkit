@@ -2738,6 +2738,10 @@ body.li-editor-open {
 }
 
 .li-composer-block--column-set {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   width: 100%;
   max-width: 100%;
   min-width: 0;
@@ -2753,7 +2757,7 @@ body.li-editor-open {
 .li-composer-columns__grid {
   display: grid;
   grid-auto-flow: row;
-  align-items: start;
+  align-items: center;
   gap: calc(28px * var(--li-scale, 1));
   width: 100%;
   min-width: 0;
@@ -2770,6 +2774,7 @@ body.li-editor-open {
 .li-composer-columns__col {
   display: flex;
   flex-direction: column;
+  justify-content: center;
   gap: calc(14px * var(--li-scale, 1));
   min-width: 0;
   max-width: 100%;

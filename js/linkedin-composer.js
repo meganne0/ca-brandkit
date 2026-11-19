@@ -75,6 +75,16 @@ function uid(prefix = "c") {
   return `${prefix}-${Date.now().toString(36)}-${uidSeq}`;
 }
 
+function hasVisibleText(text) {
+  return String(text ?? "")
+    .replace(/\r\n|\r/g, "\n")
+    .split("\n")
+    .some((line) => {
+      const trimmed = line.trim();
+      return Boolean(trimmed) && !/^-\s*$/.test(trimmed);
+    });
+}
+
 function withBreaks(text) {
   const lines = String(text ?? "").replace(/\r\n|\r/g, "\n").split("\n");
   const html = [];
@@ -95,9 +105,10 @@ function withBreaks(text) {
     prose = [];
   };
   lines.forEach((line) => {
+    if (!line.trim()) return;
     if (/^\s*-(?:\s|$)/.test(line)) {
       flushProse();
-      const item = line.replace(/^\s*-\s?/, "");
+      const item = line.replace(/^\s*-\s?/, "").trim();
       if (item) list.push(item);
       return;
     }
@@ -579,9 +590,9 @@ function accentClass(accent) {
 function splitCopyMarkup(component) {
   return `
     <div class="li-composer-split__copy">
-      ${component.eyebrow ? `<p class="type-label">${withBreaks(component.eyebrow)}</p>` : ""}
-      ${component.title ? `<h2 class="type-h2 li-composer-block__title li-composer-block__title--md">${withBreaks(component.title)}</h2>` : ""}
-      ${component.body ? `<div class="type-body">${withBreaks(component.body)}</div>` : ""}
+      ${hasVisibleText(component.eyebrow) ? `<p class="type-label">${withBreaks(component.eyebrow)}</p>` : ""}
+      ${hasVisibleText(component.title) ? `<h2 class="type-h2 li-composer-block__title li-composer-block__title--md">${withBreaks(component.title)}</h2>` : ""}
+      ${hasVisibleText(component.body) ? `<div class="type-body">${withBreaks(component.body)}</div>` : ""}
     </div>
   `;
 }
@@ -714,29 +725,41 @@ function renderPerson(person) {
 
 function renderColumn(col) {
   if (col.asset) {
-    return renderComponent(col.asset, "landscape").innerHTML;
+    const node = renderComponent(col.asset, "landscape");
+    return node ? node.innerHTML : "";
   }
   if (col.image && col.src) {
     return `<img class="li-composer-block__image is-contain" src="${escapeHtml(col.src)}" alt="${escapeHtml(col.alt)}" />`;
   }
   const people = columnPeople(col);
-  return `
-    ${col.eyebrow ? `<p class="type-label">${withBreaks(col.eyebrow)}</p>` : ""}
-    ${col.title ? `<h2 class="type-h2 li-composer-block__title li-composer-block__title--lg">${withBreaks(col.title)}</h2>` : ""}
-    ${col.body ? `<div class="type-body">${withBreaks(col.body)}</div>` : ""}
-    ${people.length ? `<div class="li-composer-people">${people.map((person) => renderPerson(person)).join("")}</div>` : ""}
-  `;
+  return [
+    hasVisibleText(col.eyebrow)
+      ? `<p class="type-label">${withBreaks(col.eyebrow)}</p>`
+      : "",
+    hasVisibleText(col.title)
+      ? `<h2 class="type-h2 li-composer-block__title li-composer-block__title--lg">${withBreaks(col.title)}</h2>`
+      : "",
+    hasVisibleText(col.body) ? `<div class="type-body">${withBreaks(col.body)}</div>` : "",
+    people.length
+      ? `<div class="li-composer-people">${people.map((person) => renderPerson(person)).join("")}</div>`
+      : "",
+  ]
+    .filter(Boolean)
+    .join("");
 }
 
 function renderColumnBlock(block) {
   if (block.type === "eyebrow") {
+    if (!hasVisibleText(block.text)) return "";
     return `<p class="type-label">${withBreaks(block.text)}</p>`;
   }
   if (block.type === "title") {
+    if (!hasVisibleText(block.text)) return "";
     const size = ["sm", "md", "lg", "xl"].includes(block.size) ? block.size : "lg";
     return `<h2 class="type-h2 li-composer-block__title li-composer-block__title--${size}">${withBreaks(block.text)}</h2>`;
   }
   if (block.type === "body") {
+    if (!hasVisibleText(block.text)) return "";
     return `<div class="type-body">${withBreaks(block.text)}</div>`;
   }
   if (block.type === "person") {
@@ -752,6 +775,22 @@ function renderColumnBlock(block) {
 }
 
 function renderComponent(component, formatId = "square") {
+  if (
+    (component.type === "eyebrow" ||
+      component.type === "title" ||
+      component.type === "body") &&
+    !hasVisibleText(component.text)
+  ) {
+    return null;
+  }
+  if (
+    component.type === "copy" &&
+    ![component.eyebrow, component.title, component.body, component.eyebrowEnd].some(
+      hasVisibleText,
+    )
+  ) {
+    return null;
+  }
   const wrap = document.createElement("div");
   wrap.className = `li-composer-block li-composer-block--${component.type}`;
   wrap.dataset.componentId = component.id;
@@ -762,28 +801,34 @@ function renderComponent(component, formatId = "square") {
       : "lg";
     wrap.innerHTML = `
       <div class="li-composer-copy">
-        ${component.eyebrow ? `<p class="type-label">${withBreaks(component.eyebrow)}</p>` : ""}
-        ${component.title ? `<h2 class="type-h2 li-composer-block__title li-composer-block__title--${size}">${withBreaks(component.title)}</h2>` : ""}
-        ${component.body ? `<div class="type-body">${withBreaks(component.body)}</div>` : ""}
-        ${component.eyebrowEnd ? `<p class="type-label li-composer-copy__eyebrow-end">${withBreaks(component.eyebrowEnd)}</p>` : ""}
+        ${hasVisibleText(component.eyebrow) ? `<p class="type-label">${withBreaks(component.eyebrow)}</p>` : ""}
+        ${hasVisibleText(component.title) ? `<h2 class="type-h2 li-composer-block__title li-composer-block__title--${size}">${withBreaks(component.title)}</h2>` : ""}
+        ${hasVisibleText(component.body) ? `<div class="type-body">${withBreaks(component.body)}</div>` : ""}
+        ${hasVisibleText(component.eyebrowEnd) ? `<p class="type-label li-composer-copy__eyebrow-end">${withBreaks(component.eyebrowEnd)}</p>` : ""}
       </div>
     `;
   } else if (component.type === "eyebrow") {
-    wrap.innerHTML = `<p class="type-label">${withBreaks(component.text)}</p>`;
+    wrap.innerHTML = hasVisibleText(component.text)
+      ? `<p class="type-label">${withBreaks(component.text)}</p>`
+      : "";
   } else if (component.type === "title") {
     const size = ["sm", "md", "lg", "xl"].includes(component.size)
       ? component.size
       : "lg";
-    wrap.innerHTML = `<h2 class="type-h2 li-composer-block__title li-composer-block__title--${size}">${withBreaks(component.text)}</h2>`;
+    wrap.innerHTML = hasVisibleText(component.text)
+      ? `<h2 class="type-h2 li-composer-block__title li-composer-block__title--${size}">${withBreaks(component.text)}</h2>`
+      : "";
   } else if (component.type === "body") {
-    wrap.innerHTML = `<div class="type-body">${withBreaks(component.text)}</div>`;
+    wrap.innerHTML = hasVisibleText(component.text)
+      ? `<div class="type-body">${withBreaks(component.text)}</div>`
+      : "";
   } else if (component.type === "quote-panel") {
     const hasAvatar = Boolean(component.avatar);
     const panel = `
       <div class="li-layout-quote__panel">
-        ${component.text ? `<p class="type-h3 li-layout-quote__text">${withBreaks(component.text)}</p>` : ""}
+        ${hasVisibleText(component.text) ? `<p class="type-h3 li-layout-quote__text">${withBreaks(component.text)}</p>` : ""}
         ${
-          component.attribution
+          hasVisibleText(component.attribution)
             ? `<p class="type-label li-layout-quote__attr">${withBreaks(component.attribution)}</p>`
             : ""
         }
@@ -830,8 +875,8 @@ function renderComponent(component, formatId = "square") {
           .map(
             (card) => `
               <article class="li-layout-cards__card">
-                ${card.label ? `<p class="type-label">${withBreaks(card.label)}</p>` : ""}
-                ${card.body ? `<div class="type-body">${withBreaks(card.body)}</div>` : ""}
+                ${hasVisibleText(card.label) ? `<p class="type-label">${withBreaks(card.label)}</p>` : ""}
+                ${hasVisibleText(card.body) ? `<div class="type-body">${withBreaks(card.body)}</div>` : ""}
               </article>
             `,
           )
@@ -841,15 +886,15 @@ function renderComponent(component, formatId = "square") {
   } else if (component.type === "columns-3") {
     const columns = (component.columns ?? []).slice(0, 3);
     wrap.innerHTML = `
-      ${component.heading ? `<h2 class="type-h2 li-layout-columns__heading">${withBreaks(component.heading)}</h2>` : ""}
+      ${hasVisibleText(component.heading) ? `<h2 class="type-h2 li-layout-columns__heading">${withBreaks(component.heading)}</h2>` : ""}
       <div class="li-layout-columns__grid">
         ${columns
           .map(
             (col) => `
               <article class="li-layout-columns__col">
                 <p class="type-numeral type-numeral--xl li-layout-columns__num">${withBreaks(col.number ?? "")}</p>
-                ${col.title ? `<h3 class="type-h5 li-layout-columns__title">${withBreaks(col.title)}</h3>` : ""}
-                ${col.body ? `<div class="type-body li-layout-columns__body">${withBreaks(col.body)}</div>` : ""}
+                ${hasVisibleText(col.title) ? `<h3 class="type-h5 li-layout-columns__title">${withBreaks(col.title)}</h3>` : ""}
+                ${hasVisibleText(col.body) ? `<div class="type-body li-layout-columns__body">${withBreaks(col.body)}</div>` : ""}
               </article>
             `,
           )
@@ -859,9 +904,9 @@ function renderComponent(component, formatId = "square") {
   } else if (component.type === "metric") {
     wrap.innerHTML = `
       <article class="li-composer-block__metric">
-        <p class="type-metric li-composer-block__metric-value">${withBreaks(component.value)}</p>
-        <div class="type-body">${withBreaks(component.text)}</div>
-        ${component.source ? `<p class="type-label">${withBreaks(component.source)}</p>` : ""}
+        ${hasVisibleText(component.value) ? `<p class="type-metric li-composer-block__metric-value">${withBreaks(component.value)}</p>` : ""}
+        ${hasVisibleText(component.text) ? `<div class="type-body">${withBreaks(component.text)}</div>` : ""}
+        ${hasVisibleText(component.source) ? `<p class="type-label">${withBreaks(component.source)}</p>` : ""}
       </article>
     `;
   } else if (component.type === "person") {
@@ -886,17 +931,25 @@ function renderComponent(component, formatId = "square") {
         ? stored[1]
         : null;
     const columns = [textColumn, imageColumn].filter(Boolean);
+    const renderedColumns = columns.map((col) =>
+      col.blocks
+        ? (col.blocks ?? []).map((block) => renderColumnBlock(block)).join("")
+        : renderColumn(col),
+    );
     const count = Math.max(1, columns.length);
-    const panel = count === 1 && component.quotePanel ? " li-composer-columns--panel" : "";
+    const panel =
+      count === 1 && component.quotePanel && renderedColumns.some((html) => html.trim())
+        ? " li-composer-columns--panel"
+        : "";
     const template = count === 1 ? "minmax(0, 1fr)" : "minmax(0, 1.15fr) minmax(0, 0.85fr)";
     wrap.innerHTML = `
       <div class="li-composer-columns li-composer-columns--${count}${panel}">
         <div class="li-composer-columns__grid" style="display:grid;grid-template-columns:${template};width:100%;align-items:center">
-          ${columns
+          ${renderedColumns
             .map(
-              (col) => `
+              (html) => `
                 <div class="li-composer-columns__col">
-                  ${col.blocks ? (col.blocks ?? []).map((block) => renderColumnBlock(block)).join("") : renderColumn(col)}
+                  ${html}
                 </div>
               `,
             )
@@ -974,7 +1027,8 @@ export function paintComposerCanvas(canvas, state, {
     );
   }
   (state.components ?? []).forEach((component) => {
-    content.appendChild(renderComponent(component, state.format));
+    const node = renderComponent(component, state.format);
+    if (node) content.appendChild(node);
   });
   canvas.appendChild(content);
 
