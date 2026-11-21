@@ -13,6 +13,8 @@ ALLOWED = {
     "drafts/dec-7.slides.json",
     "drafts/prebreach-intro.html",
     "drafts/prebreach-intro.slides.json",
+    "drafts/monthly-check-in.html",
+    "drafts/monthly-check-in.slides.json",
 }
 
 

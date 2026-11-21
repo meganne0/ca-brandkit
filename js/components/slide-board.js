@@ -9,7 +9,7 @@ import {
   renderLayout,
   refreshImageTitleLayouts,
   refreshFlowFunnels,
-} from "../layouts.js?v=145";
+} from "../layouts.js?v=147";
 import { LAYOUT_SAMPLES } from "../layout-samples.js?v=15";
 import { initImageLightbox } from "./lightbox.js?v=28";
 
@@ -168,6 +168,7 @@ export function initEditableSlideBoard({
   showBgInMeta = false,
   desc = "Click to enlarge · right-click to edit · drag to reorder",
   enableAdd = true,
+  mapBackground = (bg) => bg,
 }) {
   /** @type {{ tile: HTMLElement, slide: HTMLElement, stage: HTMLElement }[]} */
   const entries = [];
@@ -257,7 +258,7 @@ export function initEditableSlideBoard({
       const slide = document.createElement("div");
       slide.className = "slide";
       slide.dataset.layout = recipeId;
-      slide.dataset.bg = sample.bg;
+      slide.dataset.bg = mapBackground(sample.bg);
       slide.dataset.content = JSON.stringify(sample.content);
       const layers = document.createElement("div");
       layers.className = "slide-layers";
@@ -329,7 +330,7 @@ export function initEditableSlideBoard({
     slide.className = "slide";
     slide.dataset.title = overrides?.title || layout.label;
     slide.dataset.layout = layoutId;
-    slide.dataset.bg = overrides?.bg || sample.bg;
+    slide.dataset.bg = mapBackground(overrides?.bg || sample.bg);
     slide.dataset.content = JSON.stringify(overrides?.content ?? sample.content);
     const layers = document.createElement("div");
     layers.className = "slide-layers";
@@ -343,7 +344,7 @@ export function initEditableSlideBoard({
     slide.className = "slide";
     slide.dataset.title = def.title || LAYOUTS[def.layout]?.label || def.layout;
     slide.dataset.layout = def.layout;
-    slide.dataset.bg = def.bg;
+    slide.dataset.bg = mapBackground(def.bg);
     slide.dataset.content = JSON.stringify(def.content ?? {});
     const layers = document.createElement("div");
     layers.className = "slide-layers";

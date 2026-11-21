@@ -1,5 +1,12 @@
 [
   {
+    "title": "Monthly Check In",
+    "description": "Monthly check-in presentation on the Dark Slides backgrounds.",
+    "href": "drafts/monthly-check-in.html",
+    "status": "Draft",
+    "meta": "5 slides"
+  },
+  {
     "title": "Dec 7",
     "description": "Dec 7 presentation. Starts as a copy of Prebreach intro. Edits stay in this deck.",
     "href": "drafts/dec-7.html",

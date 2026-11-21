@@ -1366,6 +1366,13 @@ body.slide-lightbox-open {
   text-align: left;
 }
 
+.text-bullets-grid--bullets-only .bullet-list {
+  grid-column: 1;
+  justify-self: start;
+  width: 100%;
+  text-align: left;
+}
+
 .bullet-list {
   display: grid;
   gap: 28px;

@@ -501,13 +501,16 @@ function renderTextBullets(content) {
   el.className = "slide-content layout-text-bullets";
   const bullets = content.bullets ?? [];
   const blurBullets = Boolean(content.blurBullets);
+  const copy = String(content.text ?? "").trim();
   el.innerHTML = `
     ${cornerSection(content)}
     ${titleBlock(content)}
-    <div class="text-bullets-grid">
-      <div class="text-bullets-grid__copy">
-        <p class="type-body">${content.text ?? ""}</p>
-      </div>
+    <div class="text-bullets-grid${copy ? "" : " text-bullets-grid--bullets-only"}">
+      ${
+        copy
+          ? `<div class="text-bullets-grid__copy"><p class="type-body">${content.text ?? ""}</p></div>`
+          : ""
+      }
       <ul class="bullet-list${blurBullets ? " bullet-list--blur-reveal" : ""}">
         ${bullets
           .map((bullet) => {
