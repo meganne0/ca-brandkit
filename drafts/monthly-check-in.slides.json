@@ -1,6 +1,6 @@
 {
-  "savedAt": "2026-11-21T01:20:23.679Z",
-  "publishId": "monthly-check-in-1795224023679",
+  "savedAt": "2026-11-21T01:24:13.557Z",
+  "publishId": "monthly-check-in-1795224253557",
   "slides": [
     {
       "title": "Cover",
@@ -86,6 +86,33 @@
         "alt": "Remote access phishing campaign evidence",
         "text": "",
         "imageSide": "right"
+      }
+    },
+    {
+      "title": "Table of contents",
+      "layout": "LY-03",
+      "bg": "DS-01",
+      "content": {
+        "sectionTitle": "Roadmap",
+        "title": "Next Steps...",
+        "subtitle": "",
+        "items": [
+          {
+            "number": "01",
+            "title": "Bot identification",
+            "description": ""
+          },
+          {
+            "number": "02",
+            "title": "Test accounts for form",
+            "description": ""
+          },
+          {
+            "number": "03",
+            "title": "Set recurring meeting",
+            "description": ""
+          }
+        ]
       }
     }
   ]
