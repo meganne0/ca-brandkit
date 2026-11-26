@@ -3,57 +3,16 @@
  * Layout-aware fields → content JSON (Modal Maker / LinkedIn style).
  */
 
-import { loadAssetsCatalog } from "./assets-catalog.js?v=6";
-
-const SCREENSHOT_LABELS = [
-  ["cra phish", "CRA phish · remote monitoring installer"],
-  ["eviltokens", "Eviltokens · salary adjustment DocuSign"],
-  ["acces token", "Access token · CyberArmor capture"],
-  ["phaas-kali365", "Kali365 · Microsoft phish with PDF"],
-  ["remotepc", "SSA phish · RemotePC"],
-  ["expired, clean domains", "Expired domain purchase"],
-  ["bitcoin", "Bitcoin payment for domains"],
-  ["youtube channel", "YouTube · KMS activator"],
-  ["pricing tiers", "Kali365 · pricing tiers"],
-  ["report_2026", "Kali365 · report bait"],
-  ["supported azure", "Kali365 · Azure login"],
-  ["top of the page", "Kali365 · top of page"],
-  ["license killer", "License Killer · KMS tool"],
-];
-
-let screenshotLibrary = [];
-
-function imageKey(src) {
-  if (!src || String(src).startsWith("data:")) return String(src || "");
-  let path = String(src).split("?")[0];
-  try {
-    path = decodeURIComponent(path);
-  } catch {
-    /* keep the encoded path */
-  }
-  return path.replace(/^(\.\.\/)+/, "").replace(/^\//, "").toLowerCase();
-}
-
-function screenshotLabel(image) {
-  const file = imageKey(image.path || image.src || image.label || "");
-  const hit = SCREENSHOT_LABELS.find(([needle]) => file.includes(needle));
-  if (hit) return hit[1];
-  const bare = file.split("/").pop()?.replace(/\.png$/i, "") || "Screenshot";
-  return bare.length > 64 ? `${bare.slice(0, 62).trim()}…` : bare;
-}
-
-const screenshotLibraryReady = loadAssetsCatalog()
-  .then((catalog) => {
-    screenshotLibrary = (catalog.images || [])
-      .filter((image) => image.group === "screenshots")
-      .map((image) => ({ ...image, label: screenshotLabel(image) }))
-      .sort((a, b) => a.label.localeCompare(b.label));
-    return screenshotLibrary;
-  })
-  .catch(() => {
-    screenshotLibrary = [];
-    return screenshotLibrary;
-  });
+import {
+  applyMediaChoice,
+  mediaTriggerLabel,
+  MODAL_BODY_SIZES,
+  MODAL_SPACES,
+  normalizeModalBodySize,
+  normalizeModalSpace,
+  openSlideMediaMenu,
+  slideMediaKind,
+} from "./slide-media.js?v=3";
 
 function esc(value) {
   return String(value ?? "")
@@ -89,6 +48,52 @@ function severitySelect(name, value) {
       <option value="medium" ${v === "medium" ? "selected" : ""}>Medium</option>
       <option value="high" ${v === "high" ? "selected" : ""}>High</option>
     </select>
+  `;
+}
+
+function choiceField(name, label, value, options) {
+  const opts = options
+    .map(([id, text]) => `<option value="${esc(id)}" ${value === id ? "selected" : ""}>${esc(text)}</option>`)
+    .join("");
+  return `
+    <label class="deck-form__field">
+      <span class="deck-form__label">${esc(label)}</span>
+      <select class="deck-form__input" name="${esc(name)}">${opts}</select>
+    </label>
+  `;
+}
+
+function modalFields(prefix, modal = {}) {
+  const space = normalizeModalSpace(modal);
+  const bodySize = normalizeModalBodySize(modal);
+  return [
+    choiceField(`${prefix}space`, "Modal size", space, MODAL_SPACES),
+    choiceField(`${prefix}body-size`, "Body text size", bodySize, MODAL_BODY_SIZES),
+    field(`${prefix}title`, "Modal title", modal.title ?? ""),
+    field(`${prefix}subtitle`, "Modal subtitle", modal.subtitle ?? ""),
+    field(`${prefix}body`, "Modal body", modal.body ?? "", { type: "textarea", rows: 2 }),
+    field(`${prefix}window-title`, "Window title", modal.windowTitle ?? ""),
+    field(`${prefix}window-body`, "Window text", modal.windowBody ?? "", { type: "textarea", rows: 5 }),
+  ].join("");
+}
+
+function mediaControl(slot, label, record, index = null) {
+  const kind = slideMediaKind(
+    slot === "image"
+      ? { mediaKind: record.mediaKind, image: record.image, modal: record.modal }
+      : record,
+  );
+  const indexAttr = index == null ? "" : ` data-shot-index="${index}"`;
+  const modal =
+    kind === "modal"
+      ? modalFields(slot === "image" ? "modal-" : `shot-modal-${index}-`, record.modal || {})
+      : "";
+  return `
+    <div class="deck-media-field" data-media-field="${esc(slot)}"${indexAttr}>
+      <span class="deck-form__label">${esc(label)}</span>
+      <button type="button" class="deck-form__input deck-media-field__trigger">${esc(mediaTriggerLabel(slot === "image" ? { mediaKind: record.mediaKind, image: record.image, modal: record.modal } : record))}</button>
+    </div>
+    ${modal}
   `;
 }
 
@@ -239,34 +244,11 @@ function buildFormHtml(layout, content) {
     `);
     const visibleCount = count === "1" ? 1 : 2;
     const shots = Array.isArray(c.shots) ? c.shots : [];
-    if (!screenshotLibrary.length) {
-      bits.push(`<p class="deck-form__note">Loading screenshots…</p>`);
-    } else {
-      for (let i = 0; i < visibleCount; i += 1) {
-        const shot = shots[i] || {};
-        const currentKey = imageKey(shot.src);
-        const inLibrary = screenshotLibrary.some((image) => imageKey(image.src) === currentKey);
-        const label = visibleCount === 1 ? "Image" : i === 0 ? "Top image" : "Bottom image";
-        const options = screenshotLibrary
-          .map((image) => {
-            const selected = imageKey(image.src) === currentKey ? "selected" : "";
-            return `<option value="${esc(image.src)}" ${selected}>${esc(image.label)}</option>`;
-          })
-          .join("");
-        bits.push(`
-          <label class="deck-form__field">
-            <span class="deck-form__label">${label}</span>
-            <select class="deck-form__input" name="shot-src-${i}">
-              <option value="__keep__" ${shot.src && !inLibrary ? "selected" : ""}>${
-                shot.src && !inLibrary ? "Custom upload" : "Choose a screenshot…"
-              }</option>
-              ${options}
-            </select>
-          </label>
-        `);
-      }
-      bits.push(`<p class="deck-form__note">Pick a brand screenshot, or click the image on the slide to upload your own.</p>`);
+    for (let i = 0; i < visibleCount; i += 1) {
+      const label = visibleCount === 1 ? "Image" : i === 0 ? "Top image" : "Bottom image";
+      bits.push(mediaControl("shot", label, shots[i] || {}, i));
     }
+    bits.push(`<p class="deck-form__note">Upload an image, choose a saved screenshot, or add a hugging-screenshot modal. The same choices are on the image itself.</p>`);
   }
 
   if (layout === "LY-15") {
@@ -284,6 +266,13 @@ function buildFormHtml(layout, content) {
         </label>
       </fieldset>
     `);
+    bits.push(mediaControl("image", "Image", c));
+    bits.push(`<p class="deck-form__note">Upload an image, choose a saved screenshot, or add a hugging-screenshot modal. The same choices are on the image itself.</p>`);
+  }
+
+  if (layout === "LY-16" || layout === "LY-17") {
+    bits.push(mediaControl("image", "Image", c));
+    bits.push(`<p class="deck-form__note">Upload an image, choose a saved screenshot, or add a hugging-screenshot modal. The same choices are on the image itself.</p>`);
   }
 
   bits.push(field("title", "Title", c.title ?? ""));
@@ -652,17 +641,37 @@ function readContentFromForm(form, layout, base = {}) {
   if (form.elements.namedItem("shotCount")) {
     next.shotCount = val(form, "shotCount") === "1" ? 1 : 2;
   }
+  if (form.elements.namedItem("modal-title")) {
+    next.modal = {
+      ...(next.modal || {}),
+      title: val(form, "modal-title"),
+      subtitle: val(form, "modal-subtitle"),
+      body: val(form, "modal-body"),
+      windowTitle: val(form, "modal-window-title"),
+      windowBody: val(form, "modal-window-body"),
+      space: normalizeModalSpace({ space: val(form, "modal-space") }),
+      bodySize: normalizeModalBodySize({ bodySize: val(form, "modal-body-size") }),
+      width: /^\d+$/.test(val(form, "modal-space")) ? val(form, "modal-space") : "520",
+    };
+  }
   for (let i = 0; i < 2; i += 1) {
-    const name = `shot-src-${i}`;
-    if (!form.elements.namedItem(name)) continue;
-    const picked = val(form, name);
-    if (!picked || picked === "__keep__") continue;
-    const shots = Array.isArray(next.shots) ? [...next.shots] : [];
-    const prev = shots[i] && typeof shots[i] === "object" ? shots[i] : {};
-    if (imageKey(prev.src) === imageKey(picked)) continue;
-    const label = screenshotLibrary.find((image) => imageKey(image.src) === imageKey(picked))?.label;
+    if (!form.elements.namedItem(`shot-modal-${i}-title`)) continue;
+    const shots = Array.isArray(next.shots) ? next.shots.map((shot) => ({ ...shot })) : [];
     while (shots.length <= i) shots.push({ src: "", alt: "" });
-    shots[i] = { ...prev, src: picked, alt: label || prev.alt || "" };
+    shots[i] = {
+      ...shots[i],
+      modal: {
+        ...(shots[i].modal || {}),
+        title: val(form, `shot-modal-${i}-title`),
+        subtitle: val(form, `shot-modal-${i}-subtitle`),
+        body: val(form, `shot-modal-${i}-body`),
+        windowTitle: val(form, `shot-modal-${i}-window-title`),
+        windowBody: val(form, `shot-modal-${i}-window-body`),
+        space: normalizeModalSpace({ space: val(form, `shot-modal-${i}-space`) }),
+        bodySize: normalizeModalBodySize({ bodySize: val(form, `shot-modal-${i}-body-size`) }),
+        width: /^\d+$/.test(val(form, `shot-modal-${i}-space`)) ? val(form, `shot-modal-${i}-space`) : "520",
+      },
+    };
     next.shots = shots;
   }
 
@@ -1015,6 +1024,23 @@ export function mountSlideContentForm(container, { layout, content, onChange }) 
     });
 
     form.addEventListener("click", (event) => {
+      const trigger = event.target.closest(".deck-media-field__trigger");
+      if (trigger) {
+        event.preventDefault();
+        const field = trigger.closest("[data-media-field]");
+        const slot = field?.dataset.mediaField === "shot" ? "shot" : "image";
+        const index = Number(field?.dataset.shotIndex || 0);
+        openSlideMediaMenu({
+          anchor: trigger,
+          onChoose: (choice) => {
+            current = readContentFromForm(form, layout, current);
+            applyMediaChoice(current, { slot, index }, choice);
+            onChange?.(structuredClone(current));
+            render();
+          },
+        });
+        return;
+      }
       const btn = event.target.closest("[data-action]");
       if (!btn) return;
       event.preventDefault();
@@ -1049,18 +1075,9 @@ export function mountSlideContentForm(container, { layout, content, onChange }) 
     });
   }
 
-  const hadLibrary = screenshotLibrary.length > 0;
-  let alive = true;
   render();
-  if ((layout === "LY-06" || layout === "LY-07") && !hadLibrary) {
-    screenshotLibraryReady.then(() => {
-      if (!alive) return;
-      render();
-    });
-  }
 
   return () => {
-    alive = false;
     container.replaceChildren();
   };
 }

@@ -1,5 +1,6 @@
 import { mountSlideFooter } from "./components/footer.js?v=32";
 import { initImageLightbox } from "./components/lightbox.js?v=28";
+import { renderSlideMedia, slideMediaKind } from "./slide-media.js?v=3";
 
 const LOGO_COVER_SRC = "/visual%20assets/logo/logo-vertical-white-orange.svg";
 
@@ -340,24 +341,34 @@ function renderSplit(content, { defaultSide = "right", expandWhenEmpty = false }
       : defaultSide;
   const count = Number(content.shotCount) === 1 ? 1 : 2;
   const mediaLeft = side === "left";
-  const textless = expandWhenEmpty && splitCopyIsEmpty(content);
+  const records = Array.from({ length: count }, (_, i) => content.shots?.[i] || {});
+  const filled = records.filter((record) => slideMediaKind(record));
+  const soloModal =
+    count === 1 &&
+    splitCopyIsEmpty(content) &&
+    filled.length === 1 &&
+    slideMediaKind(filled[0]) === "modal";
+  const textless = soloModal || (expandWhenEmpty && splitCopyIsEmpty(content));
   el.className = [
     "slide-content",
     "layout-split",
     mediaLeft ? "layout-split--media-left" : "",
     count === 1 ? "layout-split--single" : "",
     textless ? "layout-split--textless" : "",
+    soloModal ? "layout-split--solo-modal" : "",
   ]
     .filter(Boolean)
     .join(" ");
-  const shots = (content.shots ?? [])
-    .filter((shot) => shot?.src)
-    .slice(0, count)
-    .map((shot, i) => {
-      const cls = count === 1 ? "shot-single" : i === 0 ? "shot-back" : "shot-front";
-      return `<img class="${cls}" src="${shot.src}" alt="${shot.alt ?? ""}" />`;
-    })
-    .join("");
+  const shots = Array.from({ length: count }, (_, i) => {
+    const shot = content.shots?.[i] || {};
+    const cls = count === 1 ? "shot-single" : i === 0 ? "shot-back" : "shot-front";
+    return renderSlideMedia({
+      slot: "shot",
+      index: i,
+      className: cls,
+      record: shot,
+    });
+  }).join("");
   const copy = `
     <div class="layout-split__copy">
       ${titleBlock(content)}
@@ -398,8 +409,10 @@ function fitTextlessSingle(root) {
   if (!root?.classList?.contains("layout-split--textless")) return;
   if (!root.classList.contains("layout-split--single")) return;
   const stack = root.querySelector(".media-stack");
-  const img = stack?.querySelector("img");
-  if (!img || !stack.clientWidth || !stack.clientHeight) return;
+  const frame = stack?.querySelector(".slide-media");
+  const img = frame?.querySelector("img") || stack?.querySelector("img");
+  const target = frame || img;
+  if (!img || !target || !stack.clientWidth || !stack.clientHeight) return;
   if (!img.naturalWidth) {
     img.addEventListener("load", () => fitTextlessSingle(root), { once: true });
     return;
@@ -411,7 +424,7 @@ function fitTextlessSingle(root) {
   const w = img.naturalWidth * scale;
   const h = img.naturalHeight * scale;
   placeTextlessShot(
-    img,
+    target,
     (stack.clientWidth - w) / 2,
     (stack.clientHeight - h) / 2,
     w,
@@ -424,8 +437,9 @@ function fitTextlessPair(root) {
   if (!root?.classList?.contains("layout-split--textless")) return;
   if (root.classList.contains("layout-split--single")) return;
   const stack = root.querySelector(".media-stack");
-  const imgs = stack ? [...stack.querySelectorAll("img")] : [];
-  if (imgs.length < 2) return;
+  const frames = stack ? [...stack.querySelectorAll(".slide-media")].slice(0, 2) : [];
+  const imgs = frames.map((frame) => frame.querySelector("img")).filter(Boolean);
+  if (frames.length < 2 || imgs.length < 2) return;
   const slide = root.closest(".slide");
   if (!slide || !stack.clientWidth || !stack.clientHeight) return;
 
@@ -443,9 +457,10 @@ function fitTextlessPair(root) {
   const stackH = stack.clientHeight;
   const maxW = slideW * 0.62;
   const maxH = slideH * 0.58;
-  const sized = imgs.slice(0, 2).map((img) => {
+  const sized = frames.slice(0, 2).map((frame) => {
+    const img = frame.querySelector("img");
     const scale = Math.min(maxW / img.naturalWidth, maxH / img.naturalHeight);
-    return { img, w: img.naturalWidth * scale, h: img.naturalHeight * scale };
+    return { img: frame, w: img.naturalWidth * scale, h: img.naturalHeight * scale };
   });
   const [a, b] = sized;
   let ax = 0;
@@ -728,14 +743,27 @@ function renderImageTitle(content, position = "center", imageSide = "right") {
   const image = content.image ?? content.src ?? "";
   const alt = content.alt ?? "";
   const bullets = content.bullets ?? [];
+  const soloModal =
+    !String(title).trim() &&
+    !String(subtitle).trim() &&
+    !body &&
+    !bullets.length &&
+    slideMediaKind({ mediaKind: content.mediaKind, image, modal: content.modal }) === "modal";
+  if (soloModal) el.classList.add("layout-image-title--solo");
   el.innerHTML = `
     ${cornerSection(content)}
     <div class="layout-image-title__stage">
-      ${
-        image
-          ? `<img class="layout-image-title__media" src="${image}" alt="${alt}" />`
-          : `<div class="layout-image-title__media layout-image-title__media--empty" aria-hidden="true"></div>`
-      }
+      ${renderSlideMedia({
+        slot: "image",
+        frameClass: "layout-image-title__media",
+        emptyClass: "layout-image-title__media layout-image-title__media--empty",
+        record: {
+          mediaKind: content.mediaKind,
+          image,
+          alt,
+          modal: content.modal,
+        },
+      })}
       <div class="layout-image-title__copy">
         ${
           title

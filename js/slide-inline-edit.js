@@ -3,6 +3,12 @@
  * On blur (text) or replace (image), harvests content back into data-content shape.
  */
 
+import {
+  applyMediaChoice,
+  openSlideMediaMenu,
+  readModalFrom,
+} from "./slide-media.js?v=3";
+
 function parseContent(slide) {
   try {
     return JSON.parse(slide.dataset.content || "{}");
@@ -118,21 +124,34 @@ export function harvestSlideContent(slide) {
   }
 
   if (root.classList.contains("layout-split")) {
-    const visible = [...root.querySelectorAll(".media-stack img")].map((img, i) => ({
-      ...(base.shots?.[i] ?? {}),
-      src: img.getAttribute("src") ?? "",
-      alt: img.getAttribute("alt") ?? "",
-    }));
-    const shots = Array.isArray(base.shots) ? base.shots.map((shot) => ({ ...shot })) : [];
-    visible.forEach((shot, i) => {
-      shots[i] = shot;
-    });
+    const slots = [...root.querySelectorAll('[data-media-slot="shot"]')];
+    let shots = Array.isArray(base.shots) ? base.shots.map((shot) => ({ ...shot })) : [];
+    if (slots.length) {
+      shots = slots.map((slot, i) => {
+        const prev = base.shots?.[i] ?? {};
+        const kind = slot.dataset.mediaKind || "";
+        if (kind === "modal") {
+          return { ...prev, kind: "modal", src: "", alt: "", modal: readModalFrom(slot) };
+        }
+        if (kind === "image") {
+          const img = slot.querySelector("img");
+          return {
+            ...prev,
+            kind: "image",
+            src: img?.getAttribute("src") ?? "",
+            alt: img?.getAttribute("alt") ?? "",
+            modal: null,
+          };
+        }
+        return { kind: "", src: "", alt: "" };
+      });
+    }
     return {
       ...base,
       ...corner,
       ...titles,
       text: root.querySelector(".layout-split__copy > p.type-body")?.textContent.trim() ?? base.text,
-      shots: shots.length ? shots : base.shots,
+      shots,
       imageSide: root.classList.contains("layout-split--media-left") ? "left" : "right",
       shotCount: root.classList.contains("layout-split--single") ? 1 : 2,
     };
@@ -228,7 +247,31 @@ export function harvestSlideContent(slide) {
     const bullets = [...root.querySelectorAll(".layout-image-title__bullets li")].map((li) =>
       li.textContent.trim(),
     );
-    const img = root.querySelector(".layout-image-title__media");
+    const slot = root.querySelector('[data-media-slot="image"]');
+    const kind = slot?.dataset.mediaKind || "";
+    let image = base.image ?? "";
+    let alt = base.alt ?? "";
+    let mediaKind = base.mediaKind || (image ? "image" : "");
+    let modal = base.modal ?? null;
+    if (slot) {
+      if (kind === "modal") {
+        image = "";
+        alt = "";
+        mediaKind = "modal";
+        modal = readModalFrom(slot);
+      } else if (kind === "image") {
+        const img = slot.querySelector("img");
+        image = img?.getAttribute("src") ?? "";
+        alt = img?.getAttribute("alt") ?? "";
+        mediaKind = "image";
+        modal = null;
+      } else {
+        image = "";
+        alt = "";
+        mediaKind = "";
+        modal = null;
+      }
+    }
     return {
       ...base,
       ...corner,
@@ -240,8 +283,10 @@ export function harvestSlideContent(slide) {
         root.querySelector(".layout-image-title__body .layout-image-title__chip")?.textContent.trim() ??
         base.text,
       bullets: bullets.length ? bullets : base.bullets,
-      image: img?.getAttribute?.("src") ?? base.image,
-      alt: img?.getAttribute?.("alt") ?? base.alt,
+      image,
+      alt,
+      mediaKind,
+      modal,
       imageSide: root.classList.contains("layout-image-title--center")
         ? root.classList.contains("layout-image-title--image-left")
           ? "left"
@@ -326,29 +371,6 @@ export function harvestSlideContent(slide) {
   return { ...base, ...corner, ...titles };
 }
 
-function pickImageFile() {
-  return new Promise((resolve) => {
-    const input = document.createElement("input");
-    input.type = "file";
-    input.accept = "image/*";
-    input.hidden = true;
-    document.body.appendChild(input);
-    input.addEventListener("change", () => {
-      const file = input.files?.[0];
-      input.remove();
-      if (!file) {
-        resolve(null);
-        return;
-      }
-      const reader = new FileReader();
-      reader.onload = () => resolve(String(reader.result || ""));
-      reader.onerror = () => resolve(null);
-      reader.readAsDataURL(file);
-    });
-    input.click();
-  });
-}
-
 /**
  * @param {HTMLElement} slide
  * @param {{ onCommit: (content: object) => void }} opts
@@ -357,7 +379,8 @@ export function enableInlineEditing(slide, { onCommit }) {
   const content = slide.querySelector(".slide-content");
   if (!content) return () => {};
 
-  const cleanups = [];
+  slide.classList.add("is-editing");
+  const cleanups = [() => slide.classList.remove("is-editing")];
 
   const commit = () => {
     const next = harvestSlideContent(slide);
@@ -366,7 +389,7 @@ export function enableInlineEditing(slide, { onCommit }) {
   };
 
   const textTargets = content.querySelectorAll(
-    "h1, h2, h3, h4, p, li, .type-metric, .type-numeral, .type-label, .type-caption, .type-body, .type-h1, .type-h3, .type-h4, .type-h5, .layout-image-title__chip",
+    "h1, h2, h3, h4, p, li, .type-metric, .type-numeral, .type-label, .type-caption, .type-body, .type-h1, .type-h3, .type-h4, .type-h5, .layout-image-title__chip, [data-modal-field]",
   );
 
   const orbitPanelMode = Boolean(content.querySelector(".flow-orbit--orbit-panel"));
@@ -390,6 +413,7 @@ export function enableInlineEditing(slide, { onCommit }) {
     el.classList.add("is-editable");
     const onBlur = () => commit();
     const onKey = (e) => {
+      if (el.hasAttribute("data-modal-field")) return;
       if (e.key === "Enter" && !e.shiftKey && el.tagName !== "LI" && el.tagName !== "P") {
         e.preventDefault();
         el.blur();
@@ -405,24 +429,57 @@ export function enableInlineEditing(slide, { onCommit }) {
     });
   });
 
-  content.querySelectorAll("img:not(.logo)").forEach((img) => {
-    img.classList.add("is-replaceable");
-    img.title = "Click to replace image";
-    const onClick = async (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      const dataUrl = await pickImageFile();
-      if (!dataUrl) return;
-      img.src = dataUrl;
-      commit();
-    };
-    img.addEventListener("click", onClick);
-    cleanups.push(() => {
-      img.removeEventListener("click", onClick);
-      img.classList.remove("is-replaceable");
-      img.removeAttribute("title");
+  const onMediaClick = (event) => {
+    const clear = event.target.closest(".slide-media__clear");
+    const media = (clear || event.target).closest?.(".slide-media");
+    if (!media || !content.contains(media)) return;
+    if (clear) {
+      event.preventDefault();
+      event.stopPropagation();
+      commitMedia(media, null);
+      return;
+    }
+    if (event.target.closest("[data-modal-field]")) return;
+    const kind = media.dataset.mediaKind || "";
+    const opensMenu =
+      kind === "" ||
+      (kind === "image" && event.target.closest("img")) ||
+      (kind === "modal" && event.target.closest(".ca-modal"));
+    if (!opensMenu) return;
+    event.preventDefault();
+    event.stopPropagation();
+    const rect = media.getBoundingClientRect();
+    openSlideMediaMenu({
+      x: rect.left,
+      y: Math.min(rect.bottom + 6, window.innerHeight - 16),
+      onChoose: (choice) => commitMedia(media, choice),
     });
-  });
+  };
+
+  function commitMedia(media, choice) {
+    let next = {};
+    try {
+      next = JSON.parse(slide.dataset.content || "{}");
+    } catch {
+      next = {};
+    }
+    if (media.dataset.mediaKind === "modal" && choice) {
+      next = harvestSlideContent(slide);
+    }
+    applyMediaChoice(
+      next,
+      {
+        slot: media.dataset.mediaSlot === "shot" ? "shot" : "image",
+        index: Number(media.dataset.shotIndex || 0),
+      },
+      choice,
+    );
+    slide.dataset.content = JSON.stringify(next);
+    onCommit(next);
+  }
+
+  content.addEventListener("click", onMediaClick);
+  cleanups.push(() => content.removeEventListener("click", onMediaClick));
 
   return () => cleanups.forEach((fn) => fn());
 }

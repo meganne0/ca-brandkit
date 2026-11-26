@@ -14,7 +14,7 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/light/style.css"
     />
-    <link rel="stylesheet" href="../css/slides.css?v=94" />
+    <link rel="stylesheet" href="../css/slides.css?v=99" />
     <script src="../js/auth-gate.js?v=6"></script>
   </head>
   <body>
@@ -137,17 +137,17 @@
     </div>
 
     <script type="module">
-      import { initEditableSlideBoard } from "../js/components/slide-board.js?v=46";
+      import { initEditableSlideBoard } from "../js/components/slide-board.js?v=51";
       import {
         refreshImageTitleLayouts,
         refreshFlowFunnels,
-      } from "../js/layouts.js?v=89";
-      import { enableInlineEditing } from "../js/slide-inline-edit.js?v=4";
-      import { mountSlideContentForm } from "../js/slide-content-form.js?v=15";
+      } from "../js/layouts.js?v=151";
+      import { enableInlineEditing } from "../js/slide-inline-edit.js?v=7";
+      import { mountSlideContentForm } from "../js/slide-content-form.js?v=18";
       import {
         isPresentMode,
         startPresentMode,
-      } from "../js/present-mode.js?v=15";
+      } from "../js/present-mode.js?v=19";
       import {
         fetchDraftJson,
         persistDraftHtml,
@@ -358,6 +358,7 @@
         slides,
         mapBackground: (bg) => DARK_SLIDE_BG[bg] || bg,
         onOpen: handleOpen,
+        onEdit: editFromMenu,
         onChange: (count) => {
           label.textContent = `${count} slide${count === 1 ? "" : "s"}`;
           if (mode === "edit" && index >= count) {
@@ -463,7 +464,7 @@
         }
       }
 
-      function applyEditorContent(content) {
+      function applyEditorContent(content, refreshForm = false) {
         if (!editSlide) return;
         boardApi.updateSlideContent(index, content);
         editSlide.dataset.content = JSON.stringify(content);
@@ -480,19 +481,19 @@
         // Rebind inline edit after paint replaces DOM nodes
         disposeInline?.();
         disposeInline = enableInlineEditing(editSlide, {
-          onCommit: (next) => {
-            boardApi.updateSlideContent(index, next);
-            editSlide.dataset.content = JSON.stringify(next);
-            persistLocal();
-            disposeForm?.();
-            disposeForm = mountSlideContentForm(editorPanel, {
-              layout: editSlide.dataset.layout,
-              content: next,
-              onChange: applyEditorContent,
-            });
-          },
+          onCommit: (next) => applyEditorContent(next, true),
         });
+        if (refreshForm) {
+          disposeForm?.();
+          disposeForm = mountSlideContentForm(editorPanel, {
+            layout: editSlide.dataset.layout,
+            content,
+            onChange: applyEditorContent,
+          });
+        }
       }
+
+
 
       function selectEditSlide(i) {
         if (!slides.length) {
@@ -540,22 +541,19 @@
         });
 
         disposeInline = enableInlineEditing(live, {
-          onCommit: (next) => {
-            boardApi.updateSlideContent(index, next);
-            live.dataset.content = JSON.stringify(next);
-            disposeForm?.();
-            disposeForm = mountSlideContentForm(editorPanel, {
-              layout: live.dataset.layout,
-              content: next,
-              onChange: applyEditorContent,
-            });
-          },
+          onCommit: (next) => applyEditorContent(next, true),
         });
       }
 
       function handleOpen(i) {
         if (mode === "edit") selectEditSlide(i);
         else openLightbox(i);
+      }
+
+      function editFromMenu(i) {
+        index = i;
+        if (mode === "edit") selectEditSlide(i);
+        else setMode("edit");
       }
 
       function setMode(next) {

@@ -14,7 +14,7 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/npm/@phosphor-icons/web@2.1.2/src/light/style.css"
     />
-    <link rel="stylesheet" href="../css/slides.css?v=93" />
+    <link rel="stylesheet" href="../css/slides.css?v=98" />
       <script src="../js/auth-gate.js?v=6"></script>
 </head>
   <body>
@@ -82,9 +82,9 @@
     </div>
 
     <script type="module">
-      import { initEditableSlideBoard } from "../js/components/slide-board.js?v=42";
-      import { refreshImageTitleLayouts } from "../js/layouts.js?v=89";
-      import { enableInlineEditing } from "../js/slide-inline-edit.js?v=1";
+      import { initEditableSlideBoard } from "../js/components/slide-board.js?v=47";
+      import { refreshImageTitleLayouts } from "../js/layouts.js?v=151";
+      import { enableInlineEditing } from "../js/slide-inline-edit.js?v=4";
 
       const STORAGE_KEY = `ca-brandkit:draft:${location.pathname}`;
 
@@ -144,6 +144,7 @@
         board,
         slides,
         onOpen: handleOpen,
+        onEdit: editFromMenu,
         onChange: (count) => {
           label.textContent = `${count} slide${count === 1 ? "" : "s"}`;
           if (mode === "edit" && index >= count) {
@@ -228,18 +229,26 @@
         refreshImageTitleLayouts(live);
         new ResizeObserver(fit).observe(editorStage);
 
-        disposeEdit = enableInlineEditing(live, {
-          onCommit: (content) => {
-            boardApi.updateSlideContent(index, content);
-            // Keep editor DOM as source of truth while typing; sync dataset only
-            live.dataset.content = JSON.stringify(content);
-          },
-        });
+        const commitEditor = (content) => {
+          boardApi.updateSlideContent(index, content);
+          live.dataset.content = JSON.stringify(content);
+          boardApi.paintSlide(live);
+          refreshImageTitleLayouts(live);
+          disposeEdit?.();
+          disposeEdit = enableInlineEditing(live, { onCommit: commitEditor });
+        };
+        disposeEdit = enableInlineEditing(live, { onCommit: commitEditor });
       }
 
       function handleOpen(i) {
         if (mode === "edit") selectEditSlide(i);
         else openLightbox(i);
+      }
+
+      function editFromMenu(i) {
+        index = i;
+        if (mode === "edit") selectEditSlide(i);
+        else setMode("edit");
       }
 
       function setMode(next) {

@@ -9,7 +9,7 @@ import {
   renderLayout,
   refreshImageTitleLayouts,
   refreshFlowFunnels,
-} from "../layouts.js?v=147";
+} from "../layouts.js?v=151";
 import { LAYOUT_SAMPLES } from "../layout-samples.js?v=15";
 import { initImageLightbox } from "./lightbox.js?v=28";
 
@@ -114,6 +114,9 @@ function ensureMenu() {
   menu.hidden = true;
   menu.setAttribute("role", "menu");
   menu.innerHTML = `
+    <button type="button" class="slide-tile-menu__item" role="menuitem" data-action="edit" hidden>
+      Edit
+    </button>
     <button type="button" class="slide-tile-menu__item" role="menuitem" data-action="duplicate">
       Duplicate
     </button>
@@ -155,6 +158,7 @@ function ensurePicker() {
  * @param {HTMLElement} opts.board
  * @param {HTMLElement[]} opts.slides
  * @param {(index: number) => void} opts.onOpen
+ * @param {(index: number) => void} [opts.onEdit]
  * @param {(count: number) => void} [opts.onChange]
  * @param {boolean} [opts.showBgInMeta]
  * @param {string} [opts.desc]
@@ -164,6 +168,7 @@ export function initEditableSlideBoard({
   board,
   slides,
   onOpen,
+  onEdit,
   onChange,
   showBgInMeta = false,
   desc = "Click to enlarge · right-click to edit · drag to reorder",
@@ -224,6 +229,8 @@ export function initEditableSlideBoard({
 
   function openMenu(tile, x, y) {
     menuTarget = tile;
+    const editItem = menu.querySelector('[data-action="edit"]');
+    if (editItem) editItem.hidden = typeof onEdit !== "function";
     menu.hidden = false;
     const pad = 8;
     const { width, height } = menu.getBoundingClientRect();
@@ -506,6 +513,11 @@ export function initEditableSlideBoard({
     const action = btn.dataset.action;
     const target = menuTarget;
     closeMenu();
+    if (action === "edit" && typeof onEdit === "function") {
+      syncFromDom();
+      const i = entries.findIndex((entry) => entry.tile === target);
+      if (i >= 0) onEdit(i);
+    }
     if (action === "duplicate") duplicateTile(target);
     if (action === "delete") deleteTile(target);
   });
